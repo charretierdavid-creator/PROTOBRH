@@ -16,6 +16,9 @@ jobs:
           S: ${{ secrets.FTP_SERVER }}
           U: ${{ secrets[format('{0}_FTP_USERNAME', matrix.site)] }}
           P: ${{ secrets[format('{0}_FTP_PASSWORD', matrix.site)] }}
+          OLDP: ${{ secrets.FTP_PASSWORD }}
+          CP: ${{ secrets.CDCBRH_FTP_PASSWORD }}
+          PP: ${{ secrets.PROTOBRH_FTP_PASSWORD }}
         run: |
           H="$(printf '%s' "$S" | tr -d '[:space:]')"; H="${H#*://}"; H="${H%%/*}"; H="${H%%:*}"
           echo "::add-mask::$H"
@@ -24,6 +27,8 @@ jobs:
           site=$(echo "${{ matrix.site }}" | tr A-Z a-z)
           [ "$U" = "u631589815.$site.monsitedetest.com" ] && echo "utilisateur: conforme" || echo "utilisateur: DIFFERENT de u631589815.$site.monsitedetest.com (longueur ${#U})"
           echo "mot de passe: longueur ${#P}"
+          [ "$P" = "$OLDP" ] && echo "mot de passe: IDENTIQUE a l'ancien FTP_PASSWORD" || echo "mot de passe: different de l'ancien FTP_PASSWORD"
+          [ "$CP" = "$PP" ] && echo "cdcbrh et protobrh: MEME mot de passe" || echo "cdcbrh et protobrh: mots de passe differents"
           case "$P" in " "*|*" ") echo "mot de passe: ESPACE au debut ou a la fin";; esac
           case "$P" in *$'\n'*|*$'\r'*) echo "mot de passe: RETOUR A LA LIGNE";; esac
           for d in "" "public_html/"; do
