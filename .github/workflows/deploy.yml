@@ -1,51 +1,26 @@
 name: Mise en ligne Hostinger
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 jobs:
-  cdcbrh:
+  verification:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        site: [CDCBRH, PROTOBRH]
     steps:
-      - uses: actions/checkout@v4
-      - name: Nettoyage de l'adresse FTP (préfixe ftp://, espaces, port, /)
-        id: ftp
+      - name: Contenu de public_html (lecture seule)
         env:
           S: ${{ secrets.FTP_SERVER }}
+          U: ${{ secrets[format('{0}_FTP_USERNAME', matrix.site)] }}
+          P: ${{ secrets[format('{0}_FTP_PASSWORD', matrix.site)] }}
         run: |
-          H="$(printf '%s' "$S" | tr -d '[:space:]')"
-          H="${H#*://}"; H="${H%%/*}"; H="${H%%:*}"
+          H="$(printf '%s' "$S" | tr -d '[:space:]')"; H="${H#*://}"; H="${H%%/*}"; H="${H%%:*}"
           echo "::add-mask::$H"
-          echo "host=$H" >> "$GITHUB_OUTPUT"
-      - name: Envoi de cdcbrh/ vers cdcbrh.monsitedetest.com
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ steps.ftp.outputs.host }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./cdcbrh/
-          server-dir: public_html/cdcbrh/
-
-  protobrh:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Nettoyage de l'adresse FTP (préfixe ftp://, espaces, port, /)
-        id: ftp
-        env:
-          S: ${{ secrets.FTP_SERVER }}
-        run: |
-          H="$(printf '%s' "$S" | tr -d '[:space:]')"
-          H="${H#*://}"; H="${H%%/*}"; H="${H%%:*}"
-          echo "::add-mask::$H"
-          echo "host=$H" >> "$GITHUB_OUTPUT"
-      - name: Envoi de protobrh/ vers protobrh.monsitedetest.com
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ steps.ftp.outputs.host }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./protobrh/
-          server-dir: public_html/protobrh/
+          [ -n "$U" ] || { echo "SECRET ${{ matrix.site }}_FTP_USERNAME ABSENT"; exit 1; }
+          for d in "" "public_html/"; do
+            echo "== /$d"
+            curl -sS --max-time 20 -u "$U:$P" "ftp://$H/$d" | tr -d '\r' | awk '{print $5, $6, $7, $8, $9}'
+          done
