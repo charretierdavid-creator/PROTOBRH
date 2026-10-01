@@ -1,0 +1,16 @@
+# --- Données et secrets : restent uniquement sur Hostinger, jamais sur GitHub ---
+cdcbrh/data/
+cdcbrh/config.php
+protobrh/config.php
+.htpasswd
+**/.htpasswd
+protobrh/.htaccess
+*.key
+.env
+
+# --- Fichiers parasites ---
+.DS_Store
+Thumbs.db
+*.zip
+_sauvegarde/
+__pycache__/
