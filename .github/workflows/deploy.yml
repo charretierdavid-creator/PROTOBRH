@@ -5,6 +5,8 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Chaque sous-domaine est un site Hostinger distinct, avec son propre compte FTP
+# dont la racine contient public_html/ (le dossier servi par le site).
 jobs:
   cdcbrh:
     runs-on: ubuntu-latest
@@ -23,10 +25,10 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ steps.ftp.outputs.host }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          username: ${{ secrets.CDCBRH_FTP_USERNAME }}
+          password: ${{ secrets.CDCBRH_FTP_PASSWORD }}
           local-dir: ./cdcbrh/
-          server-dir: public_html/cdcbrh/
+          server-dir: public_html/
 
   protobrh:
     runs-on: ubuntu-latest
@@ -45,7 +47,7 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ steps.ftp.outputs.host }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          username: ${{ secrets.PROTOBRH_FTP_USERNAME }}
+          password: ${{ secrets.PROTOBRH_FTP_PASSWORD }}
           local-dir: ./protobrh/
-          server-dir: public_html/protobrh/
+          server-dir: public_html/
