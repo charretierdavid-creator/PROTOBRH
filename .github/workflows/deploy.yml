@@ -17,7 +17,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./cdcbrh/
-          server-dir: ${{ secrets.CDCBRH_DIR }}
+          server-dir: public_html/cdcbrh/
 
   protobrh:
     runs-on: ubuntu-latest
@@ -30,4 +30,4 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./protobrh/
-          server-dir: ${{ secrets.PROTOBRH_DIR }}
+          server-dir: public_html/protobrh/
