@@ -1,0 +1,13 @@
+[
+ {"version":"CDC V0.5","date":"01/10/2026","type":"Cahier des charges","pages":[],"desc":"Cycle de vie des commentaires (Nouveau → Validé → Intégré / Rejeté), mode Business Owner, export et copie du backlog validé, création du journal des évolutions.","origine":"Demande BO — lien prototype / cahier des charges"},
+ {"version":"CDC V0.4","date":"01/10/2026","type":"Cahier des charges","pages":[],"desc":"Notation par étoiles retirée ; commentaires seuls.","origine":"Demande BO"},
+ {"version":"CDC V0.4","date":"01/10/2026","type":"Cahier des charges","pages":[],"desc":"Schéma du parcours allégé sur l'accueil (jusqu'au bloc « Un expert BRH à chaque étape »).","origine":"Demande BO"},
+ {"version":"CDC V0.4","date":"01/10/2026","type":"Cahier des charges","pages":[],"desc":"Focus CRM : colonne « Scoring » renommée « SOLEAD (web to CR) ».","origine":"Atelier data / CRM"},
+ {"version":"CDC V0.4","date":"30/09/2026","type":"Cahier des charges","pages":[],"desc":"Commentaires partagés sur chaque page, visibles de tous, avec export CSV.","origine":"Demande BO"},
+ {"version":"CDC V0.4","date":"30/09/2026","type":"Cahier des charges","pages":[],"desc":"Cahier des charges interactif en ligne : parcours cliquable, 28 pages, Focus CRM (84 données).","origine":"Demande BO"},
+ {"version":"Mapping V2","date":"29/09/2026","type":"Cahier des charges","pages":["É07","É09","É10","É21"],"desc":"Mapping recalé sur le vrai parcours : bifurcation après 4.1, étapes du devis remises dans l'ordre du prototype, légende MVP / V2 corrigée.","origine":"Contrôle de cohérence"},
+ {"version":"CDC V0.2","date":"29/09/2026","type":"Cahier des charges","pages":[],"desc":"Une page par écran du prototype (É01 à É25), récits utilisateurs, Focus CRM.","origine":"Écrans du prototype du 29/09"},
+ {"version":"Proto 29/09","date":"29/09/2026","type":"Prototype","pages":["É07"],"desc":"Gains fiscaux et pouvoir d'achat affichés sans demande d'e-mail préalable (la valeur avant les coordonnées).","origine":"Arbitrage de cadrage"},
+ {"version":"Proto 29/09","date":"29/09/2026","type":"Prototype","pages":["É10","É11","É12","É13","É14","É15","É16","É17","É18","É19","É20","É21"],"desc":"Parcours devis en ligne en 7 étapes : identification SIRET, configuration des 4 offres, estimation, proposition, envoi du devis.","origine":"Cadrage V2 devis en ligne"},
+ {"version":"Proto 29/09","date":"29/09/2026","type":"Prototype","pages":["É01"],"desc":"Module « Votre avis » : notes sur 5 par partie du site et par critère, suggestions libres.","origine":"Culture du feedback"}
+]

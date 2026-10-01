@@ -1,0 +1,1188 @@
+{
+"t1": {
+"x": 36,
+"y": 18,
+"w": 1848,
+"h": 35.6875,
+"text": "PARCOURS DIRIGEANT – PORTAIL BANQUE DES RH"
+},
+"t2": {
+"x": 36,
+"y": 59.6875,
+"w": 961.171875,
+"h": 41,
+"a": "DE LA DÉCOUVERTE AU DEVIS EN LIGNE ",
+"b": "(DIAGNOSTIC + SIMULATION + DEVIS)"
+},
+"persona": {
+"x": 1534,
+"y": 18,
+"w": 350,
+"h": 74.25
+},
+"phases": [
+{
+"x": 36,
+"y": 116,
+"w": 111,
+"h": 14,
+"text": "ATTIRER",
+"bg": "rgb(1, 98, 101)"
+},
+{
+"x": 150,
+"y": 116,
+"w": 957,
+"h": 14,
+"text": "ENGAGER",
+"bg": "rgb(0, 106, 78)"
+},
+{
+"x": 1110,
+"y": 116,
+"w": 771,
+"h": 14,
+"text": "CONVERTIR",
+"bg": "rgb(6, 81, 69)"
+}
+],
+"cols": [
+{
+"x": 36,
+"y": 134,
+"w": 114,
+"h": 40,
+"n": {
+"x": 44,
+"y": 134.171875,
+"w": 22,
+"h": 22
+},
+"num": "0",
+"nbg": "rgb(1, 98, 101)",
+"l": {
+"x": 44,
+"y": 157.171875,
+"w": 99.546875,
+"h": 24,
+"text": "Acquisition"
+},
+"s": {
+"x": 44,
+"y": 183.171875,
+"w": 105,
+"h": 15,
+"text": "Hors site"
+}
+},
+{
+"x": 150,
+"y": 134,
+"w": 355,
+"h": 40,
+"n": {
+"x": 158,
+"y": 136,
+"w": 22,
+"h": 22
+},
+"num": "1",
+"nbg": "rgb(6, 81, 69)",
+"l": {
+"x": 186,
+"y": 135,
+"w": 85.625,
+"h": 24,
+"text": "Découvrir"
+},
+"s": {
+"x": 158,
+"y": 161,
+"w": 346,
+"h": 15,
+"text": "Un portail organisé autour des 4 besoins RH"
+}
+},
+{
+"x": 505,
+"y": 134,
+"w": 365,
+"h": 40,
+"n": {
+"x": 513,
+"y": 136,
+"w": 22,
+"h": 22
+},
+"num": "2",
+"nbg": "rgb(6, 81, 69)",
+"l": {
+"x": 541,
+"y": 135,
+"w": 124.90625,
+"h": 24,
+"text": "Diagnostiquer"
+},
+"s": {
+"x": 513,
+"y": 161,
+"w": 356,
+"h": 15,
+"text": "Profil et priorités RH comparés"
+}
+},
+{
+"x": 870,
+"y": 134,
+"w": 240,
+"h": 40,
+"n": {
+"x": 878,
+"y": 136,
+"w": 22,
+"h": 22
+},
+"num": "3",
+"nbg": "rgb(6, 81, 69)",
+"l": {
+"x": 906,
+"y": 135,
+"w": 67.703125,
+"h": 24,
+"text": "Simuler"
+},
+"s": {
+"x": 878,
+"y": 161,
+"w": 231,
+"h": 15,
+"text": "Gains fiscaux et pouvoir d'achat"
+}
+},
+{
+"x": 1110,
+"y": 134,
+"w": 235,
+"h": 40,
+"n": {
+"x": 1118,
+"y": 136,
+"w": 22,
+"h": 22
+},
+"num": "4",
+"nbg": "rgb(6, 81, 69)",
+"l": {
+"x": 1146,
+"y": 135,
+"w": 62.046875,
+"h": 24,
+"text": "Choisir"
+},
+"s": {
+"x": 1118,
+"y": 161,
+"w": 226,
+"h": 15,
+"text": "Solutions priorisées"
+}
+},
+{
+"x": 1345,
+"y": 134,
+"w": 310,
+"h": 40,
+"n": {
+"x": 1353,
+"y": 136,
+"w": 22,
+"h": 22
+},
+"num": "5",
+"nbg": "rgb(6, 81, 69)",
+"l": {
+"x": 1381,
+"y": 135,
+"w": 246.984375,
+"h": 24,
+"text": "Devis en ligne / Lead qualifié"
+},
+"s": {
+"x": 1353,
+"y": 161,
+"w": 301,
+"h": 15,
+"text": "Selon le profil de l'entreprise"
+}
+},
+{
+"x": 1655,
+"y": 134,
+"w": 229,
+"h": 40,
+"n": {
+"x": 1663,
+"y": 136,
+"w": 22,
+"h": 22
+},
+"num": "6",
+"nbg": "rgb(6, 81, 69)",
+"l": {
+"x": 1691,
+"y": 135,
+"w": 82.828125,
+"h": 24,
+"text": "Convertir"
+},
+"s": {
+"x": 1663,
+"y": 161,
+"w": 220,
+"h": 15,
+"text": "Expert BRH de la CR"
+}
+}
+],
+"paths": [
+{
+"d": "M40,440 C52,436.6666666666667 82.83333333333333,433.3333333333333 112,420 C141.16666666666666,406.6666666666667 180.33333333333334,375 215,360 C249.66666666666666,345 285,340 320,330 C355,320 387.5,295 425,300 C462.5,305 505.8333333333333,341.6666666666667 545,360 C584.1666666666666,378.3333333333333 620.8333333333334,411.6666666666667 660,410 C699.1666666666666,408.3333333333333 739.1666666666666,370 780,350 C820.8333333333334,330 864.1666666666666,298.3333333333333 905,290 C945.8333333333334,281.6666666666667 985.8333333333334,292.5 1025,300 C1064.1666666666667,307.5 1108.3333333333333,323 1140,335 C1171.6666666666667,347 1202.5,365.8333333333333 1215,372",
+"stroke": "#B9CEC7",
+"w": 5,
+"dash": null
+},
+{
+"d": "M1215,372 C1243.3333333333333,362.5 1337.5,327.8333333333333 1385,315 C1432.5,302.1666666666667 1461.6666666666667,297.5 1500,295 C1538.3333333333333,292.5 1566.6666666666667,299.1666666666667 1615,300 C1663.3333333333333,300.8333333333333 1747.1666666666667,302 1790,300 C1832.8333333333333,298 1858.3333333333333,290 1872,288",
+"stroke": "#8FB822",
+"w": 4,
+"dash": "9 6"
+},
+{
+"d": "M1215,372 C1227.5,379.1666666666667 1245.8333333333333,403.6666666666667 1290,415 C1334.1666666666667,426.3333333333333 1396.6666666666667,437.8333333333333 1480,440 C1563.3333333333333,442.1666666666667 1724.6666666666667,427.1666666666667 1790,428 C1855.3333333333333,428.8333333333333 1858.3333333333333,442.1666666666667 1872,445",
+"stroke": "#016265",
+"w": 4,
+"dash": null
+}
+],
+"circles": [
+{
+"cx": 112,
+"cy": 420,
+"r": 8.5,
+"fill": "#016265"
+},
+{
+"cx": 215,
+"cy": 360,
+"r": 8.5,
+"fill": "#8FB5A9"
+},
+{
+"cx": 320,
+"cy": 330,
+"r": 8.5,
+"fill": "#8FB5A9"
+},
+{
+"cx": 425,
+"cy": 300,
+"r": 8.5,
+"fill": "#8FB5A9"
+},
+{
+"cx": 545,
+"cy": 360,
+"r": 8.5,
+"fill": "#8FB5A9"
+},
+{
+"cx": 660,
+"cy": 410,
+"r": 8.5,
+"fill": "#8FB5A9"
+},
+{
+"cx": 780,
+"cy": 350,
+"r": 8.5,
+"fill": "#8FB5A9"
+},
+{
+"cx": 905,
+"cy": 290,
+"r": 8.5,
+"fill": "#8FB5A9"
+},
+{
+"cx": 1025,
+"cy": 300,
+"r": 8.5,
+"fill": "#8FB5A9"
+},
+{
+"cx": 1140,
+"cy": 335,
+"r": 8.5,
+"fill": "#8FB5A9"
+},
+{
+"cx": 1385,
+"cy": 315,
+"r": 8.5,
+"fill": "#8FB822"
+},
+{
+"cx": 1500,
+"cy": 295,
+"r": 8.5,
+"fill": "#8FB822"
+},
+{
+"cx": 1615,
+"cy": 300,
+"r": 8.5,
+"fill": "#8FB822"
+},
+{
+"cx": 1790,
+"cy": 300,
+"r": 8.5,
+"fill": "#8FB822"
+},
+{
+"cx": 1290,
+"cy": 415,
+"r": 8.5,
+"fill": "#8FB5A9"
+},
+{
+"cx": 1480,
+"cy": 440,
+"r": 8.5,
+"fill": "#8FB5A9"
+},
+{
+"cx": 1790,
+"cy": 428,
+"r": 8.5,
+"fill": "#065145"
+},
+{
+"cx": 1215,
+"cy": 372,
+"r": 6,
+"fill": "#065145"
+}
+],
+"lines": [
+{
+"x1": 112,
+"y1": 420,
+"x2": 112,
+"y2": 446
+},
+{
+"x1": 215,
+"y1": 360,
+"x2": 215,
+"y2": 320
+},
+{
+"x1": 320,
+"y1": 330,
+"x2": 320,
+"y2": 356
+},
+{
+"x1": 425,
+"y1": 300,
+"x2": 425,
+"y2": 260
+},
+{
+"x1": 545,
+"y1": 360,
+"x2": 545,
+"y2": 386
+},
+{
+"x1": 660,
+"y1": 410,
+"x2": 660,
+"y2": 370
+},
+{
+"x1": 780,
+"y1": 350,
+"x2": 780,
+"y2": 376
+},
+{
+"x1": 905,
+"y1": 290,
+"x2": 905,
+"y2": 250
+},
+{
+"x1": 1025,
+"y1": 300,
+"x2": 1025,
+"y2": 326
+},
+{
+"x1": 1140,
+"y1": 335,
+"x2": 1140,
+"y2": 295
+},
+{
+"x1": 1385,
+"y1": 315,
+"x2": 1385,
+"y2": 275
+},
+{
+"x1": 1500,
+"y1": 295,
+"x2": 1500,
+"y2": 321
+},
+{
+"x1": 1615,
+"y1": 300,
+"x2": 1615,
+"y2": 260
+},
+{
+"x1": 1790,
+"y1": 300,
+"x2": 1790,
+"y2": 260
+},
+{
+"x1": 1290,
+"y1": 415,
+"x2": 1290,
+"y2": 441
+},
+{
+"x1": 1480,
+"y1": 440,
+"x2": 1480,
+"y2": 466
+},
+{
+"x1": 1790,
+"y1": 428,
+"x2": 1790,
+"y2": 454
+}
+],
+"cards": [
+{
+"x": 37,
+"y": 446,
+"w": 150,
+"h": 75.171875,
+"kind": "start",
+"b": "Acquisition",
+"txt": "SEO · GEO (IA) · campagnes LinkedIn / Meta / Google · réseau CR",
+"ref": ""
+},
+{
+"x": 140,
+"y": 251,
+"w": 150,
+"h": 75.421875,
+"kind": "step",
+"b": "1.1 Accueil portail 360°",
+"txt": "« Le portail RH dédié aux chefs d'entreprise »",
+"ref": "É01 · É04"
+},
+{
+"x": 245,
+"y": 356,
+"w": 150,
+"h": 91.34375,
+"kind": "step",
+"b": "1.2 Explore les 4 besoins RH",
+"txt": "4 solutions, fiches et avantages fiscaux",
+"ref": "É02 · É03 · É08"
+},
+{
+"x": 350,
+"y": 175,
+"w": 150,
+"h": 91.34375,
+"kind": "step",
+"b": "1.3 Ressources & Assistant",
+"txt": "Contenus, newsletter · « Besoin d'aide ? »",
+"ref": "É23 – É25 · H"
+},
+{
+"x": 470,
+"y": 386,
+"w": 150,
+"h": 91.34375,
+"kind": "step",
+"b": "2.1 Décrit son entreprise",
+"txt": "Secteur, effectif, type, localisation",
+"ref": "É05"
+},
+{
+"x": 585,
+"y": 299,
+"w": 150,
+"h": 76.59375,
+"kind": "step",
+"b": "2.2 Note ses priorités RH",
+"txt": "De 1 à 4, sur 4 dimensions",
+"ref": "É06"
+},
+{
+"x": 705,
+"y": 376,
+"w": 150,
+"h": 75.421875,
+"kind": "step",
+"b": "2.3 Se compare",
+"txt": "Profil vs entreprises similaires (radar)",
+"ref": "É06"
+},
+{
+"x": 830,
+"y": 181,
+"w": 150,
+"h": 75.421875,
+"kind": "step",
+"b": "3.1 Gain fiscal annuel",
+"txt": "Affiché sans e-mail, non contractuel",
+"ref": "É07"
+},
+{
+"x": 950,
+"y": 326,
+"w": 150,
+"h": 76.59375,
+"kind": "step",
+"b": "3.2 Pouvoir d'achat / salarié",
+"txt": "Gain net par collaborateur",
+"ref": "É07"
+},
+{
+"x": 1065,
+"y": 240,
+"w": 150,
+"h": 60.671875,
+"kind": "step",
+"b": "4.1 Solutions priorisées",
+"txt": "Classées de 1 à 4 étoiles",
+"ref": "É07"
+},
+{
+"x": 1310,
+"y": 206,
+"w": 150,
+"h": 75.421875,
+"kind": "target",
+"b": "5.1 Choisit ses solutions",
+"txt": "Une ou plusieurs des 4 offres",
+"ref": "É10 · É11"
+},
+{
+"x": 1425,
+"y": 321,
+"w": 150,
+"h": 91.34375,
+"kind": "target",
+"b": "5.2 Identifie son entreprise",
+"txt": "SIRET, IDCC, effectif, salariés",
+"ref": "É12 – É14"
+},
+{
+"x": 1540,
+"y": 191,
+"w": 150,
+"h": 75.421875,
+"kind": "target",
+"b": "5.3 Configure et estime",
+"txt": "Configuration, estimation, proposition",
+"ref": "É15 – É20"
+},
+{
+"x": 1715,
+"y": 191,
+"w": 150,
+"h": 75.421875,
+"kind": "target",
+"b": "6.1 Reçoit son devis",
+"txt": "Transmis à l'expert BRH de la CR",
+"ref": "É21 · P2"
+},
+{
+"x": 1215,
+"y": 441,
+"w": 150,
+"h": 76.59375,
+"kind": "step",
+"b": "4.2 Transmet ses coordonnées",
+"txt": "Consentement explicite",
+"ref": "É09 · É22"
+},
+{
+"x": 1405,
+"y": 466,
+"w": 150,
+"h": 75.421875,
+"kind": "step",
+"b": "Lead qualifié",
+"txt": "Contexte complet → CR (SOLEAD)",
+"ref": "P1"
+},
+{
+"x": 1715,
+"y": 454,
+"w": 150,
+"h": 91.34375,
+"kind": "end",
+"b": "Rappel expert BRH de la CR",
+"txt": "Sous 24 h ouvrées · devis sur-mesure",
+"ref": "P1"
+}
+],
+"emos": [
+{
+"x": 118,
+"y": 352,
+"w": 60.328125,
+"h": 15,
+"text": "Curiosité",
+"dot": "rgb(143, 184, 34)"
+},
+{
+"x": 612,
+"y": 482,
+"w": 91.71875,
+"h": 15,
+"text": "Effort de saisie",
+"dot": "rgb(201, 162, 39)"
+},
+{
+"x": 988,
+"y": 236,
+"w": 77.5625,
+"h": 15,
+"text": "Effet waouh",
+"dot": "rgb(143, 184, 34)"
+},
+{
+"x": 1228,
+"y": 528,
+"w": 68.4375,
+"h": 15,
+"text": "Hésitation",
+"dot": "rgb(201, 162, 39)"
+},
+{
+"x": 1690,
+"y": 354,
+"w": 66.03125,
+"h": 15,
+"text": "Confiance",
+"dot": "rgb(6, 81, 69)"
+}
+],
+"tags": [
+{
+"x": 1655,
+"y": 318,
+"w": 170.21875,
+"h": 21,
+"text": "PRO-TPE · besoins simples",
+"bg": "rgb(238, 246, 216)",
+"color": "rgb(6, 81, 69)"
+},
+{
+"x": 1568,
+"y": 388,
+"w": 177.65625,
+"h": 21,
+"text": "PME-ETI · besoins complexes",
+"bg": "rgb(220, 235, 234)",
+"color": "rgb(1, 98, 101)"
+}
+],
+"ettl": {
+"x": 36,
+"y": 574,
+"w": 150,
+"h": 84
+},
+"ebs": [
+{
+"x": 202,
+"y": 584,
+"w": 295,
+"h": 64,
+"text": "« Parler à un expert » sur chaque écran",
+"key": false
+},
+{
+"x": 521,
+"y": 584,
+"w": 341,
+"h": 64,
+"text": "Aide pour qualifier vos priorités",
+"key": true
+},
+{
+"x": 886,
+"y": 584,
+"w": 216,
+"h": 64,
+"text": "Lecture et validation de vos gains",
+"key": true
+},
+{
+"x": 1126,
+"y": 584,
+"w": 211,
+"h": 64,
+"text": "Conseil sur la combinaison de solutions",
+"key": false
+},
+{
+"x": 1361,
+"y": 584,
+"w": 286,
+"h": 64,
+"text": "Ajustement et validation du devis",
+"key": true
+},
+{
+"x": 1671,
+"y": 584,
+"w": 205,
+"h": 64,
+"text": "Rappel rapide par un expert",
+"key": false
+}
+],
+"bot": {
+"x": 36,
+"y": 668,
+"w": 1848,
+"h": 368
+},
+"rec": {
+"x": 54,
+"y": 682,
+"w": 360,
+"h": 207.5,
+"title": {
+"x": 54,
+"y": 682,
+"w": 360,
+"h": 50
+},
+"ps": [
+{
+"x": 54,
+"y": 739,
+"w": 360,
+"h": 39,
+"b": "Parler besoins, pas produits.",
+"rest": " Le dirigeant vient chercher un éclairage RH, pas une offre."
+},
+{
+"x": 54,
+"y": 785,
+"w": 360,
+"h": 58.5,
+"b": "La valeur avant les coordonnées :",
+"rest": " diagnostic et gains affichés avant toute demande de contact, sans compte, en moins de 5 minutes."
+},
+{
+"x": 54,
+"y": 850.5,
+"w": 360,
+"h": 39,
+"b": "Zéro rupture digital / humain :",
+"rest": " l'expert qui rappelle a déjà lu le diagnostic."
+}
+]
+},
+"tbl": {
+"x": 434,
+"y": 682,
+"w": 900,
+"h": 160.75
+},
+"ths": [
+{
+"x": 435,
+"y": 683,
+"w": 130,
+"h": 34,
+"text": "En proactivité"
+},
+{
+"x": 565,
+"y": 683,
+"w": 768,
+"h": 34,
+"text": "Modalités d'accompagnement"
+}
+],
+"tds": [
+{
+"x": 435,
+"y": 717,
+"w": 130,
+"h": 124.75,
+"html": "<b style=\"font-size:14.5px\">Effet waouh</b><br><span style=\"font-size:12.5px;color:var(--grey)\">Radar benchmark + gains chiffrés, restitués immédiatement (étapes 2.3 → 3.2)</span>"
+},
+{
+"x": 565,
+"y": 717,
+"w": 385,
+"h": 124.75,
+"html": "<b>Programme relationnel :</b> nurturing des leads froids → tièdes → chauds, relance des devis abandonnés, contenus alignés sur les priorités notées par le dirigeant."
+},
+{
+"x": 950,
+"y": 717,
+"w": 383,
+"h": 124.75,
+"html": "<b>Sous 24 h ouvrées :</b> rappel par un expert BRH de la CR qui a lu le diagnostic — lecture des gains, conseil sur la combinaison de solutions, ajustement du devis."
+}
+],
+"att": [
+{
+"x": 434,
+"y": 864.75,
+"w": 278.03125,
+"h": 119.8125,
+"h4": {
+"x": 434,
+"y": 864.75,
+"w": 278.03125,
+"h": 25,
+"text": "Attentes Dirigeant PRO-TPE"
+},
+"lis": [
+{
+"x": 434,
+"y": 894.75,
+"w": 278.03125,
+"h": 20.453125,
+"text": "Rapide et simple (< 5 min)",
+"ck": true,
+"v2": false,
+"ckR": {
+"x": 619.21875,
+"y": 898.25,
+"w": 15,
+"h": 15
+}
+},
+{
+"x": 434,
+"y": 917.203125,
+"w": 278.03125,
+"h": 20.453125,
+"text": "Pas de création de compte",
+"ck": true,
+"v2": false,
+"ckR": {
+"x": 621.390625,
+"y": 920.703125,
+"w": 15,
+"h": 15
+}
+},
+{
+"x": 434,
+"y": 939.65625,
+"w": 278.03125,
+"h": 20.453125,
+"text": "Offre standard, sans options",
+"ck": false,
+"v2": false,
+"ckR": null
+},
+{
+"x": 434,
+"y": 962.109375,
+"w": 278.03125,
+"h": 20.453125,
+"text": "Devis en autonomie",
+"ck": false,
+"v2": true,
+"ckR": {
+"x": 580.421875,
+"y": 964.109375,
+"w": 23.015625,
+"h": 18
+}
+}
+]
+},
+{
+"x": 738.03125,
+"y": 864.75,
+"w": 291.9375,
+"h": 119.8125,
+"h4": {
+"x": 738.03125,
+"y": 864.75,
+"w": 291.9375,
+"h": 25,
+"text": "Attentes Dirigeant PME-ETI / DRH"
+},
+"lis": [
+{
+"x": 738.03125,
+"y": 894.75,
+"w": 291.9375,
+"h": 20.453125,
+"text": "Vision globale des enjeux RH",
+"ck": true,
+"v2": false,
+"ckR": {
+"x": 939.328125,
+"y": 898.25,
+"w": 15,
+"h": 15
+}
+},
+{
+"x": 738.03125,
+"y": 917.203125,
+"w": 291.9375,
+"h": 20.453125,
+"text": "Se situer vs entreprises similaires",
+"ck": true,
+"v2": false,
+"ckR": {
+"x": 966.78125,
+"y": 920.703125,
+"w": 15,
+"h": 15
+}
+},
+{
+"x": 738.03125,
+"y": 939.65625,
+"w": 291.9375,
+"h": 20.453125,
+"text": "Gains chiffrés : fiscal, pouvoir d'achat",
+"ck": true,
+"v2": false,
+"ckR": {
+"x": 992.09375,
+"y": 943.15625,
+"w": 15,
+"h": 15
+}
+},
+{
+"x": 738.03125,
+"y": 962.109375,
+"w": 291.9375,
+"h": 20.453125,
+"text": "Un expert joignable, réactif",
+"ck": false,
+"v2": false,
+"ckR": null
+}
+]
+},
+{
+"x": 1055.96875,
+"y": 864.75,
+"w": 278.03125,
+"h": 119.8125,
+"h4": {
+"x": 1055.96875,
+"y": 864.75,
+"w": 278.03125,
+"h": 25,
+"text": "Attentes Caisses Régionales"
+},
+"lis": [
+{
+"x": 1055.96875,
+"y": 894.75,
+"w": 278.03125,
+"h": 20.453125,
+"text": "Leads qualifiés et contextualisés",
+"ck": true,
+"v2": false,
+"ckR": {
+"x": 1278.546875,
+"y": 898.25,
+"w": 15,
+"h": 15
+}
+},
+{
+"x": 1055.96875,
+"y": 917.203125,
+"w": 278.03125,
+"h": 20.453125,
+"text": "Lead dans le CRM, sans ressaisie",
+"ck": false,
+"v2": false,
+"ckR": null
+},
+{
+"x": 1055.96875,
+"y": 939.65625,
+"w": 278.03125,
+"h": 20.453125,
+"text": "Pas de concurrence interne",
+"ck": true,
+"v2": false,
+"ckR": {
+"x": 1248.21875,
+"y": 943.15625,
+"w": 15,
+"h": 15
+}
+},
+{
+"x": 1055.96875,
+"y": 962.109375,
+"w": 278.03125,
+"h": 20.453125,
+"text": "Une offre Groupe unifiée",
+"ck": true,
+"v2": false,
+"ckR": {
+"x": 1234,
+"y": 965.609375,
+"w": 15,
+"h": 15
+}
+}
+]
+}
+],
+"kpi": {
+"x": 1356,
+"y": 682,
+"w": 510,
+"h": 248.25,
+"gt": {
+"x": 1372,
+"y": 696,
+"w": 478,
+"h": 23
+},
+"ks": [
+{
+"x": 1372,
+"y": 723,
+"w": 478,
+"h": 44,
+"v": {
+"x": 1372,
+"y": 728,
+"w": 88,
+"h": 33,
+"text": "≥ 15 %"
+},
+"d": {
+"x": 1470,
+"y": 740,
+"w": 249.1875,
+"h": 16.1875,
+"text": "Taux de complétion du diagnostic (cible 20 %)"
+}
+},
+{
+"x": 1372,
+"y": 767,
+"w": 478,
+"h": 44,
+"v": {
+"x": 1372,
+"y": 772,
+"w": 88,
+"h": 33,
+"text": "≥ 75 %"
+},
+"d": {
+"x": 1470,
+"y": 784,
+"w": 245.578125,
+"h": 16.1875,
+"text": "Leads acceptés par les CR pilotes (cible 85 %)"
+}
+},
+{
+"x": 1372,
+"y": 811,
+"w": 478,
+"h": 44,
+"v": {
+"x": 1372,
+"y": 816,
+"w": 88,
+"h": 33,
+"text": "40 / 10"
+},
+"d": {
+"x": 1470,
+"y": 828,
+"w": 262.625,
+"h": 16.1875,
+"text": "RDV tenus / contrats signés sur la période pilote"
+}
+},
+{
+"x": 1372,
+"y": 855,
+"w": 478,
+"h": 43,
+"v": {
+"x": 1372,
+"y": 860,
+"w": 88,
+"h": 33,
+"text": "100 %"
+},
+"d": {
+"x": 1470,
+"y": 872,
+"w": 337.578125,
+"h": 16.1875,
+"text": "Leads tracés : visiteur → diagnostic → lead → devis → contrat"
+}
+}
+],
+"leg": {
+"x": 1372,
+"y": 906,
+"w": 478,
+"h": 16.25
+}
+},
+"foot": [
+{
+"x": 36,
+"y": 1044,
+"w": 870.484375,
+"h": 14,
+"text": "Sources : écrans du prototype Portail BRH (29/09/2026), cahier des charges fonctionnel V0.4 (codes É01–É25, P1–P2), Dossier 15C BRH — Devis en ligne : cible V2 (M17), hors POC."
+},
+{
+"x": 1681.390625,
+"y": 1044,
+"w": 202.609375,
+"h": 14,
+"text": "Projet 15C BRH Entreprise · Usage interne"
+}
+]
+}

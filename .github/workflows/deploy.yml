@@ -10,24 +10,42 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Nettoyage de l'adresse FTP (préfixe ftp://, espaces, port, /)
+        id: ftp
+        env:
+          S: ${{ secrets.FTP_SERVER }}
+        run: |
+          H="$(printf '%s' "$S" | tr -d '[:space:]')"
+          H="${H#*://}"; H="${H%%/*}"; H="${H%%:*}"
+          echo "::add-mask::$H"
+          echo "host=$H" >> "$GITHUB_OUTPUT"
       - name: Envoi de cdcbrh/ vers cdcbrh.monsitedetest.com
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER }}
+          server: ${{ steps.ftp.outputs.host }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./cdcbrh/
-          server-dir: ${{ secrets.CDCBRH_DIR }}
+          server-dir: public_html/cdcbrh/
 
   protobrh:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Nettoyage de l'adresse FTP (préfixe ftp://, espaces, port, /)
+        id: ftp
+        env:
+          S: ${{ secrets.FTP_SERVER }}
+        run: |
+          H="$(printf '%s' "$S" | tr -d '[:space:]')"
+          H="${H#*://}"; H="${H%%/*}"; H="${H%%:*}"
+          echo "::add-mask::$H"
+          echo "host=$H" >> "$GITHUB_OUTPUT"
       - name: Envoi de protobrh/ vers protobrh.monsitedetest.com
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER }}
+          server: ${{ steps.ftp.outputs.host }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./protobrh/
-          server-dir: ${{ secrets.PROTOBRH_DIR }}
+          server-dir: public_html/protobrh/
