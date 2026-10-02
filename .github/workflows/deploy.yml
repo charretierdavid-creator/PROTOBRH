@@ -5,49 +5,32 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# Chaque sous-domaine est un site Hostinger distinct, avec son propre compte FTP
-# dont la racine contient public_html/ (le dossier servi par le site).
+# Chaque site a son propre compte FTP (hPanel > monsitedetest.com > Comptes FTP),
+# dont la racine est directement le dossier servi : public_html/cdcbrh ou public_html/protobrh.
+# Les fichiers absents du dépôt (config.php, data/, .htaccess) ne sont jamais supprimés.
 jobs:
   cdcbrh:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Nettoyage de l'adresse FTP (préfixe ftp://, espaces, port, /)
-        id: ftp
-        env:
-          S: ${{ secrets.FTP_SERVER }}
-        run: |
-          H="$(printf '%s' "$S" | tr -d '[:space:]')"
-          H="${H#*://}"; H="${H%%/*}"; H="${H%%:*}"
-          echo "::add-mask::$H"
-          echo "host=$H" >> "$GITHUB_OUTPUT"
       - name: Envoi de cdcbrh/ vers cdcbrh.monsitedetest.com
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ steps.ftp.outputs.host }}
+          server: ftp.monsitedetest.com
           username: ${{ secrets.CDCBRH_FTP_USERNAME }}
           password: ${{ secrets.CDCBRH_FTP_PASSWORD }}
           local-dir: ./cdcbrh/
-          server-dir: public_html/
+          server-dir: ./
 
   protobrh:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Nettoyage de l'adresse FTP (préfixe ftp://, espaces, port, /)
-        id: ftp
-        env:
-          S: ${{ secrets.FTP_SERVER }}
-        run: |
-          H="$(printf '%s' "$S" | tr -d '[:space:]')"
-          H="${H#*://}"; H="${H%%/*}"; H="${H%%:*}"
-          echo "::add-mask::$H"
-          echo "host=$H" >> "$GITHUB_OUTPUT"
       - name: Envoi de protobrh/ vers protobrh.monsitedetest.com
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ steps.ftp.outputs.host }}
+          server: ftp.monsitedetest.com
           username: ${{ secrets.PROTOBRH_FTP_USERNAME }}
           password: ${{ secrets.PROTOBRH_FTP_PASSWORD }}
           local-dir: ./protobrh/
-          server-dir: public_html/
+          server-dir: ./
