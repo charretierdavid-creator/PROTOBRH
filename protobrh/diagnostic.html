@@ -1108,7 +1108,28 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ var m=doc
 </script>
 <!-- ============ FIN MODALE BENCHMARK ============ -->
 
-<script src="chatbot-widget.js?v=20260923b" defer></script>
+<script>
+/* ===== Profil entreprise pour l'Assistant BRH (conseil personnalisé) — V2 01/10/2026 =====
+   Enregistre dans la session du navigateur les données d'ENTREPRISE du diagnostic (aucune donnée personnelle).
+   L'assistant ne les utilise qu'après accord du dirigeant. Les gains ne sont transmis que s'ils sont affichés. */
+function saveProfile(){ try{
+  const {total,details}=calculateFiscalGain(state.effectif,state.priorities);
+  const act=Object.values(details).filter(v=>v>0).length;
+  const prev=JSON.parse(sessionStorage.getItem('brhProfil')||'{}');
+  sessionStorage.setItem('brhProfil', JSON.stringify(Object.assign(prev,{
+    source:'diagnostic', effectif:state.effectif, secteur:val('secteur'), typeEntreprise:val('typeent'), region:val('region'),
+    priorites:Object.assign({},state.priorities), dispositifsActifs:act,
+    gains: state.resultsUnlocked ? {fiscalAnnuel:total, parSalarie:400*act} : null,
+    maj:new Date().toISOString() })));
+}catch(e){} }
+(function(){
+  const _refresh=refresh; refresh=function(){ _refresh(); saveProfile(); };
+  const _unlock=unlockResults; unlockResults=function(){ _unlock(); saveProfile(); };
+  ['secteur','typeent','region'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('change',saveProfile); });
+  saveProfile();
+})();
+</script>
+<script src="chatbot-widget.js?v=20261001" defer></script>
 
 </body>
 </html>

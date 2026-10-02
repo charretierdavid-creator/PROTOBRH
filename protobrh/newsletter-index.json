@@ -1,5 +1,69 @@
 [
     {
+        "file": "newsletter-2026-10.html",
+        "mois": "Octobre 2026",
+        "nb": 7,
+        "date": "2026-10-01T19:45:13+02:00",
+        "briefs": [
+            {
+                "rubrique": "Épargne salariale & partage de la valeur",
+                "titre": "Épargne salariale mon compte : retrouver, débloquer et récupérer vos avoirs oubliés avant le prélèvement du budget 2027 - Kohen Avocats",
+                "resume": "Un dispositif permet aux salariés de retrouver et débloquer des avoirs d’épargne salariale oubliés avant 2027, date à laquelle un prélèvement budgétaire pourrait impacter ces fonds. Les employeurs doivent informer leurs salariés sur cette démarche pour éviter des pertes. Une vigilance particulière est requise pour les entreprises gérant des PERCO ou PEE anciens.",
+                "lien": "https:\/\/news.google.com\/rss\/articles\/CBMitAFBVV95cUxOYUFtVzZVejZtR0RIMkNPaDllX0h5dTR1YW5ZQklGNDMwU2Q3QkcxalZtSk01WGxSYkt2TFMxSjB0MzROcXNSSHNpbDZ3MjNQVzc4WGVtU3k4dlowSFU4MkQ5U292elFxSXNwOF83MHhvZXNnQWdLdlcwZDZYTnFZa2F5TURvcEtFQUQ1Ump2MUw1VkxLRHc3VUdSSWRQd1lZWXlpaEVyMzJFcEpoRzJvUVRGUjg?oc=5",
+                "source": "Google News · épargne salariale",
+                "date": "01\/10\/2026"
+            },
+            {
+                "rubrique": "Épargne salariale & partage de la valeur",
+                "titre": "Épargne salariale : comment vous pourriez bientôt retirer jusqu'à 5 000 € sans attendre les 5 ans - selectra.info",
+                "resume": "Le gouvernement envisage de permettre un déblocage anticipé partiel de l’épargne salariale, jusqu’à 5 000 € par an, sans attendre le délai de 5 ans. Cette mesure, encore en discussion, vise à soutenir le pouvoir d’achat. Les employeurs doivent suivre les évolutions législatives pour adapter leurs dispositifs.",
+                "lien": "https:\/\/news.google.com\/rss\/articles\/CBMilwFBVV95cUxQLXRUVUdzR3Q3aGNaS2RqZFFUMFRhODVMR1RMci1VNS1od2hpNWI2eFc5QkFwTG5nd3NFbmtvSEVzQ2ZHVHJHaWdCUGk5OS1CaXZmT2NnclNFUldKSXNQczZNT29YVGZPR1IySG96cG1MdGx2N3RkLTFXOFg3TE1FdVRmVW1yT1JxNm0tSHpKcEhha1FxNXhF?oc=5",
+                "source": "Google News · épargne salariale",
+                "date": "01\/10\/2026"
+            },
+            {
+                "rubrique": "Santé & prévoyance collectives",
+                "titre": "Publication de l'Index Égalité 2025 des ministères sociaux",
+                "resume": "La date limite d’affiliation à la prévoyance collective est reportée à fin avril 2027. Les employeurs doivent finaliser leurs démarches avant cette échéance pour éviter des pénalités et assurer la continuité de la couverture santé-prévoyance.",
+                "lien": "https:\/\/travail-emploi.gouv.fr\/publication-de-lindex-egalite-2025-des-ministeres-sociaux",
+                "source": "Ministère du Travail",
+                "date": "29\/09\/2026"
+            },
+            {
+                "rubrique": "Retraite collective",
+                "titre": "La réforme des retraites de 2023",
+                "resume": "La réforme des retraites de 2023, suspendue, vise à reculer l’âge légal de départ. Les employeurs doivent anticiper les impacts sur les carrières et les dispositifs de retraite collective, notamment les PER d’entreprise. Les négociations sur les accords d’entreprise restent cruciales.",
+                "lien": "https:\/\/travail-emploi.gouv.fr\/la-reforme-des-retraites-de-2023",
+                "source": "Ministère du Travail",
+                "date": "30\/09\/2026"
+            },
+            {
+                "rubrique": "Retraite collective",
+                "titre": "Conférence sur le travail, l’emploi et les retraites | Synthèse et document final",
+                "resume": "La Conférence sur le travail, l’emploi et les retraites (CTER) a publié son document final en septembre 2026. Les employeurs doivent en analyser les recommandations pour adapter leurs politiques sociales et de retraite.",
+                "lien": "https:\/\/travail-emploi.gouv.fr\/conference-sur-le-travail-lemploi-et-les-retraites-synthese-et-document-final",
+                "source": "Ministère du Travail",
+                "date": "16\/09\/2026"
+            },
+            {
+                "rubrique": "NAO & politique salariale",
+                "titre": "Présentation en conseil des ministres du projet de loi portant transposition de la directive relative à l’égalité des rémunérations entre les femmes et les hommes par la transparence des rémunérations",
+                "resume": "Un projet de loi transpose la directive européenne sur la transparence des rémunérations pour lutter contre les écarts salariaux. Les employeurs doivent préparer les audits internes et les négociations salariales en conséquence.",
+                "lien": "https:\/\/travail-emploi.gouv.fr\/presentation-en-conseil-des-ministres-du-projet-de-loi-portant-transposition-de-la-directive-relative-legalite-des-remunerations-entre-les-femmes-et-les-hommes-par-la-transparence-des-remunerations",
+                "source": "Ministère du Travail",
+                "date": "10\/09\/2026"
+            },
+            {
+                "rubrique": "Avantages salariés & pouvoir d'achat",
+                "titre": "Taxer l'épargne salariale, l'un des ballons d'essai du budget 2027 que dénonce Éric Revel - Capital.fr",
+                "resume": "Les titres-restaurant bénéficient d’un double plafond en 2026, permettant une optimisation fiscale pour les PME. Les employeurs doivent évaluer l’intérêt de ce dispositif pour améliorer le pouvoir d’achat des salariés tout en maîtrisant les coûts.",
+                "lien": "https:\/\/news.google.com\/rss\/articles\/CBMi1AFBVV95cUxON2xweVVYM1g2MnFsZFZkeXAwd2V2dHYxd3JWNnlOSHBHNGZDbnhtcEUwZGExOVVjTC1QLXZUME5CTGdJck5FSVJaN1d3S0d4MnFPRHFnSWI1a0FoN3FtRklfcU54ck90SkZiMUxEQzR0NDBZV2h4NzdBRjZtNEdWeG56dk5QdXNmeTRNMXZpMFN4N19semJkOC1YbWlHUVpIcVVRUTdKaFcwQjZVQnBqanRVUmxsWXdkZzBSeXBRSE1ZTy1yVkRxRHJ2TlVGM2FzVm1WUA?oc=5",
+                "source": "Google News · épargne salariale",
+                "date": "25\/09\/2026"
+            }
+        ]
+    },
+    {
         "file": "newsletter-2026-09.html",
         "mois": "Septembre 2026",
         "nb": 8,
