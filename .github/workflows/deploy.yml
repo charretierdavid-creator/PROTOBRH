@@ -1,36 +1,34 @@
 name: Mise en ligne Hostinger
-
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
-
-# Chaque site a son propre compte FTP (hPanel > monsitedetest.com > Comptes FTP),
-# dont la racine est directement le dossier servi : public_html/cdcbrh ou public_html/protobrh.
-# Les fichiers absents du dépôt (config.php, data/, .htaccess) ne sont jamais supprimés.
 jobs:
-  cdcbrh:
+  diag-chatbot:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Envoi de cdcbrh/ vers cdcbrh.monsitedetest.com
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ftp.monsitedetest.com
-          username: ${{ secrets.CDCBRH_FTP_USERNAME }}
-          password: ${{ secrets.CDCBRH_FTP_PASSWORD }}
-          local-dir: ./cdcbrh/
-          server-dir: ./
-
-  protobrh:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Envoi de protobrh/ vers protobrh.monsitedetest.com
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ftp.monsitedetest.com
-          username: ${{ secrets.PROTOBRH_FTP_USERNAME }}
-          password: ${{ secrets.PROTOBRH_FTP_PASSWORD }}
-          local-dir: ./protobrh/
-          server-dir: ./
+      - name: Appels du chatbot en ligne (mode standard et conseil personnalisé)
+        run: |
+          U=https://protobrh.monsitedetest.com/chatbot.php
+          call() {
+            body=$(printf '%s' "$1" | base64 -w0)
+            echo "== $2"
+            curl -sS -o /tmp/r -w "HTTP %{http_code} en %{time_total}s\n" --max-time 60 -X POST \
+              -H 'Content-Type: text/plain;charset=UTF-8' -H 'Origin: https://protobrh.monsitedetest.com' \
+              -A 'Mozilla/5.0 (iPad; CPU OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Safari/604.1' \
+              --data-binary "$body" "$U" || echo "ECHEC RESEAU"
+            python3 - <<'PY'
+          import json,base64
+          raw=open('/tmp/r','rb').read().decode('utf-8','replace')
+          try:
+              j=json.loads(raw)
+              for k in ('a','d'):
+                  if k in j: j[k]=base64.b64decode(j[k]).decode('utf-8','replace')[:400]
+              print(json.dumps(j,ensure_ascii=False)[:900])
+          except Exception as e:
+              print('NON JSON:', raw[:400])
+          PY
+          }
+          call '{"question":"Bonjour, que proposez-vous ?","history":[],"p":null}' "standard"
+          P=$(printf '%s' '{"effectif":50,"departement":"37","priorites":{"protection":3,"partageValeur":4,"pouvoirAchat":2,"retraite":3}}' | base64 -w0)
+          call "{\"question\":\"Compte tenu de mon profil, par où commencer ? Quelles sont mes 2 ou 3 pistes prioritaires ?\",\"history\":[],\"p\":\"$P\"}" "perso (departement)"
+          P2=$(printf '%s' '{"effectif":50,"priorites":{"protection":3,"partageValeur":4,"pouvoirAchat":2,"retraite":3}}' | base64 -w0)
+          call "{\"question\":\"Compte tenu de mon profil, par où commencer ?\",\"history\":[],\"p\":\"$P2\"}" "perso (sans departement)"
