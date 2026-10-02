@@ -55,6 +55,8 @@ Si une demande ne touche qu'un des deux sites, le dire explicitement dans le ré
 - **Données produites** : identifiants `D01`… `D84` ; une nouvelle donnée prend le code suivant libre et s'ajoute au
   dictionnaire (`data` dans `app_data.json`) avec écran, nature (P, E, C, T) et exemple.
 - **Technique** : fichiers HTML/CSS/JS autonomes, sans framework ; images intégrées quand c'est possible.
+- **Cache navigateur** : toute modification de `chatbot-widget.js` ou `feedback-widget.js` impose de changer leur
+  numéro de version (`?v=AAAAMMJJ`) dans **toutes** les pages de `protobrh/`, sinon les visiteurs gardent l'ancienne version.
 - **Charte BRH** : vert pin `#065145` (titres, boutons), teal `#016265`, vert lime `#8FB822` (accents),
   menthe `#E3EFEA` (fonds), `#006A4E` (bandeaux).
 - **Vocabulaire Crédit Agricole** : Caisse Régionale (CR), BRH, CABD, PNB, SOLEAD, lead, CRM Entreprise.
