@@ -1,51 +1,34 @@
-name: Mise en ligne Hostinger
+name: Test FTP upload to cdcbrh
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
+  push:
+    branches:
+      - Main
+    paths:
+      - github-deploy-test.txt
+
+permissions:
+  contents: read
 
 jobs:
-  cdcbrh:
+  upload-test-file:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Nettoyage de l'adresse FTP (préfixe ftp://, espaces, port, /)
-        id: ftp
-        env:
-          S: ${{ secrets.FTP_SERVER }}
-        run: |
-          H="$(printf '%s' "$S" | tr -d '[:space:]')"
-          H="${H#*://}"; H="${H%%/*}"; H="${H%%:*}"
-          echo "::add-mask::$H"
-          echo "host=$H" >> "$GITHUB_OUTPUT"
-      - name: Envoi de cdcbrh/ vers cdcbrh.monsitedetest.com
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ steps.ftp.outputs.host }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./cdcbrh/
-          server-dir: public_html/cdcbrh/
+      - name: Check out repository
+        uses: actions/checkout@v7.0.1
 
-  protobrh:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Nettoyage de l'adresse FTP (préfixe ftp://, espaces, port, /)
-        id: ftp
+      - name: Upload only the test file to cdcbrh
+        if: hashFiles('github-deploy-test.txt') != ''
         env:
-          S: ${{ secrets.FTP_SERVER }}
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.CDCBRH_FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.CDCBRH_FTP_PASSWORD }}
         run: |
-          H="$(printf '%s' "$S" | tr -d '[:space:]')"
-          H="${H#*://}"; H="${H%%/*}"; H="${H%%:*}"
-          echo "::add-mask::$H"
-          echo "host=$H" >> "$GITHUB_OUTPUT"
-      - name: Envoi de protobrh/ vers protobrh.monsitedetest.com
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ steps.ftp.outputs.host }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./protobrh/
-          server-dir: public_html/protobrh/
+          test -n "$FTP_SERVER"
+          test -n "$FTP_USERNAME"
+          test -n "$FTP_PASSWORD"
+          curl --show-error --silent --ftp-pasv \
+            --user "$FTP_USERNAME:$FTP_PASSWORD" \
+            --upload-file ./github-deploy-test.txt \
+            "ftp://${FTP_SERVER}:21/github-deploy-test.txt"
