@@ -1,34 +1,36 @@
-name: Test FTP upload to cdcbrh
+name: Mise en ligne Hostinger
 
 on:
-  workflow_dispatch:
   push:
-    branches:
-      - Main
-    paths:
-      - github-deploy-test.txt
+    branches: [main]
+  workflow_dispatch:
 
-permissions:
-  contents: read
-
+# Chaque site a son propre compte FTP (hPanel > monsitedetest.com > Comptes FTP),
+# dont la racine est directement le dossier servi : public_html/cdcbrh ou public_html/protobrh.
+# Les fichiers absents du dépôt (config.php, data/, .htaccess) ne sont jamais supprimés.
 jobs:
-  upload-test-file:
+  cdcbrh:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v4
+      - name: Envoi de cdcbrh/ vers cdcbrh.monsitedetest.com
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ftp.monsitedetest.com
+          username: ${{ secrets.CDCBRH_FTP_USERNAME }}
+          password: ${{ secrets.CDCBRH_FTP_PASSWORD }}
+          local-dir: ./cdcbrh/
+          server-dir: ./
 
-      - name: Upload only the test file to cdcbrh
-        if: hashFiles('github-deploy-test.txt') != ''
-        env:
-          FTP_SERVER: ${{ secrets.FTP_SERVER }}
-          FTP_USERNAME: ${{ secrets.CDCBRH_FTP_USERNAME }}
-          FTP_PASSWORD: ${{ secrets.CDCBRH_FTP_PASSWORD }}
-        run: |
-          test -n "$FTP_SERVER"
-          test -n "$FTP_USERNAME"
-          test -n "$FTP_PASSWORD"
-          curl --show-error --silent --ftp-pasv \
-            --user "$FTP_USERNAME:$FTP_PASSWORD" \
-            --upload-file ./github-deploy-test.txt \
-            "ftp://${FTP_SERVER}:21/github-deploy-test.txt"
+  protobrh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Envoi de protobrh/ vers protobrh.monsitedetest.com
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ftp.monsitedetest.com
+          username: ${{ secrets.PROTOBRH_FTP_USERNAME }}
+          password: ${{ secrets.PROTOBRH_FTP_PASSWORD }}
+          local-dir: ./protobrh/
+          server-dir: ./

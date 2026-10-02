@@ -243,7 +243,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 
 /* section 1 : entreprise — layout titre à gauche, champs à droite */
 .ent-grid{display:grid;grid-template-columns:.9fr 2.4fr;gap:30px;align-items:start}
-.fields-row{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.fields-row{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .field label{font-family:var(--fb);font-weight:600;font-size:.86rem;color:var(--ink);display:block;margin-bottom:7px}
 .field .req{color:var(--green)}
 .field input,.field select{width:100%;font-family:var(--fb);font-size:.95rem;padding:.72rem .85rem;border:1.5px solid var(--line-2);
@@ -632,10 +632,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
           <input type="number" id="effectif" min="1" step="1" value="50" inputmode="numeric" oninput="onEffectif()" aria-describedby="eff-warn">
           <span class="hint">Nécessaire au calcul du gain fiscal.</span>
           <span class="warn" id="eff-warn" role="alert"></span></div>
-        <div class="field"><label for="typeent">Type d'entreprise</label>
-          <select id="typeent"><option value="">Sélectionner un type</option><option>PME</option><option>ETI</option><option>Groupe</option><option>Association</option><option>Autre</option></select></div>
-        <div class="field"><label for="region">Localisation <span class="req">*</span></label>
-          <select id="region"><option value="">Sélectionner une région</option><option>Auvergne-Rhône-Alpes</option><option>Bourgogne-Franche-Comté</option><option>Bretagne</option><option>Centre-Val de Loire</option><option>Corse</option><option>Grand Est</option><option>Hauts-de-France</option><option>Île-de-France</option><option>Normandie</option><option>Nouvelle-Aquitaine</option><option>Occitanie</option><option>Pays de la Loire</option><option>Provence-Alpes-Côte d'Azur</option></select></div>
+        <div class="field"><label for="departement">Département <span class="req">*</span></label>
+          <input type="text" id="departement" maxlength="2" placeholder="Ex. 37" autocomplete="off" autocapitalize="characters" spellcheck="false" oninput="onDepartement()" aria-describedby="dep-hint dep-warn">
+          <span class="hint" id="dep-hint">2 caractères : 37, 41, 2A…</span>
+          <span class="warn" id="dep-warn" role="alert"></span></div>
       </div>
     </div></div>
 
@@ -1024,16 +1024,23 @@ function submitLead(){
   err.classList.remove('show');
   const {total,details}=calculateFiscalGain(state.effectif,state.priorities);
   const payload={contact:{name:nom,companyName:ent,email,phone:tel,consent:true,consentDate:new Date().toISOString()},
-    company:{sector:val('secteur'),employeeCount:state.effectif,companyType:val('typeent'),region:val('region')},
+    company:{sector:val('secteur'),employeeCount:state.effectif,departement:depValide()},
     priorities:Object.assign({},state.priorities),fiscalGain:{total,details}};
-  track('lead_submit',{region:payload.company.region,total_gain:total,active_devices:Object.values(details).filter(v=>v>0).length,consent_status:true});
+  track('lead_submit',{departement:payload.company.departement,total_gain:total,active_devices:Object.values(details).filter(v=>v>0).length,consent_status:true});
   try{ fetch('traitement_lead.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});}catch(e){}
   document.getElementById('contact-form').classList.add('hidden');
   const s=document.getElementById('contact-success'); s.classList.remove('hidden');
-  document.getElementById('success-msg').textContent='Merci '+nom.split(' ')[0]+'. Votre synthèse (gain estimé '+fmtEur(total)+') est transmise. Un expert Banque des RH'+(payload.company.region?' de la région '+payload.company.region:'')+' vous recontactera rapidement.';
+  document.getElementById('success-msg').textContent='Merci '+nom.split(' ')[0]+'. Votre synthèse (gain estimé '+fmtEur(total)+') est transmise. Un expert Banque des RH'+(payload.company.departement?' de votre Caisse régionale (département '+payload.company.departement+')':'')+' vous recontactera rapidement.';
   s.scrollIntoView({behavior:'smooth',block:'center'});
 }
 function val(id){ return document.getElementById(id).value.trim(); }
+/* Département sur 2 caractères : 01 à 95, 2A ou 2B (Corse) */
+function depValide(){ const d=val('departement').toUpperCase(); return /^(0[1-9]|1[0-9]|2[1-9]|[3-8][0-9]|9[0-5]|2[AB])$/.test(d)?d:''; }
+function onDepartement(){
+  const el=document.getElementById('departement'); el.value=el.value.toUpperCase().replace(/[^0-9AB]/g,'').slice(0,2);
+  const w=document.getElementById('dep-warn');
+  w.textContent=(el.value.length===2 && !depValide())?'Département inconnu : saisissez 2 caractères, par exemple 37, 41 ou 2A.':'';
+}
 function showErr(el,msg){ el.textContent=msg; el.classList.add('show'); }
 
 /* ---------- navigation (page unique) ---------- */
@@ -1108,7 +1115,28 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ var m=doc
 </script>
 <!-- ============ FIN MODALE BENCHMARK ============ -->
 
-<script src="chatbot-widget.js?v=20260923b" defer></script>
+<script>
+/* ===== Profil entreprise pour l'Assistant BRH (conseil personnalisé) — V2 01/10/2026 =====
+   Enregistre dans la session du navigateur les données d'ENTREPRISE du diagnostic (aucune donnée personnelle).
+   L'assistant ne les utilise qu'après accord du dirigeant. Les gains ne sont transmis que s'ils sont affichés. */
+function saveProfile(){ try{
+  const {total,details}=calculateFiscalGain(state.effectif,state.priorities);
+  const act=Object.values(details).filter(v=>v>0).length;
+  const prev=JSON.parse(sessionStorage.getItem('brhProfil')||'{}');
+  sessionStorage.setItem('brhProfil', JSON.stringify(Object.assign(prev,{
+    source:'diagnostic', effectif:state.effectif, secteur:val('secteur'), departement:depValide(),
+    priorites:Object.assign({},state.priorities), dispositifsActifs:act,
+    gains: state.resultsUnlocked ? {fiscalAnnuel:total, parSalarie:400*act} : null,
+    maj:new Date().toISOString() })));
+}catch(e){} }
+(function(){
+  const _refresh=refresh; refresh=function(){ _refresh(); saveProfile(); };
+  const _unlock=unlockResults; unlockResults=function(){ _unlock(); saveProfile(); };
+  ['secteur','departement'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('change',saveProfile); });
+  saveProfile();
+})();
+</script>
+<script src="chatbot-widget.js?v=20261001" defer></script>
 
 </body>
 </html>
