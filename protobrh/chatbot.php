@@ -108,7 +108,7 @@ function brh_profile($p): ?array {
   $o = [];
   $eff = (int) ($p['effectif'] ?? 0);
   if ($eff > 0 && $eff < 100000) $o['effectif'] = $eff;
-  foreach (['secteur', 'typeEntreprise', 'region', 'naf', 'idcc', 'enjeu'] as $k) {
+  foreach (['secteur', 'departement', 'naf', 'idcc', 'enjeu'] as $k) {
     if (isset($p[$k]) && is_string($p[$k]) && trim($p[$k]) !== '') $o[$k] = mb_substr(trim($p[$k]), 0, 60);
   }
   if (is_array($p['priorites'] ?? null)) {
@@ -136,7 +136,7 @@ function brh_profile_text(array $o): string {
   $nf = static fn($n) => number_format((float) $n, 0, ',', ' ');
   $l = [];
   if (isset($o['effectif'])) $l[] = '- Effectif : ' . $o['effectif'] . ' salarié' . ($o['effectif'] > 1 ? 's' : '');
-  $id = array_filter([$o['typeEntreprise'] ?? '', isset($o['secteur']) ? 'secteur ' . $o['secteur'] : '', isset($o['region']) ? 'région ' . $o['region'] : '']);
+  $id = array_filter([isset($o['secteur']) ? 'secteur ' . $o['secteur'] : '', isset($o['departement']) ? 'département ' . $o['departement'] : '']);
   if ($id) $l[] = '- Entreprise : ' . implode(' ; ', $id);
   if (isset($o['naf'])) $l[] = '- Code NAF : ' . $o['naf'];
   if (isset($o['idcc'])) $l[] = '- Convention collective (IDCC, à confirmer) : ' . $o['idcc'];

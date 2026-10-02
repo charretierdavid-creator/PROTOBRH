@@ -17,7 +17,7 @@
 .cbot-launch:hover{background:var(--green-h);transform:translateY(-2px)}
 .cbot-launch svg{width:22px;height:22px}
 .cbot-launch.hide{display:none}
-.cbot{position:fixed;right:22px;bottom:22px;z-index:901;width:460px;max-width:calc(100vw - 32px);height:760px;max-height:calc(100vh - 40px);
+.cbot{position:fixed;right:22px;bottom:22px;z-index:901;width:420px;max-width:calc(100vw - 32px);height:680px;max-height:calc(100vh - 40px);
   background:#fff;border-radius:20px;box-shadow:0 24px 70px rgba(6,81,69,.28);display:none;flex-direction:column;overflow:hidden}
 .cbot.open{display:flex}
 .cbot-head{background:linear-gradient(135deg,var(--green) 0%,var(--banner) 100%);color:#fff;padding:16px 18px;display:flex;align-items:center;gap:12px}
@@ -142,9 +142,8 @@ function cbotTop(p){ const pr=(p&&p.priorites)||{}; return Object.keys(CBOT_AXES
 function cbotResume(p){
   const parts=[];
   if(p.effectif) parts.push(p.effectif+' salarié'+(p.effectif>1?'s':''));
-  if(p.typeEntreprise) parts.push(p.typeEntreprise);
   if(p.secteur) parts.push(p.secteur);
-  if(p.region) parts.push(p.region);
+  if(p.departement) parts.push('département '+p.departement);
   return parts.join(' · ');
 }
 
@@ -263,7 +262,7 @@ function cbotB64(s){ return btoa(unescape(encodeURIComponent(s))); }
 function cbotUnB64(s){ try{ return decodeURIComponent(escape(atob(s))); }catch(e){ return ''; } }
 function cbotPack(p){
   if(!p) return null;
-  const keep=['effectif','secteur','typeEntreprise','region','naf','idcc','enjeu','deja','priorites','solutionsDevis','gains'];
+  const keep=['effectif','secteur','departement','naf','idcc','enjeu','deja','priorites','solutionsDevis','gains'];
   const o={}; keep.forEach(k=>{ if(p[k]!==undefined && p[k]!==null && p[k]!=='') o[k]=p[k]; });
   try{ return btoa(unescape(encodeURIComponent(JSON.stringify(o)))); }catch(e){ return null; }
 }
