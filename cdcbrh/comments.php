@@ -74,6 +74,9 @@ function require_admin(string $key): void {
     if ($ok !== 'ok') fail('Clé d\'administration invalide', 403);
 }
 
+$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+$action = (string) ($_GET['action'] ?? $_POST['action'] ?? '');
+
 if ($method === 'GET' && $action === 'backlog') {
     $list = with_file(DATA_FILE, function (array $d) { return ['return' => $d]; });
     $b = array_values(array_filter(array_map('public_view', $list ?? []), function ($c) { return $c['status'] === 'valide'; }));

@@ -1,4 +1,5 @@
 [
+ {"version":"CDC V0.6.1","date":"02/10/2026","type":"Cahier des charges","pages":[],"desc":"Correctif du module de commentaires : lecture des commentaires, vérification de la clé Business Owner et changement de statut de nouveau opérationnels (erreur « Méthode non autorisée »).","origine":"Anomalie signalée par David CHARRETIER"},
  {"version":"V0.6","date":"02/10/2026","type":"Prototype + cahier des charges","pages":["É05","H"],"desc":"Diagnostic : champ « Type d'entreprise » retiré et « Localisation » remplacée par « Département » sur 2 caractères (37, 41, 2A…) ; Assistant BRH : fenêtre flottante légèrement réduite (420 × 680 px).","origine":"Demande BO — David CHARRETIER"},
  {"version":"CDC V0.5","date":"01/10/2026","type":"Cahier des charges","pages":[],"desc":"Cycle de vie des commentaires (Nouveau → Validé → Intégré / Rejeté), mode Business Owner, export et copie du backlog validé, création du journal des évolutions.","origine":"Demande BO — lien prototype / cahier des charges"},
  {"version":"CDC V0.4","date":"01/10/2026","type":"Cahier des charges","pages":[],"desc":"Notation par étoiles retirée ; commentaires seuls.","origine":"Demande BO"},
