@@ -81,6 +81,10 @@ Si une demande ne touche qu'un des deux sites, le dire explicitement dans le ré
 Les commentaires validés par David sont disponibles en JSON :
 `https://cdcbrh.monsitedetest.com/comments.php?action=backlog`
 
+Les **idées** (code page `NF`, bouton « Suggérer une idée ») décrivent une fonctionnalité absente du portail
+(champs : titre, besoin, nom). Une idée validée donne un **nouvel écran** (`É26`…) rattaché à une étape du parcours,
+ou, si elle touche le périmètre, le budget ou la conformité, une proposition d'**arbitrage COPIL**.
+
 Pour chaque commentaire validé : proposer l'évolution correspondante, la regrouper avec les autres dans une même
 version si elles sont cohérentes, et signaler ce qui relève d'un arbitrage COPIL (périmètre, budget, conformité)
 plutôt que de l'implémenter directement.

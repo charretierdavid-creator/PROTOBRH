@@ -212,6 +212,17 @@ table.data tr:target td{background:#EEF6D8}
 .citem .h{font-size:13px;color:var(--grey);display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
 .citem .h b{color:var(--pine);font-size:14px}
 .citem .h .pg{font-weight:700;color:var(--teal);text-decoration:none}
+.citem .h .pg.idea{background:var(--lime);color:var(--pine);padding:1px 8px;border-radius:10px;font-size:12px}
+.citem.idea{border-left-color:var(--lime)}
+.citem .ti{font-weight:700;color:var(--pine)}
+.tabs a.idea-btn{background:var(--lime);color:var(--pine)!important;font-weight:700;border-radius:6px}
+form.idea{display:none;background:var(--paper);border:1.5px dashed var(--lime);border-radius:8px;padding:16px;margin:12px 0;gap:10px;flex-direction:column;max-width:760px}
+form.idea.on{display:flex}
+form.idea label{font:600 13px var(--display);color:var(--pine);display:flex;flex-direction:column;gap:4px}
+form.idea input,form.idea textarea{font:15px inherit;padding:8px 10px;border:1px solid var(--sage);border-radius:6px}
+form.idea textarea{min-height:90px;resize:vertical}
+form.idea .hint{font-size:12px;color:var(--grey);font-weight:400}
+form.idea .row{display:flex;gap:8px;flex-wrap:wrap}
 .citem .h button{margin-left:auto;background:none;border:0;color:var(--amber);cursor:pointer;font-size:13px;text-decoration:underline}
 .citem p{margin-top:3px;white-space:pre-wrap;word-wrap:break-word}
 .comment{margin:0}
@@ -252,8 +263,8 @@ table.data tr:target td{background:#EEF6D8}
 </head>
 <body>
 <header class="bar">
-  <div class="brand"><b>Portail Banque des RH</b><span>Cahier des charges interactif · V0.5 · Projet 15C</span></div>
-  <nav class="tabs" aria-label="Vues"><a href="#parcours" data-tab="parcours">Parcours</a><a href="#p-E01" data-tab="page">Pages</a><a href="#crm" data-tab="crm">Focus CRM</a><a href="#comments" data-tab="comments">Commentaires <span class="badge" id="ctotal">0</span></a><a href="#journal" data-tab="journal">Journal</a></nav>
+  <div class="brand"><b>Portail Banque des RH</b><span>Cahier des charges interactif · V0.7 · Projet 15C</span></div>
+  <nav class="tabs" aria-label="Vues"><a href="#parcours" data-tab="parcours">Parcours</a><a href="#p-E01" data-tab="page">Pages</a><a href="#crm" data-tab="crm">Focus CRM</a><a href="#comments" data-tab="comments">Commentaires <span class="badge" id="ctotal">0</span></a><a href="#journal" data-tab="journal">Journal</a><a href="#comments" class="idea-btn" data-idea="1">💡 Suggérer une idée</a></nav>
 </header>
 <main><p class="cstatus" id="cstatus"></p><div class="shell">
 <aside class="side" aria-label="Sommaire">%%TOC%%</aside>
@@ -293,6 +304,14 @@ table.data tr:target td{background:#EEF6D8}
     <p>Tous les commentaires publiés sur les pages du cahier des charges, partagés entre les relecteurs. Chaque commentaire suit un cycle de vie : <b>Nouveau → Validé → Intégré</b> (ou Rejeté). Les commentaires validés forment le backlog des évolutions du prototype.</p>
   </div></div>
   <p class="cstatus" id="cstatus2"></p>
+  <p><button class="btn primary" type="button" data-idea="1">💡 Suggérer une idée</button> <span style="color:var(--grey);font-size:14px">Une fonctionnalité qui n'existe pas encore dans le portail ? Proposez-la ici.</span></p>
+  <form class="idea" id="ideaform" autocomplete="off">
+    <label>Titre de l'idée<input name="title" maxlength="120" required placeholder="Ex. Simulateur de prime d'intéressement"></label>
+    <label>Le besoin<span class="hint">Décrivez ce qui manque et à quoi cela servirait (qui, quoi, pourquoi).</span><textarea name="text" maxlength="2000" required placeholder="Ex. En tant que dirigeant, je veux simuler une prime d'intéressement afin de mesurer son coût et son avantage pour mes salariés."></textarea></label>
+    <label>Votre nom<input name="author" maxlength="60" required placeholder="Prénom (et entité)"></label>
+    <input name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+    <div class="row"><button class="btn primary" type="submit">Envoyer mon idée</button><button class="btn" type="button" id="ideacancel">Annuler</button></div>
+  </form>
   <div class="admbar" id="admbar"><b>Mode Business Owner activé</b> — validez, rejetez ou marquez comme intégrés les commentaires ci-dessous. Les commentaires validés forment le backlog à intégrer au prototype.</div>
   <div class="kstat">
     <button type="button" data-sf="nouveau"><b id="n-nouveau">0</b><span>Nouveaux</span></button>
@@ -332,6 +351,8 @@ table.data tr:target td{background:#EEF6D8}
   function set(k, v){ try { localStorage.setItem('brh-cdc:' + k, JSON.stringify(v)); } catch(e){} }
   // ---------- shared comments (avec statuts) ----------
   var TITLES = %%TITLES%%, API = 'comments.php', online = false, COMMENTS = [];
+  TITLES.NF = 'Idée — nouvelle fonctionnalité';
+  var full = function(c){ return (c.title ? c.title + ' — ' : '') + (c.text || ''); };
   var ST = { nouveau:'Nouveau', valide:'Validé', rejete:'Rejeté', integre:'Intégré' };
   var ex = function(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
   var fmt = function(d){ try { return new Date(d).toLocaleString('fr-FR', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'}); } catch(e){ return d; } };
@@ -344,8 +365,9 @@ table.data tr:target td{background:#EEF6D8}
   function itemHTML(c, withPage){
     var mine = !!tokens()[c.id], s = stOf(c);
     var adm = ADMIN ? '<div class="adm">' + ['valide','rejete','integre','nouveau'].filter(function(k){ return k !== s; }).map(function(k){ return '<button type="button" data-st="' + k + '" data-id="' + ex(c.id) + '">' + {valide:'Valider', rejete:'Rejeter', integre:'Marquer intégré', nouveau:'Remettre à « Nouveau »'}[k] + '</button>'; }).join('') + '<button type="button" class="danger" data-del="' + ex(c.id) + '">Supprimer</button></div>' : '';
-    return '<div class="citem st-' + s + '" data-id="' + ex(c.id) + '"><div class="h">' + (withPage ? '<a class="pg" href="#' + aid(c.page) + '">' + ex(c.page) + ' · ' + ex(TITLES[c.page] || '') + '</a>' : '') +
-      '<b>' + ex(c.author) + '</b><span>' + ex(fmt(c.date)) + '</span>' + badge(c) + (mine && !ADMIN ? '<button type="button" data-del="' + ex(c.id) + '">Supprimer</button>' : '') + '</div>' + (c.text ? '<p>' + ex(c.text) + '</p>' : '') + adm + '</div>';
+    var nf = c.page === 'NF';
+    return '<div class="citem st-' + s + (nf ? ' idea' : '') + '" data-id="' + ex(c.id) + '"><div class="h">' + (withPage ? (nf ? '<span class="pg idea">💡 Idée</span>' : '<a class="pg" href="#' + aid(c.page) + '">' + ex(c.page) + ' · ' + ex(TITLES[c.page] || '') + '</a>') : '') +
+      '<b>' + ex(c.author) + '</b><span>' + ex(fmt(c.date)) + '</span>' + badge(c) + (mine && !ADMIN ? '<button type="button" data-del="' + ex(c.id) + '">Supprimer</button>' : '') + '</div>' + (c.title ? '<p class="ti">' + ex(c.title) + '</p>' : '') + (c.text ? '<p>' + ex(c.text) + '</p>' : '') + adm + '</div>';
   }
   function render(){
     var by = {}; COMMENTS.forEach(function(c){ (by[c.page] = by[c.page] || []).push(c); });
@@ -410,7 +432,30 @@ table.data tr:target td{background:#EEF6D8}
     }
   });
   var sel = document.getElementById('cfilter');
+  (function(){ var o = document.createElement('option'); o.value = 'NF'; o.textContent = '💡 Idées — nouvelles fonctionnalités'; sel.appendChild(o); })();
   ORDER.forEach(function(c){ var o = document.createElement('option'); o.value = c; o.textContent = c + ' · ' + TITLES[c]; sel.appendChild(o); });
+  var IF = document.getElementById('ideaform');
+  function openIdea(){ IF.classList.add('on'); if (!IF.author.value) IF.author.value = get('author', ''); setTimeout(function(){ IF.scrollIntoView({behavior:'smooth', block:'center'}); IF.elements.title.focus(); }, 60); }
+  document.querySelectorAll('[data-idea]').forEach(function(b){ b.addEventListener('click', function(){ setTimeout(openIdea, 0); }); });
+  if (location.hash === '#idee'){ location.hash = '#comments'; setTimeout(openIdea, 100); }
+  document.getElementById('ideacancel').onclick = function(){ IF.classList.remove('on'); };
+  IF.addEventListener('submit', function(e){
+    e.preventDefault();
+    var E = IF.elements, title = E.title.value.trim(), text = E.text.value.trim(), author = E.author.value.trim();
+    if (!title){ E.title.focus(); return; } if (!text){ E.text.focus(); return; } if (!author){ E.author.focus(); return; }
+    set('author', author);
+    var btn = IF.querySelector('button[type=submit]'); btn.disabled = true;
+    var done = function(c, tok){ var t = tokens(); t[c.id] = tok || 'local'; set('tokens', t); COMMENTS.push(c); E.title.value = ''; E.text.value = ''; IF.classList.remove('on'); btn.disabled = false; render();
+      var el = document.getElementById('cstatus2'); el.className = 'cstatus okk'; el.textContent = 'Merci ! Votre idée est enregistrée : l\u2019équipe projet l\u2019étudiera.'; };
+    if (online){
+      post({action:'add', page:'NF', title:title, author:author, text:text, website:E.website.value})
+        .then(function(j){ if (j.comment) done(j.comment, j.token); else btn.disabled = false; })
+        .catch(function(err){ status('Idée non publiée : ' + err.message, 'err'); btn.disabled = false; });
+    } else {
+      var c = {id:'L' + Date.now().toString(36), page:'NF', title:title, author:author, text:text, status:'nouveau', date:new Date().toISOString()};
+      var lc = get('localComments', []); lc.push(c); set('localComments', lc); done(c);
+    }
+  });
   sel.onchange = render; document.getElementById('sfilter').onchange = render;
   document.querySelectorAll('[data-sf]').forEach(function(b){ b.onclick = function(){ document.getElementById('sfilter').value = b.dataset.sf; render(); }; });
   document.getElementById('crefresh').onclick = load;
@@ -419,20 +464,20 @@ table.data tr:target td{background:#EEF6D8}
   var sortC = function(a, b){ return ORDER.indexOf(a.page) - ORDER.indexOf(b.page) || (a.date < b.date ? -1 : 1); };
   document.getElementById('cexport').onclick = function(){
     var L = [['ID','Page','Titre de la page','Auteur','Date','Statut','Version','Commentaire'].map(q).join(';')];
-    COMMENTS.slice().sort(sortC).forEach(function(c){ L.push([c.id, c.page, TITLES[c.page], c.author, fmt(c.date), ST[stOf(c)], c.version || '', c.text].map(q).join(';')); });
+    COMMENTS.slice().sort(sortC).forEach(function(c){ L.push([c.id, c.page, TITLES[c.page], c.author, fmt(c.date), ST[stOf(c)], c.version || '', full(c)].map(q).join(';')); });
     dl('BRH_commentaires_equipe.csv', '\ufeff' + L.join('\n'), 'text/csv;charset=utf-8');
   };
   function backlog(){ return COMMENTS.filter(function(c){ return stOf(c) === 'valide'; }).slice().sort(sortC); }
   function backlogText(){
     var b = backlog(); if (!b.length) return '';
     return 'BACKLOG VALIDÉ — Portail BRH — ' + new Date().toLocaleDateString('fr-FR') + ' — ' + b.length + ' évolution(s) à intégrer au prototype et au cahier des charges\n\n' +
-      b.map(function(c, i){ return (i + 1) + '. [' + c.id + '] ' + c.page + ' · ' + TITLES[c.page] + ' — ' + c.author + ' (' + fmtD(c.date) + ')\n   ' + c.text.replace(/\n/g, '\n   '); }).join('\n\n') +
-      '\n\nConsigne : intégrer ces évolutions dans protobrh, mettre à jour le cahier des charges interactif et ajouter une entrée au journal des évolutions.';
+      b.map(function(c, i){ return (i + 1) + '. [' + c.id + '] ' + c.page + ' · ' + TITLES[c.page] + ' — ' + c.author + ' (' + fmtD(c.date) + ')\n   ' + full(c).replace(/\n/g, '\n   '); }).join('\n\n') +
+      '\n\nConsigne : intégrer ces évolutions dans protobrh, mettre à jour le cahier des charges interactif et ajouter une entrée au journal des évolutions. Pour une idée (NF), créer un nouvel écran (É26…) rattaché à une étape du parcours, ou signaler un arbitrage COPIL.';
   }
   document.getElementById('bexport').onclick = function(){
     var b = backlog(); if (!b.length){ status('Aucun commentaire au statut « Validé » pour le moment.', 'off'); return; }
     var L = [['ID','Page','Titre de la page','Auteur','Date','Commentaire'].map(q).join(';')];
-    b.forEach(function(c){ L.push([c.id, c.page, TITLES[c.page], c.author, fmt(c.date), c.text].map(q).join(';')); });
+    b.forEach(function(c){ L.push([c.id, c.page, TITLES[c.page], c.author, fmt(c.date), full(c)].map(q).join(';')); });
     dl('BRH_backlog_valide.csv', '\ufeff' + L.join('\n'), 'text/csv;charset=utf-8');
   };
   document.getElementById('bcopy').onclick = function(){

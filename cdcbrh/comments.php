@@ -96,7 +96,9 @@ if (($_POST['website'] ?? '') !== '') out(['ok' => true, 'comment' => null]);
 
 if ($action === 'add') {
     $page = (string)($_POST['page'] ?? '');
-    if (!preg_match('/^(É\d{2}|P1|P2|H)$/u', $page)) fail('Page inconnue');
+    if (!preg_match('/^(É\d{2}|P1|P2|H|NF)$/u', $page)) fail('Page inconnue');
+    $title  = clean((string)($_POST['title'] ?? ''), 120);   // titre d'une idée (page NF = nouvelle fonctionnalité)
+    if ($page === 'NF' && $title === '') fail('Titre de l\'idée obligatoire');
     $author = clean((string)($_POST['author'] ?? ''), MAX_AUTHOR);
     $text   = clean((string)($_POST['text'] ?? ''), MAX_TEXT);
     $rating = (int)($_POST['rating'] ?? 0);
@@ -118,7 +120,7 @@ if ($action === 'add') {
     if (!$allowed) fail('Trop de commentaires en peu de temps : réessayez dans quelques minutes', 429);
 
     $token = bin2hex(random_bytes(16));
-    $c = ['id' => bin2hex(random_bytes(6)), 'page' => $page, 'author' => $author, 'text' => $text, 'rating' => $rating, 'status' => 'nouveau', 'date' => date('c'), 'th' => hash('sha256', $token)];
+    $c = ['id' => bin2hex(random_bytes(6)), 'page' => $page, 'title' => $page === 'NF' ? $title : '', 'author' => $author, 'text' => $text, 'rating' => $rating, 'status' => 'nouveau', 'date' => date('c'), 'th' => hash('sha256', $token)];
     $saved = with_file(DATA_FILE, function (array $d) use ($c) {
         if (count($d) >= MAX_COMMENTS) return ['return' => false];
         $d[] = $c;

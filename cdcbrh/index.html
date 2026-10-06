@@ -212,6 +212,17 @@ table.data tr:target td{background:#EEF6D8}
 .citem .h{font-size:13px;color:var(--grey);display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
 .citem .h b{color:var(--pine);font-size:14px}
 .citem .h .pg{font-weight:700;color:var(--teal);text-decoration:none}
+.citem .h .pg.idea{background:var(--lime);color:var(--pine);padding:1px 8px;border-radius:10px;font-size:12px}
+.citem.idea{border-left-color:var(--lime)}
+.citem .ti{font-weight:700;color:var(--pine)}
+.tabs a.idea-btn{background:var(--lime);color:var(--pine)!important;font-weight:700;border-radius:6px}
+form.idea{display:none;background:var(--paper);border:1.5px dashed var(--lime);border-radius:8px;padding:16px;margin:12px 0;gap:10px;flex-direction:column;max-width:760px}
+form.idea.on{display:flex}
+form.idea label{font:600 13px var(--display);color:var(--pine);display:flex;flex-direction:column;gap:4px}
+form.idea input,form.idea textarea{font:15px inherit;padding:8px 10px;border:1px solid var(--sage);border-radius:6px}
+form.idea textarea{min-height:90px;resize:vertical}
+form.idea .hint{font-size:12px;color:var(--grey);font-weight:400}
+form.idea .row{display:flex;gap:8px;flex-wrap:wrap}
 .citem .h button{margin-left:auto;background:none;border:0;color:var(--amber);cursor:pointer;font-size:13px;text-decoration:underline}
 .citem p{margin-top:3px;white-space:pre-wrap;word-wrap:break-word}
 .comment{margin:0}
@@ -252,8 +263,8 @@ table.data tr:target td{background:#EEF6D8}
 </head>
 <body>
 <header class="bar">
-  <div class="brand"><b>Portail Banque des RH</b><span>Cahier des charges interactif · V0.5 · Projet 15C</span></div>
-  <nav class="tabs" aria-label="Vues"><a href="#parcours" data-tab="parcours">Parcours</a><a href="#p-E01" data-tab="page">Pages</a><a href="#crm" data-tab="crm">Focus CRM</a><a href="#comments" data-tab="comments">Commentaires <span class="badge" id="ctotal">0</span></a><a href="#journal" data-tab="journal">Journal</a></nav>
+  <div class="brand"><b>Portail Banque des RH</b><span>Cahier des charges interactif · V0.7 · Projet 15C</span></div>
+  <nav class="tabs" aria-label="Vues"><a href="#parcours" data-tab="parcours">Parcours</a><a href="#p-E01" data-tab="page">Pages</a><a href="#crm" data-tab="crm">Focus CRM</a><a href="#comments" data-tab="comments">Commentaires <span class="badge" id="ctotal">0</span></a><a href="#journal" data-tab="journal">Journal</a><a href="#comments" class="idea-btn" data-idea="1">💡 Suggérer une idée</a></nav>
 </header>
 <main><p class="cstatus" id="cstatus"></p><div class="shell">
 <aside class="side" aria-label="Sommaire"><h4>Accueil &amp; découverte</h4><a href="#p-E01" data-code="É01"><b>É01</b><span>Accueil — promesse et accès au diagnostic</span><i class="cc" data-cc="É01"></i></a><a href="#p-E02" data-code="É02"><b>É02</b><span>Accueil — arguments et « Nos solutions »</span><i class="cc" data-cc="É02"></i></a><a href="#p-E03" data-code="É03"><b>É03</b><span>Fiche solution (fenêtre) — ex. « Partager la valeur »</span><i class="cc" data-cc="É03"></i></a><a href="#p-E04" data-code="É04"><b>É04</b><span>Accueil — bandeau diagnostic et accompagnement</span><i class="cc" data-cc="É04"></i></a><h4>Diagnostic RH</h4><a href="#p-E05" data-code="É05"><b>É05</b><span>Diagnostic — entrée et « 1. Votre entreprise »</span><i class="cc" data-cc="É05"></i></a><a href="#p-E06" data-code="É06"><b>É06</b><span>Diagnostic — « 2. Vos priorités » et benchmark</span><i class="cc" data-cc="É06"></i></a><a href="#p-E07" data-code="É07"><b>É07</b><span>Diagnostic — résultats et « 3. Nos solutions »</span><i class="cc" data-cc="É07"></i></a><a href="#p-E08" data-code="É08"><b>É08</b><span>Page « Vos avantages fiscaux &amp; sociaux »</span><i class="cc" data-cc="É08"></i></a><a href="#p-E09" data-code="É09"><b>É09</b><span>Diagnostic — « 4. Nous contacter »</span><i class="cc" data-cc="É09"></i></a><h4>Devis — données communes</h4><a href="#p-E10" data-code="É10"><b>É10</b><span>Devis en ligne — page d&#x27;entrée</span><i class="cc" data-cc="É10"></i></a><a href="#p-E11" data-code="É11"><b>É11</b><span>Devis — « 1. Vos besoins »</span><i class="cc" data-cc="É11"></i></a><a href="#p-E12" data-code="É12"><b>É12</b><span>Devis — « 2. Votre entreprise » : identification</span><i class="cc" data-cc="É12"></i></a><a href="#p-E13" data-code="É13"><b>É13</b><span>Devis — « 2. Votre entreprise » : vérification</span><i class="cc" data-cc="É13"></i></a><a href="#p-E14" data-code="É14"><b>É14</b><span>Devis — « 3. Vos salariés »</span><i class="cc" data-cc="É14"></i></a><h4>Devis — configuration</h4><a href="#p-E15" data-code="É15"><b>É15</b><span>Configuration — Épargne salariale (Amundi)</span><i class="cc" data-cc="É15"></i></a><a href="#p-E16" data-code="É16"><b>É16</b><span>Configuration — Santé &amp; prévoyance (CAA)</span><i class="cc" data-cc="É16"></i></a><a href="#p-E17" data-code="É17"><b>É17</b><span>Configuration — Retraite collective (CAA / Amundi)</span><i class="cc" data-cc="É17"></i></a><a href="#p-E18" data-code="É18"><b>É18</b><span>Configuration — Avantages salariés (Worklife)</span><i class="cc" data-cc="É18"></i></a><h4>Estimation, proposition, devis</h4><a href="#p-E19" data-code="É19"><b>É19</b><span>Devis — « 5. Estimation »</span><i class="cc" data-cc="É19"></i></a><a href="#p-E20" data-code="É20"><b>É20</b><span>Devis — « 6. Votre proposition »</span><i class="cc" data-cc="É20"></i></a><a href="#p-E21" data-code="É21"><b>É21</b><span>Devis — « 7. Recevez votre devis »</span><i class="cc" data-cc="É21"></i></a><a href="#p-E22" data-code="É22"><b>É22</b><span>Fenêtre « Parler à un expert »</span><i class="cc" data-cc="É22"></i></a><h4>Ressources &amp; newsletter</h4><a href="#p-E23" data-code="É23"><b>É23</b><span>Page « Ressources »</span><i class="cc" data-cc="É23"></i></a><a href="#p-E24" data-code="É24"><b>É24</b><span>Newsletter — inscription</span><i class="cc" data-cc="É24"></i></a><a href="#p-E25" data-code="É25"><b>É25</b><span>Newsletter — édition du mois</span><i class="cc" data-cc="É25"></i></a><h4>Back-office &amp; transverse</h4><a href="#p-P1" data-code="P1"><b>P1</b><span>Lead qualifié PME-ETI transmis à la CR</span><i class="cc" data-cc="P1"></i></a><a href="#p-P2" data-code="P2"><b>P2</b><span>Transmission du devis et contractualisation en CR</span><i class="cc" data-cc="P2"></i></a><a href="#p-H" data-code="H"><b>H</b><span>Assistant BRH — widget « Besoin d&#x27;aide ? »</span><i class="cc" data-cc="H"></i></a><h4>Données</h4><a href="#crm"><b>CRM</b><span>Tableau des data outputs</span></a></aside>
@@ -762,6 +773,14 @@ table.data tr:target td{background:#EEF6D8}
     <p>Tous les commentaires publiés sur les pages du cahier des charges, partagés entre les relecteurs. Chaque commentaire suit un cycle de vie : <b>Nouveau → Validé → Intégré</b> (ou Rejeté). Les commentaires validés forment le backlog des évolutions du prototype.</p>
   </div></div>
   <p class="cstatus" id="cstatus2"></p>
+  <p><button class="btn primary" type="button" data-idea="1">💡 Suggérer une idée</button> <span style="color:var(--grey);font-size:14px">Une fonctionnalité qui n'existe pas encore dans le portail ? Proposez-la ici.</span></p>
+  <form class="idea" id="ideaform" autocomplete="off">
+    <label>Titre de l'idée<input name="title" maxlength="120" required placeholder="Ex. Simulateur de prime d'intéressement"></label>
+    <label>Le besoin<span class="hint">Décrivez ce qui manque et à quoi cela servirait (qui, quoi, pourquoi).</span><textarea name="text" maxlength="2000" required placeholder="Ex. En tant que dirigeant, je veux simuler une prime d'intéressement afin de mesurer son coût et son avantage pour mes salariés."></textarea></label>
+    <label>Votre nom<input name="author" maxlength="60" required placeholder="Prénom (et entité)"></label>
+    <input name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+    <div class="row"><button class="btn primary" type="submit">Envoyer mon idée</button><button class="btn" type="button" id="ideacancel">Annuler</button></div>
+  </form>
   <div class="admbar" id="admbar"><b>Mode Business Owner activé</b> — validez, rejetez ou marquez comme intégrés les commentaires ci-dessous. Les commentaires validés forment le backlog à intégrer au prototype.</div>
   <div class="kstat">
     <button type="button" data-sf="nouveau"><b id="n-nouveau">0</b><span>Nouveaux</span></button>
@@ -801,6 +820,8 @@ table.data tr:target td{background:#EEF6D8}
   function set(k, v){ try { localStorage.setItem('brh-cdc:' + k, JSON.stringify(v)); } catch(e){} }
   // ---------- shared comments (avec statuts) ----------
   var TITLES = {"É01": "Accueil — promesse et accès au diagnostic", "É02": "Accueil — arguments et « Nos solutions »", "É03": "Fiche solution (fenêtre) — ex. « Partager la valeur »", "É04": "Accueil — bandeau diagnostic et accompagnement", "É05": "Diagnostic — entrée et « 1. Votre entreprise »", "É06": "Diagnostic — « 2. Vos priorités » et benchmark", "É07": "Diagnostic — résultats et « 3. Nos solutions »", "É08": "Page « Vos avantages fiscaux & sociaux »", "É09": "Diagnostic — « 4. Nous contacter »", "É10": "Devis en ligne — page d'entrée", "É11": "Devis — « 1. Vos besoins »", "É12": "Devis — « 2. Votre entreprise » : identification", "É13": "Devis — « 2. Votre entreprise » : vérification", "É14": "Devis — « 3. Vos salariés »", "É15": "Configuration — Épargne salariale (Amundi)", "É16": "Configuration — Santé & prévoyance (CAA)", "É17": "Configuration — Retraite collective (CAA / Amundi)", "É18": "Configuration — Avantages salariés (Worklife)", "É19": "Devis — « 5. Estimation »", "É20": "Devis — « 6. Votre proposition »", "É21": "Devis — « 7. Recevez votre devis »", "É22": "Fenêtre « Parler à un expert »", "É23": "Page « Ressources »", "É24": "Newsletter — inscription", "É25": "Newsletter — édition du mois", "P1": "Lead qualifié PME-ETI transmis à la CR", "P2": "Transmission du devis et contractualisation en CR", "H": "Assistant BRH — widget « Besoin d'aide ? »"}, API = 'comments.php', online = false, COMMENTS = [];
+  TITLES.NF = 'Idée — nouvelle fonctionnalité';
+  var full = function(c){ return (c.title ? c.title + ' — ' : '') + (c.text || ''); };
   var ST = { nouveau:'Nouveau', valide:'Validé', rejete:'Rejeté', integre:'Intégré' };
   var ex = function(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
   var fmt = function(d){ try { return new Date(d).toLocaleString('fr-FR', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'}); } catch(e){ return d; } };
@@ -813,8 +834,9 @@ table.data tr:target td{background:#EEF6D8}
   function itemHTML(c, withPage){
     var mine = !!tokens()[c.id], s = stOf(c);
     var adm = ADMIN ? '<div class="adm">' + ['valide','rejete','integre','nouveau'].filter(function(k){ return k !== s; }).map(function(k){ return '<button type="button" data-st="' + k + '" data-id="' + ex(c.id) + '">' + {valide:'Valider', rejete:'Rejeter', integre:'Marquer intégré', nouveau:'Remettre à « Nouveau »'}[k] + '</button>'; }).join('') + '<button type="button" class="danger" data-del="' + ex(c.id) + '">Supprimer</button></div>' : '';
-    return '<div class="citem st-' + s + '" data-id="' + ex(c.id) + '"><div class="h">' + (withPage ? '<a class="pg" href="#' + aid(c.page) + '">' + ex(c.page) + ' · ' + ex(TITLES[c.page] || '') + '</a>' : '') +
-      '<b>' + ex(c.author) + '</b><span>' + ex(fmt(c.date)) + '</span>' + badge(c) + (mine && !ADMIN ? '<button type="button" data-del="' + ex(c.id) + '">Supprimer</button>' : '') + '</div>' + (c.text ? '<p>' + ex(c.text) + '</p>' : '') + adm + '</div>';
+    var nf = c.page === 'NF';
+    return '<div class="citem st-' + s + (nf ? ' idea' : '') + '" data-id="' + ex(c.id) + '"><div class="h">' + (withPage ? (nf ? '<span class="pg idea">💡 Idée</span>' : '<a class="pg" href="#' + aid(c.page) + '">' + ex(c.page) + ' · ' + ex(TITLES[c.page] || '') + '</a>') : '') +
+      '<b>' + ex(c.author) + '</b><span>' + ex(fmt(c.date)) + '</span>' + badge(c) + (mine && !ADMIN ? '<button type="button" data-del="' + ex(c.id) + '">Supprimer</button>' : '') + '</div>' + (c.title ? '<p class="ti">' + ex(c.title) + '</p>' : '') + (c.text ? '<p>' + ex(c.text) + '</p>' : '') + adm + '</div>';
   }
   function render(){
     var by = {}; COMMENTS.forEach(function(c){ (by[c.page] = by[c.page] || []).push(c); });
@@ -879,7 +901,30 @@ table.data tr:target td{background:#EEF6D8}
     }
   });
   var sel = document.getElementById('cfilter');
+  (function(){ var o = document.createElement('option'); o.value = 'NF'; o.textContent = '💡 Idées — nouvelles fonctionnalités'; sel.appendChild(o); })();
   ORDER.forEach(function(c){ var o = document.createElement('option'); o.value = c; o.textContent = c + ' · ' + TITLES[c]; sel.appendChild(o); });
+  var IF = document.getElementById('ideaform');
+  function openIdea(){ IF.classList.add('on'); if (!IF.author.value) IF.author.value = get('author', ''); setTimeout(function(){ IF.scrollIntoView({behavior:'smooth', block:'center'}); IF.elements.title.focus(); }, 60); }
+  document.querySelectorAll('[data-idea]').forEach(function(b){ b.addEventListener('click', function(){ setTimeout(openIdea, 0); }); });
+  if (location.hash === '#idee'){ location.hash = '#comments'; setTimeout(openIdea, 100); }
+  document.getElementById('ideacancel').onclick = function(){ IF.classList.remove('on'); };
+  IF.addEventListener('submit', function(e){
+    e.preventDefault();
+    var E = IF.elements, title = E.title.value.trim(), text = E.text.value.trim(), author = E.author.value.trim();
+    if (!title){ E.title.focus(); return; } if (!text){ E.text.focus(); return; } if (!author){ E.author.focus(); return; }
+    set('author', author);
+    var btn = IF.querySelector('button[type=submit]'); btn.disabled = true;
+    var done = function(c, tok){ var t = tokens(); t[c.id] = tok || 'local'; set('tokens', t); COMMENTS.push(c); E.title.value = ''; E.text.value = ''; IF.classList.remove('on'); btn.disabled = false; render();
+      var el = document.getElementById('cstatus2'); el.className = 'cstatus okk'; el.textContent = 'Merci ! Votre idée est enregistrée : l\u2019équipe projet l\u2019étudiera.'; };
+    if (online){
+      post({action:'add', page:'NF', title:title, author:author, text:text, website:E.website.value})
+        .then(function(j){ if (j.comment) done(j.comment, j.token); else btn.disabled = false; })
+        .catch(function(err){ status('Idée non publiée : ' + err.message, 'err'); btn.disabled = false; });
+    } else {
+      var c = {id:'L' + Date.now().toString(36), page:'NF', title:title, author:author, text:text, status:'nouveau', date:new Date().toISOString()};
+      var lc = get('localComments', []); lc.push(c); set('localComments', lc); done(c);
+    }
+  });
   sel.onchange = render; document.getElementById('sfilter').onchange = render;
   document.querySelectorAll('[data-sf]').forEach(function(b){ b.onclick = function(){ document.getElementById('sfilter').value = b.dataset.sf; render(); }; });
   document.getElementById('crefresh').onclick = load;
@@ -888,20 +933,20 @@ table.data tr:target td{background:#EEF6D8}
   var sortC = function(a, b){ return ORDER.indexOf(a.page) - ORDER.indexOf(b.page) || (a.date < b.date ? -1 : 1); };
   document.getElementById('cexport').onclick = function(){
     var L = [['ID','Page','Titre de la page','Auteur','Date','Statut','Version','Commentaire'].map(q).join(';')];
-    COMMENTS.slice().sort(sortC).forEach(function(c){ L.push([c.id, c.page, TITLES[c.page], c.author, fmt(c.date), ST[stOf(c)], c.version || '', c.text].map(q).join(';')); });
+    COMMENTS.slice().sort(sortC).forEach(function(c){ L.push([c.id, c.page, TITLES[c.page], c.author, fmt(c.date), ST[stOf(c)], c.version || '', full(c)].map(q).join(';')); });
     dl('BRH_commentaires_equipe.csv', '\ufeff' + L.join('\n'), 'text/csv;charset=utf-8');
   };
   function backlog(){ return COMMENTS.filter(function(c){ return stOf(c) === 'valide'; }).slice().sort(sortC); }
   function backlogText(){
     var b = backlog(); if (!b.length) return '';
     return 'BACKLOG VALIDÉ — Portail BRH — ' + new Date().toLocaleDateString('fr-FR') + ' — ' + b.length + ' évolution(s) à intégrer au prototype et au cahier des charges\n\n' +
-      b.map(function(c, i){ return (i + 1) + '. [' + c.id + '] ' + c.page + ' · ' + TITLES[c.page] + ' — ' + c.author + ' (' + fmtD(c.date) + ')\n   ' + c.text.replace(/\n/g, '\n   '); }).join('\n\n') +
-      '\n\nConsigne : intégrer ces évolutions dans protobrh, mettre à jour le cahier des charges interactif et ajouter une entrée au journal des évolutions.';
+      b.map(function(c, i){ return (i + 1) + '. [' + c.id + '] ' + c.page + ' · ' + TITLES[c.page] + ' — ' + c.author + ' (' + fmtD(c.date) + ')\n   ' + full(c).replace(/\n/g, '\n   '); }).join('\n\n') +
+      '\n\nConsigne : intégrer ces évolutions dans protobrh, mettre à jour le cahier des charges interactif et ajouter une entrée au journal des évolutions. Pour une idée (NF), créer un nouvel écran (É26…) rattaché à une étape du parcours, ou signaler un arbitrage COPIL.';
   }
   document.getElementById('bexport').onclick = function(){
     var b = backlog(); if (!b.length){ status('Aucun commentaire au statut « Validé » pour le moment.', 'off'); return; }
     var L = [['ID','Page','Titre de la page','Auteur','Date','Commentaire'].map(q).join(';')];
-    b.forEach(function(c){ L.push([c.id, c.page, TITLES[c.page], c.author, fmt(c.date), c.text].map(q).join(';')); });
+    b.forEach(function(c){ L.push([c.id, c.page, TITLES[c.page], c.author, fmt(c.date), full(c)].map(q).join(';')); });
     dl('BRH_backlog_valide.csv', '\ufeff' + L.join('\n'), 'text/csv;charset=utf-8');
   };
   document.getElementById('bcopy').onclick = function(){
@@ -920,6 +965,9 @@ table.data tr:target td{background:#EEF6D8}
   };
   // journal des évolutions
   var JOURNAL = [
+ {"version":"CDC V0.7","date":"06/10/2026","type":"Cahier des charges","pages":[],"desc":"Bouton « Suggérer une idée » : proposer une fonctionnalité qui n'existe pas encore (titre, besoin, nom). Les idées suivent le même cycle de vie que les commentaires et alimentent le backlog.","origine":"Demande BO — David CHARRETIER"},
+ {"version":"V0.6.2","date":"02/10/2026","type":"Prototype","pages":["H"],"desc":"Assistant BRH : numéro de version des scripts mis à jour pour que tous les navigateurs chargent le chatbot V0.6 (panne visible hors navigation privée).","origine":"Anomalie signalée par David CHARRETIER"},
+ {"version":"CDC V0.6.1","date":"02/10/2026","type":"Cahier des charges","pages":[],"desc":"Correctif du module de commentaires : lecture des commentaires, vérification de la clé Business Owner et changement de statut de nouveau opérationnels (erreur « Méthode non autorisée »).","origine":"Anomalie signalée par David CHARRETIER"},
  {"version":"V0.6","date":"02/10/2026","type":"Prototype + cahier des charges","pages":["É05","H"],"desc":"Diagnostic : champ « Type d'entreprise » retiré et « Localisation » remplacée par « Département » sur 2 caractères (37, 41, 2A…) ; Assistant BRH : fenêtre flottante légèrement réduite (420 × 680 px).","origine":"Demande BO — David CHARRETIER"},
  {"version":"CDC V0.5","date":"01/10/2026","type":"Cahier des charges","pages":[],"desc":"Cycle de vie des commentaires (Nouveau → Validé → Intégré / Rejeté), mode Business Owner, export et copie du backlog validé, création du journal des évolutions.","origine":"Demande BO — lien prototype / cahier des charges"},
  {"version":"CDC V0.4","date":"01/10/2026","type":"Cahier des charges","pages":[],"desc":"Notation par étoiles retirée ; commentaires seuls.","origine":"Demande BO"},
