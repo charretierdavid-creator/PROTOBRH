@@ -2,7 +2,7 @@
 /* ============================================================================
    Porte d'accès — même modèle que « Diagnostic Conseil Banque des RH »
    ----------------------------------------------------------------------------
-   - Écran d'identification : identifiant + mot de passe communs + prénom et nom.
+   - Écran d'identification : identifiant + mot de passe communs.
    - Vérification côté serveur (config.php, jamais publié sur GitHub).
    - Session PHP de 10 heures d'inactivité au plus, cookie HttpOnly.
    - 8 essais erronés : blocage 5 minutes.
@@ -101,12 +101,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && $action === 'login') {
   [$cfgLogin, $cfgPass] = brh_acces_config();
   $login = trim((string) ($_POST['login'] ?? ''));
   $pw    = (string) ($_POST['password'] ?? '');
-  $nom   = trim(preg_replace('/\s+/u', ' ', (string) ($_POST['nom'] ?? '')) ?? '');
-  $nomOk = (bool) preg_match("/^[\\p{L}][\\p{L}'’.-]*(\\s[\\p{L}][\\p{L}'’.-]*)+$/u", $nom) && mb_strlen(str_replace(' ', '', $nom)) >= 4;
   if (!empty($_SESSION['bloque']) && $_SESSION['bloque'] > $now) $err = 'Trop d’essais. Réessayez dans quelques minutes.';
   elseif ($cfgLogin === '' || $cfgPass === '') $err = 'Accès non configuré : renseignez ACCES_LOGIN et ACCES_PASSWORD dans config.php.';
-  elseif ($login === '' || $pw === '' || $nom === '') $err = 'Renseignez l’identifiant, le mot de passe et vos prénom et nom.';
-  elseif (!$nomOk) $err = 'Indiquez vos prénom et nom (ex. Claire Durand).';
+  elseif ($login === '' || $pw === '') $err = 'Renseignez l’identifiant et le mot de passe.';
   elseif (!hash_equals($cfgLogin, $login) || !hash_equals($cfgPass, $pw)) {
     $err = 'Identifiant ou mot de passe incorrect.';
     $_SESSION['echecs'] = (int) ($_SESSION['echecs'] ?? 0) + 1;
@@ -114,17 +111,12 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && $action === 'login') {
   } else {
     session_regenerate_id(true);
     $_SESSION['echecs'] = 0;
-    $_SESSION['brh'] = ['nom' => mb_substr($nom, 0, 60), 't' => $now];
+    $_SESSION['brh'] = ['t' => $now];
     $r = (string) ($_POST['r'] ?? '');
     $dest = (str_starts_with($r, '/') && !str_starts_with($r, '//') && !str_contains($r, '\\') && !str_contains($r, 'acces.php')) ? $r : './' . $cible;   // adresse d'origine (avec ?paramètres)
     $h = (string) ($_POST['h'] ?? '');
     if (preg_match('/^#[\w\-\/%.]{1,80}$/u', $h)) $dest .= $h;                                          // ancre (#comments…)
-    header('Content-Type: text/html; charset=utf-8');
-    header('Cache-Control: no-store');
-    // Pré-remplit le nom de l'auteur des commentaires du cahier des charges, puis ouvre la page demandée.
-    echo '<!doctype html><meta charset="utf-8"><title>Connexion…</title><script>try{if(!localStorage.getItem("brh-cdc:author"))localStorage.setItem("brh-cdc:author",' .
-         json_encode(json_encode(mb_substr($nom, 0, 60), JSON_UNESCAPED_UNICODE)) . ');}catch(e){}location.replace(' . json_encode($dest) . ');</script>' .
-         '<a href="' . htmlspecialchars($dest) . '">Continuer</a>';
+    header('Location: ' . $dest, true, 303);
     exit;
   }
 }
@@ -194,7 +186,6 @@ button,input{font:inherit;color:inherit}button{cursor:pointer}:focus-visible{out
       <input type="hidden" name="h" id="lgH" value="<?= $e($_POST['h'] ?? '') ?>">
       <div class="fld"><label for="lgId">Identifiant <span class="req">*</span></label><input class="in" id="lgId" name="login" autocomplete="username" autocapitalize="none" spellcheck="false" value="<?= $e($_POST['login'] ?? '') ?>"></div>
       <div class="fld"><label for="lgPw">Mot de passe <span class="req">*</span></label><input class="in" id="lgPw" name="password" type="password" autocomplete="current-password"></div>
-      <div class="fld"><label for="lgNom">Prénom et nom <span class="req">*</span></label><input class="in" id="lgNom" name="nom" autocomplete="name" autocapitalize="words" placeholder="Prénom Nom" value="<?= $e($_POST['nom'] ?? '') ?>"></div>
       <p class="lg-err" role="alert"><?= $e($err) ?></p>
       <button class="btn" type="submit">Se connecter</button>
       <p class="hint" style="margin-top:14px">Version de test. Cible : authentification par l’annuaire Crédit Agricole.</p>
