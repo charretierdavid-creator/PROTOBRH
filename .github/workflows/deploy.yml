@@ -1,36 +1,14 @@
 name: Mise en ligne Hostinger
-
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
-
-# Chaque site a son propre compte FTP (hPanel > monsitedetest.com > Comptes FTP),
-# dont la racine est directement le dossier servi : public_html/cdcbrh ou public_html/protobrh.
-# Les fichiers absents du dépôt (config.php, data/, .htaccess) ne sont jamais supprimés.
 jobs:
-  cdcbrh:
+  verif-acces:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Envoi de cdcbrh/ vers cdcbrh.monsitedetest.com
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ftp.monsitedetest.com
-          username: ${{ secrets.CDCBRH_FTP_USERNAME }}
-          password: ${{ secrets.CDCBRH_FTP_PASSWORD }}
-          local-dir: ./cdcbrh/
-          server-dir: ./
-
-  protobrh:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Envoi de protobrh/ vers protobrh.monsitedetest.com
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ftp.monsitedetest.com
-          username: ${{ secrets.PROTOBRH_FTP_USERNAME }}
-          password: ${{ secrets.PROTOBRH_FTP_PASSWORD }}
-          local-dir: ./protobrh/
-          server-dir: ./
+      - name: Vérification de la porte d'accès en ligne (sans identifiants)
+        run: |
+          for u in https://protobrh.monsitedetest.com/ https://protobrh.monsitedetest.com/diagnostic.html https://protobrh.monsitedetest.com/connaissances.txt https://protobrh.monsitedetest.com/config.php https://protobrh.monsitedetest.com/photo.jpeg https://cdcbrh.monsitedetest.com/ https://cdcbrh.monsitedetest.com/journal.json "https://cdcbrh.monsitedetest.com/comments.php?action=list" https://cdcbrh.monsitedetest.com/config.php; do
+            code=$(curl -s -o /tmp/b -w "%{http_code}" --max-time 20 "$u")
+            t=$(grep -o "<title>[^<]*" /tmp/b | head -1 | sed 's/<title>//'); [ -z "$t" ] && t=$(head -c 70 /tmp/b | tr -d '\n' | tr -c '[:print:]' '?')
+            echo "$code  $u  ->  $t"
+          done
