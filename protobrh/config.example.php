@@ -13,3 +13,7 @@ const DB_PASS = 'REMPLACER-MOT-DE-PASSE';
 
 // Identification entreprise du devis (entreprise.php) — laisser vide pour le mode démonstration
 const PAPPERS_API_KEY = '';
+
+// Porte d'accès (écran d'identification commun aux deux sites)
+const ACCES_LOGIN    = 'REMPLACER-IDENTIFIANT';
+const ACCES_PASSWORD = 'REMPLACER-MOT-DE-PASSE';

@@ -11,6 +11,7 @@
  * Les données sont stockées dans data/comments.json (dossier fermé au web).
  */
 declare(strict_types=1);
+require_once __DIR__ . '/acces.php'; brh_acces_api();   // accès réservé aux personnes connectées (porte d'accès)
 date_default_timezone_set('Europe/Paris');
 header('Content-Type: application/json; charset=utf-8');
 header('X-Robots-Tag: noindex, nofollow');
