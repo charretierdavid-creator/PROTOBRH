@@ -4,7 +4,6 @@ cdcbrh/config.php
 protobrh/config.php
 .htpasswd
 **/.htpasswd
-protobrh/.htaccess
 *.key
 .env
 

@@ -263,7 +263,7 @@ form.idea .row{display:flex;gap:8px;flex-wrap:wrap}
 </head>
 <body>
 <header class="bar">
-  <div class="brand"><b>Portail Banque des RH</b><span>Cahier des charges interactif · V0.7 · Projet 15C</span></div>
+  <div class="brand"><b>Portail Banque des RH</b><span>Cahier des charges interactif · V0.8 · Projet 15C</span></div>
   <nav class="tabs" aria-label="Vues"><a href="#parcours" data-tab="parcours">Parcours</a><a href="#p-E01" data-tab="page">Pages</a><a href="#crm" data-tab="crm">Focus CRM</a><a href="#comments" data-tab="comments">Commentaires <span class="badge" id="ctotal">0</span></a><a href="#journal" data-tab="journal">Journal</a><a href="#comments" class="idea-btn" data-idea="1">💡 Suggérer une idée</a></nav>
 </header>
 <main><p class="cstatus" id="cstatus"></p><div class="shell">
@@ -809,7 +809,7 @@ form.idea .row{display:flex;gap:8px;flex-wrap:wrap}
   <div class="tblwrap" style="max-height:none"><table class="data jtab"><thead><tr><th>Version</th><th>Date</th><th>Type</th><th>Pages</th><th>Évolution</th><th>Origine</th></tr></thead><tbody id="jbody"></tbody></table></div>
 </section>
 </div></div></main>
-<p class="foot"><a href="#comments" id="admin" class="admlink">Mode Business Owner</a> · Sources : écrans du prototype Portail BRH (29/09/2026), cahier des charges fonctionnel V0.5, Dossier 15C BRH. Usage interne. Les commentaires publiés sont partagés entre les relecteurs ; les choix du Focus CRM restent dans ce navigateur.</p>
+<p class="foot"><a href="acces.php?action=logout" class="admlink">Se déconnecter</a> · <a href="#comments" id="admin" class="admlink">Mode Business Owner</a> · Sources : écrans du prototype Portail BRH (29/09/2026), cahier des charges fonctionnel V0.5, Dossier 15C BRH. Usage interne. Les commentaires publiés sont partagés entre les relecteurs ; les choix du Focus CRM restent dans ce navigateur.</p>
 <div class="lb" id="lb" role="dialog" aria-label="Capture agrandie"><img alt=""></div>
 <script>
 (function(){
@@ -965,6 +965,7 @@ form.idea .row{display:flex;gap:8px;flex-wrap:wrap}
   };
   // journal des évolutions
   var JOURNAL = [
+ {"version":"V0.8","date":"07/10/2026","type":"Prototype + cahier des charges","pages":[],"desc":"Accès protégé aux deux sites, sur le modèle de Diagnostic Conseil BRH : écran d'identification (identifiant, mot de passe, prénom et nom), session de 10 heures, blocage après 8 essais ; pages, données et services (chatbot, commentaires, avis) réservés aux personnes connectées.","origine":"Demande BO — David CHARRETIER"},
  {"version":"CDC V0.7","date":"06/10/2026","type":"Cahier des charges","pages":[],"desc":"Bouton « Suggérer une idée » : proposer une fonctionnalité qui n'existe pas encore (titre, besoin, nom). Les idées suivent le même cycle de vie que les commentaires et alimentent le backlog.","origine":"Demande BO — David CHARRETIER"},
  {"version":"V0.6.2","date":"02/10/2026","type":"Prototype","pages":["H"],"desc":"Assistant BRH : numéro de version des scripts mis à jour pour que tous les navigateurs chargent le chatbot V0.6 (panne visible hors navigation privée).","origine":"Anomalie signalée par David CHARRETIER"},
  {"version":"CDC V0.6.1","date":"02/10/2026","type":"Cahier des charges","pages":[],"desc":"Correctif du module de commentaires : lecture des commentaires, vérification de la clé Business Owner et changement de statut de nouveau opérationnels (erreur « Méthode non autorisée »).","origine":"Anomalie signalée par David CHARRETIER"},

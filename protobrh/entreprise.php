@@ -11,6 +11,7 @@
    https://www.pappers.fr/api/documentation
    ============================================================ */
 declare(strict_types=1);
+require_once __DIR__ . '/acces.php'; brh_acces_api();   // accès réservé aux personnes connectées (porte d'accès)
 header('Content-Type: application/json; charset=utf-8');
 
 if (is_file(__DIR__ . '/config.php')) require_once __DIR__ . '/config.php';   // PAPPERS_API_KEY (optionnelle)
