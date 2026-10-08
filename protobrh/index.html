@@ -19,10 +19,11 @@ const SOL_DETAIL={
   partage:{title:'Partager la valeur avec mes collaborateurs',partner:'Amundi',
     icon:'<circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.2"/><path d="M15.5 20a5 5 0 0 1 6.5-4.8"/>',
     offers:[
-      {t:'Épargne salariale (PEE / PER COL-I)',d:'Intéressement, participation et abondement pour se constituer une épargne, avec un abondement employeur exonéré (jusqu\u2019à 8 % du PASS sur le PEI, 16 % sur le PER COL-I).'},
+      {t:'Épargne salariale (PEI)',d:'Intéressement, participation et abondement pour se constituer une épargne, avec un abondement employeur exonéré (jusqu\u2019à 8 % du PASS sur le PEI).'},
       {t:'Prime de Partage de la Valeur (PPV)',d:'Une prime dans un cadre social et fiscal favorable, exonérée jusqu\u2019à 3 000 € (6 000 € avec accord d\u2019intéressement ou de participation).'},
       {t:'Autres primes & gratifications',d:'Intéressement (≤ 20 % des salaires bruts) et participation (≤ 75 % du PASS/salarié) pour récompenser la réussite collective.'}
     ],
+    formules:['decouverte','integrale_epargne'],
     note:'Avec Amundi, 1ᵉʳ acteur de l\u2019épargne salariale (+ 100 Mds€ sous gestion) : des dispositifs combinables et des formules clé en main pour les PME-PMI.'},
   proteger:{title:'Protéger mes salariés',partner:'Crédit Agricole Assurances',
     icon:'<path d="M12 3l7 4v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V7l7-4Z"/><path d="M12 9v3M12 15h.01"/>',
@@ -39,6 +40,7 @@ const SOL_DETAIL={
       {t:'L\u2019article 39',d:'Retraite supplémentaire à prestations définies ; à la retraite, la rente est imposée à l\u2019IR avec un prélèvement spécifique de 7 % ou 14 % selon son niveau.'},
       {t:'Indemnités de Fin de Carrière (IFC)',d:'Anticipez le coût des indemnités dues au départ en retraite via un contrat d\u2019assurance IFC qui lisse la charge et rembourse les IFC versées.'}
     ],
+    formules:['integrale_retraite'],
     note:'Des dispositifs retraite portés par Crédit Agricole Assurances (11,7 Mds€ d\u2019encours retraite) et Amundi (1ᵉʳ acteur de l\u2019épargne salariale avec + 100 Mds€ sous gestion : des dispositifs combinables, évolutifs, et des formules clé en main pour les Entreprises).'},
   pouvoir:{title:'Donner du pouvoir d\u2019achat et du bien-être',partner:'Worklife',
     icon:'<path d="M4 5h2l2 12h9l2-8H7"/><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/>',
@@ -727,7 +729,7 @@ function openSol(id){
   document.getElementById('smIc').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+s.icon+'</svg>';
   document.getElementById('smPartner').textContent=s.partner+(s.partner2?' · '+s.partner2:'');
   document.getElementById('smTitle').textContent=s.title;
-  document.getElementById('smBody').innerHTML=s.offers.map(o=>'<div class="sm-offer"><b>'+o.t+'</b><span>'+o.d+'</span></div>').join('')+'<p class="sm-note">'+s.note+'</p>';
+  document.getElementById('smBody').innerHTML=s.offers.map(o=>'<div class="sm-offer"><b>'+o.t+'</b><span>'+o.d+'</span></div>').join('')+(window.cartesFormules?cartesFormules(s.formules):'')+'<p class="sm-note">'+s.note+'</p>';
   const m=document.getElementById('solModal'); m.hidden=false; document.body.style.overflow='hidden';
   const c=m.querySelector('.sm-close'); if(c) c.focus();
   if(typeof track==='function') track('solution_modal_open',{solution_name:id});
@@ -737,6 +739,7 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ const m=d
 </script>
 <!-- ============ FIN MODALE SOLUTIONS ============ -->
 
+<script src="formules-amundi.js?v=20261008" defer></script>
 <script src="chatbot-widget.js?v=20261002" defer></script>
 <script src="feedback-widget.js?v=20261002" defer></script>
 

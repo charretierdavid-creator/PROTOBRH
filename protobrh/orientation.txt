@@ -28,3 +28,9 @@ Rôle : aider l'assistant à PRIORISER les pistes selon le profil. Les règles, 
 5. TOUJOURS
 - 2 à 3 pistes maximum, de la plus prioritaire à la moins prioritaire, chacune justifiée par le profil.
 - Terminer par la prochaine étape et la mention « Orientation indicative — un expert BRH valide avec vous la solution adaptée. »
+
+6. FORMULES AMUNDI (épargne salariale et retraite)
+- Priorités « Partager la valeur » ET « Préparer la retraite » notées 3 ou 4 : citer d'abord la formule Convergence (PEI + PER COL-I, un seul contrat).
+- « Partager la valeur » seule : formule Découverte pour démarrer simplement ; formule Intégrale si l'entreprise veut l'intéressement ou la participation et ne rien gérer elle-même.
+- « Préparer la retraite » seule : formule Intégrale (focus PER COL-I) ; citer aussi la retraite collective de Crédit Agricole Assurances (rente à vie).
+- Donner le coût indicatif de la formule à partir de l'effectif, puis renvoyer vers le devis en ligne (étape 4) ou un expert BRH.

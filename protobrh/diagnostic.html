@@ -26,10 +26,11 @@ const SOLUTIONS=[
   {id:'partage', d:'Associez vos salariés à la performance de l’entreprise et fidélisez-les durablement.', key:'partageValeur', title:'Partager la valeur avec mes collaborateurs', partner:'Amundi', icon:ICON.partageValeur,
    b:['Associez vos salariés à la performance de l’entreprise.','Fidélisez durablement vos collaborateurs.','Optimisez le coût employeur grâce à un cadre social favorable.'],
    offers:[
-     {t:'Épargne salariale (PEI / PER COL-I)',d:'Intéressement, participation et abondement pour se constituer une épargne, avec un abondement employeur exonéré (jusqu’à 8 % du PASS sur le PEI, 16 % sur le PER COL-I).'},
+     {t:'Épargne salariale (PEI)',d:'Intéressement, participation et abondement pour se constituer une épargne, avec un abondement employeur exonéré (jusqu’à 8 % du PASS sur le PEI).'},
      {t:'Prime de Partage de la Valeur (PPV)',d:'Versez une prime dans un cadre social et fiscal favorable, exonérée jusqu’à 3 000 € (6 000 € avec accord d’intéressement ou de participation).'},
      {t:'Autres primes & gratifications',d:'Intéressement (plafond global 20 % des salaires bruts) et participation (≤ 75 % du PASS par salarié) pour récompenser la réussite collective.'}
    ],
+   formules:['decouverte','integrale_epargne'],
    note:'Avec Amundi, 1ᵉʳ acteur de l’épargne salariale (+ 100 Mds€ sous gestion) : des dispositifs combinables, évolutifs, et des formules clé en main pour les PME-PMI.'},
   {id:'proteger', d:'Couvrez vos salariés et leurs proches face aux aléas de la vie.', key:'protection', title:'Protéger mes salariés', partner:'Crédit Agricole Assurances', icon:ICON.protection,
    b:['Couvrez vos salariés et leurs proches face aux aléas de la vie.','Renforcez votre attractivité et votre politique sociale.','Maîtrisez l’absentéisme et vos coûts.'],
@@ -46,6 +47,7 @@ const SOLUTIONS=[
      {t:'L’article 39',d:'Retraite supplémentaire à prestations définies ; à la retraite, la rente est imposée à l’IR avec un prélèvement spécifique de 7 % ou 14 % selon son niveau.'},
      {t:'Indemnités de Fin de Carrière (IFC)',d:'Anticipez le coût des indemnités dues au départ en retraite via un contrat d’assurance IFC qui lisse la charge et rembourse les IFC versées.'}
    ],
+   formules:['integrale_retraite'],
    note:'Des dispositifs retraite portés par Crédit Agricole Assurances (11,7 Mds€ d’encours retraite) et Amundi (1ᵉʳ acteur de l’épargne salariale avec + 100 Mds€ sous gestion : des dispositifs combinables, évolutifs, et des formules clé en main pour les Entreprises).'},
   {id:'pouvoir', d:'Boostez le pouvoir d’achat au quotidien, avec des avantages exonérés de charges sociales.', key:'pouvoirAchat', title:'Donner du pouvoir d’achat et du bien‑être', partner:'Worklife', icon:ICON.pouvoirAchat,
    b:['Améliorez le pouvoir d’achat au quotidien.','Renforcez le bien-être et l’engagement des équipes.','Profitez d’avantages exonérés de charges sociales.'],
@@ -451,6 +453,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 .fisc-row .fr-cap{font-size:.82rem;color:var(--ink);margin-top:5px}
 .fisc-row .fr-cap b{color:var(--green);font-weight:700}
 .fisc-legal{font-size:.74rem;color:var(--slate);margin-top:12px;line-height:1.45}
+.bas-k{display:inline-block;font-family:var(--fh);font-weight:700;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:#173a10;background:var(--lime);border-radius:20px;padding:3px 11px;margin-bottom:14px}
+.bas-conv[hidden]{display:none}
 
 
 /* V3 diagnostic : titre pleine largeur + vignettes réparties + partenaire sur la ligne de l'icône */
@@ -537,6 +541,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 .devis-cta .dc-alt:hover{opacity:1}
 @media(max-width:900px){.devis-cta{grid-template-columns:1fr;padding:24px 22px}.devis-cta .dc-act{align-items:stretch}.devis-cta .btn{justify-content:center}}
 </style>
+<script src="formules-amundi.js?v=20261008"></script>
 </head>
 <body>
 <header class="header">
@@ -708,15 +713,35 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
       <div class="rec-intro">
         <div class="block-head">
           <span class="bh-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.6 1 1 1 2h6c0-1 .3-1.4 1-2A6 6 0 0 0 12 3Z"/></svg></span>
-          <div><h2><b>3.</b> Nos solutions et vos avantages fiscaux</h2></div>
+          <div><h2><b>3.</b> Nos solutions</h2></div>
         </div>
         <p>En fonction de vos priorités, nous vous recommandons des solutions adaptées.</p>
       </div>
       <div id="rec-cards" class="rec-cards"></div>
     </div>
 
-    <!-- AVANTAGES FISCAUX — alimenté depuis « Avantages salariés : le guide de référence – Édition 2026 » -->
-    <div class="fisc-block" id="avantages-fiscaux">
+    <!-- BON À SAVOIR — Convergence si « Partager » et « Retraite » sont prioritaires (3 ou 4 étoiles),
+         sinon contenu par défaut : avantages fiscaux et sociaux (guide « Avantages salariés – Édition 2026 ») -->
+    <div class="fisc-block bas-block" id="bon-a-savoir">
+      <span class="bas-k">Bon à savoir</span>
+      <div class="bas-conv" id="basConv" hidden>
+        <div class="fisc-head">
+          <span class="fh-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.6 1 1.4 1 2.5h6c0-1.1.3-1.9 1-2.5A6 6 0 0 0 12 3Z"/></svg></span>
+          <div>
+            <h3>Vos deux priorités réunies dans une seule formule</h3>
+            <p>Vous souhaitez <b>partager la valeur</b> et <b>préparer la retraite</b> de vos salariés. La <b>formule Convergence</b> d’Amundi réunit un PEI (Plan d’Épargne Interentreprises) et un PER COL-I (Plan d’Épargne Retraite Collectif Interentreprises) : un seul contrat, un seul tarif, toutes les sources d’épargne (intéressement, participation, prime de partage de la valeur, abondement).</p>
+          </div>
+        </div>
+        <div class="fisc-hl">
+          <div class="hl"><b>199 € HT</b><span>par an pour les deux plans, jusqu’à 10 salariés</span></div>
+          <div class="hl"><b>+ 8 €</b><span>par an et par salarié à partir du 11ᵉ</span></div>
+          <div class="hl"><b>1 contrat</b><span>pour l’épargne et la retraite de vos salariés</span></div>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="openFormule('convergence')">En savoir plus sur la formule Convergence
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <p class="fisc-legal">Tarifs indicatifs et non contractuels (grille Amundi), à confirmer avec votre expert.</p>
+      </div>
+      <div id="avantages-fiscaux">
       <div class="fisc-head">
         <span class="fh-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10M10 21V6M16 21v-8M20 21V4"/><path d="M2 21h20"/></svg></span>
         <div>
@@ -734,6 +759,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
       <a class="btn btn-primary" href="avantages-fiscaux.html" style="margin-top:2px">Voir le détail des avantages fiscaux
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       <p class="fisc-legal">Exonérations de charges sociales et d’IR détaillées dispositif par dispositif sur la page dédiée. Montants indicatifs, à confirmer avec votre expert.</p>
+    </div>
     </div></div>
 
     <!-- PASSERELLE VERS LE DEVIS EN LIGNE (affichée selon l'effectif) -->
@@ -992,7 +1018,13 @@ function updateDevisCta(){
   const q=new URLSearchParams({eff:String(n)}); if(sol.length) q.set('sol',sol.join(','));
   document.getElementById('devisCtaBtn').href='devis.html?'+q.toString();
 }
-function refresh(){ updateRadar(); updateGain(); updateSolutions(); updateRecap(); updateDevisCta(); }
+/* Bon à savoir : Convergence si « Partager la valeur » et « Préparer la retraite » sont notées 3 ou 4 */
+function updateBonASavoir(){
+  const conv=(state.priorities.partageValeur||0)>=3 && (state.priorities.retraite||0)>=3;
+  const c=document.getElementById('basConv'), d=document.getElementById('avantages-fiscaux'); if(!c||!d) return;
+  c.hidden=!conv; d.hidden=conv;
+}
+function refresh(){ updateRadar(); updateGain(); updateSolutions(); updateRecap(); updateDevisCta(); updateBonASavoir(); }
 
 /* ---------- effectif ---------- */
 function onEffectif(){
@@ -1078,7 +1110,7 @@ function openSol(id){
   document.getElementById('smIc').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+s.icon+'</svg>';
   document.getElementById('smPartner').textContent=s.partner+(s.partner2?' · '+s.partner2:'');
   document.getElementById('smTitle').textContent=s.title;
-  document.getElementById('smBody').innerHTML=s.offers.map(function(o){return '<div class="sm-offer"><b>'+o.t+'</b><span>'+o.d+'</span></div>';}).join('')+'<p class="sm-note">'+s.note+'</p>';
+  document.getElementById('smBody').innerHTML=s.offers.map(function(o){return '<div class="sm-offer"><b>'+o.t+'</b><span>'+o.d+'</span></div>';}).join('')+(window.cartesFormules?cartesFormules(s.formules):'')+'<p class="sm-note">'+s.note+'</p>';
   var m=document.getElementById('solModal'); m.hidden=false; document.body.style.overflow='hidden';
   var c=m.querySelector('.sm-close'); if(c) c.focus();
   if(typeof track==='function') track('solution_modal_open',{solution_name:id});
