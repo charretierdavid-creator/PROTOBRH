@@ -599,6 +599,14 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 .dv-opt span small{display:block;color:var(--slate);font-size:.76rem;margin-top:2px}
 .dv-opt input:checked + span{border-color:var(--green);background:var(--mint-2);box-shadow:inset 0 0 0 1px var(--green)}
 .dv-opt input:focus-visible + span{outline:3px solid var(--lime);outline-offset:2px}
+.dv-forms{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.dv-forms .dv-opt span{height:100%;padding:.8rem 1rem;font-family:var(--fh);font-weight:600}
+.dv-forms .dv-opt span small{font-family:var(--fb);font-weight:400;line-height:1.4}
+.dv-more{display:inline-block;margin-top:8px;padding:0;border:none;background:none;font-family:var(--fh);font-weight:700;font-size:.78rem;color:var(--green);text-decoration:underline;cursor:pointer}
+.dv-tag{display:inline-block;font-style:normal;background:var(--lime);color:#173a10;font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em;border-radius:20px;padding:2px 8px;margin-bottom:5px}
+.dv-tag{display:table}
+.dv-note{display:none;margin-top:12px;font-size:.84rem;line-height:1.45;border-radius:10px;padding:10px 14px;background:#fff4d6;border-left:4px solid #e0a800}
+.dv-note.show{display:block}.dv-note.ok{display:block;background:var(--mint-2);border-left-color:var(--lime)}
 .dv-range{display:flex;align-items:center;gap:16px;max-width:560px}
 .dv-range input[type=range]{flex:1;accent-color:var(--green)}
 .dv-range output{min-width:110px;text-align:right;font-family:var(--fh);font-weight:700;color:var(--green)}
@@ -712,6 +720,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 @media(max-width:1320px){.header-in{gap:1rem}.nav{gap:0}.nav a{padding:.5rem .5rem;font-size:.88rem}.header .btn{padding:.75rem 1rem;font-size:.9rem}}
 
 </style>
+<script src="formules-amundi.js?v=20261008"></script>
 </head>
 <body>
 <header class="header">
@@ -864,11 +873,20 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 
       <!-- ÉPARGNE SALARIALE -->
       <div class="dv-panel" id="p-epargne" role="tabpanel">
-        <div class="dv-q"><span class="q-t">Dispositifs souhaités</span><p class="q-h">Plusieurs choix possibles.</p>
+        <div class="dv-q"><span class="q-t">Choisissez votre formule Amundi</span><p class="q-h">Une seule formule par entreprise. Vous pourrez en parler avec un expert avant de signer.</p>
+          <div class="dv-opts dv-forms">
+            <label class="dv-opt"><input type="radio" name="ep_form" value="decouverte"><span>Formule Découverte<small>PEI (Plan d'Épargne Interentreprises) 100 % en ligne · intéressement et abondement en option · dès 99 €/an</small><button type="button" class="dv-more" onclick="event.preventDefault();event.stopPropagation();openFormule('decouverte',{onChoose:k=>chooseForm('ep',k)})">En savoir plus</button></span></label>
+            <label class="dv-opt"><input type="radio" name="ep_form" value="integrale"><span>Formule Intégrale<small>PEI, intéressement et abondement · consultation des salariés gérée pour vous · dès 170 €/an</small><button type="button" class="dv-more" onclick="event.preventDefault();event.stopPropagation();openFormule('integrale_epargne',{onChoose:k=>chooseForm('ep',k)})">En savoir plus</button></span></label>
+            <label class="dv-opt dv-conv"><input type="radio" name="ep_form" value="convergence"><span><em class="dv-tag">Vos 2 besoins</em>Formule Convergence<small>PEI + PER COL-I (Plan d'Épargne Retraite Collectif Interentreprises) · un seul contrat · 199 € HT/an</small><button type="button" class="dv-more" onclick="event.preventDefault();event.stopPropagation();openFormule('convergence',{onChoose:k=>chooseForm('ep',k)})">En savoir plus</button></span></label>
+            <label class="dv-opt"><input type="radio" name="ep_form" value="nsp"><span>Je ne sais pas encore<small>un expert vous conseille</small></span></label>
+          </div>
+          <p class="dv-note" id="ep_conv_lost"></p>
+          <p class="dv-note ok" data-show="ep_form:convergence">Convergence couvre aussi la retraite : précisez l'abondement retraite dans l'onglet « Retraite collective ».</p></div>
+        <div class="dv-q" data-show="ep_form:decouverte,integrale,convergence,nsp"><span class="q-t">Dispositifs souhaités</span><p class="q-h">Plusieurs choix possibles. Seuls les dispositifs de votre formule sont proposés.</p>
           <div class="dv-opts">
-            <label class="dv-opt"><input type="checkbox" name="ep_disp" value="pee" checked><span>Plan d'épargne entreprise<small>avec abondement de l'employeur</small></span></label>
+            <label class="dv-opt"><input type="checkbox" name="ep_disp" value="pee" checked><span>PEI (Plan d'Épargne Interentreprises)<small>avec abondement de l'employeur</small></span></label>
             <label class="dv-opt"><input type="checkbox" name="ep_disp" value="int"><span>Intéressement<small>lié à vos résultats ou objectifs</small></span></label>
-            <label class="dv-opt"><input type="checkbox" name="ep_disp" value="part"><span>Participation<small>mise en place volontaire</small></span></label>
+            <label class="dv-opt" data-forms="integrale,convergence,nsp"><input type="checkbox" name="ep_disp" value="part"><span>Participation<small>mise en place volontaire</small></span></label>
             <label class="dv-opt"><input type="checkbox" name="ep_disp" value="ppv"><span>Prime de partage de la valeur<small>versement ponctuel</small></span></label>
           </div></div>
         <div class="dv-q" data-show="ep_disp:pee"><label for="ep_abd">Abondement annuel par salarié</label><p class="q-h">Somme que vous ajoutez aux versements de vos salariés.</p>
@@ -948,13 +966,22 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 
       <!-- RETRAITE COLLECTIVE -->
       <div class="dv-panel" id="p-retraite" role="tabpanel">
-        <div class="dv-q"><span class="q-t">Dispositif envisagé</span>
+        <div class="dv-q"><span class="q-t">Choisissez votre formule</span><p class="q-h">Formule Amundi ou retraite collective de Crédit Agricole Assurances.</p>
+          <div class="dv-opts dv-forms">
+            <label class="dv-opt"><input type="radio" name="rt_form" value="integrale"><span>Formule Intégrale — retraite<small>PER COL-I (Plan d'Épargne Retraite Collectif Interentreprises) seul · abondement fixe, variable ou de départ · dès 170 €/an</small><button type="button" class="dv-more" onclick="event.preventDefault();event.stopPropagation();openFormule('integrale_retraite',{onChoose:k=>chooseForm('rt',k)})">En savoir plus</button></span></label>
+            <label class="dv-opt"><input type="radio" name="rt_form" value="caa"><span>Retraite collective CAA<small>cotisation régulière de l'entreprise, rente à vie · Crédit Agricole Assurances · sur devis</small></span></label>
+            <label class="dv-opt dv-conv"><input type="radio" name="rt_form" value="convergence"><span><em class="dv-tag">Vos 2 besoins</em>Formule Convergence<small>PEI + PER COL-I · un seul contrat · 199 € HT/an</small><button type="button" class="dv-more" onclick="event.preventDefault();event.stopPropagation();openFormule('convergence',{onChoose:k=>chooseForm('rt',k)})">En savoir plus</button></span></label>
+            <label class="dv-opt"><input type="radio" name="rt_form" value="nsp"><span>Je ne sais pas encore<small>un expert vous conseille</small></span></label>
+          </div>
+          <p class="dv-note" id="rt_conv_lost"></p>
+          <p class="dv-note ok" data-show="rt_form:convergence">Convergence est commune aux onglets « Épargne salariale » et « Retraite collective » : elle n'est configurée qu'une fois. Il reste à préciser l'abondement retraite ci-dessous.</p></div>
+        <div class="dv-q" hidden><span class="q-t">Dispositif envisagé</span>
           <div class="dv-opts">
             <label class="dv-opt"><input type="radio" name="rt_disp" value="percol" checked><span>Plan d'épargne retraite collectif<small>versements libres + abondement</small></span></label>
             <label class="dv-opt"><input type="radio" name="rt_disp" value="pero"><span>Plan d'épargne retraite obligatoire<small>cotisation régulière de l'employeur</small></span></label>
             <label class="dv-opt"><input type="radio" name="rt_disp" value="nsp"><span>Je ne sais pas encore<small>un expert vous conseille</small></span></label>
           </div></div>
-        <div class="dv-q" data-show="rt_disp:percol,pero"><span class="q-t">Salariés bénéficiaires</span>
+        <div class="dv-q" data-show="rt_disp:pero"><span class="q-t">Salariés bénéficiaires</span>
           <div class="dv-opts">
             <label class="dv-opt"><input type="radio" name="rt_pop" value="tous" checked><span>Tous les salariés</span></label>
             <label class="dv-opt"><input type="radio" name="rt_pop" value="cadres"><span>Cadres uniquement</span></label>
@@ -1184,7 +1211,7 @@ function save(){ try{
     if(!el.id && !el.name) return;
     if(el.type==='checkbox'||el.type==='radio'){ if(el.name) { f['@'+el.name+'='+el.value]=el.checked; } else f[el.id]=el.checked; }
     else f[el.id]=el.value; });
-  sessionStorage.setItem('brhDevis', JSON.stringify({S:{step:S.step,maxStep:S.maxStep,sol:S.sol,ent:S.ent,entSrc:S.entSrc,tab:S.tab,done:S.done},f}));
+  sessionStorage.setItem('brhDevis', JSON.stringify({S:{step:S.step,maxStep:S.maxStep,sol:S.sol,ent:S.ent,entSrc:S.entSrc,tab:S.tab,done:S.done,fi:S.fi},f}));
 }catch(e){} }
 function restore(){ try{
   const raw=sessionStorage.getItem('brhDevis'); if(!raw) return false; const o=JSON.parse(raw);
@@ -1367,12 +1394,58 @@ function renderTabs(){
   const idc=$('sp_idcc_info'); if(idc) idc.textContent = S.ent && S.ent.idcc ? 'Convention collective retenue : '+S.ent.idcc+' (à confirmer avec votre expert).' : 'Précisez votre convention collective à l’étape 2 : elle détermine les garanties minimales de prévoyance.';
 }
 function openTab(k){ S.tab=k; renderTabs(); save(); }
-function applyShow(){ document.querySelectorAll('#devis [data-show]').forEach(el=>{ const [n,v]=el.dataset.show.split(':'); const sel=vals(n).concat(val(n)?[val(n)]:[]); el.style.display = v.split(',').some(x=>sel.includes(x)) ? '' : 'none'; }); }
+function applyShow(){ syncFormules(); document.querySelectorAll('#devis [data-show]').forEach(el=>{ const [n,v]=el.dataset.show.split(':'); const sel=vals(n).concat(val(n)?[val(n)]:[]); el.style.display = v.split(',').some(x=>sel.includes(x)) ? '' : 'none'; }); }
 function panelOk(k){ return !!S.done[k] && validatePanel(k); }
+
+/* ---------- Formules Amundi (formules-amundi.js) ----------
+   Convergence n'existe que si Épargne ET Retraite sont choisies ; elle est commune aux 2 onglets
+   et ne se configure qu'une fois. rt_disp (percol / pero / nsp) est déduit de la formule retraite. */
+const RT_DISP_DE = {integrale:'percol', convergence:'percol', caa:'pero', nsp:'nsp'};
+function setRadio(n,v){ document.querySelectorAll('#devis input[name="'+n+'"]').forEach(el=>el.checked=(el.value===v)); }
+function deuxBesoins(){ return S.sol.includes('epargne') && S.sol.includes('retraite'); }
+function syncFormules(changed){
+  const both=deuxBesoins();
+  document.querySelectorAll('#devis .dv-conv').forEach(el=>el.style.display=both?'':'none');
+  let ef=val('ep_form'), rf=val('rt_form');
+  if(!S.fi && S.step===4){ S.fi=true;   /* formule pré-sélectionnée selon les besoins */
+    if(both){ ef=ef||'convergence'; rf=rf||'convergence'; } else { ef=ef||'decouverte'; rf=rf||'integrale'; }
+    setRadio('ep_form',ef); setRadio('rt_form',rf); }
+  if(changed==='ep_form' && ef==='convergence') { rf='convergence'; setRadio('rt_form',rf); }
+  if(changed==='rt_form' && rf==='convergence') { ef='convergence'; setRadio('ep_form',ef); }
+  if(changed==='ep_form' && ef!=='convergence' && rf==='convergence') { rf=null; setRadio('rt_form',null); }
+  if(changed==='rt_form' && rf!=='convergence' && ef==='convergence') { ef=null; setRadio('ep_form',null); }
+  const lost='La formule Convergence n’est disponible que si vous choisissez à la fois l’épargne salariale et la retraite collective. Choisissez une autre formule.';
+  if(!both && ef==='convergence'){ ef=null; setRadio('ep_form',null); $('ep_conv_lost').textContent=lost; $('ep_conv_lost').classList.add('show'); }
+  if(!both && rf==='convergence'){ rf=null; setRadio('rt_form',null); $('rt_conv_lost').textContent=lost; $('rt_conv_lost').classList.add('show'); }
+  if(ef) $('ep_conv_lost').classList.remove('show'); if(rf) $('rt_conv_lost').classList.remove('show');
+  /* dispositifs proposés selon la formule épargne */
+  document.querySelectorAll('#p-epargne [data-forms]').forEach(el=>{ const ok=!ef || el.dataset.forms.split(',').includes(ef);
+    el.style.display=ok?'':'none'; if(!ok) el.querySelector('input').checked=false; });
+  setRadio('rt_disp', RT_DISP_DE[rf]||null);
+}
+function chooseForm(tab,k){
+  const map={decouverte:['ep','decouverte'], integrale_epargne:['ep','integrale'], integrale_retraite:['rt','integrale'], convergence:[tab,'convergence']};
+  const m=map[k]; if(!m) return; if(k==='convergence' && !deuxBesoins()) return;
+  const n=m[0]+'_form'; setRadio(n,m[1]); syncFormules(n); applyShow(); updOutputs(); renderTabsState(); save();
+}
+/* frais annuels de la formule Amundi, rattachés à l'onglet qui porte la formule */
+function fraisAmundi(h){
+  const F=window.fraisFormuleAmundi, ef=S.sol.includes('epargne')?val('ep_form'):null, rf=S.sol.includes('retraite')?val('rt_form'):null, r={};
+  if(!F) return r;
+  const d=vals('ep_disp'), ops=d.filter(x=>x==='int'||x==='part'||x==='ppv').length, nom=k=>window.FORMULES_AMUNDI[k].nom;
+  const lib=(k,f)=>'Frais de la '+nom(k).replace('Formule','formule')+' : '+eur(f.montant)+(f.ht?' HT':'')+' / an ('+f.detail+')';
+  if(ef==='convergence'){ const f=F('convergence',{n:h.N}); r.epargne={formule:'convergence', frais:f, hyp:lib('convergence',f)}; r.retraite={formule:'convergence', frais:null, hyp:'Frais compris dans la formule Convergence (onglet Épargne salariale)'}; return r; }
+  if(ef==='integrale' && rf==='integrale'){ const f=F('integrale_deux',{n:h.N, ops, nRet:h.N}); r.epargne={formule:'integrale', frais:f, hyp:lib('integrale_epargne',f).replace('formule Intégrale','formule Intégrale (PEI + PER COL-I)')}; r.retraite={formule:'integrale', frais:null, hyp:'Frais compris dans la formule Intégrale (onglet Épargne salariale)'}; return r; }
+  if(ef==='decouverte'){ const f=F('decouverte',{n:h.N, ops:d.filter(x=>x==='int'||x==='ppv').length}); r.epargne={formule:'decouverte', frais:f, hyp:lib('decouverte',f)}; }
+  if(ef==='integrale'){ const f=F('integrale_epargne',{n:h.N, ops}); r.epargne={formule:'integrale', frais:f, hyp:lib('integrale_epargne',f)}; }
+  if(rf==='integrale'){ const f=F('integrale_retraite',{n:h.N}); r.retraite={formule:'integrale', frais:f, hyp:lib('integrale_retraite',f)}; }
+  if(rf==='caa') r.retraite={formule:'caa', frais:null, hyp:'Retraite collective Crédit Agricole Assurances : tarif sur devis'};
+  return r;
+}
 function validatePanel(k){
-  if(k==='epargne') return vals('ep_disp').length>0;
+  if(k==='epargne') return !!val('ep_form') && (val('ep_form')==='nsp' || vals('ep_disp').length>0);
   if(k==='sante') return vals('sp_cov').length>0;
-  if(k==='retraite') return !!val('rt_disp');
+  if(k==='retraite') return !!val('rt_form');
   if(k==='avantages') return vals('av_type').length>0;
   return true;
 }
@@ -1397,7 +1470,7 @@ function compute(){
   if(S.sol.includes('epargne')){
     const d=vals('ep_disp'), a=d.includes('pee')?+$('ep_abd').value:0, i=(d.includes('int')||d.includes('part'))?+$('ep_int').value:0, p=d.includes('ppv')?+$('ep_ppv').value:0;
     const brut=a+i+p, cout=h.N*brut*(1+C.FORFAIT_SOCIAL_EPARGNE), net=(a+i)*(1-C.CSG_CRDS)+p;
-    const lbl={pee:'Plan d’épargne entreprise',int:'Intéressement',part:'Participation',ppv:'Prime de partage de la valeur'};
+    const lbl={pee:'PEI (Plan d’Épargne Interentreprises)',int:'Intéressement',part:'Participation',ppv:'Prime de partage de la valeur'};
     out.epargne={cout, netSal:net, benef:h.N, equiv:net*h.N*C.COUT_SALAIRE_PAR_EURO_NET,
       hyp:[d.map(x=>lbl[x]).join(', '), (a?'Abondement '+eur(a):'')+(i?(a?' · ':'')+'Intéressement / participation '+eur(i):'')+(p?' · Prime '+eur(p):'')+' par salarié et par an', h.N+' bénéficiaires', 'Sans forfait social pour votre taille d’entreprise ; CSG-CRDS à la charge du salarié'].filter(Boolean),
       resume:d.map(x=>lbl[x]).join(', ')};
@@ -1422,10 +1495,10 @@ function compute(){
     out.sante={cout, netSal, benef:h.N, equiv:0, hyp, resume:resume.join(' + ')};
   }
   if(S.sol.includes('retraite')){
-    const d=val('rt_disp'), pop=val('rt_pop')||'tous', B=pop==='cadres'?h.cadres:h.N;
+    const d=val('rt_disp'), pop=(d==='pero'&&val('rt_pop'))||'tous', B=pop==='cadres'?h.cadres:h.N;
     if(d==='nsp'){ out.retraite={cout:null, netSal:null, benef:B, equiv:0, hyp:['Dispositif à définir avec un expert'], resume:'Dispositif à définir'}; }
     else if(d==='percol'){ const a=+$('rt_abd').value, cout=a*B*(1+C.FORFAIT_SOCIAL_PERCOL), net=a*(1-C.CSG_CRDS);
-      out.retraite={cout, netSal:net, benef:B, equiv:net*B*C.COUT_SALAIRE_PAR_EURO_NET, hyp:['Plan d’épargne retraite collectif','Abondement '+eur(a)+' par salarié et par an', B+' bénéficiaires', 'Gestion '+(val('rt_gest')==='libre'?'libre':'pilotée')], resume:'PER collectif — abondement '+eur(a)}; }
+      out.retraite={cout, netSal:net, benef:B, equiv:net*B*C.COUT_SALAIRE_PAR_EURO_NET, hyp:['PER COL-I (Plan d’Épargne Retraite Collectif Interentreprises)','Abondement '+eur(a)+' par salarié et par an', B+' bénéficiaires', 'Gestion '+(val('rt_gest')==='libre'?'libre':'pilotée')], resume:'PER COL-I — abondement '+eur(a)}; }
     else { const t=+$('rt_taux').value/100, base=t*h.sal, cout=base*B*(1+C.FORFAIT_SOCIAL_PERO), net=base*(1-C.CSG_CRDS);
       out.retraite={cout, netSal:net, benef:B, equiv:net*B*C.COUT_SALAIRE_PAR_EURO_NET, hyp:['Plan d’épargne retraite obligatoire', 'Cotisation employeur '+(t*100).toFixed(1).replace('.',',')+' % du salaire brut', B+' bénéficiaires ('+(pop==='cadres'?'cadres':'tous les salariés')+')', 'Forfait social de '+Math.round(C.FORFAIT_SOCIAL_PERO*100)+' % inclus (à confirmer)'], resume:'PER obligatoire — '+(t*100).toFixed(1).replace('.',',')+' %'}; }
     if(out.retraite && B===0){ out.retraite.hyp.unshift('Aucun cadre déclaré à l’étape 3'); }
@@ -1439,6 +1512,10 @@ function compute(){
     if(t.includes('cad')){ const a=+$('av_cad').value; cout+=a*h.N; net+=a; hyp.push('Cartes cadeaux '+eur(a)+' / salarié / an'); resume.push('Cartes cadeaux'); }
     out.avantages={cout, netSal:net, benef:h.N, equiv:net*h.N*C.COUT_SALAIRE_PAR_EURO_NET, hyp, resume:resume.join(', ')};
   }
+  const fa=fraisAmundi(h), FN={decouverte:'Formule Découverte', integrale:'Formule Intégrale', convergence:'Formule Convergence', caa:'Retraite collective CAA'};
+  ['epargne','retraite'].forEach(k=>{ const r=out[k], x=fa[k]; if(!r||!x) return;
+    r.formule=x.formule; r.hyp.unshift(x.hyp); r.resume=FN[x.formule]+(r.resume?' — '+r.resume:'');
+    if(x.frais){ r.frais=Math.round(x.frais.montant); if(r.cout!=null) r.cout+=x.frais.montant; } });
   S.est=out; return out;
 }
 
@@ -1496,7 +1573,7 @@ async function submitDevis(){
     entreprise:{siret:S.ent.siret, raison_sociale:S.ent.nom, ville:S.ent.ville, code_postal:S.ent.cp, naf:S.ent.naf, idcc:S.ent.idcc, effectif:S.ent.effectif, source_donnees:S.entSrc},
     contact:{prenom:$('c-prenom').value.trim(), nom:$('c-nom').value.trim(), fonction:$('c-fct').value, telephone:$('c-tel').value.trim(), email:$('c-email').value.trim(), rappel_expert:$('c-rappel').checked, consentement:true, consentement_date:new Date().toISOString()},
     rh:{salaries_concernes:h.N, cadres:h.cadres, non_cadres:h.noncadres, tranche_salaire:$('h-sal').value, etablissements:+$('h-etab').value||1, anciennete_mois:+$('h-anc').value},
-    panier:S.sol.map(k=>({solution:k, libelle:DV_SOL[k].title, statut:STATUT_LBL[DV_SOL[k].statut], hypotheses:o[k].hyp, cout_employeur_annuel:o[k].cout==null?null:Math.round(o[k].cout), gain_net_salarie:o[k].netSal==null?null:Math.round(o[k].netSal)})),
+    panier:S.sol.map(k=>({solution:k, libelle:DV_SOL[k].title, formule:o[k].formule||null, frais_formule_annuels:o[k].frais||null, statut:STATUT_LBL[DV_SOL[k].statut], hypotheses:o[k].hyp, cout_employeur_annuel:o[k].cout==null?null:Math.round(o[k].cout), gain_net_salarie:o[k].netSal==null?null:Math.round(o[k].netSal)})),
     estimation_totale:Math.round(tot), routage:{departement:S.ent.cp.slice(0,2), caisse_regionale:'à déterminer (table code postal → Caisse régionale)'},
     scoring:score(tot) };
   if(DEVIS_CONFIG.LEAD_ENDPOINT){ try{ await fetch(DEVIS_CONFIG.LEAD_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(lead)}); }catch(err){} }
@@ -1535,7 +1612,7 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeExpert(); });
 function toggleMenu(){ const m=$('mobileMenu'),b=document.querySelector('.burger'); const o=m.classList.toggle('open'); b.setAttribute('aria-expanded',o); }
 function closeMenu(){ $('mobileMenu').classList.remove('open'); const b=document.querySelector('.burger'); if(b) b.setAttribute('aria-expanded','false'); }
 document.addEventListener('input',e=>{ if(!e.target.closest('#devis')) return; if(e.target.id==='e-eff') $('dvRoute').classList.remove('show'); if(e.target.id==='h-couv'||e.target.id==='h-cad') updNonCad(); if(S.step===4){ applyShow(); updOutputs(); renderTabsState(); } save(); });
-document.addEventListener('change',e=>{ if(!e.target.closest('#devis')) return; if(S.step===4){ applyShow(); updOutputs(); renderTabsState(); } save(); });
+document.addEventListener('change',e=>{ if(!e.target.closest('#devis')) return; if(S.step===4){ if(/^(ep|rt)_form$/.test(e.target.name)) syncFormules(e.target.name); applyShow(); updOutputs(); renderTabsState(); } save(); });
 function renderTabsState(){ document.querySelectorAll('#dvTabs .dv-tab').forEach((t,i)=>t.classList.toggle('done',panelOk(S.sol[i]))); }
 (function init(){
   const had=restore();
@@ -1543,6 +1620,8 @@ function renderTabsState(){ document.querySelectorAll('#dvTabs .dv-tab').forEach
   const qp=new URLSearchParams(location.search);
   if(!had && qp.get('sol')) S.sol=qp.get('sol').split(',').filter(k=>DV_ORDER.includes(k));
   if(!had && qp.get('eff')) S.prefEff=parseInt(qp.get('eff'),10)||null;
+  const qf=qp.get('formule'), QF={decouverte:[['ep_form','decouverte']], integrale_epargne:[['ep_form','integrale']], integrale_retraite:[['rt_form','integrale']], convergence:[['ep_form','convergence'],['rt_form','convergence']]};
+  if(!had && QF[qf]) QF[qf].forEach(x=>setRadio(x[0],x[1]));
   renderChoices();
   if(had && S.ent){ const eff=S.ent.effectif; fillEntreprise(Object.assign({},S.ent,S.entSrc||{}),true); S.ent.effectif=eff; $('e-eff').value=eff||''; }
   const n = had ? Math.min(S.step, S.maxStep) : 1;

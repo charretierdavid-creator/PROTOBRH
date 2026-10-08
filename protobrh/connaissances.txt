@@ -746,3 +746,62 @@ expert BRH pour étudier votre situation.”
 
 SOURCE Document : Banque des Ressources Humaines du Crédit Agricole — «
 Avantages salariés : le guide de référence » — Édition 2026.
+
+============================================================ 32.
+FORMULES AMUNDI POUR LES ENTREPRISES (offre « ESR Entreprises »)
+============================================================
+Amundi propose aux entreprises 3 formules clés en main d'épargne salariale
+et de retraite, distribuées par les Caisses régionales du Crédit Agricole.
+Une entreprise ne souscrit qu'une seule formule Amundi. Frais facturés une
+fois par an à l'entreprise, à terme échu. Frais d'entrée : 2 % des sommes
+versées, par plan et par opération. Montants indicatifs et non contractuels
+(grille Amundi), à confirmer avec un expert BRH.
+
+FORMULE DÉCOUVERTE — pour partager la valeur simplement
+- Un PEI (Plan d'Épargne Interentreprises), 100 % en ligne.
+- Les salariés y placent leurs primes (dont la prime de partage de la
+  valeur) et leurs versements personnels.
+- En option : intéressement et abondement (complément versé par l'entreprise).
+- Coût : 99 € par an + 4 € par an et par salarié qui a de l'épargne + 49 €
+  chaque fois que les salariés sont consultés sur le placement d'une prime.
+- Exemple : 8 salariés et une prime par an -> 99 + 8 × 4 + 49 = 180 € par an.
+
+FORMULE INTÉGRALE — clé en main, pour l'épargne, la retraite ou les deux
+- Focus épargne : un PEI (Plan d'Épargne Interentreprises) avec intéressement,
+  participation, prime de partage de la valeur et abondement à taux fixe ou
+  variable. Amundi consulte chaque salarié (bulletin d'options) pour savoir
+  s'il touche sa prime ou l'épargne, et où la placer.
+- Focus retraite : un PER COL-I (Plan d'Épargne Retraite Collectif
+  Interentreprises) seul, avec abondement fixe, variable ou versement de
+  départ offert par l'entreprise ; les jours de congé ou de repos non pris
+  peuvent y être placés ; gestion pilotée par défaut (épargne sécurisée
+  progressivement à l'approche de la retraite).
+- Accompagnement et conseil de l'entreprise.
+- Coût : 170 € par an pour un plan (199 € pour le PEI et le PER COL-I)
+  + 8 € par an et par salarié qui a de l'épargne + 2 € par consultation d'un
+  salarié + 2 € par relevé de placement.
+- Exemple : 20 salariés, une prime d'intéressement par an ->
+  170 + 20 × 8 + 20 × 2 + 20 × 2 = 410 € par an.
+
+FORMULE CONVERGENCE — partager la valeur ET préparer la retraite
+- Les deux plans ensemble : un PEI et un PER COL-I, un seul contrat.
+- Toutes les sources d'épargne : versements personnels, intéressement,
+  participation, prime de partage de la valeur, jours non pris (retraite).
+- Abondement à taux fixe, réglable différemment pour chaque plan.
+- L'entreprise recueille elle-même les choix de placement de ses salariés.
+- Coût : 199 € HT par an + 8 € par an et par salarié à partir du 11ᵉ ;
+  consultations et relevés de placement inclus.
+- Exemple : 25 salariés -> 199 + 15 × 8 = 319 € HT par an.
+
+RETRAITE COLLECTIVE DE CRÉDIT AGRICOLE ASSURANCES
+- Alternative ou complément aux formules Amundi pour la retraite : plan
+  d'épargne retraite obligatoire (cotisation régulière de l'entreprise,
+  rente à vie). Tarif sur devis de Crédit Agricole Assurances.
+
+OÙ LES TROUVER SUR LE PORTAIL
+- Rubrique Solutions (« Partager la valeur », « Préparer la retraite ») :
+  bouton « En savoir plus » de chaque formule.
+- Diagnostic : bloc « Bon à savoir » (formule Convergence si les priorités
+  « Partager la valeur » et « Préparer la retraite » sont notées 3 ou 4).
+- Devis en ligne, étape 4 : choix de la formule dans les onglets
+  « Épargne salariale » et « Retraite collective ».
