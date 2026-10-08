@@ -15,7 +15,7 @@ var IC = {
 
 var FORMULES = {
   decouverte:{
-    nom:'Formule Découverte', bandeau:'Amundi · Partager la valeur', icon:IC.epargne, sol:'epargne',
+    nom:'Formule Découverte', bandeau:'Amundi · CA Titres · Partager la valeur', icon:IC.epargne, sol:'epargne',
     accroche:'Un PEI (Plan d’Épargne Interentreprises) 100 % en ligne. Intéressement et abondement en option.',
     prix:'dès 99 €/an',
     qui:'Les petites entreprises qui veulent un premier dispositif d’épargne pour leurs salariés, simple et sans paperasse.',
@@ -28,7 +28,7 @@ var FORMULES = {
     calcul:'Exemple Martin : 99 + 8 × 4 + 49 = 180 € pour l’année.'
   },
   integrale_epargne:{
-    nom:'Formule Intégrale', bandeau:'Amundi · Partager la valeur', icon:IC.epargne, sol:'epargne',
+    nom:'Formule Intégrale', bandeau:'Amundi · CA Titres · Partager la valeur', icon:IC.epargne, sol:'epargne',
     accroche:'PEI, intéressement et abondement, avec la consultation de chaque salarié gérée pour vous.',
     prix:'dès 170 €/an',
     qui:'Les entreprises qui veulent un dispositif complet pour récompenser leurs salariés, sans rien gérer elles-mêmes.',
@@ -54,7 +54,7 @@ var FORMULES = {
     calcul:'Exemple Petit : 170 + 12 × 8 + 12 × 2 + 12 × 2 = 314 € pour l’année.'
   },
   convergence:{
-    nom:'Formule Convergence', bandeau:'Amundi · Partager la valeur et préparer la retraite', icon:IC.deux, sol:'epargne,retraite',
+    nom:'Formule Convergence', bandeau:'Amundi · CA Titres · Partager la valeur et préparer la retraite', icon:IC.deux, sol:'epargne,retraite',
     accroche:'PEI + PER COL-I réunis : un seul contrat, un seul tarif.',
     prix:'199 € HT/an',
     qui:'Les entreprises qui veulent à la fois partager la valeur et préparer la retraite de leurs salariés.',
