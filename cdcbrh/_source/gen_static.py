@@ -36,7 +36,7 @@ for x, code in zip(G['ebs'], ['É22','É06','É07','É20','É15','É22']):
 
 steps_html = ''.join(f'<div class="step"><h3>{e(LAB[s])}</h3><div class="chips">' + ''.join(f'<a class="chip{" v2" if BY[c]["statut"]=="V2" else ""}" href="#{aid(c)}">{c}</a>' for c in STEP_PAGES[s]) + '</div></div>' for s in STEP_ORDER)
 
-toc = ''.join(f'<h4>{e(g)}</h4>' + ''.join(f'<a href="#{aid(c)}" data-code="{c}"><b>{c}</b><span>{e(BY[c]["title"])}</span><i class="cc" data-cc="{c}"></i></a>' for c in cs) for g, cs in GROUPS) + '<h4>Données</h4><a href="#crm"><b>CRM</b><span>Tableau des data outputs</span></a>'
+toc = ''.join(f'<h4>{e(g)}</h4>' + ''.join(f'<a href="#{aid(c)}" data-code="{c}"><b>{c}</b><span>{e(BY[c]["title"])}</span><i class="cc" data-cc="{c}"></i></a>' for c in cs) for g, cs in GROUPS) + '<h4>Données</h4><a href="#crm"><b>DATA</b><span>Tableau des data outputs</span></a>'
 
 # ---- pages
 pages_html = []
@@ -46,12 +46,12 @@ for i, code in enumerate(ORDER):
     rel = ''.join(f'<div class="rel"><span>Dans le parcours : <b>{e(LAB[s])}</b></span>' + ''.join(f'<a class="chip{" cur" if c==code else ""}" href="#{aid(c)}">{c} · {e(BY[c]["title"].split(" — ")[-1])}</a>' for c in STEP_PAGES[s]) + '</div>' for s in steps)
     tile = 'proc' if p.get('process') else ('v2' if p['statut'] == 'V2' else '')
     if p.get('imgs'):
-        figs = ''.join(f'<figure><img src="{IM[imn]}" alt="Capture de l\'écran {code}" loading="lazy" data-zoom><figcaption>{"Capture du prototype (support 15C)" if imn in ("contact","chatbot") else "Capture du prototype, version tablette du 29/09/2026"}{" — vue " + str(k+1) if len(p["imgs"])>1 else ""}</figcaption></figure>' for k, imn in enumerate(p['imgs']))
+        figs = ''.join(f'<figure><img src="{IM[imn]}" alt="Capture de l\'écran {code}" loading="lazy" data-zoom><figcaption>Capture du prototype du 14/10/2026 (V1.0.3){" — vue " + str(k+1) if len(p["imgs"])>1 else ""}</figcaption></figure>' for k, imn in enumerate(p['imgs']))
     else:
         figs = f'<div class="noimg"><b>{"Processus back-office" if p.get("process") else "Écran à maquetter"}</b><br>Pas d\'écran côté dirigeant</div>'
     reqs = ''.join(f'<tr><td>{k+1:02d}</td><td>{e(r[0])}</td><td><span class="prio {r[1]}">{PRIO[r[1]]}</span></td></tr>' for k, r in enumerate(p['reqs']))
     rules = ''.join(f'<li>{e(r)}</li>' for r in p['rules'])
-    data = ''.join(f'<a class="dchip" href="#d-{d}" title="Voir dans le Focus CRM"><b>{d}</b>{e(DNAME.get(d, ""))}</a>' for d in p.get('data', []))
+    data = ''.join(f'<a class="dchip" href="#d-{d}" title="Voir dans Data"><b>{d}</b>{e(DNAME.get(d, ""))}</a>' for d in p.get('data', []))
     kpi = ('<h3>Indicateurs</h3><ul class="rules">' + ''.join(f'<li>{e(k)}</li>' for k in p['kpi']) + '</ul>') if p.get('kpi') else ''
     alert = f'<p class="alert"><b>Point d\'attention.</b> {e(p["alert"])}</p>' if p.get('alert') else ''
     prev = f'<a class="btn" href="#{aid(ORDER[i-1])}">Page précédente · {ORDER[i-1]}</a>' if i > 0 else '<span></span>'

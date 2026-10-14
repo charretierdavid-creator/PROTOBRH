@@ -52,7 +52,7 @@ Si une demande ne touche qu'un des deux sites, le dire explicitement dans le ré
 - **Pages du cahier des charges** : codes `É01` à `É26` (écrans), `P1`, `P2` (processus back-office), `H` (Assistant BRH).
   Une nouvelle page d'écran prend le code suivant libre (`É27`…) et doit être reliée à une étape du parcours.
 - **Priorités** : `MVP`, `V2`, `ARB` (à arbitrer).
-- **Données produites** : identifiants `D01`… `D92` ; une nouvelle donnée prend le code suivant libre et s'ajoute au
+- **Données produites** : identifiants `D01`… `D103` ; une nouvelle donnée prend le code suivant libre et s'ajoute au
   dictionnaire (`data` dans `app_data.json`) avec écran, nature (P, E, C, T) et exemple.
 - **Technique** : fichiers HTML/CSS/JS autonomes, sans framework ; images intégrées quand c'est possible.
 - **Accès protégé** : les deux sites passent par `acces.php` (même modèle que Diagnostic Conseil BRH :
