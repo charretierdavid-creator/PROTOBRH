@@ -26,6 +26,9 @@ Une évolution n'est terminée que si les **trois** éléments suivants sont liv
 2. **Le cahier des charges** est mis à jour : modifier `cdcbrh/_source/app_data.json` (page de l'écran concerné :
    exigences, règles de gestion, données produites), puis régénérer avec `python3 cdcbrh/_source/gen_static.py`.
    Ne jamais modifier `cdcbrh/index.html` à la main.
+   Si l'évolution change le parcours (nouvelle étape ou nouveau module), mettre à jour le schéma avec
+   `python3 cdcbrh/_source/gen_map.py` : les étapes du chemin critique restent sur la courbe ; les modules
+   complémentaires (ressources, assistant, audit mutuelle…) vont dans la liste `ADDONS`, sous le parcours principal.
 3. **Le journal** `cdcbrh/journal.json` reçoit une nouvelle entrée **en tête de liste** :
 
 ```json
@@ -52,7 +55,7 @@ Si une demande ne touche qu'un des deux sites, le dire explicitement dans le ré
 - **Pages du cahier des charges** : codes `É01` à `É26` (écrans), `P1`, `P2` (processus back-office), `H` (Assistant BRH).
   Une nouvelle page d'écran prend le code suivant libre (`É27`…) et doit être reliée à une étape du parcours.
 - **Priorités** : `MVP`, `V2`, `ARB` (à arbitrer).
-- **Données produites** : identifiants `D01`… `D92` ; une nouvelle donnée prend le code suivant libre et s'ajoute au
+- **Données produites** : identifiants `D01`… `D103` ; une nouvelle donnée prend le code suivant libre et s'ajoute au
   dictionnaire (`data` dans `app_data.json`) avec écran, nature (P, E, C, T) et exemple.
 - **Technique** : fichiers HTML/CSS/JS autonomes, sans framework ; images intégrées quand c'est possible.
 - **Accès protégé** : les deux sites passent par `acces.php` (même modèle que Diagnostic Conseil BRH :

@@ -1,0 +1,185 @@
+{
+ "maph": 800,
+ "cards": [
+  {
+   "x": 37,
+   "y": 446,
+   "w": 150,
+   "h": 75.171875,
+   "b": "Acquisition"
+  },
+  {
+   "x": 140,
+   "y": 251,
+   "w": 150,
+   "h": 75.421875,
+   "b": "1.1 Accueil portail 360°"
+  },
+  {
+   "x": 245,
+   "y": 356,
+   "w": 150,
+   "h": 91.34375,
+   "b": "1.2 Explore les 4 besoins RH"
+  },
+  {
+   "x": 470,
+   "y": 386,
+   "w": 150,
+   "h": 91.34375,
+   "b": "2.1 Décrit son entreprise"
+  },
+  {
+   "x": 585,
+   "y": 299,
+   "w": 150,
+   "h": 76.59375,
+   "b": "2.2 Note ses priorités RH"
+  },
+  {
+   "x": 705,
+   "y": 376,
+   "w": 150,
+   "h": 75.421875,
+   "b": "2.3 Se compare"
+  },
+  {
+   "x": 830,
+   "y": 181,
+   "w": 150,
+   "h": 75.421875,
+   "b": "3.1 Gain fiscal annuel"
+  },
+  {
+   "x": 950,
+   "y": 326,
+   "w": 150,
+   "h": 76.59375,
+   "b": "3.2 Pouvoir d'achat / salarié"
+  },
+  {
+   "x": 1065,
+   "y": 240,
+   "w": 150,
+   "h": 60.671875,
+   "b": "4.1 Solutions priorisées"
+  },
+  {
+   "x": 1310,
+   "y": 206,
+   "w": 150,
+   "h": 75.421875,
+   "b": "5.1 Choisit ses solutions"
+  },
+  {
+   "x": 1425,
+   "y": 321,
+   "w": 150,
+   "h": 91.34375,
+   "b": "5.2 Identifie son entreprise"
+  },
+  {
+   "x": 1540,
+   "y": 191,
+   "w": 150,
+   "h": 75.421875,
+   "b": "5.3 Configure et estime"
+  },
+  {
+   "x": 1715,
+   "y": 191,
+   "w": 150,
+   "h": 75.421875,
+   "b": "6.1 Reçoit son devis"
+  },
+  {
+   "x": 1215,
+   "y": 441,
+   "w": 150,
+   "h": 76.59375,
+   "b": "4.2 Transmet ses coordonnées"
+  },
+  {
+   "x": 1405,
+   "y": 466,
+   "w": 150,
+   "h": 75.421875,
+   "b": "Lead qualifié"
+  },
+  {
+   "x": 1715,
+   "y": 454,
+   "w": 150,
+   "h": 91.34375,
+   "b": "Rappel expert BRH de la CR"
+  },
+  {
+   "x": 202,
+   "y": 586,
+   "w": 300,
+   "h": 92,
+   "b": "Ressources & newsletter",
+   "sid": "R"
+  },
+  {
+   "x": 521,
+   "y": 586,
+   "w": 341,
+   "h": 92,
+   "b": "Assistant BRH",
+   "sid": "AS"
+  },
+  {
+   "x": 886,
+   "y": 586,
+   "w": 451,
+   "h": 92,
+   "b": "Audit mutuelle et prévoyance",
+   "sid": "AM"
+  }
+ ],
+ "ebs": [
+  {
+   "x": 202,
+   "y": 718,
+   "w": 295,
+   "h": 64,
+   "text": "« Parler à un expert » sur chaque écran"
+  },
+  {
+   "x": 521,
+   "y": 718,
+   "w": 341,
+   "h": 64,
+   "text": "Aide pour qualifier vos priorités"
+  },
+  {
+   "x": 886,
+   "y": 718,
+   "w": 216,
+   "h": 64,
+   "text": "Lecture et validation de vos gains"
+  },
+  {
+   "x": 1126,
+   "y": 718,
+   "w": 211,
+   "h": 64,
+   "text": "Conseil sur la combinaison de solutions"
+  },
+  {
+   "x": 1361,
+   "y": 718,
+   "w": 286,
+   "h": 64,
+   "text": "Ajustement et validation du devis"
+  },
+  {
+   "x": 1671,
+   "y": 718,
+   "w": 205,
+   "h": 64,
+   "text": "Rappel rapide par un expert"
+  }
+ ]
+}
