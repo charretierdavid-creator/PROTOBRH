@@ -62,6 +62,9 @@ Si une demande ne touche qu'un des deux sites, le dire explicitement dans le ré
 - **Cache navigateur** : toute modification d'un script partagé (`chatbot-widget.js`, `feedback-widget.js`,
   `formules-amundi.js`, `conventions.js`) impose de changer son numéro de version (`?v=AAAAMMJJ`) dans **toutes** les pages
   de `protobrh/` qui le chargent, sinon les visiteurs gardent l'ancienne version.
+- **Version hors ligne** : `python3 outils/generer_hors_ligne.py protobrh <sortie.html> https://protobrh.monsitedetest.com/assistant-demo.php <jeton>`
+  produit un fichier unique (pages embarquées). Le jeton est celui de `ASSISTANT_DEMO_TOKEN` dans `config.php` (serveur) :
+  ne jamais le committer ni committer le fichier généré. L'assistant passe par `assistant-demo.php` (relais à jeton).
 - **Listes partagées** : secteurs d'activité et conventions collectives dans `conventions.js` (diagnostic, audit mutuelle,
   devis) ; textes et tarifs des formules Amundi dans `formules-amundi.js`.
 - **Charte BRH** : vert pin `#065145` (titres, boutons), teal `#016265`, vert lime `#8FB822` (accents),

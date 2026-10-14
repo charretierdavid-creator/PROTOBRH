@@ -110,7 +110,7 @@
    V2 (01/10/2026) : conseil personnalisé (pré-orientation) à partir du profil de l'entreprise.
    Le profil est lu dans la session du navigateur (diagnostic : brhProfil ; devis : brhDevis),
    n'est utilisé qu'avec l'accord du dirigeant et ne contient aucune donnée personnelle. */
-const CBOT_ENDPOINT = 'chatbot.php';                 // même dossier
+const CBOT_ENDPOINT = window.BRH_CBOT_ENDPOINT || 'chatbot.php';   // même dossier ; version hors ligne : relais assistant-demo.php (jeton)
 const CBOT_CONTACT  = { label:'Être recontacté par un expert', href:'diagnostic.html#contact' };
 const CBOT_DEVIS    = { label:'Obtenir mon devis en ligne', href:'devis.html' };
 const CBOT_SUGG = ["Qu'est-ce que la Banque des RH ?","Quelles solutions proposez-vous ?","Parler à un expert"];
@@ -267,6 +267,20 @@ function cbotPack(p){
   try{ return btoa(unescape(encodeURIComponent(JSON.stringify(o)))); }catch(e){ return null; }
 }
 const CBOT_DEBUG = /[?&]debug=1/.test(location.search);   // ajouter ?debug=1 à l'adresse pour afficher le diagnostic technique
+/* Version hors ligne : sans réseau, réponse tirée de la base documentaire embarquée (window.BRH_CBOT_LOCAL) */
+function cbotNorm(t){ return String(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]+/g,' '); }
+function cbotLocal(q){
+  const base=window.BRH_CBOT_LOCAL; if(!Array.isArray(base) || !base.length) return null;
+  const stop=new Set(['comment','quelle','quelles','quels','quel','pour','avec','dans','mais','plus','vous','votre','vos','nous','notre','est','sont','une','des','les','que','qui','quoi','faire','peut','puis','cette','entre','sans','tout','tous']);
+  const mots=cbotNorm(q).split(' ').filter(w=>w.length>3 && !stop.has(w)); if(!mots.length) return null;
+  let best=null, bs=0;
+  base.forEach(sec=>{ const tt=cbotNorm(sec.t), tx=cbotNorm(sec.x); let sc=0;
+    mots.forEach(w=>{ const r=w.slice(0,Math.max(4,w.length-2)); if(tt.indexOf(r)>=0) sc+=8; let i=tx.indexOf(r), k=0; while(i>=0 && k<2){ sc++; k++; i=tx.indexOf(r,i+1); } });
+    if(sc>bs){ bs=sc; best=sec; } });
+  if(!best || bs<2) return null;
+  let txt=best.x.replace(/\s+/g,' ').trim(); if(txt.length>700){ txt=txt.slice(0,700); txt=txt.slice(0,Math.max(txt.lastIndexOf('. '),400)+1)+' …'; }
+  return best.t+' — '+txt+'\n\n(Réponse hors connexion, tirée de la base documentaire de la Banque des RH. Un expert peut vous recontacter pour en savoir plus.)';
+}
 async function ask(q){
   userSay(q); cbotHistory.push({role:'user',content:q}); typing(true);
   const perso=cbotPerso(), profile= perso ? cbotProfile() : null;
@@ -279,7 +293,9 @@ async function ask(q){
     let data=null; try{ data=JSON.parse(raw.trim()); }catch(err){}
     if(data && data.e){ data = { answer: data.a ? cbotUnB64(data.a) : '', debug: data.d ? cbotUnB64(data.d) : '', mode: data.m }; }
     typing(false);
+    if(status>=400 || (data && (data.mode==='demo' || (data.debug && Array.isArray(window.BRH_CBOT_LOCAL) && window.BRH_CBOT_LOCAL.length)))){ const loc=cbotLocal(q); if(loc){ botSay(loc, CBOT_CONTACT); return; } }   /* relais indisponible : base embarquée */
     if(!data){
+      const loc=cbotLocal(q); if(loc){ botSay(loc, CBOT_CONTACT); return; }
       console.warn('[Assistant BRH] réponse non JSON de chatbot.php (HTTP '+status+') :', raw.slice(0,400));
       botSay("Je ne parviens pas à joindre l'assistant pour le moment (code "+status+"). Souhaitez-vous être recontacté par un expert ?"+
         (CBOT_DEBUG?"\n\n[Diagnostic] Réponse reçue : "+(raw.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,300)||'vide'):''), CBOT_CONTACT);
@@ -295,6 +311,7 @@ async function ask(q){
   }catch(e){
     typing(false);
     console.warn('[Assistant BRH] appel impossible :', e);
+    const loc=cbotLocal(q); if(loc){ botSay(loc, CBOT_CONTACT); return; }
     botSay("Je ne parviens pas à joindre l'assistant pour le moment. Souhaitez-vous être recontacté par un expert ?"+(CBOT_DEBUG?"\n\n[Diagnostic] "+(e&&e.message?e.message:e):''), CBOT_CONTACT);
   }
 }
