@@ -26,6 +26,9 @@ Une évolution n'est terminée que si les **trois** éléments suivants sont liv
 2. **Le cahier des charges** est mis à jour : modifier `cdcbrh/_source/app_data.json` (page de l'écran concerné :
    exigences, règles de gestion, données produites), puis régénérer avec `python3 cdcbrh/_source/gen_static.py`.
    Ne jamais modifier `cdcbrh/index.html` à la main.
+   Si l'évolution change le parcours (nouvelle étape ou nouveau module), mettre à jour le schéma avec
+   `python3 cdcbrh/_source/gen_map.py` : les étapes du chemin critique restent sur la courbe ; les modules
+   complémentaires (ressources, assistant, audit mutuelle…) vont dans la liste `ADDONS`, sous le parcours principal.
 3. **Le journal** `cdcbrh/journal.json` reçoit une nouvelle entrée **en tête de liste** :
 
 ```json

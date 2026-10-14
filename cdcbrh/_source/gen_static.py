@@ -1,24 +1,24 @@
 import json, html, base64, io, re, os
 HERE = os.path.dirname(os.path.abspath(__file__)); os.chdir(HERE)
-# Génère ../index.html à partir de app_data.json (contenu), app_imgs.json (captures), map3.jpg + geo3.json (parcours), static_tpl.html (gabarit) et ../journal.json
+# Génère ../index.html à partir de app_data.json (contenu), app_imgs.json (captures), map3.jpg + geo_map.json (parcours, produits par gen_map.py), static_tpl.html (gabarit) et ../journal.json
 from PIL import Image
-D = json.load(open('app_data.json')); IM = json.load(open('app_imgs.json')); G = json.load(open('geo3.json'))
+D = json.load(open('app_data.json')); IM = json.load(open('app_imgs.json')); G = json.load(open('geo_map.json'))
 PAGES = D['pages']; DICT = D['data']
 BY = {p['code']: p for p in PAGES}
 DNAME = {r[0]: r[1] for g in DICT for r in g['rows']}
 e = lambda s: html.escape(str(s), quote=True)
 aid = lambda code: 'p-' + code.replace('É', 'E')
-STEP_PAGES = {'A':['É01'],'1.1':['É01','É04'],'1.2':['É02','É03','É08','É26'],'1.3':['É23','É24','É25','H'],'2.1':['É05'],'2.2':['É06'],'2.3':['É06'],'3.1':['É07'],'3.2':['É07'],'4.1':['É07','É26'],'4.2':['É09','É22'],'5.1':['É10','É11'],'5.2':['É12','É13','É14'],'5.3':['É15','É16','É17','É18','É19','É20'],'6.1':['É21','P2'],'5.L':['P1'],'6.L':['P1','É22']}
-LAB = {'A':'Acquisition','1.1':'1.1 Accueil portail 360°','1.2':'1.2 Explore les 4 besoins RH','1.3':'1.3 Ressources & Assistant','2.1':'2.1 Décrit son entreprise','2.2':'2.2 Note ses priorités RH','2.3':'2.3 Se compare','3.1':'3.1 Gain fiscal annuel','3.2':"3.2 Pouvoir d'achat / salarié",'4.1':'4.1 Solutions priorisées','4.2':'4.2 Transmet ses coordonnées','5.1':'5.1 Choisit ses solutions','5.2':'5.2 Identifie son entreprise','5.3':'5.3 Configure et estime','5.L':'Lead qualifié','6.1':'6.1 Reçoit son devis','6.L':'Rappel expert BRH de la CR'}
-STEP_ORDER = ['A','1.1','1.2','1.3','2.1','2.2','2.3','3.1','3.2','4.1','4.2','5.1','5.2','5.3','5.L','6.1','6.L']
+STEP_PAGES = {'A':['É01'],'1.1':['É01','É04'],'1.2':['É02','É03'],'2.1':['É05'],'2.2':['É06'],'2.3':['É06'],'3.1':['É07'],'3.2':['É07'],'4.1':['É07'],'4.2':['É09','É22'],'5.1':['É10','É11'],'5.2':['É12','É13','É14'],'5.3':['É15','É16','É17','É18','É19','É20'],'6.1':['É21','P2'],'5.L':['P1'],'6.L':['P1','É22'],'R':['É08','É23','É24','É25'],'AS':['H'],'AM':['É26']}
+LAB = {'A':'Acquisition','1.1':'1.1 Accueil portail 360°','1.2':'1.2 Explore les 4 besoins RH','2.1':'2.1 Décrit son entreprise','2.2':'2.2 Note ses priorités RH','2.3':'2.3 Se compare','3.1':'3.1 Gain fiscal annuel','3.2':"3.2 Pouvoir d'achat / salarié",'4.1':'4.1 Solutions priorisées','4.2':'4.2 Transmet ses coordonnées','5.1':'5.1 Choisit ses solutions','5.2':'5.2 Identifie son entreprise','5.3':'5.3 Configure et estime','5.L':'Lead qualifié','6.1':'6.1 Reçoit son devis','6.L':'Rappel expert BRH de la CR','R':'Complément · Ressources & newsletter','AS':'Complément · Assistant BRH','AM':'Complément · Audit mutuelle et prévoyance'}
+STEP_ORDER = ['A','1.1','1.2','2.1','2.2','2.3','3.1','3.2','4.1','4.2','5.1','5.2','5.3','5.L','6.1','6.L','R','AS','AM']
 GROUPS = [('Accueil & découverte',['É01','É02','É03','É04']),('Diagnostic RH',['É05','É06','É07','É08','É09','É26']),('Devis — données communes',['É10','É11','É12','É13','É14']),('Devis — configuration',['É15','É16','É17','É18']),('Estimation, proposition, devis',['É19','É20','É21','É22']),('Ressources & newsletter',['É23','É24','É25']),('Back-office & transverse',['P1','P2','H'])]
 ORDER = [c for g in GROUPS for c in g[1]]
 PRIO = {'MVP':'MVP','V2':'V2','ARB':'À arbitrer'}
 def story(t): return re.sub(r"(En tant que |je veux |afin (?:de |d'|que ))", r'<b>\1</b>', e(t))
 
 # ---- map image
-MAPH = 666  # hauteur conservée (repère 1920 px) : jusqu'au bloc « Un expert BRH à chaque étape » inclus
-im = Image.open('map3.jpg').convert('RGB'); im = im.crop((0, 0, im.size[0], round(im.size[1] * MAPH / 1080))).resize((2400, round(2400 * MAPH / 1920)), Image.LANCZOS)
+MAPH = G['maph']  # hauteur du schéma dans le repère 1920 px
+im = Image.open('map3.jpg').convert('RGB').resize((2400, round(2400 * MAPH / 1920)), Image.LANCZOS)
 b = io.BytesIO(); im.save(b, 'JPEG', quality=80, optimize=True)
 MAPIMG = 'data:image/jpeg;base64,' + base64.b64encode(b.getvalue()).decode()
 def stepid(label):
@@ -29,7 +29,7 @@ def stepid(label):
 pct = lambda v, t: f'{v / t * 100:.3f}%'
 hot = []
 for c in G['cards']:
-    sid = stepid(c['b']); pages = STEP_PAGES[sid]
+    sid = c.get('sid') or stepid(c['b']); pages = STEP_PAGES[sid]
     hot.append(f'<a class="hot" href="#{aid(pages[0])}" style="left:{pct(c["x"]-4,1920)};top:{pct(c["y"]-4,MAPH)};width:{pct(c["w"]+8,1920)};height:{pct(c["h"]+8,MAPH)}" title="{e(LAB[sid])} — pages : {", ".join(pages)}" aria-label="{e(LAB[sid])} : ouvrir {len(pages)} page(s)"><span>{len(pages)}</span></a>')
 for x, code in zip(G['ebs'], ['É22','É06','É07','É20','É15','É22']):
     hot.append(f'<a class="hot eb" href="#{aid(code)}" style="left:{pct(x["x"],1920)};top:{pct(x["y"],MAPH)};width:{pct(x["w"],1920)};height:{pct(x["h"],MAPH)}" title="{e(x["text"])} — voir {code}" aria-label="{e(x["text"])} : voir {code}"></a>')
@@ -59,7 +59,7 @@ for i, code in enumerate(ORDER):
     pages_html.append(f'''<section class="view pg" id="{aid(code)}" data-code="{code}">
 {rel}
 <article class="page">
-<header class="ph"><div class="tile {tile}"><strong>{code}</strong><span>Étape {e(p["ref"])}</span></div>
+<header class="ph"><div class="tile {tile}"><strong>{code}</strong><span>{("Étape " if p["ref"][:1].isdigit() else "") + e(p["ref"])}</span></div>
 <div class="tt"><h2>{e(p["title"])}</h2><p class="obj"><b>Objectif.</b> {e(p["desc"])}</p></div>
 <dl class="meta"><dt>Phase</dt><dd>{p["phase"]}</dd><dt>Priorité</dt><dd class="p-{p["statut"]}">{PRIO[p["statut"]]}</dd><dt>Zone</dt><dd>{e(p["zone"])}</dd></dl></header>
 <p class="chap">{story(p.get("chap",""))}</p>
