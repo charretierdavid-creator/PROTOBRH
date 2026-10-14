@@ -17,3 +17,7 @@ const PAPPERS_API_KEY = '';
 // Porte d'accès (écran d'identification commun aux deux sites)
 const ACCES_LOGIN    = 'REMPLACER-IDENTIFIANT';
 const ACCES_PASSWORD = 'REMPLACER-MOT-DE-PASSE';
+
+// Assistant de la version hors ligne (assistant-demo.php) : jeton recopié dans le fichier index.html hors ligne.
+// Laisser vide pour désactiver ; le changer pour couper l'accès des fichiers déjà distribués.
+const ASSISTANT_DEMO_TOKEN = '';

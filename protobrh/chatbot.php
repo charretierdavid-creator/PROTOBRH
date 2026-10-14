@@ -10,7 +10,8 @@
    ============================================================ */
 
 declare(strict_types=1);
-require_once __DIR__ . '/acces.php'; brh_acces_api();   // accès réservé aux personnes connectées (porte d'accès)
+require_once __DIR__ . '/acces.php';
+if (!defined('BRH_ASSISTANT_DEMO')) brh_acces_api();   // accès réservé aux personnes connectées (porte d'accès) ; version hors ligne : assistant-demo.php
 header('Content-Type: application/json; charset=utf-8');
 
 /* -------- enveloppe encodée (base64) : la question, le profil ET la réponse circulent encodés,
