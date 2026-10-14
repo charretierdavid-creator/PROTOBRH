@@ -721,6 +721,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 
 </style>
 <script src="formules-amundi.js?v=20261009"></script>
+<script src="conventions.js?v=20261014"></script>
 </head>
 <body>
 <header class="header">
@@ -729,6 +730,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
     <nav class="nav" aria-label="Navigation">
       <a href="index.html">Accueil</a>
       <a href="diagnostic.html">Diagnostic RH</a>
+      <a href="audit-mutuelle.html?from=devis">Audit mutuelle</a>
       <a href="#" class="active" onclick="startDevis();return false;">Devis en ligne</a>
       <a href="avantages-fiscaux.html">Avantages fiscaux</a>
       <a href="ressources.html">Ressources</a>
@@ -739,6 +741,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
   <div class="mobile-menu" id="mobileMenu"><div class="wrap">
     <a href="index.html">Accueil</a>
     <a href="diagnostic.html">Diagnostic RH</a>
+    <a href="audit-mutuelle.html?from=devis">Audit mutuelle</a>
     <a href="#devis" onclick="closeMenu()">Devis en ligne</a>
     <a href="ressources.html">Ressources</a>
     <a class="btn btn-primary" href="#" onclick="closeMenu();openExpert();return false;">Parler à un expert</a>
@@ -823,12 +826,15 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 
       <div class="dv-found" id="dvFound" aria-live="polite">
         <div class="dv-found-head"><h3>Vérifiez les informations de votre entreprise</h3><span id="dvSrcBadge"></span></div>
+        <p class="dv-note ok" id="dvAuditNote" style="display:none"></p>
         <div class="dv-grid">
           <div class="field"><label for="e-nom">Raison sociale <span class="req">*</span><span class="dv-status found" data-st="nom">Trouvé</span></label><input id="e-nom" autocomplete="organization"></div>
           <div class="field"><label for="e-ville">Ville <span class="req">*</span><span class="dv-status found" data-st="ville">Trouvé</span></label><input id="e-ville"></div>
           <div class="field"><label for="e-cp">Code postal <span class="req">*</span><span class="dv-status found" data-st="cp">Trouvé</span></label><input id="e-cp" inputmode="numeric" maxlength="5"></div>
           <div class="field"><label for="e-naf">Activité (code NAF)<span class="dv-status found" data-st="naf">Trouvé</span></label><input id="e-naf"></div>
-          <div class="field"><label for="e-idcc">Convention collective (IDCC)<span class="dv-status check" data-st="idcc">À confirmer</span></label><input id="e-idcc" placeholder="Ex. 1486 — Syntec"><span class="hint">Utile pour la santé et la prévoyance.</span></div>
+          <div class="field"><label for="e-sec">Secteur d'activité</label><select id="e-sec" onchange="onDvSecteur()"></select><span class="hint">Il affine le devis santé et prévoyance.</span></div>
+          <div class="field"><label for="e-ccn">Convention collective<span class="dv-status check" data-st="idcc">À confirmer</span></label><select id="e-ccn" onchange="onDvCcn()"></select>
+            <input id="e-idcc" placeholder="Code IDCC et intitulé, ex. 1486 — Syntec" style="margin-top:8px"><span class="hint">Clé de votre devis santé et prévoyance : elle fixe les garanties minimales et la tarification.</span></div>
           <div class="field"><label for="e-eff">Nombre de salariés <span class="req">*</span><span class="dv-status check" data-st="eff">À confirmer</span></label><input id="e-eff" type="number" min="0" step="1" inputmode="numeric" placeholder="Effectif actuel">
             <span class="hint" id="effHint">Indiquez votre effectif salarié actuel.</span></div>
         </div>
@@ -1211,7 +1217,7 @@ function save(){ try{
     if(!el.id && !el.name) return;
     if(el.type==='checkbox'||el.type==='radio'){ if(el.name) { f['@'+el.name+'='+el.value]=el.checked; } else f[el.id]=el.checked; }
     else f[el.id]=el.value; });
-  sessionStorage.setItem('brhDevis', JSON.stringify({S:{step:S.step,maxStep:S.maxStep,sol:S.sol,ent:S.ent,entSrc:S.entSrc,tab:S.tab,done:S.done,fi:S.fi},f}));
+  sessionStorage.setItem('brhDevis', JSON.stringify({S:{step:S.step,maxStep:S.maxStep,sol:S.sol,ent:S.ent,entSrc:S.entSrc,tab:S.tab,done:S.done,fi:S.fi,fromAudit:S.fromAudit},f}));
 }catch(e){} }
 function restore(){ try{
   const raw=sessionStorage.getItem('brhDevis'); if(!raw) return false; const o=JSON.parse(raw);
@@ -1322,9 +1328,13 @@ function demoSearch(q){
 }
 function setStatus(k,found){ const b=document.querySelector('[data-st="'+k+'"]'); if(!b) return; b.className='dv-status '+(found?'found':'check'); b.textContent=found?'Trouvé':'À confirmer'; }
 function fillEntreprise(d,noFocus){
-  S.ent={siret:d.siret||'', nom:d.nom||'', ville:d.ville||'', cp:d.cp||'', naf:d.naf||'', idcc:d.idcc||'', tranche:d.tranche||''};
+  S.ent={siret:d.siret||'', nom:d.nom||'', ville:d.ville||'', cp:d.cp||'', naf:d.naf||'', idcc:d.idcc||'', tranche:d.tranche||'', secteur:d.secteur||''};
   S.entSrc={source:d.source||'manuel', date:d.date||''};
+  /* convention et secteur déclarés dans le diagnostic ou l'audit mutuelle : prioritaires sur une valeur non confirmée */
+  if(S.prefIdcc && !d.idcc_confirme) S.ent.idcc=S.prefIdcc;
+  S.ent.secteur=d.secteur||S.prefSecteur||'';
   $('e-nom').value=S.ent.nom; $('e-ville').value=S.ent.ville; $('e-cp').value=S.ent.cp; $('e-naf').value=S.ent.naf; $('e-idcc').value=S.ent.idcc;
+  fillDvSecteur();
   ['nom','ville','cp','naf'].forEach(k=>setStatus(k, !!S.ent[k] && d.source!=='manuel'));
   setStatus('idcc', !!d.idcc_confirme); setStatus('eff', false);
   $('effHint').textContent = d.tranche ? 'Donnée publique : '+d.tranche+'. Indiquez votre effectif actuel.' : 'Indiquez votre effectif salarié actuel.';
@@ -1334,6 +1344,7 @@ function fillEntreprise(d,noFocus){
      'Source : '+(d.source==='demo'?'jeu de données de démonstration':'registres publics (INSEE, INPI) via '+d.source)+(d.date?', données du '+d.date:'')+'. L’effectif et la convention collective sont à confirmer.';
   $('dvFound').classList.add('show'); $('dvRoute').classList.remove('show'); $('next2').disabled=false;
   if(S.prefEff && !$('e-eff').value) $('e-eff').value=S.prefEff;
+  fillDvCcn();
   if(!noFocus) $('e-eff').focus(); save();
 }
 function manualEntry(){ fillEntreprise({source:'manuel', siret:$('siret').value.replace(/\D/g,'')}); $('e-nom').focus(); }
@@ -1353,6 +1364,30 @@ function routeEffectif(n){
   r.classList.add('show'); r.scrollIntoView({behavior:'smooth',block:'center'});
   track('devis_orientation',{effectif:n, route:n<DEVIS_CONFIG.EFFECTIF_MIN?'expert':'diagnostic'});
 }
+/* ---------- secteur d'activité et convention collective (liste partagée conventions.js) ---------- */
+const ccnDe = t => (String(t||'').match(/^\s*(\d{1,4})\b/)||[])[1]||'';
+function fillDvSecteur(){
+  const sel=$('e-sec'); if(!sel || !window.BRH_CCN) return;
+  const cur=(S.ent&&S.ent.secteur)||'';
+  sel.innerHTML='<option value="">Sélectionner un secteur</option>'+BRH_CCN.secteurs.map(x=>'<option'+(x===cur?' selected':'')+'>'+esc(x)+'</option>').join('');
+  fillDvCcn();
+}
+function fillDvCcn(){
+  const sel=$('e-ccn'); if(!sel || !window.BRH_CCN) return;
+  const sec=$('e-sec').value, code=ccnDe($('e-idcc').value), eff=+$('e-eff').value||+(S.ent&&S.ent.effectif)||0;
+  if(!sec){ sel.innerHTML='<option value="">Choisissez d’abord votre secteur</option>'; return; }
+  const known=BRH_CCN.list(sec,eff).some(c=>c[0]===code);
+  sel.innerHTML=BRH_CCN.options(sec,eff, known?code:(code?'autre':''));
+}
+function onDvSecteur(){ if(S.ent) S.ent.secteur=$('e-sec').value; fillDvCcn(); save(); track('devis_secteur',{secteur:$('e-sec').value}); }
+function onDvCcn(){
+  const v=$('e-ccn').value, inp=$('e-idcc');
+  if(/^\d+$/.test(v)){ const l=BRH_CCN.label(v); inp.value=v+(l?' — '+l:''); }
+  else if(v==='aucune') inp.value='Aucune convention collective';
+  else if(v==='nsp') inp.value='';
+  else if(v==='autre'){ inp.value=''; inp.focus(); }
+  if(S.ent) S.ent.idcc=inp.value; save();
+}
 function validateEntreprise(){
   hideErr('err2');
   if(!$('dvFound').classList.contains('show')) { showErr('err2','Recherchez votre entreprise par son SIRET ou saisissez vos informations manuellement.'); return false; }
@@ -1361,7 +1396,7 @@ function validateEntreprise(){
   if(miss.length){ showErr('err2','Merci de renseigner '+miss.join(', ')+'.'); return false; }
   if(!/^\d{5}$/.test($('e-cp').value.trim())){ showErr('err2','Le code postal doit comporter 5 chiffres.'); return false; }
   const n=parseInt($('e-eff').value,10);
-  Object.assign(S.ent,{nom:$('e-nom').value.trim(), ville:$('e-ville').value.trim(), cp:$('e-cp').value.trim(), naf:$('e-naf').value.trim(), idcc:$('e-idcc').value.trim(), effectif:n});
+  Object.assign(S.ent,{nom:$('e-nom').value.trim(), ville:$('e-ville').value.trim(), cp:$('e-cp').value.trim(), naf:$('e-naf').value.trim(), idcc:$('e-idcc').value.trim(), secteur:$('e-sec').value, effectif:n});
   if(isNaN(n) || n<DEVIS_CONFIG.EFFECTIF_MIN || n>DEVIS_CONFIG.EFFECTIF_MAX){ routeEffectif(isNaN(n)?0:n); return false; }
   $('dvRoute').classList.remove('show'); save(); return true;
 }
@@ -1391,7 +1426,7 @@ function renderTabs(){
   $('dvTabs').innerHTML=S.sol.map(k=>'<button type="button" role="tab" class="dv-tab'+(panelOk(k)?' done':'')+'" aria-selected="'+(k===S.tab)+'" onclick="openTab(\''+k+'\')">'+svg(DV_ICON[k])+DV_SOL[k].title+'<span class="tk">'+CHK+'</span></button>').join('');
   DV_ORDER.forEach(k=>$('p-'+k).classList.toggle('active',k===S.tab));
   applyShow(); updOutputs();
-  const idc=$('sp_idcc_info'); if(idc) idc.textContent = S.ent && S.ent.idcc ? 'Convention collective retenue : '+S.ent.idcc+' (à confirmer avec votre expert).' : 'Précisez votre convention collective à l’étape 2 : elle détermine les garanties minimales de prévoyance.';
+  const idc=$('sp_idcc_info'); if(idc) idc.textContent = S.ent && S.ent.idcc ? 'Convention collective retenue : '+S.ent.idcc+(S.ent.secteur?' (secteur '+S.ent.secteur+')':'')+'. Elle sert de base à votre devis santé et prévoyance ; votre expert la confirme.' : 'Précisez votre convention collective à l’étape 2 : c’est la clé de votre devis santé et prévoyance (garanties minimales et tarification).';
 }
 function openTab(k){ S.tab=k; renderTabs(); save(); }
 function applyShow(){ syncFormules(); document.querySelectorAll('#devis [data-show]').forEach(el=>{ const [n,v]=el.dataset.show.split(':'); const sel=vals(n).concat(val(n)?[val(n)]:[]); el.style.display = v.split(',').some(x=>sel.includes(x)) ? '' : 'none'; }); }
@@ -1570,7 +1605,7 @@ async function submitDevis(){
   const o=S.est||compute(), h=RH(), tot=S.sol.reduce((a,k)=>a+(o[k].cout||0),0);
   const ref='DEV-'+new Date().getFullYear()+'-'+Math.random().toString(36).slice(2,7).toUpperCase();
   const lead={ reference:ref, date:new Date().toISOString(), source:'portail_brh_devis_en_ligne',
-    entreprise:{siret:S.ent.siret, raison_sociale:S.ent.nom, ville:S.ent.ville, code_postal:S.ent.cp, naf:S.ent.naf, idcc:S.ent.idcc, effectif:S.ent.effectif, source_donnees:S.entSrc},
+    entreprise:{siret:S.ent.siret, secteur:S.ent.secteur||'', audit_mutuelle:!!S.fromAudit, raison_sociale:S.ent.nom, ville:S.ent.ville, code_postal:S.ent.cp, naf:S.ent.naf, idcc:S.ent.idcc, effectif:S.ent.effectif, source_donnees:S.entSrc},
     contact:{prenom:$('c-prenom').value.trim(), nom:$('c-nom').value.trim(), fonction:$('c-fct').value, telephone:$('c-tel').value.trim(), email:$('c-email').value.trim(), rappel_expert:$('c-rappel').checked, consentement:true, consentement_date:new Date().toISOString()},
     rh:{salaries_concernes:h.N, cadres:h.cadres, non_cadres:h.noncadres, tranche_salaire:$('h-sal').value, etablissements:+$('h-etab').value||1, anciennete_mois:+$('h-anc').value},
     panier:S.sol.map(k=>({solution:k, libelle:DV_SOL[k].title, formule:o[k].formule||null, frais_formule_annuels:o[k].frais||null, statut:STATUT_LBL[DV_SOL[k].statut], hypotheses:o[k].hyp, cout_employeur_annuel:o[k].cout==null?null:Math.round(o[k].cout), gain_net_salarie:o[k].netSal==null?null:Math.round(o[k].netSal)})),
@@ -1611,15 +1646,39 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeExpert(); });
 /* ============================ MENU & INIT ============================ */
 function toggleMenu(){ const m=$('mobileMenu'),b=document.querySelector('.burger'); const o=m.classList.toggle('open'); b.setAttribute('aria-expanded',o); }
 function closeMenu(){ $('mobileMenu').classList.remove('open'); const b=document.querySelector('.burger'); if(b) b.setAttribute('aria-expanded','false'); }
-document.addEventListener('input',e=>{ if(!e.target.closest('#devis')) return; if(e.target.id==='e-eff') $('dvRoute').classList.remove('show'); if(e.target.id==='h-couv'||e.target.id==='h-cad') updNonCad(); if(S.step===4){ applyShow(); updOutputs(); renderTabsState(); } save(); });
+document.addEventListener('input',e=>{ if(!e.target.closest('#devis')) return; if(e.target.id==='e-eff'){ $('dvRoute').classList.remove('show'); fillDvCcn(); } if(e.target.id==='h-couv'||e.target.id==='h-cad') updNonCad(); if(S.step===4){ applyShow(); updOutputs(); renderTabsState(); } save(); });
 document.addEventListener('change',e=>{ if(!e.target.closest('#devis')) return; if(S.step===4){ if(/^(ep|rt)_form$/.test(e.target.name)) syncFormules(e.target.name); applyShow(); updOutputs(); renderTabsState(); } save(); });
 function renderTabsState(){ document.querySelectorAll('#dvTabs .dv-tab').forEach((t,i)=>t.classList.toggle('done',panelOk(S.sol[i]))); }
+/* audit mutuelle → configuration santé & prévoyance (formules illustratives de l'audit) */
+function applyAudit(a){
+  const cov=[]; if(a.perimetre==='les2'||a.perimetre==='mutuelle') cov.push('sante'); if(a.perimetre==='les2'||a.perimetre==='prevoyance') cov.push('prev');
+  if(cov.length) document.querySelectorAll('#devis input[name="sp_cov"]').forEach(el=>el.checked=cov.includes(el.value));
+  if(a.reco!=null) setRadio('sp_niv',['essentiel','confort','renfort'][a.reco]||'confort');
+  if(a.famille==='oui') setRadio('sp_fam','famille_obl'); else if(a.famille==='non') setRadio('sp_fam','isole');
+  const pe={'50':'0.5','60':'0.6','75':'0.75','100':'1'}[a.partEmp]; if(pe) setRadio('sp_part',pe);
+  if(a.prevPop==='tous'||a.prevPop==='cadres') setRadio('sp_pop',a.prevPop);
+  if(!S.sol.includes('sante')) S.sol.push('sante');
+  S.sol.sort((x,y)=>DV_ORDER.indexOf(x)-DV_ORDER.indexOf(y));
+  track('devis_from_audit',{perimetre:a.perimetre||''});
+}
 (function init(){
   const had=restore();
   /* reprise depuis le diagnostic : effectif et solutions prioritaires transmis dans l'adresse */
   const qp=new URLSearchParams(location.search);
   if(!had && qp.get('sol')) S.sol=qp.get('sol').split(',').filter(k=>DV_ORDER.includes(k));
   if(!had && qp.get('eff')) S.prefEff=parseInt(qp.get('eff'),10)||null;
+  /* reprise de l'audit mutuelle / du diagnostic : secteur, convention collective, besoins santé */
+  let aud=null, prof={}; try{ aud=JSON.parse(sessionStorage.getItem('brhAudit')||'null'); prof=JSON.parse(sessionStorage.getItem('brhProfil')||'{}'); }catch(e){}
+  if(!had){
+    const sec=qp.get('secteur')||(aud&&aud.secteur)||prof.secteur||'';
+    if(sec && window.BRH_CCN && BRH_CCN.secteurs.includes(sec)) S.prefSecteur=sec;
+    const code=(qp.get('idcc')||(aud&&aud.idccCode)||'').replace(/\D/g,'').slice(0,4);
+    if(code){ const l=(window.BRH_CCN&&BRH_CCN.label(code))||''; S.prefIdcc=code+(l?' — '+l:''); }
+    else if(aud && aud.ccn==='aucune') S.prefIdcc='Aucune convention collective';
+    if(!S.prefEff && aud && aud.effectif) S.prefEff=parseInt(aud.effectif,10)||null;
+    if(qp.get('from')==='audit' && aud){ S.fromAudit=true; applyAudit(aud); }
+  }
+  if(S.fromAudit){ const n=$('dvAuditNote'); if(n){ n.style.display='block'; n.textContent='Repris de votre audit mutuelle : '+[S.prefSecteur||(S.ent&&S.ent.secteur), S.prefIdcc||(S.ent&&S.ent.idcc)].filter(Boolean).join(' · ')+'. Vous pouvez les modifier.'; } }
   const qf=qp.get('formule'), QF={decouverte:[['ep_form','decouverte']], integrale_epargne:[['ep_form','integrale']], integrale_retraite:[['rt_form','integrale']], convergence:[['ep_form','convergence'],['rt_form','convergence']]};
   if(!had && QF[qf]) QF[qf].forEach(x=>setRadio(x[0],x[1]));
   renderChoices();

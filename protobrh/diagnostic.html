@@ -35,8 +35,8 @@ const SOLUTIONS=[
   {id:'proteger', d:'Couvrez vos salariés et leurs proches face aux aléas de la vie.', key:'protection', title:'Protéger mes salariés', partner:'Crédit Agricole Assurances', icon:ICON.protection,
    b:['Couvrez vos salariés et leurs proches face aux aléas de la vie.','Renforcez votre attractivité et votre politique sociale.','Maîtrisez l’absentéisme et vos coûts.'],
    offers:[
-     {t:'Complémentaire santé',d:'Couverture des frais de santé (financée à ≥ 50 % par l’employeur), extensible à la famille, avec des services santé au quotidien.'},
-     {t:'Prévoyance collective',d:'Maintien de salaire, capital décès et éducation pour protéger le collaborateur et sa famille en cas d’accident de la vie.'}
+     {t:'Complémentaire santé',d:'Couverture des frais de santé (financée à ≥ 50 % par l’employeur) adaptée à votre convention collective, intégrant le 100 % Santé, extensible à la famille, avec l’application Ma Santé et un bilan santé prévention pour chaque salarié.'},
+     {t:'Prévoyance collective',d:'Maintien des revenus en cas d’arrêt de travail, rente d’invalidité et capital décès, avec en option rente éducation, rente conjoint et allocation obsèques. Un portail entreprise simplifie l’affiliation et les déclarations.'}
    ],
    note:'Avec Crédit Agricole Assurances, l’expert de la protection sociale : 2 millions de personnes protégées, des solutions santé, prévoyance et prévention.'},
   {id:'retraite', d:'Aidez vos salariés à préparer leur retraite dans un cadre social avantageux.', key:'retraite', title:'Préparer la retraite de mes salariés', partner:'Crédit Agricole Assurances', partner2:'Amundi', icon:ICON.retraite,
@@ -455,6 +455,29 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 .fisc-legal{font-size:.74rem;color:var(--slate);margin-top:12px;line-height:1.45}
 .bas-k{display:inline-block;font-family:var(--fh);font-weight:700;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:#173a10;background:var(--lime);border-radius:20px;padding:3px 11px;margin-bottom:14px}
 .bas-conv[hidden]{display:none}
+.bas-card:not([hidden]) ~ .bas-card:not([hidden]){margin-top:22px;padding-top:22px;border-top:1px solid #e2ecdd}
+.bas-pts{margin:10px 0 14px;padding-left:18px;font-size:.88rem;color:var(--ink);line-height:1.5}
+/* V1.0 — convention collective et contrats actuels (repris du module Audit mutuelle) */
+.ccn-row{margin-top:4px;grid-column:2/3}
+@media(max-width:960px){.ccn-row{grid-column:auto}}
+.ccn-field{grid-column:span 2}
+@media(max-width:560px){.ccn-field{grid-column:auto}}
+.field .opt{font-weight:500;font-size:.74rem;color:var(--slate);background:var(--mint-2);border-radius:999px;padding:1px 8px;margin-left:4px}
+.protect-extra{background:var(--mint-2);border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;margin:-8px 0 0 58px;display:flex;flex-direction:column;gap:12px}
+@media(max-width:560px){.protect-extra{margin-left:0}}
+.pe-head{display:flex;flex-wrap:wrap;gap:6px;align-items:baseline}
+.pe-head b{font-family:var(--fh);color:var(--green);font-size:.98rem}
+.pe-head span{font-size:.78rem;color:var(--slate)}
+.pe-note{font-size:.84rem;color:var(--slate);line-height:1.45}
+.pe-q{display:flex;flex-direction:column;gap:6px}
+.pe-q > span{font-size:.84rem;font-weight:600;color:var(--ink)}
+.pe-chips{display:flex;flex-wrap:wrap;gap:6px}
+.pe-chips button{font-family:var(--fb);font-size:.82rem;font-weight:600;padding:.45rem .8rem;border-radius:999px;border:1.5px solid var(--line-2);background:#fff;color:var(--ink);cursor:pointer}
+.pe-chips button[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:#fff}
+.pe-date{display:flex;gap:8px;flex-wrap:wrap}
+.pe-date select{font-family:var(--fb);font-size:.88rem;padding:.5rem .7rem;border:1.5px solid var(--line-2);border-radius:10px;background:#fff;color:var(--ink)}
+.pe-hint{font-size:.82rem;color:var(--green);font-weight:600}
+.pe-hint:empty{display:none}
 
 
 /* V3 diagnostic : titre pleine largeur + vignettes réparties + partenaire sur la ligne de l'icône */
@@ -542,6 +565,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 @media(max-width:900px){.devis-cta{grid-template-columns:1fr;padding:24px 22px}.devis-cta .dc-act{align-items:stretch}.devis-cta .btn{justify-content:center}}
 </style>
 <script src="formules-amundi.js?v=20261009"></script>
+<script src="conventions.js?v=20261014"></script>
 </head>
 <body>
 <header class="header">
@@ -551,6 +575,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
       <a href="#" class="active" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">Diagnostic RH</a>
       <a href="#block2">Vos priorités</a>
       <a href="#block3">Solutions</a>
+      <a href="audit-mutuelle.html?from=header">Audit mutuelle</a>
       <a href="devis.html">Devis en ligne</a>
       <a href="avantages-fiscaux.html">Avantages fiscaux</a>
       <a href="ressources.html">Ressources</a>
@@ -562,6 +587,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
     <a href="index.html">Accueil</a>
     <a href="#block2" onclick="closeMenu()">Vos priorités</a>
     <a href="#block3" onclick="closeMenu()">Solutions</a>
+    <a href="audit-mutuelle.html?from=header">Audit mutuelle</a>
     <a href="devis.html">Devis en ligne</a>
     <a href="ressources.html" onclick="closeMenu()">Ressources</a>
     <a class="btn btn-primary" href="#contact" onclick="closeMenu()">Parler à un expert</a>
@@ -632,7 +658,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
       </div>
       <div class="fields-row">
         <div class="field"><label for="secteur">Secteur d'activité <span class="req">*</span></label>
-          <select id="secteur"><option value="">Sélectionner un secteur</option><option>Industrie</option><option>Commerce</option><option>Services</option><option>BTP</option><option>Santé</option><option>Association</option><option>Autre</option></select></div>
+          <select id="secteur" onchange="onSecteur()"><option value="">Sélectionner un secteur</option><option>Industrie</option><option>BTP</option><option>Commerce</option><option>Hôtellerie-restauration</option><option>Transport et logistique</option><option>Services aux entreprises</option><option>Santé et social</option><option>Services à la personne</option><option>Artisanat alimentaire</option><option>Agriculture et paysage</option><option>Banque, assurance, immobilier</option><option>Association</option><option>Autre</option></select></div>
         <div class="field"><label for="effectif">Nombre de salariés <span class="req">*</span></label>
           <input type="number" id="effectif" min="1" step="1" value="50" inputmode="numeric" oninput="onEffectif()" aria-describedby="eff-warn">
           <span class="hint">Nécessaire au calcul du gain fiscal.</span>
@@ -641,6 +667,13 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
           <input type="text" id="departement" maxlength="2" placeholder="Ex. 37" autocomplete="off" autocapitalize="characters" spellcheck="false" oninput="onDepartement()" aria-describedby="dep-hint dep-warn">
           <span class="hint" id="dep-hint">2 caractères : 37, 41, 2A…</span>
           <span class="warn" id="dep-warn" role="alert"></span></div>
+      </div>
+      <div class="fields-row ccn-row">
+        <div class="field ccn-field"><label for="ccn">Convention collective <span class="opt">facultatif</span></label>
+          <select id="ccn" onchange="onCcn()"><option value="">Choisissez d’abord votre secteur</option></select>
+          <span class="hint">Elle figure sur vos bulletins de paie et fixe vos obligations en santé et prévoyance.</span></div>
+        <div class="field hidden" id="idcc-wrap"><label for="idcc">Code IDCC</label>
+          <input type="text" id="idcc" inputmode="numeric" maxlength="4" placeholder="Ex. 1486" oninput="onIdcc()" autocomplete="off"></div>
       </div>
     </div></div>
 
@@ -724,7 +757,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
          sinon contenu par défaut : avantages fiscaux et sociaux (guide « Avantages salariés – Édition 2026 ») -->
     <div class="fisc-block bas-block" id="bon-a-savoir">
       <span class="bas-k">Bon à savoir</span>
-      <div class="bas-conv" id="basConv" hidden>
+      <div class="bas-conv bas-card" id="basAudit" hidden></div>
+      <div class="bas-conv bas-card" id="basConv" hidden>
         <div class="fisc-head">
           <span class="fh-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.6 1 1.4 1 2.5h6c0-1.1.3-1.9 1-2.5A6 6 0 0 0 12 3Z"/></svg></span>
           <div>
@@ -877,7 +911,8 @@ function buildSliders(){
         '<input type="range" min="1" max="4" step="1" value="'+v+'" id="s-'+a.key+'" '+
           'aria-label="'+a.full+' — priorité de 1 à 4" aria-valuemin="1" aria-valuemax="4" aria-valuenow="'+v+'" '+
           'oninput="onPriority(\''+a.key+'\',this.value)">'+
-      '</div></div></div>';
+      '</div></div></div>'+
+      (a.key==='protection'?'<div id="protect-extra" class="protect-extra hidden" aria-live="polite"></div>':'');
   }).join('');
   AXES.forEach(a=>paintSlider(a.key));
 }
@@ -1021,8 +1056,10 @@ function updateDevisCta(){
 /* Bon à savoir : Convergence si « Partager la valeur » et « Préparer la retraite » sont notées 3 ou 4 */
 function updateBonASavoir(){
   const conv=(state.priorities.partageValeur||0)>=3 && (state.priorities.retraite||0)>=3;
-  const c=document.getElementById('basConv'), d=document.getElementById('avantages-fiscaux'); if(!c||!d) return;
-  c.hidden=!conv; d.hidden=conv;
+  const audit=(state.priorities.protection||0)>=3;
+  const c=document.getElementById('basConv'), a=document.getElementById('basAudit'), d=document.getElementById('avantages-fiscaux'); if(!c||!d) return;
+  c.hidden=!conv; if(a){ a.hidden=!audit; if(audit && typeof renderAuditCard==='function') renderAuditCard(); }
+  d.hidden=conv||audit;
 }
 function refresh(){ updateRadar(); updateGain(); updateSolutions(); updateRecap(); updateDevisCta(); updateBonASavoir(); }
 
@@ -1056,7 +1093,8 @@ function submitLead(){
   err.classList.remove('show');
   const {total,details}=calculateFiscalGain(state.effectif,state.priorities);
   const payload={contact:{name:nom,companyName:ent,email,phone:tel,consent:true,consentDate:new Date().toISOString()},
-    company:{sector:val('secteur'),employeeCount:state.effectif,departement:depValide()},
+    company:{sector:val('secteur'),employeeCount:state.effectif,departement:depValide(),idcc:(typeof ccnCode==='function'?ccnCode():''),conventionCollective:(typeof ccnTexte==='function'?ccnTexte():'')},
+    protectionActuelle:(typeof state.contrats==='object'?Object.assign({},state.contrats):null),
     priorities:Object.assign({},state.priorities),fiscalGain:{total,details}};
   track('lead_submit',{departement:payload.company.departement,total_gain:total,active_devices:Object.values(details).filter(v=>v>0).length,consent_status:true});
   try{ fetch('traitement_lead.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});}catch(e){}
@@ -1166,6 +1204,124 @@ function saveProfile(){ try{
   const _unlock=unlockResults; unlockResults=function(){ _unlock(); saveProfile(); };
   ['secteur','departement'].forEach(id=>{ const el=document.getElementById(id); if(el) el.addEventListener('change',saveProfile); });
   saveProfile();
+})();
+</script>
+<script>
+/* ===== V0.x 09/10/2026 — Convention collective, contrats actuels (pilier Protéger) et « Bon à savoir » =====
+   Tout est facultatif : rien ne bloque le parcours. Les réponses alimentent la synthèse transmise à l'expert,
+   le lien vers le devis (IDCC), l'audit mutuelle / prévoyance et le profil de l'Assistant BRH (données d'entreprise uniquement). */
+state.ccn=''; state.idcc='';
+state.contrats={ mutuelle:'', prevoyance:'', echM:'', echA:'' };
+const PE_MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+const PE_LIB={ mutuelle:{oui:'Oui',non:'Non',nsp:'Je ne sais pas'}, prevoyance:{tous:'Oui, pour tous',cadres:'Cadres seulement',non:'Non',nsp:'Je ne sais pas'} };
+const AUDIT_URL='audit-mutuelle.html';
+
+/* ---------- convention collective ---------- */
+function onSecteur(){ fillCcn(); saveProfile2(); }
+function fillCcn(){
+  const sel=document.getElementById('ccn'); if(!sel||!window.BRH_CCN) return;
+  const sec=val('secteur');
+  if(!sec){ sel.innerHTML='<option value="">Choisissez d’abord votre secteur</option>'; state.ccn=''; toggleIdcc(); return; }
+  const codes=BRH_CCN.list(sec,state.effectif).map(c=>c[0]);
+  if(state.ccn && !['autre','nsp','aucune'].includes(state.ccn) && !codes.includes(state.ccn)) state.ccn='';
+  sel.innerHTML=BRH_CCN.options(sec,state.effectif,state.ccn);
+  toggleIdcc();
+}
+function onCcn(){ state.ccn=document.getElementById('ccn').value; toggleIdcc(); track('ccn_selected',{ccn:state.ccn}); refresh(); }
+function onIdcc(){ const el=document.getElementById('idcc'); el.value=el.value.replace(/\D/g,'').slice(0,4); state.idcc=el.value; refresh(); }
+function toggleIdcc(){ const w=document.getElementById('idcc-wrap'); if(w) w.classList.toggle('hidden', state.ccn!=='autre'); }
+function ccnCode(){ if(state.ccn==='autre') return state.idcc||''; return /^\d+$/.test(state.ccn)?state.ccn:''; }
+function ccnTexte(){
+  if(state.ccn==='nsp') return 'Je ne sais pas';
+  if(state.ccn==='aucune') return 'Aucune convention collective';
+  const c=ccnCode(); if(!c) return '';
+  const l=window.BRH_CCN?BRH_CCN.label(c):''; return c+(l?' — '+l:'');
+}
+
+/* ---------- contrats actuels (s'affiche si « Protéger mes salariés » > 1) ---------- */
+function peChips(k){ return '<div class="pe-chips" role="group" aria-label="'+(k==='mutuelle'?'Mutuelle d’entreprise':'Prévoyance collective')+'">'+
+  Object.keys(PE_LIB[k]).map(v=>'<button type="button" data-pe="'+k+'" data-v="'+v+'" aria-pressed="'+(state.contrats[k]===v)+'">'+PE_LIB[k][v]+'</button>').join('')+'</div>'; }
+function renderProtect(){
+  const box=document.getElementById('protect-extra'); if(!box) return;
+  const y=new Date().getFullYear();
+  box.innerHTML=
+    '<div class="pe-head"><b>Vos contrats actuels</b><span>facultatif</span></div>'+
+    '<p class="pe-note">Si vous le souhaitez, nous pourrons comparer vos contrats avec les solutions du Crédit Agricole, gratuitement et sans engagement.</p>'+
+    '<div class="pe-q"><span>Avez-vous une mutuelle d’entreprise ?</span>'+peChips('mutuelle')+'</div>'+
+    '<div class="pe-q"><span>Et une prévoyance collective ?</span>'+peChips('prevoyance')+'</div>'+
+    '<div class="pe-q hidden" id="pe-ech"><span>Date d’échéance de vos contrats</span><div class="pe-date">'+
+      '<select id="pe-m" aria-label="Mois d’échéance"><option value="">Mois</option>'+PE_MOIS.map((m,i)=>'<option value="'+i+'">'+m+'</option>').join('')+'</select>'+
+      '<select id="pe-a" aria-label="Année d’échéance">'+[y,y+1,y+2].map(a=>'<option>'+a+'</option>').join('')+'</select></div></div>'+
+    '<p class="pe-hint" id="pe-hint"></p>';
+  box.addEventListener('click',e=>{ const b=e.target.closest('button[data-pe]'); if(!b) return;
+    const k=b.dataset.pe, v=b.dataset.v; state.contrats[k]= state.contrats[k]===v ? '' : v;
+    box.querySelectorAll('button[data-pe="'+k+'"]').forEach(x=>x.setAttribute('aria-pressed', x.dataset.v===state.contrats[k]));
+    track('contrat_declare',{type:k,valeur:state.contrats[k]}); refresh(); });
+  box.addEventListener('change',e=>{ if(e.target.id==='pe-m') state.contrats.echM=e.target.value; if(e.target.id==='pe-a') state.contrats.echA=e.target.value; refresh(); });
+  state.contrats.echA=String(y);
+}
+function aUnContrat(){ const c=state.contrats; return c.mutuelle==='oui' || c.prevoyance==='tous' || c.prevoyance==='cadres'; }
+function moisAvantEcheance(){
+  const c=state.contrats; if(c.echM===''||!c.echA) return null;
+  const now=new Date(), d=new Date(+c.echA,+c.echM,1);
+  return (d.getFullYear()-now.getFullYear())*12 + (d.getMonth()-now.getMonth());
+}
+function updateProtect(){
+  const box=document.getElementById('protect-extra'); if(!box) return;
+  const on=(state.priorities.protection||0)>=3;
+  box.classList.toggle('hidden',!on);
+  const ech=document.getElementById('pe-ech'); if(ech) ech.classList.toggle('hidden',!aUnContrat());
+  const h=document.getElementById('pe-hint'); if(!h) return;
+  const m=moisAvantEcheance();
+  h.textContent = (aUnContrat() && m!==null && m>=0 && m<=6) ? 'Votre échéance approche : c’est le bon moment pour comparer vos contrats.' : '';
+}
+
+/* ---------- « Bon à savoir » : carte Audit mutuelle (priorité « Protéger » à 3 ou 4 étoiles) ---------- */
+function renderAuditCard(){
+  const box=document.getElementById('basAudit'); if(!box) return;
+  const c=state.contrats, m=moisAvantEcheance(), pts=[];
+  if(aUnContrat() && m!==null && m>=0 && m<=6) pts.push('Votre échéance arrive dans '+(m<=0?'moins d’un mois':m+' mois')+' : c’est le bon moment pour comparer.');
+  if(c.prevoyance==='cadres') pts.push('Seuls vos cadres sont couverts en prévoyance : vos autres salariés restent exposés en cas d’arrêt long ou d’invalidité.');
+  if(c.mutuelle==='non') pts.push('La complémentaire santé d’entreprise est obligatoire et financée au moins à 50 % par l’employeur.');
+  if(ccnTexte() && state.ccn!=='nsp' && state.ccn!=='aucune') pts.push('Votre convention collective ('+ccnTexte()+') est prise en compte dans l’audit.');
+  const titre = aUnContrat() ? 'Un audit gratuit de votre mutuelle et de votre prévoyance' : 'Un audit gratuit pour bien choisir votre mutuelle et votre prévoyance';
+  box.innerHTML='<div class="fisc-head"><span class="fh-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 4v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V7l7-4Z"/><path d="M9 12l2 2 4-4"/></svg></span><div>'+
+    '<h3>'+titre+'</h3><p>Vous souhaitez <b>protéger vos salariés</b>. En 3 minutes, comparez vos garanties avec les solutions de Crédit Agricole Assurances : résultat immédiat, sans coordonnées et sans engagement. Votre diagnostic reste ouvert : vous y revenez en un clic.</p></div></div>'+
+    (pts.length?'<ul class="bas-pts">'+pts.map(t=>'<li>'+t+'</li>').join('')+'</ul>':'')+
+    '<a class="btn btn-primary" href="audit-mutuelle.html?from=diagnostic" onclick="saveProfile2();track(\'cta_audit_click\',{source:\'bon_a_savoir\'})">Faire mon audit mutuelle / prévoyance'+
+    ' <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>';
+}
+/* ---------- profil partagé (assistant, audit, devis) ---------- */
+function saveProfile2(){ try{
+  const prev=JSON.parse(sessionStorage.getItem('brhProfil')||'{}');
+  const c=state.contrats, deja=[];
+  const ech=(c.echM!==''&&c.echA)?' (échéance '+String(+c.echM+1).padStart(2,'0')+'/'+c.echA+')':'';
+  if(c.mutuelle==='oui') deja.push('Mutuelle'+ech);
+  if(c.prevoyance==='tous') deja.push('Prévoyance (tous)'+ech);
+  if(c.prevoyance==='cadres') deja.push('Prévoyance (cadres)'+ech);
+  const o=Object.assign(prev,{ idcc:ccnTexte()||undefined, contrats:Object.assign({},c), ccn:state.ccn });
+  if(deja.length) o.deja=deja; else delete o.deja;
+  sessionStorage.setItem('brhProfil',JSON.stringify(o));
+}catch(e){} }
+
+/* ---------- synthèse transmise et passerelle devis enrichies ---------- */
+(function(){
+  const _recap=updateRecap;
+  updateRecap=function(){ _recap(); const r=document.getElementById('recap'); if(!r) return;
+    const extra=[]; const t=ccnTexte(); if(t) extra.push('convention '+t);
+    const c=state.contrats;
+    if(c.mutuelle) extra.push('mutuelle : '+PE_LIB.mutuelle[c.mutuelle].toLowerCase());
+    if(c.prevoyance) extra.push('prévoyance : '+PE_LIB.prevoyance[c.prevoyance].toLowerCase());
+    if(c.echM!=='' && aUnContrat()) extra.push('échéance '+PE_MOIS[+c.echM]+' '+c.echA);
+    if(extra.length) r.innerHTML+=' '+extra.join(' · ')+'.'; };
+  const _devis=updateDevisCta;
+  updateDevisCta=function(){ _devis(); const a=document.getElementById('devisCtaBtn'); const code=ccnCode();
+    if(a && code && a.href.indexOf('idcc=')<0) a.href+=(a.href.indexOf('?')<0?'?':'&')+'idcc='+encodeURIComponent(code);
+    const sec=val('secteur'); if(a && sec && a.href.indexOf('secteur=')<0) a.href+=(a.href.indexOf('?')<0?'?':'&')+'secteur='+encodeURIComponent(sec); };
+  const _r=refresh;
+  refresh=function(){ _r(); updateProtect(); updateBonASavoir(); saveProfile2(); };
+  const ef=document.getElementById('effectif'); if(ef) ef.addEventListener('change',fillCcn);
+  renderProtect(); fillCcn(); refresh();
 })();
 </script>
 <script src="chatbot-widget.js?v=20261002" defer></script>
