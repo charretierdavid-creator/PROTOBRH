@@ -49,18 +49,21 @@ Si une demande ne touche qu'un des deux sites, le dire explicitement dans le ré
 
 ## 4. Conventions du projet
 
-- **Pages du cahier des charges** : codes `É01` à `É25` (écrans), `P1`, `P2` (processus back-office), `H` (Assistant BRH).
-  Une nouvelle page d'écran prend le code suivant libre (`É26`…) et doit être reliée à une étape du parcours.
+- **Pages du cahier des charges** : codes `É01` à `É26` (écrans), `P1`, `P2` (processus back-office), `H` (Assistant BRH).
+  Une nouvelle page d'écran prend le code suivant libre (`É27`…) et doit être reliée à une étape du parcours.
 - **Priorités** : `MVP`, `V2`, `ARB` (à arbitrer).
-- **Données produites** : identifiants `D01`… `D84` ; une nouvelle donnée prend le code suivant libre et s'ajoute au
+- **Données produites** : identifiants `D01`… `D92` ; une nouvelle donnée prend le code suivant libre et s'ajoute au
   dictionnaire (`data` dans `app_data.json`) avec écran, nature (P, E, C, T) et exemple.
 - **Technique** : fichiers HTML/CSS/JS autonomes, sans framework ; images intégrées quand c'est possible.
 - **Accès protégé** : les deux sites passent par `acces.php` (même modèle que Diagnostic Conseil BRH :
   identifiant et mot de passe communs dans `config.php` — `ACCES_LOGIN`, `ACCES_PASSWORD` —, session 10 h, blocage
   après 8 essais). Tout nouveau script PHP appelé par les pages commence par `require_once __DIR__ . '/acces.php'; brh_acces_api();`.
   `acces.php` est identique dans `protobrh/` et `cdcbrh/` : le modifier aux deux endroits.
-- **Cache navigateur** : toute modification de `chatbot-widget.js` ou `feedback-widget.js` impose de changer leur
-  numéro de version (`?v=AAAAMMJJ`) dans **toutes** les pages de `protobrh/`, sinon les visiteurs gardent l'ancienne version.
+- **Cache navigateur** : toute modification d'un script partagé (`chatbot-widget.js`, `feedback-widget.js`,
+  `formules-amundi.js`, `conventions.js`) impose de changer son numéro de version (`?v=AAAAMMJJ`) dans **toutes** les pages
+  de `protobrh/` qui le chargent, sinon les visiteurs gardent l'ancienne version.
+- **Listes partagées** : secteurs d'activité et conventions collectives dans `conventions.js` (diagnostic, audit mutuelle,
+  devis) ; textes et tarifs des formules Amundi dans `formules-amundi.js`.
 - **Charte BRH** : vert pin `#065145` (titres, boutons), teal `#016265`, vert lime `#8FB822` (accents),
   menthe `#E3EFEA` (fonds), `#006A4E` (bandeaux).
 - **Vocabulaire Crédit Agricole** : Caisse Régionale (CR), BRH, CABD, PNB, SOLEAD, lead, CRM Entreprise.
@@ -86,7 +89,7 @@ Les commentaires validés par David sont disponibles en JSON :
 `https://cdcbrh.monsitedetest.com/comments.php?action=backlog`
 
 Les **idées** (code page `NF`, bouton « Suggérer une idée ») décrivent une fonctionnalité absente du portail
-(champs : titre, besoin, nom). Une idée validée donne un **nouvel écran** (`É26`…) rattaché à une étape du parcours,
+(champs : titre, besoin, nom). Une idée validée donne un **nouvel écran** (`É27`…) rattaché à une étape du parcours,
 ou, si elle touche le périmètre, le budget ou la conformité, une proposition d'**arbitrage COPIL**.
 
 Pour chaque commentaire validé : proposer l'évolution correspondante, la regrouper avec les autres dans une même

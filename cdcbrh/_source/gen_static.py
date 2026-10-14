@@ -8,10 +8,10 @@ BY = {p['code']: p for p in PAGES}
 DNAME = {r[0]: r[1] for g in DICT for r in g['rows']}
 e = lambda s: html.escape(str(s), quote=True)
 aid = lambda code: 'p-' + code.replace('É', 'E')
-STEP_PAGES = {'A':['É01'],'1.1':['É01','É04'],'1.2':['É02','É03','É08'],'1.3':['É23','É24','É25','H'],'2.1':['É05'],'2.2':['É06'],'2.3':['É06'],'3.1':['É07'],'3.2':['É07'],'4.1':['É07'],'4.2':['É09','É22'],'5.1':['É10','É11'],'5.2':['É12','É13','É14'],'5.3':['É15','É16','É17','É18','É19','É20'],'6.1':['É21','P2'],'5.L':['P1'],'6.L':['P1','É22']}
+STEP_PAGES = {'A':['É01'],'1.1':['É01','É04'],'1.2':['É02','É03','É08','É26'],'1.3':['É23','É24','É25','H'],'2.1':['É05'],'2.2':['É06'],'2.3':['É06'],'3.1':['É07'],'3.2':['É07'],'4.1':['É07','É26'],'4.2':['É09','É22'],'5.1':['É10','É11'],'5.2':['É12','É13','É14'],'5.3':['É15','É16','É17','É18','É19','É20'],'6.1':['É21','P2'],'5.L':['P1'],'6.L':['P1','É22']}
 LAB = {'A':'Acquisition','1.1':'1.1 Accueil portail 360°','1.2':'1.2 Explore les 4 besoins RH','1.3':'1.3 Ressources & Assistant','2.1':'2.1 Décrit son entreprise','2.2':'2.2 Note ses priorités RH','2.3':'2.3 Se compare','3.1':'3.1 Gain fiscal annuel','3.2':"3.2 Pouvoir d'achat / salarié",'4.1':'4.1 Solutions priorisées','4.2':'4.2 Transmet ses coordonnées','5.1':'5.1 Choisit ses solutions','5.2':'5.2 Identifie son entreprise','5.3':'5.3 Configure et estime','5.L':'Lead qualifié','6.1':'6.1 Reçoit son devis','6.L':'Rappel expert BRH de la CR'}
 STEP_ORDER = ['A','1.1','1.2','1.3','2.1','2.2','2.3','3.1','3.2','4.1','4.2','5.1','5.2','5.3','5.L','6.1','6.L']
-GROUPS = [('Accueil & découverte',['É01','É02','É03','É04']),('Diagnostic RH',['É05','É06','É07','É08','É09']),('Devis — données communes',['É10','É11','É12','É13','É14']),('Devis — configuration',['É15','É16','É17','É18']),('Estimation, proposition, devis',['É19','É20','É21','É22']),('Ressources & newsletter',['É23','É24','É25']),('Back-office & transverse',['P1','P2','H'])]
+GROUPS = [('Accueil & découverte',['É01','É02','É03','É04']),('Diagnostic RH',['É05','É06','É07','É08','É09','É26']),('Devis — données communes',['É10','É11','É12','É13','É14']),('Devis — configuration',['É15','É16','É17','É18']),('Estimation, proposition, devis',['É19','É20','É21','É22']),('Ressources & newsletter',['É23','É24','É25']),('Back-office & transverse',['P1','P2','H'])]
 ORDER = [c for g in GROUPS for c in g[1]]
 PRIO = {'MVP':'MVP','V2':'V2','ARB':'À arbitrer'}
 def story(t): return re.sub(r"(En tant que |je veux |afin (?:de |d'|que ))", r'<b>\1</b>', e(t))

@@ -805,3 +805,42 @@ OÙ LES TROUVER SUR LE PORTAIL
   « Partager la valeur » et « Préparer la retraite » sont notées 3 ou 4).
 - Devis en ligne, étape 4 : choix de la formule dans les onglets
   « Épargne salariale » et « Retraite collective ».
+
+============================================================ 33.
+AUDIT MUTUELLE ET PRÉVOYANCE (module du portail)
+============================================================
+Le portail propose un audit gratuit de la mutuelle (complémentaire santé)
+et de la prévoyance d'entreprise : environ 3 minutes, résultat immédiat,
+sans coordonnées et sans engagement. Il compare les garanties déclarées
+avec les solutions de Crédit Agricole Assurances et rappelle ce que prévoit
+la convention collective.
+
+DÉROULÉ
+- Votre besoin : comparer des contrats existants ou mettre en place un
+  premier contrat ; mutuelle, prévoyance ou les deux.
+- Votre entreprise : nombre de salariés, âge moyen (facultatif), secteur
+  d'activité, convention collective (code IDCC), salariés concernés.
+- Votre mutuelle : niveau de remboursement par poste (hospitalisation, soins
+  courants, optique, dentaire, aides auditives, médecines douces), famille
+  couverte, part payée par l'entreprise, cotisation.
+- Votre prévoyance : salariés couverts, maintien des revenus en cas d'arrêt,
+  rente d'invalidité, capital décès, rente éducation.
+- Résultat : points de vigilance, formule équivalente (illustrative), puis
+  au choix un devis en ligne (5 à 50 salariés) ou une comparaison chiffrée par
+  un expert BRH de la Caisse régionale (rappel sous 24 h ouvrées, avec
+  consentement).
+
+RÈGLES UTILES
+- La complémentaire santé d'entreprise est obligatoire et financée au moins à
+  50 % par l'employeur.
+- La convention collective (IDCC) fixe les garanties minimales : c'est la clé
+  du devis santé et prévoyance. Elle figure sur les bulletins de paie.
+- Le secteur, la convention collective et les réponses de l'audit sont repris
+  automatiquement dans le devis en ligne.
+
+OÙ LE TROUVER
+- Menu du haut : « Audit mutuelle », avant « Devis en ligne ».
+- Diagnostic : bloc « Bon à savoir » quand la priorité « Protéger mes
+  salariés » est notée 3 ou 4.
+- Accueil : vignette « Protéger mes salariés », lien « Pensez à réaliser un
+  audit de votre mutuelle ».

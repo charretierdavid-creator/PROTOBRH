@@ -28,8 +28,8 @@ const SOL_DETAIL={
   proteger:{title:'Protéger mes salariés',partner:'Crédit Agricole Assurances',
     icon:'<path d="M12 3l7 4v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V7l7-4Z"/><path d="M12 9v3M12 15h.01"/>',
     offers:[
-      {t:'Complémentaire santé',d:'Couverture des frais de santé (financée à ≥ 50 % par l\u2019employeur), extensible à la famille, avec des services santé au quotidien.'},
-      {t:'Prévoyance collective',d:'Maintien de salaire, capital décès et éducation pour protéger le collaborateur et sa famille en cas d\u2019accident de la vie.'}
+      {t:'Complémentaire santé',d:'Couverture des frais de santé (financée à ≥ 50 % par l\u2019employeur) adaptée à votre convention collective, intégrant le 100 % Santé, extensible à la famille, avec l\u2019application Ma Santé et un bilan santé prévention pour chaque salarié.'},
+      {t:'Prévoyance collective',d:'Maintien des revenus en cas d\u2019arrêt de travail, rente d\u2019invalidité et capital décès, avec en option rente éducation, rente conjoint et allocation obsèques. Un portail entreprise simplifie l\u2019affiliation et les déclarations.'}
     ],
     note:'Avec Crédit Agricole Assurances, l\u2019expert de la protection sociale : 2 millions de personnes protégées, des solutions santé, prévoyance et prévention.'},
   retraite:{title:'Préparer la retraite de mes salariés',partner:'Crédit Agricole Assurances',partner2:'Amundi',
@@ -467,6 +467,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 .mobile-menu .btn{display:flex !important}
 @media(max-width:1320px){.header-in{gap:1rem}.nav{gap:0}.nav a{padding:.5rem .5rem;font-size:.88rem}.header .btn{padding:.75rem 1rem;font-size:.9rem}}
 </style>
+<style>.sc-audit{align-self:flex-start;max-width:100%;white-space:normal;line-height:1.35;margin-top:12px;font-family:var(--fh);font-weight:600;font-size:.84rem;color:var(--green);background:var(--mint);border-radius:12px;padding:.5rem .85rem;text-decoration:none}.sc-audit:hover{background:#dcebe4}</style>
 </head>
 <body>
 <header class="header">
@@ -475,6 +476,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
     <nav class="nav" aria-label="Navigation principale">
       <a href="#offres">Nos offres</a>
       <a href="diagnostic.html">Diagnostic RH</a>
+      <a href="audit-mutuelle.html?from=header">Audit mutuelle</a>
       <a href="devis.html">Devis en ligne</a>
       <a href="avantages-fiscaux.html">Avantages fiscaux</a>
       <a href="ressources.html">Ressources</a>
@@ -486,6 +488,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
   <div class="mobile-menu" id="mobileMenu"><div class="wrap">
     <a href="#offres" onclick="closeMenu()">Nos offres</a>
     <a href="diagnostic.html">Diagnostic RH</a>
+    <a href="audit-mutuelle.html?from=header">Audit mutuelle</a>
     <a href="devis.html">Devis en ligne</a>
     <a href="avantages-fiscaux.html" onclick="closeMenu()">Avantages fiscaux</a>
     <a href="ressources.html">Ressources</a>
@@ -579,6 +582,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
         </div>
         <button class="sc-more" onclick="openSol('proteger')" aria-haspopup="dialog">En savoir plus
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        <a class="sc-audit" href="audit-mutuelle.html?from=offre" onclick="track('cta_audit_click',{source:'vignette_sante_prevoyance'})">Pensez à réaliser un audit de votre mutuelle <span aria-hidden="true">→</span></a>
       </article>
       <article class="scard">
         <div class="sc-top">
