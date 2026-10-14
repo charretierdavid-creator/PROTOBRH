@@ -842,5 +842,5 @@ OÙ LE TROUVER
 - Menu du haut : « Audit mutuelle », avant « Devis en ligne ».
 - Diagnostic : bloc « Bon à savoir » quand la priorité « Protéger mes
   salariés » est notée 3 ou 4.
-- Accueil : vignette « Protéger mes salariés », lien « Pensez à réaliser un
-  audit de votre mutuelle ».
+- Accueil : bouton « En savoir plus » de la vignette « Protéger mes
+  salariés », puis « Réaliser un audit de votre mutuelle » en bas de la fenêtre.
