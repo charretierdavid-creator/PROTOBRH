@@ -374,6 +374,18 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 .res-press{margin-top:28px;display:flex;justify-content:flex-end}
 .btn-press{display:inline-flex;align-items:center;gap:.5rem;background:var(--ink);color:#fff;border-radius:999px;font-family:var(--fh);font-weight:600;font-size:.95rem;padding:.85rem 1.7rem;text-decoration:none}
 .btn-press:hover{background:#0b120e}
+.res-feature{grid-column:1/-1;display:grid;grid-template-columns:1fr 1.3fr;grid-template-areas:"txt kpis" "cta kpis";column-gap:32px;row-gap:16px;align-items:center;background:var(--mint-2,#eef4ef);border-color:#dfe9e2}
+.rf-txt{grid-area:txt}.rf-kpis{grid-area:kpis}.res-feature .rf-cta{grid-area:cta;justify-self:start;align-self:start}
+.res-feature .res-cat{margin-bottom:10px}
+.res-feature h3{font-family:var(--fh);font-size:1.25rem;color:var(--green);margin:0 0 6px}
+.res-feature p{color:var(--slate);font-size:.92rem;line-height:1.5;margin:0}
+.rf-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.rf-kpis div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.rf-kpis b{display:block;font-family:var(--fh);font-weight:800;font-size:1.3rem;color:var(--green);line-height:1.1}
+.rf-kpis span{display:block;font-size:.74rem;color:var(--slate);line-height:1.35;margin-top:4px}
+.res-feature .rf-cta{margin-top:0;white-space:nowrap}
+@media(max-width:820px){.res-feature{grid-template-columns:1fr;grid-template-areas:"txt" "kpis" "cta"}}
+@media(max-width:600px){.rf-kpis{grid-template-columns:1fr}.res-feature .rf-cta{white-space:normal}}
 @media(max-width:900px){.res-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.res-grid{grid-template-columns:1fr}}
 
@@ -399,6 +411,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 .news-ok{background:var(--mint);border:1px solid #cfe3cf;border-radius:16px;padding:26px;color:var(--green);font-family:var(--fh);font-weight:600;text-align:center;line-height:1.5}
 @media(max-width:860px){.news-wrap{grid-template-columns:1fr;gap:30px}.news-title{font-size:2rem}.nf-row{grid-template-columns:1fr}}
 </style>
+<style>.nav a{white-space:nowrap}@media(max-width:1180px){.nav a{padding:.5rem .55rem;font-size:.9rem}}</style>
 </head>
 <body>
 <header class="header">
@@ -409,8 +422,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
       <a href="diagnostic.html">Diagnostic RH</a>
       <a href="audit-mutuelle.html?from=header">Audit mutuelle</a>
       <a href="devis.html">Devis en ligne</a>
-      <a href="avantages-fiscaux.html">Avantages fiscaux</a>
-      <a href="ressources.html">Ressources</a>
+      <a href="ressources.html" class="active" aria-current="page">Ressources</a>
     </nav>
     <a class="btn btn-primary" href="diagnostic.html#contact">Parler à un expert <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 8v6M23 11h-6"/><path d="M14 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="8" cy="7" r="4"/></svg></a>
     <button class="burger" aria-label="Menu" aria-expanded="false" onclick="toggleMenu()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
@@ -420,7 +432,6 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
     <a href="diagnostic.html">Diagnostic RH</a>
     <a href="audit-mutuelle.html?from=header">Audit mutuelle</a>
     <a href="devis.html">Devis en ligne</a>
-    <a href="avantages-fiscaux.html" onclick="closeMenu()">Avantages fiscaux</a>
     <a href="ressources.html">Ressources</a>
     <a class="btn btn-primary" href="diagnostic.html#contact">Parler à un expert</a>
   </div></div>
@@ -430,6 +441,20 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
     <h1 class="h2">Ressources</h1>
     <p class="res-sub">Cas clients, livres blancs, articles, webinars et podcasts pour tirer le meilleur de vos avantages salariés et de votre politique RH.</p>
     <div class="res-grid">
+      <!-- AVANTAGES FISCAUX & SOCIAUX (déplacé du menu vers les ressources) -->
+      <article class="res-card res-feature">
+        <div class="rf-txt">
+          <div class="res-cat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10M10 21V6M16 21v-8M20 21V4"/><path d="M2 21h20"/></svg>Guide 2026</div>
+          <h3>Vos avantages fiscaux &amp; sociaux</h3>
+          <p>Les exonérations de charges sociales et d’impôt sur le revenu, dispositif par dispositif : santé, prévoyance, épargne salariale, retraite, pouvoir d’achat.</p>
+        </div>
+        <div class="rf-kpis">
+          <div><b>5 050 €</b><span>de pouvoir d’achat en plus par an et par salarié</span></div>
+          <div><b>4 532 €</b><span>de coût employeur, contre 9 152 € en salaire brut chargé</span></div>
+          <div><b>0 €</b><span>de charges sociales sur les dispositifs exonérés</span></div>
+        </div>
+        <a class="res-more rf-cta" href="avantages-fiscaux.html">Voir le détail des avantages fiscaux <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </article>
 
       <article class="res-card">
         <div class="res-cat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 3z"/></svg> Cas clients</div>

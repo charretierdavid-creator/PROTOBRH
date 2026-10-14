@@ -478,6 +478,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 
 
 </style>
+<style>.af-back{display:inline-flex;align-items:center;gap:.4rem;color:var(--green);font-family:var(--fh);font-weight:600;font-size:.9rem;text-decoration:none;margin-bottom:14px}.af-back svg{width:16px;height:16px}.af-back:hover{text-decoration:underline}</style>
+<style>.nav a{white-space:nowrap}@media(max-width:1180px){.nav a{padding:.5rem .55rem;font-size:.9rem}}</style>
 </head>
 <body>
 <header class="header">
@@ -488,8 +490,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
       <a href="diagnostic.html">Diagnostic RH</a>
       <a href="audit-mutuelle.html?from=header">Audit mutuelle</a>
       <a href="devis.html">Devis en ligne</a>
-      <a href="avantages-fiscaux.html">Avantages fiscaux</a>
-      <a href="ressources.html">Ressources</a>
+      <a href="ressources.html" class="active" aria-current="page">Ressources</a>
     </nav>
     <a class="btn btn-primary" href="diagnostic.html#contact">Parler à un expert <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 8v6M23 11h-6"/><path d="M14 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="8" cy="7" r="4"/></svg></a>
     <button class="burger" aria-label="Menu" aria-expanded="false" onclick="toggleMenu()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
@@ -499,13 +500,13 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
     <a href="diagnostic.html">Diagnostic RH</a>
     <a href="audit-mutuelle.html?from=header">Audit mutuelle</a>
     <a href="devis.html">Devis en ligne</a>
-    <a href="avantages-fiscaux.html" onclick="closeMenu()">Avantages fiscaux</a>
     <a href="ressources.html">Ressources</a>
     <a class="btn btn-primary" href="diagnostic.html#contact">Parler à un expert</a>
   </div></div>
 </header>
 <main>
   <section class="sec" style="padding-bottom:0"><div class="wrap">
+    <a class="af-back" href="ressources.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Ressources</a>
     <h1 class="h2" style="margin-bottom:8px">Vos avantages fiscaux &amp; sociaux</h1>
     <p style="color:var(--slate);max-width:74ch;font-size:1.02rem">Le détail, dispositif par dispositif, des exonérations de charges sociales et d’impôt sur le revenu — contenu issu du guide « Avantages salariés – Édition 2026 ».</p>
   </div></section>

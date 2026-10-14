@@ -844,3 +844,12 @@ OÙ LE TROUVER
   salariés » est notée 3 ou 4.
 - Accueil : bouton « En savoir plus » de la vignette « Protéger mes
   salariés », puis « Réaliser un audit de votre mutuelle » en bas de la fenêtre.
+
+============================================================ 34.
+NAVIGATION DU PORTAIL
+============================================================
+- Menu du haut : Nos offres, Diagnostic RH, Audit mutuelle, Devis en ligne,
+  Ressources.
+- Le détail des avantages fiscaux et sociaux (exonérations dispositif par
+  dispositif) se trouve dans la page Ressources : pavé « Vos avantages
+  fiscaux & sociaux », bouton « Voir le détail des avantages fiscaux ».

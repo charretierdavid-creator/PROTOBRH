@@ -567,6 +567,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 <script src="formules-amundi.js?v=20261009"></script>
 <script src="conventions.js?v=20261014"></script>
 <style>.sm-audit{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding:14px 16px;border-radius:12px;background:var(--green);color:#fff;text-decoration:none;font-family:var(--fh);font-weight:600;font-size:.95rem;line-height:1.35}.sm-audit small{display:block;font-family:var(--fb);font-weight:400;font-size:.8rem;opacity:.85;margin-top:2px}.sm-audit:hover{background:var(--green-hover)}</style>
+<style>.nav a{white-space:nowrap}@media(max-width:1180px){.nav a{padding:.5rem .55rem;font-size:.9rem}}</style>
 </head>
 <body>
 <header class="header">
@@ -578,7 +579,6 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
       <a href="#block3">Solutions</a>
       <a href="audit-mutuelle.html?from=header">Audit mutuelle</a>
       <a href="devis.html">Devis en ligne</a>
-      <a href="avantages-fiscaux.html">Avantages fiscaux</a>
       <a href="ressources.html">Ressources</a>
     </nav>
     <a class="btn btn-primary" href="#contact">Parler à un expert <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 8v6M23 11h-6"/><path d="M14 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="8" cy="7" r="4"/></svg></a>
@@ -668,13 +668,6 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
           <input type="text" id="departement" maxlength="2" placeholder="Ex. 37" autocomplete="off" autocapitalize="characters" spellcheck="false" oninput="onDepartement()" aria-describedby="dep-hint dep-warn">
           <span class="hint" id="dep-hint">2 caractères : 37, 41, 2A…</span>
           <span class="warn" id="dep-warn" role="alert"></span></div>
-      </div>
-      <div class="fields-row ccn-row">
-        <div class="field ccn-field"><label for="ccn">Convention collective <span class="opt">facultatif</span></label>
-          <select id="ccn" onchange="onCcn()"><option value="">Choisissez d’abord votre secteur</option></select>
-          <span class="hint">Elle figure sur vos bulletins de paie et fixe vos obligations en santé et prévoyance.</span></div>
-        <div class="field hidden" id="idcc-wrap"><label for="idcc">Code IDCC</label>
-          <input type="text" id="idcc" inputmode="numeric" maxlength="4" placeholder="Ex. 1486" oninput="onIdcc()" autocomplete="off"></div>
       </div>
     </div></div>
 
@@ -912,8 +905,7 @@ function buildSliders(){
         '<input type="range" min="1" max="4" step="1" value="'+v+'" id="s-'+a.key+'" '+
           'aria-label="'+a.full+' — priorité de 1 à 4" aria-valuemin="1" aria-valuemax="4" aria-valuenow="'+v+'" '+
           'oninput="onPriority(\''+a.key+'\',this.value)">'+
-      '</div></div></div>'+
-      (a.key==='protection'?'<div id="protect-extra" class="protect-extra hidden" aria-live="polite"></div>':'');
+      '</div></div></div>';
   }).join('');
   AXES.forEach(a=>paintSlider(a.key));
 }
