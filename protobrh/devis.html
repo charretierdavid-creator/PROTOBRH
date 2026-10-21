@@ -722,6 +722,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 </style>
 <script src="formules-amundi.js?v=20261021"></script>
 <script src="conventions.js?v=20261014"></script>
+<script src="prevoyance-ccn.js?v=20261021"></script>
 <style>.nav a{white-space:nowrap}@media(max-width:1180px){.nav a{padding:.5rem .55rem;font-size:.9rem}}</style>
 <link rel="stylesheet" href="variante.css?v=20261021d">
 <script src="variante.js?v=20261021d"></script>
@@ -1336,7 +1337,7 @@ function fillEntreprise(d,noFocus){
   /* convention et secteur déclarés dans le diagnostic ou l'audit mutuelle : prioritaires sur une valeur non confirmée */
   if(S.prefIdcc && !d.idcc_confirme) S.ent.idcc=S.prefIdcc;
   S.ent.secteur=d.secteur||S.prefSecteur||'';
-  $('e-nom').value=S.ent.nom; $('e-ville').value=S.ent.ville; $('e-cp').value=S.ent.cp; $('e-naf').value=S.ent.naf; $('e-idcc').value=S.ent.idcc;
+  $('e-nom').value=S.ent.nom; $('e-ville').value=S.ent.ville; $('e-cp').value=S.ent.cp; $('e-naf').value=S.ent.naf; $('e-idcc').value=S.ent.idcc; if(window.BRH_PREV) BRH_PREV.maj(S.ent.idcc);
   fillDvSecteur();
   ['nom','ville','cp','naf'].forEach(k=>setStatus(k, !!S.ent[k] && d.source!=='manuel'));
   setStatus('idcc', !!d.idcc_confirme); setStatus('eff', false);
@@ -1389,7 +1390,7 @@ function onDvCcn(){
   else if(v==='aucune') inp.value='Aucune convention collective';
   else if(v==='nsp') inp.value='';
   else if(v==='autre'){ inp.value=''; inp.focus(); }
-  if(S.ent) S.ent.idcc=inp.value; save();
+  if(S.ent) S.ent.idcc=inp.value; if(window.BRH_PREV) BRH_PREV.maj(inp.value); save();
 }
 function validateEntreprise(){
   hideErr('err2');
@@ -1429,7 +1430,8 @@ function renderTabs(){
   $('dvTabs').innerHTML=S.sol.map(k=>'<button type="button" role="tab" class="dv-tab'+(panelOk(k)?' done':'')+'" aria-selected="'+(k===S.tab)+'" onclick="openTab(\''+k+'\')">'+svg(DV_ICON[k])+DV_SOL[k].title+'<span class="tk">'+CHK+'</span></button>').join('');
   DV_ORDER.forEach(k=>$('p-'+k).classList.toggle('active',k===S.tab));
   applyShow(); updOutputs();
-  const idc=$('sp_idcc_info'); if(idc) idc.textContent = S.ent && S.ent.idcc ? 'Convention collective retenue : '+S.ent.idcc+(S.ent.secteur?' (secteur '+S.ent.secteur+')':'')+'. Elle sert de base à votre devis santé et prévoyance ; votre expert la confirme.' : 'Précisez votre convention collective à l’étape 2 : c’est la clé de votre devis santé et prévoyance (garanties minimales et tarification).';
+  const idc=$('sp_idcc_txt')||$('sp_idcc_info'); if(idc) idc.textContent = S.ent && S.ent.idcc ? 'Convention collective retenue : '+S.ent.idcc+(S.ent.secteur?' (secteur '+S.ent.secteur+')':'')+'. Elle sert de base à votre devis santé et prévoyance ; votre expert la confirme.' : 'Précisez votre convention collective à l’étape 2 : c’est la clé de votre devis santé et prévoyance (garanties minimales et tarification).';
+  if(window.BRH_PREV) BRH_PREV.maj(S.ent&&S.ent.idcc);
 }
 function openTab(k){ S.tab=k; renderTabs(); save(); }
 function applyShow(){ syncFormules(); document.querySelectorAll('#devis [data-show]').forEach(el=>{ const [n,v]=el.dataset.show.split(':'); const sel=vals(n).concat(val(n)?[val(n)]:[]); el.style.display = v.split(',').some(x=>sel.includes(x)) ? '' : 'none'; }); }
@@ -1665,6 +1667,11 @@ function applyAudit(a){
   track('devis_from_audit',{perimetre:a.perimetre||''});
 }
 (function init(){
+  /* « i » prévoyance de branche : convention collective (étape 2) et prévoyance (étape 4) */
+  if(window.BRH_PREV){ $('e-ccn').parentNode.querySelector('label .dv-status').insertAdjacentHTML('beforebegin',BRH_PREV.bouton('pvTip2'));
+    $('sp_idcc_info').innerHTML='<span id="sp_idcc_txt"></span>'+BRH_PREV.bouton('pvTip4');
+    $('e-idcc').addEventListener('input',()=>BRH_PREV.maj($('e-idcc').value));
+    BRH_PREV.onOpen=(c,ok)=>track('devis_prev_ccn',{idcc:c,regime_branche:ok}); }
   const had=restore();
   /* reprise depuis le diagnostic : effectif et solutions prioritaires transmis dans l'adresse */
   const qp=new URLSearchParams(location.search);

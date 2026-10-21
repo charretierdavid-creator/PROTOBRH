@@ -84,7 +84,7 @@ Si une demande ne touche qu'un des deux sites, le dire explicitement dans le ré
   `VA`, `VB` (fiches des versions A et B du test A/B).
   Une nouvelle page d'écran prend le code suivant libre (`É28`…) et doit être reliée à une étape du parcours.
 - **Priorités** : `MVP`, `V2`, `ARB` (à arbitrer).
-- **Données produites** : identifiants `D01`… `D105` ; une nouvelle donnée prend le code suivant libre et s'ajoute au
+- **Données produites** : identifiants `D01`… `D106` ; une nouvelle donnée prend le code suivant libre et s'ajoute au
   dictionnaire (`data` dans `app_data.json`) avec écran, nature (P, E, C, T) et exemple.
 - **Technique** : fichiers HTML/CSS/JS autonomes, sans framework ; images intégrées quand c'est possible.
 - **Accès protégé** : les deux sites passent par `acces.php` (même modèle que Diagnostic Conseil BRH :
@@ -99,6 +99,7 @@ Si une demande ne touche qu'un des deux sites, le dire explicitement dans le ré
   ne jamais le committer ni committer le fichier généré. L'assistant passe par `assistant-demo.php` (relais à jeton).
 - **Listes partagées** : secteurs d'activité et conventions collectives dans `conventions.js` (diagnostic, audit mutuelle,
   devis) ; textes et tarifs des formules Amundi dans `formules-amundi.js`.
+  Prévoyance imposée par les conventions collectives (inventaire IDCC, fenêtre « i » du devis) dans `prevoyance-ccn.js`.
 - **Charte BRH** : vert pin `#065145` (titres, boutons), teal `#016265`, vert lime `#8FB822` (accents),
   menthe `#E3EFEA` (fonds), `#006A4E` (bandeaux).
 - **Vocabulaire Crédit Agricole** : Caisse Régionale (CR), BRH, CABD, PNB, SOLEAD, lead, CRM Entreprise.
