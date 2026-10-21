@@ -537,6 +537,12 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 .radar-col{display:flex;flex-direction:column;justify-content:center}
 .radar-col #radar{width:100%;height:auto}
 .radar-legend span{align-items:center}
+.info-wrap{position:relative;display:inline-block;vertical-align:2px;margin-left:8px}
+.info-i{width:19px;height:19px;border-radius:50%;border:none;background:var(--lime);color:#fff;font-family:var(--fh);font-weight:700;font-style:italic;font-size:.74rem;line-height:19px;text-align:center;cursor:pointer;padding:0}
+.info-tip{display:none;position:absolute;left:-12px;top:calc(100% + 10px);z-index:30;width:min(340px,78vw);background:#fff;color:var(--ink);border:1px solid var(--line-2);border-radius:12px;box-shadow:0 12px 32px rgba(6,81,69,.16);padding:12px 14px;font:400 .84rem/1.45 var(--fb);white-space:normal}
+.info-tip::before{content:"";position:absolute;left:16px;top:-7px;width:12px;height:12px;background:#fff;border-left:1px solid var(--line-2);border-top:1px solid var(--line-2);transform:rotate(45deg)}
+@media(max-width:600px){.info-tip{left:auto;right:-90px}.info-tip::before{left:auto;right:94px}}
+.info-wrap:hover .info-tip,.info-wrap:focus-within .info-tip,.info-wrap.open .info-tip{display:block}
 .bench-i{margin-left:7px;width:19px;height:19px;border-radius:50%;border:none;background:var(--lime);color:#fff;font-family:var(--fh);font-weight:700;font-style:italic;font-size:.74rem;line-height:19px;text-align:center;cursor:pointer;padding:0;flex:0 0 auto}
 .bench-i:hover{background:var(--green)}
 .bench-line{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-top:1px solid var(--line);font-size:.92rem;color:var(--ink)}
@@ -586,8 +592,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 <script src="offres-caa.js?v=20261021"></script>
 <style>.sm-audit{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding:14px 16px;border-radius:12px;background:var(--green);color:#fff;text-decoration:none;font-family:var(--fh);font-weight:600;font-size:.95rem;line-height:1.35}.sm-audit small{display:block;font-family:var(--fb);font-weight:400;font-size:.8rem;opacity:.85;margin-top:2px}.sm-audit:hover{background:var(--green-hover)}</style>
 <style>.nav a{white-space:nowrap}@media(max-width:1180px){.nav a{padding:.5rem .55rem;font-size:.9rem}}</style>
-<link rel="stylesheet" href="variante.css?v=20261021c">
-<script src="variante.js?v=20261021c"></script>
+<link rel="stylesheet" href="variante.css?v=20261021d">
+<script src="variante.js?v=20261021d"></script>
 </head>
 <body>
 <header class="header">
@@ -924,7 +930,7 @@ function buildSliders(){
   box.innerHTML = AXES.map(a=>{
     const v = state.priorities[a.key];
     return '<div class="srow"><span class="s-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+ICON[a.key]+'</svg></span>'+
-      '<div><div class="s-title">'+a.full+'</div><div class="s-sub">'+a.sub+'</div>'+
+      '<div><div class="s-title">'+a.full+(a.key==='protection'?'<span class="info-wrap"><button type="button" class="info-i" aria-label="Bon à savoir : obligations santé et prévoyance" aria-expanded="false" aria-controls="tip-protection" onclick="toggleTip(this)">i</button><span class="info-tip" id="tip-protection" role="tooltip"><b>Bon à savoir :</b> la <b>complémentaire santé</b> est obligatoire pour tous les salariés (accord national interprofessionnel, ANI) ; la <b>prévoyance</b> l’est pour les cadres et souvent selon votre convention collective.</span></span>':'')+'</div><div class="s-sub">'+a.sub+'</div>'+
       '<div class="pslider" id="ps-'+a.key+'">'+
         '<div class="nums"><span>1</span><span>2</span><span>3</span><span>4</span></div>'+
         '<div class="track"></div><div class="fill"></div><div class="knob"></div>'+
@@ -935,6 +941,12 @@ function buildSliders(){
   }).join('');
   AXES.forEach(a=>paintSlider(a.key));
 }
+/* petite fenêtre d'information (« i ») : survol sur ordinateur, appui sur mobile, Échap ou clic ailleurs pour fermer */
+function toggleTip(b){ const w=b.parentNode, on=!w.classList.contains('open');
+  document.querySelectorAll('.info-wrap.open').forEach(x=>{ x.classList.remove('open'); x.querySelector('.info-i').setAttribute('aria-expanded','false'); });
+  if(on){ w.classList.add('open'); b.setAttribute('aria-expanded','true'); track('info_open',{sujet:'obligations_sante_prevoyance'}); } }
+document.addEventListener('click',e=>{ if(!e.target.closest('.info-wrap')) document.querySelectorAll('.info-wrap.open').forEach(x=>x.classList.remove('open')); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('.info-wrap.open').forEach(x=>x.classList.remove('open')); });
 function paintSlider(key){
   const v = state.priorities[key];
   const ps = document.getElementById('ps-'+key);
