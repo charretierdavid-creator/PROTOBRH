@@ -94,7 +94,7 @@
     if(!prenom || !nom){ err.textContent='Merci d\u2019indiquer votre prénom et votre nom.'; return; }
     if(email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ err.textContent='Adresse e-mail non valide.'; return; }
     err.textContent='';
-    var payload={ prenom:prenom, nom:nom, email:email, commentaires:g('fb-comm').trim(), notes:ratings, page:'['+(window.BRH_VARIANTE||'REF')+'] '+location.pathname };
+    var payload={ prenom:prenom, nom:nom, email:email, commentaires:g('fb-comm').trim(), notes:ratings, page:location.pathname };   // la version (S, A, B) est déduite par feedback.php de l'adresse du site
     var btn=document.getElementById('fb-send'); btn.disabled=true; btn.textContent='Envoi\u2026';
     fetch('feedback.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
       .then(function(r){ return r.json(); })

@@ -7,6 +7,7 @@
 CREATE TABLE IF NOT EXISTS feedback (
   id               INT AUTO_INCREMENT PRIMARY KEY,
   cree_le          DATETIME NOT NULL,
+  version          CHAR(1) NOT NULL DEFAULT 'S',   -- version du prototype : S standard, A ou B (test A/B)
   prenom           VARCHAR(100),
   nom              VARCHAR(100),
   email            VARCHAR(190),
@@ -21,3 +22,6 @@ CREATE TABLE IF NOT EXISTS feedback (
   page             VARCHAR(255),
   ip               VARCHAR(64)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Table créée avant le test A/B : feedback.php ajoute la colonne automatiquement, ou à la main :
+-- ALTER TABLE feedback ADD COLUMN version CHAR(1) NOT NULL DEFAULT 'S' AFTER cree_le;
