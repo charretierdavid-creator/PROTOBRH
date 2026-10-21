@@ -270,21 +270,66 @@ function cbotPack(p){
 const CBOT_DEBUG = /[?&]debug=1/.test(location.search);   // ajouter ?debug=1 à l'adresse pour afficher le diagnostic technique
 /* Version hors ligne : sans réseau, réponse tirée de la base documentaire embarquée (window.BRH_CBOT_LOCAL) */
 function cbotNorm(t){ return String(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9 ]+/g,' '); }
-function cbotLocal(q){
+/* Mots-clés de la question (sans mots vides) */
+const CBOT_STOP=new Set(['comment','quelle','quelles','quels','quel','pour','avec','dans','mais','plus','vous','votre','vos','nous','notre','est','sont','une','des','les','que','qui','quoi','faire','peut','puis','cette','entre','sans','sur','aux','ces','mes','mon','elle','ils','leur','leurs','tout','tous','avoir','etre','bien','aussi','donc','alors','quand','combien','pourquoi','existe','avez','possible','savoir','expliquer','explique','parle','parlez']);
+function cbotMots(q){ return cbotNorm(q).split(' ').filter(w=>w.length>3 && !CBOT_STOP.has(w)); }
+/* Meilleure section de la base documentaire et ses passages les plus pertinents (puces ou phrases) */
+function cbotExtrait(q){
   const base=window.BRH_CBOT_LOCAL; if(!Array.isArray(base) || !base.length) return null;
-  const stop=new Set(['comment','quelle','quelles','quels','quel','pour','avec','dans','mais','plus','vous','votre','vos','nous','notre','est','sont','une','des','les','que','qui','quoi','faire','peut','puis','cette','entre','sans','tout','tous']);
-  const mots=cbotNorm(q).split(' ').filter(w=>w.length>3 && !stop.has(w)); if(!mots.length) return null;
+  const mots=cbotMots(q); if(!mots.length) return null;
+  const rac=mots.map(w=>w.slice(0,Math.max(4,w.length-2)));
   let best=null, bs=0;
-  base.forEach(sec=>{ const tt=cbotNorm(sec.t), tx=cbotNorm(sec.x); let sc=0;
-    mots.forEach(w=>{ const r=w.slice(0,Math.max(4,w.length-2)); if(tt.indexOf(r)>=0) sc+=8; let i=tx.indexOf(r), k=0; while(i>=0 && k<2){ sc++; k++; i=tx.indexOf(r,i+1); } });
+  base.forEach(sec=>{ if(/questions types|consigne|ton et style|r[eè]gles de r[eé]ponse|comportement/i.test(sec.t)) return;   // sections internes destinées à l'IA
+    const tt=cbotNorm(sec.t), tx=cbotNorm(sec.x); let sc=0;
+    rac.forEach(r=>{ if(tt.indexOf(r)>=0) sc+=8; let i=tx.indexOf(r), k=0; while(i>=0 && k<2){ sc++; k++; i=tx.indexOf(r,i+1); } });
     if(sc>bs){ bs=sc; best=sec; } });
-  if(!best || bs<2) return null;
-  let txt=best.x.replace(/\s+/g,' ').trim(); if(txt.length>700){ txt=txt.slice(0,700); txt=txt.slice(0,Math.max(txt.lastIndexOf('. '),400)+1)+' …'; }
-  return best.t+' — '+txt+'\n\n(Réponse hors connexion, tirée de la base documentaire de la Banque des RH. Un expert peut vous recontacter pour en savoir plus.)';
+  if(!best || bs<3) return null;
+  /* une section peut contenir des sous-blocs titrés en majuscules (ex. FORMULE CONVERGENCE — …) : on retient le sous-bloc visé par la question */
+  const H=/^[A-ZÉÈÀÇ][A-ZÉÈÀÇÂÊÎÔÛ0-9'’ ]{5,}(\s+[—-]\s.*)?:?$/;
+  const blocs=[{h:'',l:[]}]; best.x.replace(/\r/g,'').split('\n').forEach(l=>{ if(H.test(l.trim())) blocs.push({h:l.trim(),l:[]}); else blocs[blocs.length-1].l.push(l); });
+  let titre=best.t, lignes=best.x.replace(/\r/g,'').split('\n').filter(l=>!H.test(l.trim()));
+  if(blocs.length>2){ let bb=null, bh=0;
+    blocs.forEach(b=>{ if(!b.h) return; const hn=cbotNorm(b.h.split(/\s+[—-]\s/)[0]); let sc=0; rac.forEach(r=>{ if(hn.indexOf(r)>=0 && cbotNorm(best.t).indexOf(r)<0) sc++; }); if(sc>bh){ bh=sc; bb=b; } });
+    if(bb){ lignes=bb.l; const nom=bb.h.split(/\s+[—-]\s/)[0].toLowerCase(); titre=nom.charAt(0).toUpperCase()+nom.slice(1); } }
+  const txt=lignes.join('\n').replace(/[ \t]+/g,' ').replace(/\n(?![-•]\s|\n)/g,' ');      // lignes recollées, puces conservées
+  const unites=[]; txt.split(/\n+/).forEach(l=>{ l=l.trim(); if(!l) return;
+    if(/^[-•]\s/.test(l)) unites.push(l.replace(/^[-•]\s+/,'')); else l.replace(/([.!?])\s+(?=[A-ZÉÈÀÇ«])/g,'$1\u0001').split('\u0001').forEach(p=>{ if(p.trim().length>25) unites.push(p.trim()); }); });
+  const tb=cbotNorm(titre+' '+best.t), poids=rac.map(r=>tb.indexOf(r)>=0?1:3);   // un mot absent du titre de la section est plus discriminant
+  const note=unites.map((u,i)=>{ u=u.replace(/\s{2,}/g,' '); const n=cbotNorm(u); let sc=0; rac.forEach((r,k)=>{ if(n.indexOf(r)>=0) sc+=poids[k]; }); return {u,i,sc}; });
+  let pick=note.filter(x=>x.sc>0).sort((a,b)=>b.sc-a.sc||a.i-b.i).slice(0,3).sort((a,b)=>a.i-b.i);
+  if(!pick.length) pick=note.slice(0,2);
+  return { titre:titre, points:pick.map(x=>x.u.length>320 ? x.u.slice(0,x.u.lastIndexOf(' ',310))+' …' : x.u) };
+}
+const CBOT_SIM = !!window.BRH_CBOT_SIMULATION;   // version hors ligne sans relais : assistant simulé, aucun appel réseau
+const CBOT_SIM_NOTE = "\n\n*Simulation hors ligne de l'assistant (Mistral en ligne) : réponse construite à partir de la base documentaire de la Banque des RH.*";
+/* Réponse rédigée à partir de la base documentaire : repli sans réseau, ou simulation complète hors ligne */
+function cbotLocal(q, profile){
+  const n=cbotNorm(q), simNote=CBOT_SIM ? CBOT_SIM_NOTE : "\n\n*(Réponse hors connexion, tirée de la base documentaire de la Banque des RH.)*";
+  if(/^\s*(bonjour|salut|hello|bonsoir|coucou)\b/.test(n) && n.split(' ').filter(Boolean).length<=4)
+    return "Bonjour ! Je suis l'assistant de la Banque des Ressources Humaines. Posez-moi une question sur l'épargne salariale, la prime de partage de la valeur, la complémentaire santé et la prévoyance, la retraite, les titres-restaurant, le diagnostic ou le devis en ligne."+simNote;
+  if(/\bmerci\b/.test(n)) return "Avec plaisir ! Avez-vous une autre question ? Un expert BRH de votre Caisse régionale peut aussi vous recontacter."+simNote;
+  if(/\b(expert|rappel|rappeler|recontact\w*|conseiller|rendez vous|rdv|joindre)\b/.test(n))
+    return "Bien sûr : un **expert BRH de votre Caisse régionale** peut vous rappeler sous 24 h ouvrées pour étudier votre situation. Utilisez le bouton ci-dessous."+simNote;
+  const ex=cbotExtrait(q); if(!ex) return null;
+  const prix=/\b(prix|tarif\w*|cout\w*|combien|cher|budget|frais)\b/.test(n);
+  let t=(prix ? "Je ne donne pas de tarif ferme : il dépend de votre effectif, de votre convention collective et de l'offre retenue. Voici les repères de la Banque des RH" : "Voici ce que je peux vous dire")+" sur **« "+ex.titre+" »** :\n\n"+ex.points.map(p=>'- '+p).join('\n');
+  if(profile){ const top=cbotTop(profile).map(k=>CBOT_AXES[k].toLowerCase()), r=cbotResume(profile);
+    t+="\n\nPour votre entreprise"+(r?" ("+r+")":"")+(top.length?", qui a pour priorités fortes **"+top.join("** et **")+"**":"")+", un expert BRH peut préciser ce qui s'applique à votre cas."; }
+  else t+="\n\nPour aller plus loin, le **diagnostic RH** personnalise ces informations et le **devis en ligne** chiffre votre projet.";
+  return t+simNote;
 }
 async function ask(q){
   userSay(q); cbotHistory.push({role:'user',content:q}); typing(true);
   const perso=cbotPerso(), profile= perso ? cbotProfile() : null;
+  if(CBOT_SIM){   /* version hors ligne : réponse simulée, après un court délai de « frappe » */
+    await new Promise(r=>setTimeout(r, 650+Math.min(900, q.length*12)));
+    typing(false);
+    const eff=(profile&&profile.effectif)||0, ctas=(eff>=5 && eff<=50) ? [CBOT_DEVIS, CBOT_CONTACT] : [CBOT_CONTACT];
+    const ans=cbotLocal(q, profile) || ("Je n'ai pas d'information précise sur ce point dans ma base hors ligne. Je peux vous répondre sur l'épargne salariale, la prime de partage de la valeur, la complémentaire santé et la prévoyance, la retraite, les titres-restaurant, l'audit mutuelle ou le devis en ligne. Un expert BRH peut aussi vous recontacter."+CBOT_SIM_NOTE);
+    botSay(ans, ctas); cbotHistory.push({role:'assistant',content:ans});
+    if(window.dataLayer) window.dataLayer.push({event:'chatbot_answer', mode:'simulation'});
+    return;
+  }
   let status=0, raw='';
   try{
     const payload = { question:q, history: cbotHistory.slice(-6), p: cbotPack(profile) };
