@@ -934,7 +934,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
           <div class="dv-q"><span class="q-t">Niveau de garanties santé</span><p class="q-h">Offre simplifiée de Crédit Agricole Assurances pour les entreprises de moins de 50 salariés.</p>
             <div class="dv-opts">
               <label class="dv-opt"><input type="radio" name="sp_niv" value="essentiel"><span>Niveau CCN/ANI<small>socle légal · budget maîtrisé</small></span></label>
-              <label class="dv-opt"><input type="radio" name="sp_niv" value="confort" checked><span>Niveau Optimal<small>cœur de gamme · 1 acte sur 2 sans reste à charge</small></span></label>
+              <label class="dv-opt"><input type="radio" name="sp_niv" value="confort"><span>Niveau Optimal<small>cœur de gamme · 1 acte sur 2 sans reste à charge</small></span></label>
               <label class="dv-opt"><input type="radio" name="sp_niv" value="renfort"><span>Niveau Renforcé<small>haut de gamme · 2 actes sur 3 sans reste à charge</small></span></label>
             </div>
             <p class="q-h">Au choix de chaque salarié, en plus : Option 1 (dépassements d’honoraires modérés, forfaits optique et dentaire) ou Option 2 (spécialistes, forfaits renforcés).</p></div>
@@ -1482,7 +1482,7 @@ function fraisAmundi(h){
 }
 function validatePanel(k){
   if(k==='epargne') return !!val('ep_form') && (val('ep_form')==='nsp' || vals('ep_disp').length>0);
-  if(k==='sante') return vals('sp_cov').length>0;
+  if(k==='sante') return vals('sp_cov').length>0 && (!vals('sp_cov').includes('sante') || !!val('sp_niv'));   // niveau santé choisi par le dirigeant (aucun présélectionné)
   if(k==='retraite') return !!val('rt_form');
   if(k==='avantages') return vals('av_type').length>0;
   return true;

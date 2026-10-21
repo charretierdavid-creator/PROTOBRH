@@ -862,7 +862,7 @@ Agricole Assurances propose 3 niveaux d'offres simplifiées et lisibles :
 - Niveau CCN/ANI (socle légal) : couverture minimale réglementaire ; 100 %
   Santé, prise en charge du ticket modérateur, services et prévention.
   Budget maîtrisé pour l'entreprise.
-- Niveau Optimal (cœur de gamme, recommandé) : l'équilibre entre protection
+- Niveau Optimal (cœur de gamme) : l'équilibre entre protection
   renforcée et coût prédictif ; garanties renforcées pour les consultations,
   forfaits médecine douce et pharmacie non prise en charge, gains de pouvoir
   d'achat pour les salariés. 1 acte sur 2 sans reste à charge.
@@ -876,7 +876,8 @@ couverture :
   forfaits en euros sur l'optique et le dentaire.
 - Option 2 : garanties majorées pour les spécialistes et forfaits en euros
   renforcés.
-Au-delà de 50 salariés, l'expert BRH de la Caisse régionale construit une
+Présentation neutre : aucun niveau n'est recommandé, le dirigeant choisit avec son expert BRH.
+À partir de 50 salariés, l'expert BRH de la Caisse régionale construit une
 offre sur mesure. Les tarifs dépendent de la convention collective, de l'âge
 moyen et du niveau choisi : l'assistant ne donne pas de prix, il oriente vers
 le devis en ligne ou un expert.
