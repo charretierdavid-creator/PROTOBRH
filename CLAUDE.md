@@ -20,7 +20,7 @@ Le dépôt contient deux sites qui évoluent **ensemble** :
 
 ### Test A/B : un socle, trois versions
 
-- `protobrh/` est la **référence** et le **socle commun** : contenus, offres, calculs, audit, assistant, devis, PHP.
+- `protobrh/` est la version **Standard** (code `REF`) et le **socle commun** : contenus, offres, calculs, audit, assistant, devis, PHP.
 - `protobrha/` et `protobrhb/` ne contiennent **que ce qui diffère** : `variante.css` (design) et `variante.js`
   (identifiant de version + adaptations du parcours), et si besoin une page entière qui remplace celle du socle.
 - `outils/assembler_variantes.py` assemble socle + fichiers propres dans `_site/protobrha/` et `_site/protobrhb/`
@@ -58,7 +58,8 @@ Une évolution n'est terminée que si les **trois** éléments suivants sont liv
 
 `type` vaut `Prototype`, `Cahier des charges` ou `Prototype + cahier des charges`.
 `cible` vaut `TOUTES`, `REF`, `A`, `B` ou une liste (ex. `["A","B"]`) : la version du prototype concernée.
-Un commentaire ou une idée porte la même « Version cible » : la respecter pour choisir le dossier à modifier.
+Un commentaire ou une idée porte la même « Version cible », confirmée par David à la validation (« Affecter à ») :
+la respecter pour choisir le dossier à modifier.
 Si l'évolution vient d'un commentaire, citer son identifiant dans `origine`.
 
 Si une demande ne touche qu'un des deux sites, le dire explicitement dans le résumé.

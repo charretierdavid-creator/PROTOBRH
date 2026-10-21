@@ -15,9 +15,9 @@ GROUPS = [('Accueil & découverte',['É01','É02','É03','É04']),('Diagnostic R
 ORDER = [c for g in GROUPS for c in g[1]]
 PRIO = {'MVP':'MVP','V2':'V2','ARB':'À arbitrer'}
 VERS = ['REF', 'A', 'B']
-VLAB = {'REF': 'Référence', 'A': 'Version A', 'B': 'Version B'}
+VLAB = {'REF': 'Standard', 'A': 'Version A', 'B': 'Version B'}
 VURL = {'REF': 'protobrh.monsitedetest.com', 'A': 'protobrha.monsitedetest.com', 'B': 'protobrhb.monsitedetest.com'}
-VHYP = {'REF': 'Parcours et design actuels (V1.0.4) : le point de comparaison.', 'A': 'Parcours simplifié, design épuré et moderne.', 'B': 'Parcours complet, design institutionnel.'}
+VHYP = {'REF': 'Version standard : parcours et design actuels (V1.0.4), le point de comparaison.', 'A': 'Parcours simplifié, design épuré et moderne.', 'B': 'Parcours complet, design institutionnel.'}
 pvar = lambda p: p.get('var') or VERS
 def vtags(v, full=False):
     if set(v) == set(VERS): return '<span class="vtag v-ALL">Toutes versions</span>' if full else ''

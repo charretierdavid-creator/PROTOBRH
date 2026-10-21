@@ -245,6 +245,8 @@ form.idea .row{display:flex;gap:8px;flex-wrap:wrap}
 .citem .adm{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
 .citem .adm button{margin:0;text-decoration:none;border:1px solid var(--sage);background:#fff;color:var(--pine);border-radius:5px;padding:4px 10px;font:600 12.5px var(--display);cursor:pointer}
 .citem .adm button:hover{background:var(--mint)}
+.citem .adm .acib{display:flex;align-items:center;gap:6px;font:600 12.5px var(--display);color:var(--pine);margin-right:6px}
+.citem .adm .acib select{font:600 12.5px var(--display);color:var(--pine);border:1px solid var(--lime);border-radius:5px;padding:3px 6px;background:#EEF6D8}
 .citem .adm button.danger{color:#8A2B1F;border-color:#E5C3BF;margin-left:auto}
 .admbar{display:none;background:var(--pine);color:#fff;border-radius:6px;padding:10px 14px;margin-bottom:14px;font-size:14.5px}
 .admbar.on{display:block}.admbar b{color:var(--lime)}
@@ -276,7 +278,7 @@ body[data-vsel="REF"] [data-var]:not([data-var~="REF"]),body[data-vsel="A"] [dat
 <body>
 <header class="bar">
   <div class="brand"><b>Portail Banque des RH</b><span>Cahier des charges interactif · V1.1 · Projet 15C</span></div>
-  <nav class="tabs" aria-label="Vues"><a href="#parcours" data-tab="parcours">Parcours</a><a href="#p-E01" data-tab="page">Pages</a><a href="#crm" data-tab="crm">Data</a><a href="#comments" data-tab="comments">Commentaires <span class="badge" id="ctotal">0</span></a><a href="#journal" data-tab="journal">Journal</a><a href="#comments" class="idea-btn" data-idea="1">💡 Suggérer une idée</a><select id="vsel" class="vsel" aria-label="Version du prototype affichée"><option value="">Toutes les versions</option><option value="REF">Référence</option><option value="A">Version A</option><option value="B">Version B</option></select></nav>
+  <nav class="tabs" aria-label="Vues"><a href="#parcours" data-tab="parcours">Parcours</a><a href="#p-E01" data-tab="page">Pages</a><a href="#crm" data-tab="crm">Data</a><a href="#comments" data-tab="comments">Commentaires <span class="badge" id="ctotal">0</span></a><a href="#journal" data-tab="journal">Journal</a><a href="#comments" class="idea-btn" data-idea="1">💡 Suggérer une idée</a><select id="vsel" class="vsel" aria-label="Version du prototype affichée"><option value="">Toutes les versions</option><option value="REF">Standard</option><option value="A">Version A</option><option value="B">Version B</option></select></nav>
 </header>
 <main><p class="cstatus" id="cstatus"></p><div class="shell">
 <aside class="side" aria-label="Sommaire">%%TOC%%</aside>
@@ -321,12 +323,12 @@ body[data-vsel="REF"] [data-var]:not([data-var~="REF"]),body[data-vsel="A"] [dat
   <form class="idea" id="ideaform" autocomplete="off">
     <label>Titre de l'idée<input name="title" maxlength="120" required placeholder="Ex. Simulateur de prime d'intéressement"></label>
     <label>Le besoin<span class="hint">Décrivez ce qui manque et à quoi cela servirait (qui, quoi, pourquoi).</span><textarea name="text" maxlength="2000" required placeholder="Ex. En tant que dirigeant, je veux simuler une prime d'intéressement afin de mesurer son coût et son avantage pour mes salariés."></textarea></label>
-    <label>Version cible<span class="hint">À quelle version du prototype cette idée s'applique-t-elle ?</span><select name="cible"><option value="TOUTES">Toutes les versions</option><option value="REF">Référence (protobrh)</option><option value="A">Version A — parcours simplifié, design épuré (protobrha)</option><option value="B">Version B — parcours complet, design institutionnel (protobrhb)</option></select></label>
+    <label>Version cible<span class="hint">À quelle version du prototype cette idée s'applique-t-elle ?</span><select name="cible"><option value="TOUTES">Toutes les versions</option><option value="REF">Standard (protobrh)</option><option value="A">Version A — parcours simplifié, design épuré (protobrha)</option><option value="B">Version B — parcours complet, design institutionnel (protobrhb)</option></select></label>
     <label>Votre nom<input name="author" maxlength="60" required placeholder="Prénom (et entité)"></label>
     <input name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
     <div class="row"><button class="btn primary" type="submit">Envoyer mon idée</button><button class="btn" type="button" id="ideacancel">Annuler</button></div>
   </form>
-  <div class="admbar" id="admbar"><b>Mode Business Owner activé</b> — validez, rejetez ou marquez comme intégrés les commentaires ci-dessous. Les commentaires validés forment le backlog à intégrer au prototype.</div>
+  <div class="admbar" id="admbar"><b>Mode Business Owner activé</b> — validez, rejetez ou marquez comme intégrés les commentaires ci-dessous. Lors de la validation, choisissez la version concernée dans « Affecter à » : Standard, Version A, Version B ou toutes. Les commentaires validés forment le backlog à intégrer au prototype.</div>
   <div class="kstat">
     <button type="button" data-sf="nouveau"><b id="n-nouveau">0</b><span>Nouveaux</span></button>
     <button type="button" data-sf="valide"><b id="n-valide">0</b><span>Validés · backlog</span></button>
@@ -366,7 +368,7 @@ body[data-vsel="REF"] [data-var]:not([data-var~="REF"]),body[data-vsel="A"] [dat
   // ---------- shared comments (avec statuts) ----------
   var TITLES = %%TITLES%%, API = 'comments.php', online = false, COMMENTS = [];
   // test A/B : version du prototype affichée et version cible des commentaires, idées et évolutions
-  var VLAB = {TOUTES:'Toutes versions', REF:'Référence', A:'Version A', B:'Version B'};
+  var VLAB = {TOUTES:'Toutes versions', REF:'Standard', A:'Version A', B:'Version B'};
   var vtag = function(v){ return v && v !== 'TOUTES' ? '<span class="vtag v-' + ex(v) + '">' + ex(VLAB[v] || v) + '</span>' : ''; };
   var vvar = function(v){ return !v || v === 'TOUTES' ? 'REF A B' : (Array.isArray(v) ? v.join(' ') : v); };
   var VS = document.getElementById('vsel');
@@ -387,7 +389,8 @@ body[data-vsel="REF"] [data-var]:not([data-var~="REF"]),body[data-vsel="A"] [dat
   function badge(c){ var s = stOf(c); return '<span class="sbadge s-' + s + '">' + ST[s] + (s === 'integre' && c.version ? ' · ' + ex(c.version) : '') + '</span>'; }
   function itemHTML(c, withPage){
     var mine = !!tokens()[c.id], s = stOf(c);
-    var adm = ADMIN ? '<div class="adm">' + ['valide','rejete','integre','nouveau'].filter(function(k){ return k !== s; }).map(function(k){ return '<button type="button" data-st="' + k + '" data-id="' + ex(c.id) + '">' + {valide:'Valider', rejete:'Rejeter', integre:'Marquer intégré', nouveau:'Remettre à « Nouveau »'}[k] + '</button>'; }).join('') + '<button type="button" class="danger" data-del="' + ex(c.id) + '">Supprimer</button></div>' : '';
+    var cibSel = '<label class="acib">Affecter à <select data-acib="' + ex(c.id) + '" aria-label="Version affectée">' + ['TOUTES','REF','A','B'].map(function(v){ return '<option value="' + v + '"' + ((c.cible || 'TOUTES') === v ? ' selected' : '') + '>' + VLAB[v] + '</option>'; }).join('') + '</select></label>';
+    var adm = ADMIN ? '<div class="adm">' + cibSel + ['valide','rejete','integre','nouveau'].filter(function(k){ return k !== s; }).map(function(k){ return '<button type="button" data-st="' + k + '" data-id="' + ex(c.id) + '">' + {valide:'Valider', rejete:'Rejeter', integre:'Marquer intégré', nouveau:'Remettre à « Nouveau »'}[k] + '</button>'; }).join('') + '<button type="button" class="danger" data-del="' + ex(c.id) + '">Supprimer</button></div>' : '';
     var nf = c.page === 'NF';
     return '<div class="citem st-' + s + (nf ? ' idea' : '') + '" data-var="' + vvar(c.cible) + '" data-id="' + ex(c.id) + '"><div class="h">' + (withPage ? (nf ? '<span class="pg idea">💡 Idée</span>' : '<a class="pg" href="#' + aid(c.page) + '">' + ex(c.page) + ' · ' + ex(TITLES[c.page] || '') + '</a>') : '') +
       '<b>' + ex(c.author) + '</b><span>' + ex(fmt(c.date)) + '</span>' + badge(c) + vtag(c.cible) + (mine && !ADMIN ? '<button type="button" data-del="' + ex(c.id) + '">Supprimer</button>' : '') + '</div>' + (c.title ? '<p class="ti">' + ex(c.title) + '</p>' : '') + (c.text ? '<p>' + ex(c.text) + '</p>' : '') + adm + '</div>';
@@ -446,13 +449,21 @@ body[data-vsel="REF"] [data-var]:not([data-var~="REF"]),body[data-vsel="A"] [dat
     }
     var b = e.target.closest('[data-st]');
     if (b){
-      var st = b.dataset.st, cid = b.dataset.id, version = '';
+      var st = b.dataset.st, cid = b.dataset.id, version = '', cs = document.querySelector('[data-acib="' + cid + '"]'), cible = cs ? cs.value : '';
       if (st === 'integre'){ version = prompt('Intégré dans quelle version du prototype ? (ex. V0.5)', get('lastVersion', 'V0.5')); if (version === null) return; version = version.trim(); set('lastVersion', version); }
       if (!online){ status('Le changement de statut nécessite la version en ligne.', 'err'); return; }
-      post({action:'set_status', id:cid, status:st, version:version, key:ADMIN}).then(function(j){
+      post({action:'set_status', id:cid, status:st, version:version, cible:cible, key:ADMIN}).then(function(j){
         COMMENTS = COMMENTS.map(function(c){ return c.id === cid ? j.comment : c; }); render(); })
         .catch(function(err){ status('Statut non modifié : ' + err.message, 'err'); if (/clé/i.test(err.message)){ ADMIN = ''; set('adminKey', ''); render(); } });
     }
+  });
+  document.addEventListener('change', function(e){
+    var cs = e.target.closest('[data-acib]'); if (!cs || !ADMIN) return;
+    var cid = cs.dataset.acib, c = COMMENTS.filter(function(x){ return x.id === cid; })[0]; if (!c) return;
+    if (!online){ status('L\u2019affectation à une version nécessite la version en ligne.', 'err'); return; }
+    post({action:'set_status', id:cid, status:stOf(c), version:c.version || '', cible:cs.value, key:ADMIN}).then(function(j){
+      COMMENTS = COMMENTS.map(function(x){ return x.id === cid ? j.comment : x; }); render(); status('Affecté à : ' + VLAB[cs.value] + '.', ''); })
+      .catch(function(err){ status('Affectation non enregistrée : ' + err.message, 'err'); });
   });
   var sel = document.getElementById('cfilter');
   (function(){ var o = document.createElement('option'); o.value = 'NF'; o.textContent = '💡 Idées — nouvelles fonctionnalités'; sel.appendChild(o); })();
@@ -490,21 +501,22 @@ body[data-vsel="REF"] [data-var]:not([data-var~="REF"]),body[data-vsel="A"] [dat
     COMMENTS.slice().sort(sortC).forEach(function(c){ L.push([c.id, c.page, TITLES[c.page], VLAB[c.cible || 'TOUTES'], c.author, fmt(c.date), ST[stOf(c)], c.version || '', full(c)].map(q).join(';')); });
     dl('BRH_commentaires_equipe.csv', '\ufeff' + L.join('\n'), 'text/csv;charset=utf-8');
   };
-  function backlog(){ return COMMENTS.filter(function(c){ return stOf(c) === 'valide'; }).slice().sort(sortC); }
+  // backlog validé ; si une version est choisie dans l'en-tête, seulement ce qui la concerne (ex. backlog de la version A)
+  function backlog(){ var v = VS.value; return COMMENTS.filter(function(c){ return stOf(c) === 'valide' && (!v || vvar(c.cible).split(' ').indexOf(v) >= 0); }).slice().sort(sortC); }
   function backlogText(){
     var b = backlog(); if (!b.length) return '';
-    return 'BACKLOG VALIDÉ — Portail BRH — ' + new Date().toLocaleDateString('fr-FR') + ' — ' + b.length + ' évolution(s) à intégrer au prototype et au cahier des charges\n\n' +
+    return 'BACKLOG VALIDÉ — Portail BRH' + (VS.value ? ' — ' + VLAB[VS.value] : '') + ' — ' + new Date().toLocaleDateString('fr-FR') + ' — ' + b.length + ' évolution(s) à intégrer au prototype et au cahier des charges\n\n' +
       b.map(function(c, i){ return (i + 1) + '. [' + c.id + '] [' + VLAB[c.cible || 'TOUTES'] + '] ' + c.page + ' · ' + TITLES[c.page] + ' — ' + c.author + ' (' + fmtD(c.date) + ')\n   ' + full(c).replace(/\n/g, '\n   '); }).join('\n\n') +
-      '\n\nConsigne : intégrer chaque évolution dans la version cible (Toutes ou Référence : socle protobrh/ ; Version A : protobrha/ ; Version B : protobrhb/), mettre à jour le cahier des charges interactif et ajouter une entrée au journal des évolutions. Pour une idée (NF), créer un nouvel écran (É27…) rattaché à une étape du parcours, ou signaler un arbitrage COPIL.';
+      '\n\nConsigne : intégrer chaque évolution dans la version cible (Toutes versions ou Standard : socle protobrh/ ; Version A : protobrha/ ; Version B : protobrhb/), mettre à jour le cahier des charges interactif et ajouter une entrée au journal des évolutions. Pour une idée (NF), créer un nouvel écran (É27…) rattaché à une étape du parcours, ou signaler un arbitrage COPIL.';
   }
   document.getElementById('bexport').onclick = function(){
-    var b = backlog(); if (!b.length){ status('Aucun commentaire au statut « Validé » pour le moment.', 'off'); return; }
+    var b = backlog(); if (!b.length){ status('Aucun commentaire au statut « Validé »' + (VS.value ? ' affecté à : ' + VLAB[VS.value] : '') + ' pour le moment.', 'off'); return; }
     var L = [['ID','Page','Titre de la page','Version cible','Auteur','Date','Commentaire'].map(q).join(';')];
     b.forEach(function(c){ L.push([c.id, c.page, TITLES[c.page], VLAB[c.cible || 'TOUTES'], c.author, fmt(c.date), full(c)].map(q).join(';')); });
     dl('BRH_backlog_valide.csv', '\ufeff' + L.join('\n'), 'text/csv;charset=utf-8');
   };
   document.getElementById('bcopy').onclick = function(){
-    var t = backlogText(); if (!t){ status('Aucun commentaire au statut « Validé » pour le moment.', 'off'); return; }
+    var t = backlogText(); if (!t){ status('Aucun commentaire au statut « Validé »' + (VS.value ? ' affecté à : ' + VLAB[VS.value] : '') + ' pour le moment.', 'off'); return; }
     var ok = function(){ status('Backlog copié : collez-le dans votre conversation avec Claude.', ''); var el = document.getElementById('cstatus2'); el.className = 'cstatus okk'; el.textContent = 'Backlog copié : collez-le dans votre conversation avec Claude.'; };
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok, function(){ dl('BRH_backlog_valide.txt', t, 'text/plain;charset=utf-8'); });
     else dl('BRH_backlog_valide.txt', t, 'text/plain;charset=utf-8');
