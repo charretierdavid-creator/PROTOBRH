@@ -3,8 +3,9 @@ Usage : python3 outils/generer_hors_ligne.py <dossier protobrh> <fichier de sort
 #   Versions A/B : lancer d'abord outils/assembler_variantes.py puis passer _site/protobrha (ou _site/protobrhb).
 Chaque page est embarquée en base64 et affichée dans un iframe (srcdoc) ; les scripts partagés
 sont intégrés dans les pages ; la navigation entre pages passe par un routeur (#/page.html).
-Assistant BRH : relais en ligne assistant-demo.php (jeton de démonstration, clé Mistral jamais embarquée) ;
-sans réseau, réponses tirées de la base documentaire embarquée. Le bouton « Votre avis » est retiré (serveur requis)."""
+Assistant BRH : avec <url du relais> et <jeton>, relais en ligne assistant-demo.php (clé Mistral jamais embarquée),
+repli sur la base documentaire sans réseau ; sans relais, simulation hors ligne de l'assistant (aucun appel réseau),
+réponses rédigées à partir de la base documentaire embarquée (connaissances.txt). Le bouton « Votre avis » est retiré (serveur requis)."""
 import sys, os, re, json, base64, datetime
 
 SRC, OUT = sys.argv[1], sys.argv[2]
@@ -65,7 +66,7 @@ window.__QS=%QS%;window.__HASH=%HASH%;window.__PAGE=%PAGE%;
     Object.defineProperty(st,'length',{get:function(){ return Object.keys(d).length; }});
     try{ Object.defineProperty(window,k,{configurable:true,get:function(){ return st; }}); }catch(e){}
   });
-  try{ window.BRH_CBOT_ENDPOINT=parent.__BRH_EP||'chatbot.php'; window.BRH_CBOT_LOCAL=parent.__BRH_LOCAL||[]; }catch(e){}
+  try{ window.BRH_CBOT_ENDPOINT=parent.__BRH_EP||'chatbot.php'; window.BRH_CBOT_LOCAL=parent.__BRH_LOCAL||[]; window.BRH_CBOT_SIMULATION=!!parent.__BRH_SIM; }catch(e){}   /* sans relais : assistant simulé */
   window.__go=function(h){ try{ parent.postMessage({brhGo:String(h)},'*'); }catch(e){} };
   function local(href){ return href && !/^(https?:|mailto:|tel:|javascript:|data:|#)/i.test(href) && /\.html(\?|#|$)/i.test(href); }
   document.addEventListener('click',function(e){
@@ -114,6 +115,7 @@ html,body{margin:0;height:100%;background:#fff;font-family:system-ui,-apple-syst
 <script>
 const PAGES=%DATA%;
 window.__BRH_EP=%EP%;      /* relais de l'assistant (jeton de démonstration) */
+window.__BRH_SIM=%SIM%;    /* sans relais : assistant simulé hors ligne */
 window.__BRH_LOCAL=%LOCAL%; /* base documentaire : repli sans réseau */
 const SHIM=%SHIM%;
 const STAMP=%STAMP%;
@@ -136,7 +138,7 @@ function load(){
 function go(h){ const t='#/'+h; if(location.hash===t) load(); else location.hash=t; }
 window.addEventListener('message',e=>{ if(e.data && e.data.brhGo) go(e.data.brhGo); });
 window.addEventListener('hashchange',load);
-menu.innerHTML='<p>Pages du prototype — version du '+STAMP+'.<br>Assistant BRH : en ligne via Mistral si le réseau est disponible, sinon réponses tirées de la base documentaire. Envois désactivés ; recherche SIRET en données de démonstration.</p>'+Object.keys(PAGES).map(k=>'<a href="#/'+k+'" data-p="'+k+'">'+PAGES[k].t+'</a>').join('');
+menu.innerHTML='<p>Pages du prototype — version du '+STAMP+'.<br>Assistant BRH : '+(!window.__BRH_SIM?'en ligne via Mistral si le réseau est disponible, sinon réponses tirées de la base documentaire.':'simulation hors ligne de Mistral, réponses construites à partir de la base documentaire (aucune connexion).')+' Envois désactivés ; recherche SIRET en données de démonstration.</p>'+Object.keys(PAGES).map(k=>'<a href="#/'+k+'" data-p="'+k+'">'+PAGES[k].t+'</a>').join('');
 menu.addEventListener('click',e=>{ if(e.target.closest('a')) toggle(false); });
 const mb=document.getElementById('mbtn'); function toggle(o){ menu.classList.toggle('open',o); mb.setAttribute('aria-expanded',o); }
 mb.addEventListener('click',()=>toggle(!menu.classList.contains('open')));
@@ -146,6 +148,6 @@ load();
 </body>
 </html>
 """
-out = out.replace('%DATA%', json.dumps(data, ensure_ascii=False)).replace('%SHIM%', json.dumps(SHIM).replace('</', '<\\/')).replace('%STAMP%', json.dumps(STAMP)).replace('%EP%', json.dumps(RELAIS or 'hors-ligne-sans-relais')).replace('%LOCAL%', json.dumps(LOCAL, ensure_ascii=False).replace('</', '<\\/'))
+out = out.replace('%DATA%', json.dumps(data, ensure_ascii=False)).replace('%SHIM%', json.dumps(SHIM).replace('</', '<\\/')).replace('%STAMP%', json.dumps(STAMP)).replace('%SIM%', 'false' if RELAIS else 'true').replace('%EP%', json.dumps(RELAIS or 'hors-ligne-sans-relais')).replace('%LOCAL%', json.dumps(LOCAL, ensure_ascii=False).replace('</', '<\\/'))
 open(OUT, 'w', encoding='utf-8').write(out)
 print('sections KB', len(LOCAL), '| relais', 'oui' if RELAIS else 'non'); print('OK', OUT, round(len(out) / 1e6, 2), 'Mo', len(data), 'pages')
