@@ -589,7 +589,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 <script src="formules-amundi.js?v=20261021"></script>
 <script src="conventions.js?v=20261014"></script>
 <script src="entreprise-lookup.js?v=20261021"></script>
-<script src="offres-caa.js?v=20261021"></script>
+<script src="offres-caa.js?v=20261021b"></script>
 <style>.sm-audit{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding:14px 16px;border-radius:12px;background:var(--green);color:#fff;text-decoration:none;font-family:var(--fh);font-weight:600;font-size:.95rem;line-height:1.35}.sm-audit small{display:block;font-family:var(--fb);font-weight:400;font-size:.8rem;opacity:.85;margin-top:2px}.sm-audit:hover{background:var(--green-hover)}</style>
 <style>.nav a{white-space:nowrap}@media(max-width:1180px){.nav a{padding:.5rem .55rem;font-size:.9rem}}</style>
 <link rel="stylesheet" href="variante.css?v=20261021d">
@@ -1102,7 +1102,7 @@ function onEffectif(){
   else if(n<CONFIG.minEmployeesWarning){ w.textContent='Outil ciblé 5 à 1 000 salariés — estimation indicative.'; w.classList.add('show'); }
   else if(n>CONFIG.maxEmployeesWarning){ w.textContent='Au-delà de 1 000 salariés, un échange personnalisé est recommandé.'; w.classList.add('show'); }
   else w.classList.remove('show');
-  state.effectif=n; refresh();
+  state.effectif=n; state.effSaisi=true; refresh();
 }
 
 /* ---------- récap + lead ---------- */
@@ -1179,7 +1179,8 @@ function openSol(id){
   document.getElementById('smIc').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+s.icon+'</svg>';
   document.getElementById('smPartner').textContent=s.partner+(s.partner2?' · '+s.partner2:'');
   document.getElementById('smTitle').textContent=s.title;
-  document.getElementById('smBody').innerHTML=s.offers.map(function(o){return '<div class="sm-offer"><b>'+o.t+'</b><span>'+o.d+'</span></div>';}).join('')+(window.cartesFormules?cartesFormules(s.formules):'')+(id==='proteger'&&window.cartesCAA?cartesCAA(state.effectif):'')+'<p class="sm-note">'+s.note+'</p>'+(id==='proteger'?'<a class="sm-audit" href="audit-mutuelle.html?from=diagnostic" onclick="if(typeof track===\'function\')track(\'cta_audit_click\',{source:\'fenetre_proteger\'})"><span>Réaliser un audit de votre mutuelle<small>Gratuit, 3 minutes, résultat immédiat et sans engagement</small></span><span aria-hidden="true">→</span></a>':'');
+  var caa=id==='proteger' && window.BRH_CAA && BRH_CAA.pourEffectif(state.effSaisi ? state.effectif : null);   /* < 50 salariés déclarés ou effectif pas encore saisi */
+  document.getElementById('smBody').innerHTML=(caa?cartesCAA():'')+s.offers.filter(function(o){ return !(caa && /^Complémentaire santé/.test(o.t)); }).map(function(o){return '<div class="sm-offer"><b>'+o.t+'</b><span>'+o.d+'</span></div>';}).join('')+(window.cartesFormules?cartesFormules(s.formules):'')+'<p class="sm-note">'+s.note+'</p>'+(id==='proteger'?'<a class="sm-audit" href="audit-mutuelle.html?from=diagnostic" onclick="if(typeof track===\'function\')track(\'cta_audit_click\',{source:\'fenetre_proteger\'})"><span>Réaliser un audit de votre mutuelle<small>Gratuit, 3 minutes, résultat immédiat et sans engagement</small></span><span aria-hidden="true">→</span></a>':'');
   var m=document.getElementById('solModal'); m.hidden=false; document.body.style.overflow='hidden';
   var c=m.querySelector('.sm-close'); if(c) c.focus();
   if(typeof track==='function') track('solution_modal_open',{solution_name:id});
@@ -1225,7 +1226,7 @@ function saveProfile(){ try{
   const act=Object.values(details).filter(v=>v>0).length;
   const prev=JSON.parse(sessionStorage.getItem('brhProfil')||'{}');
   sessionStorage.setItem('brhProfil', JSON.stringify(Object.assign(prev,{
-    source:'diagnostic', effectif:state.effectif, secteur:val('secteur'), departement:depValide(),
+    source:'diagnostic', effectif:state.effectif, effectifSaisi:!!state.effSaisi, secteur:val('secteur'), departement:depValide(),
     priorites:Object.assign({},state.priorities), dispositifsActifs:act,
     gains: state.resultsUnlocked ? {fiscalAnnuel:total, parSalarie:400*act} : null,
     maj:new Date().toISOString() })));
