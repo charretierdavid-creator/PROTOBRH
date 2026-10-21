@@ -1,7 +1,7 @@
 /* Version B — protobrhb.monsitedetest.com
    Hypothèse : un parcours complet et un design institutionnel renforcent la confiance et la qualité des leads.
    Design : titres à empattements, angles droits, filets visibles, bandeau institutionnel, repère d'étape. */
-@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap');
+/* police Source Serif 4 chargée par variante.js, sans bloquer l'affichage */
 html[data-variante="B"]{
   --green:#00493f; --green-hover:#00342d; --banner:#00493f;
   --mint:#edf2ef; --mint-2:#f3f6f4; --sage:#eef2f0; --gray-bg:#f4f6f5;
@@ -34,3 +34,19 @@ h1,h2,h3{letter-spacing:0}
 .vb-trust div{border-left:3px solid var(--green);padding-left:12px;font-size:.88rem;color:var(--slate)}
 .vb-trust b{display:block;color:var(--green);font-family:var(--fh);font-size:1rem;margin-bottom:2px}
 @media(max-width:760px){.vb-trust .wrap{grid-template-columns:1fr}.vb-top b{width:100%}}
+/* repère d'étape : nombre d'étapes annoncé dès le premier écran */
+.vb-steps li.vb-n{font-weight:700;color:var(--green);counter-increment:none;margin-right:6px}
+.vb-steps li.vb-n+li::before{content:none}
+/* accompagnement patrimonial du dirigeant (accueil, second plan) */
+.vb-pat{background:var(--gray-bg);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:38px 0}
+.vb-pat-in{display:grid;grid-template-columns:1.4fr 1fr;gap:34px;align-items:center}
+.vb-kick{display:inline-block;font:700 .74rem var(--fb);text-transform:uppercase;letter-spacing:.06em;color:var(--red);margin-bottom:8px}
+.vb-pat h2{font-size:1.5rem;color:var(--green);margin-bottom:10px}.vb-pat p{color:var(--slate);font-size:.95rem;max-width:62ch}
+.vb-pat-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+.vb-pat ul{margin:0;padding:18px 20px 18px 36px;background:#fff;border:1px solid var(--line);color:var(--ink);font-size:.9rem;line-height:1.7}
+.vb-bas-pat{border-top:1px solid var(--line);margin-top:18px;padding-top:18px}
+.vb-bas-pat h3{font-family:var(--fh);color:var(--green);font-size:1.08rem;margin-bottom:6px}.vb-bas-pat p{font-size:.9rem;color:var(--slate);margin-bottom:12px;max-width:72ch}
+/* priorités : obligations et benchmark */
+.vb-oblig{margin-top:10px;font-size:.86rem;background:#fff6e6;border-left:3px solid var(--red);padding:9px 12px;color:var(--ink)}
+.vb-bench{font:700 .95rem var(--fh);color:var(--green);margin:0 0 6px;text-align:center}
+@media(max-width:860px){.vb-pat-in{grid-template-columns:1fr}}
