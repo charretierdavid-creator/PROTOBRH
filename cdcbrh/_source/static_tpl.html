@@ -373,9 +373,17 @@ body[data-vsel="REF"] [data-var]:not([data-var~="REF"]),body[data-vsel="A"] [dat
   var vvar = function(v){ return !v || v === 'TOUTES' ? 'REF A B' : (Array.isArray(v) ? v.join(' ') : v); };
   var VS = document.getElementById('vsel');
   function applyV(v){ VS.value = v || ''; if (v) document.body.setAttribute('data-vsel', v); else document.body.removeAttribute('data-vsel'); set('vsel', v || ''); }
-  VS.onchange = function(){ applyV(VS.value); };
+  // une page propre à une autre version ne doit jamais s'afficher vide : on bascule le filtre sur sa version
+  function pgShown(){ var h = location.hash.slice(1), el = h && document.getElementById(h); return el && el.classList.contains('pg') ? el : null; }
+  function fitV(){ var el = pgShown(), v = VS.value; if (!el || !v) return; var pv = (el.getAttribute('data-var') || '').split(' '); if (pv.indexOf(v) < 0) applyV(pv.length === 1 ? pv[0] : ''); }
+  window.addEventListener('hashchange', fitV);
+  VS.onchange = function(){
+    applyV(VS.value);
+    var el = pgShown(), v = VS.value;   // la page affichée n'existe pas dans la version choisie : première page de cette version
+    if (el && v && (el.getAttribute('data-var') || '').split(' ').indexOf(v) < 0){ var c = (/^p-V[AB]$/.test(el.id) && v !== 'REF' && document.getElementById('p-V' + v)) ? 'V' + v : ORDER.filter(function(x){ var p = document.getElementById(aid(x)); return p && p.getAttribute('data-var').split(' ').indexOf(v) >= 0; })[0]; if (c) location.hash = '#' + aid(c); }
+  };
   document.addEventListener('click', function(e){ var b = e.target.closest('[data-vpick]'); if (b) applyV(b.dataset.vpick); });
-  applyV(get('vsel', ''));
+  applyV(get('vsel', '')); fitV();
   TITLES.NF = 'Idée — nouvelle fonctionnalité';
   var full = function(c){ return (c.title ? c.title + ' — ' : '') + (c.text || ''); };
   var ST = { nouveau:'Nouveau', valide:'Validé', rejete:'Rejeté', integre:'Intégré' };
