@@ -720,11 +720,11 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 @media(max-width:1320px){.header-in{gap:1rem}.nav{gap:0}.nav a{padding:.5rem .5rem;font-size:.88rem}.header .btn{padding:.75rem 1rem;font-size:.9rem}}
 
 </style>
-<script src="formules-amundi.js?v=20261009"></script>
+<script src="formules-amundi.js?v=20261021"></script>
 <script src="conventions.js?v=20261014"></script>
 <style>.nav a{white-space:nowrap}@media(max-width:1180px){.nav a{padding:.5rem .55rem;font-size:.9rem}}</style>
-<link rel="stylesheet" href="variante.css?v=20261021">
-<script src="variante.js?v=20261021"></script>
+<link rel="stylesheet" href="variante.css?v=20261021b">
+<script src="variante.js?v=20261021b"></script>
 </head>
 <body>
 <header class="header">
@@ -1671,6 +1671,12 @@ function applyAudit(a){
   if(!had && qp.get('eff')) S.prefEff=parseInt(qp.get('eff'),10)||null;
   /* reprise de l'audit mutuelle / du diagnostic : secteur, convention collective, besoins santé */
   let aud=null, prof={}; try{ aud=JSON.parse(sessionStorage.getItem('brhAudit')||'null'); prof=JSON.parse(sessionStorage.getItem('brhProfil')||'{}'); }catch(e){}
+  if(!had && !qp.get('sol') && prof.priorites){   /* accès direct au devis après un diagnostic : priorités fortes (3 ou 4) précochées */
+    const MAP={partageValeur:'epargne', protection:'sante', retraite:'retraite', pouvoirAchat:'avantages'};
+    const sol=Object.keys(MAP).filter(k=>(prof.priorites[k]||0)>=3).map(k=>MAP[k]).filter(k=>DV_ORDER.includes(k));
+    if(sol.length) S.sol=sol;
+    if(!S.prefEff && prof.effectif) S.prefEff=parseInt(prof.effectif,10)||null;
+  }
   if(!had){
     const sec=qp.get('secteur')||(aud&&aud.secteur)||prof.secteur||'';
     if(sec && window.BRH_CCN && BRH_CCN.secteurs.includes(sec)) S.prefSecteur=sec;
@@ -1680,6 +1686,8 @@ function applyAudit(a){
     if(!S.prefEff && aud && aud.effectif) S.prefEff=parseInt(aud.effectif,10)||null;
     if(qp.get('from')==='audit' && aud){ S.fromAudit=true; applyAudit(aud); }
   }
+  /* entreprise identifiée par SIREN dans le diagnostic : étape « Votre entreprise » préremplie */
+  if(!had && prof.entreprise && prof.entreprise.nom){ const pe=prof.entreprise; fillEntreprise(Object.assign({},pe,{siret:pe.siret||''}),true); if(pe.siret){ $('siret').value=pe.siret; fmtSiret($('siret')); } }
   if(S.fromAudit){ const n=$('dvAuditNote'); if(n){ n.style.display='block'; n.textContent='Repris de votre audit mutuelle : '+[S.prefSecteur||(S.ent&&S.ent.secteur), S.prefIdcc||(S.ent&&S.ent.idcc)].filter(Boolean).join(' · ')+'. Vous pouvez les modifier.'; } }
   const qf=qp.get('formule'), QF={decouverte:[['ep_form','decouverte']], integrale_epargne:[['ep_form','integrale']], integrale_retraite:[['rt_form','integrale']], convergence:[['ep_form','convergence'],['rt_form','convergence']]};
   if(!had && QF[qf]) QF[qf].forEach(x=>setRadio(x[0],x[1]));

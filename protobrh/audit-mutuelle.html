@@ -530,6 +530,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 .au-box h3{font-size:1.06rem;color:var(--green);font-weight:600}
 .au-chk{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;padding:10px 12px;border-radius:12px;font-size:.9rem}
 .au-chk .s{font-family:var(--fh);font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:999px;background:#fff;white-space:nowrap}
+.au-info{background:var(--mint-2,#eef4ef);border-left:4px solid var(--green);border-radius:10px;padding:12px 14px;font-size:.9rem;margin:6px 0 14px}
+.au-siret{display:flex;gap:10px;align-items:flex-end}.au-siret .field{flex:1}.au-siret-msg{font-size:.8rem;margin-top:4px}.au-siret-msg.ok{color:var(--green);font-weight:600}.au-siret-msg.err{color:#b3261e}
 .au-chk.ok{background:#eef6e2}.au-chk.ok .s{color:#2f6b12}
 .au-chk.warn{background:#fdf3e1}.au-chk.warn .s{color:#8a5300}
 .au-chk.alert{background:#fbe9e7}.au-chk.alert .s{color:#a3261b}
@@ -565,8 +567,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 .au-links{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
 </style>
 <style>.nav a{white-space:nowrap}@media(max-width:1180px){.nav a{padding:.5rem .55rem;font-size:.9rem}}</style>
-<link rel="stylesheet" href="variante.css?v=20261021">
-<script src="variante.js?v=20261021"></script>
+<link rel="stylesheet" href="variante.css?v=20261021b">
+<script src="variante.js?v=20261021b"></script>
 </head>
 <body>
 <header class="header">
@@ -618,6 +620,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 </main>
 
 <script src="conventions.js?v=20261014"></script>
+<script src="entreprise-lookup.js?v=20261021"></script>
 <script>
 (function(){
 /* Audit mutuelle et prévoyance — comparateur de GARANTIES (aucune tarification détenue par le portail).
@@ -683,12 +686,30 @@ function ccnCode(){ if(A.ccn==='autre') return A.idcc||''; return /^\d+$/.test(A
 function ccnTexte(){ if(A.ccn==='nsp') return 'Je ne sais pas'; if(A.ccn==='aucune') return 'Aucune convention collective';
   const c=ccnCode(); if(!c) return ''; const l=window.BRH_CCN?BRH_CCN.label(c):''; return 'IDCC '+c+(l?' — '+l:''); }
 
+/* options activées par une version du test A/B (window.BRH_OPTIONS, défini dans variante.js) */
+const OPT=window.BRH_OPTIONS||{};
+let siretMsg='';
+function auSiret(){
+  const el=$('au-siret'); if(!el) return; const v=el.value;
+  if(!window.BRH_ENT || !BRH_ENT.valide(v)){ siretMsg='<span class="au-siret-msg err">Numéro non reconnu : 9 chiffres (SIREN) ou 14 chiffres (SIRET).</span>'; render(); return; }
+  A.siret=v;
+  BRH_ENT.chercher(v).then(function(d){
+    if(d.secteur && SECTEURS.includes(d.secteur)) A.secteur=d.secteur;
+    const code=String(d.idcc||'').split(' ')[0].replace(/\D/g,'');
+    if(code){ const codes=window.BRH_CCN?BRH_CCN.list(A.secteur,A.effectif).map(c=>c[0]):[]; if(codes.includes(code)){ A.ccn=code; A.idcc=''; } else { A.ccn='autre'; A.idcc=code; } }
+    A.entreprise={nom:d.nom, naf:d.naf, idcc:d.idcc, source:d.source};
+    siretMsg='<span class="au-siret-msg ok">✓ '+esc([d.nom, d.naf, d.idcc?'convention '+d.idcc:''].filter(Boolean).join(' · '))+(d.source==='demo'?' (données de démonstration)':'')+' — modifiable ci-dessous</span>';
+    save(); render(); track('audit_siret_lookup',{source:d.source, idcc:code});
+  });
+}
+window.auSiret=auSiret;   // appelé par le bouton « Retrouver ma convention »
 const SCREENS={
   besoin:()=>'<div class="au-q"><h2>Que cherchez-vous pour votre entreprise ?</h2>'+
       '<div class="au-opts">'+opt('situation','optimiser','Comparer mes contrats actuels','Vérifier mes garanties et la conformité')+opt('situation','premier','Mettre en place un premier contrat','Choisir le bon niveau de garanties')+'</div></div>'+
     '<div class="au-q"><h2>Sur quels contrats ?</h2>'+
       '<div class="au-opts">'+opt('perimetre','les2','Mutuelle et prévoyance','La protection complète',true)+opt('perimetre','mutuelle','Mutuelle seule','Frais de santé')+opt('perimetre','prevoyance','Prévoyance seule','Arrêt de travail, invalidité, décès')+'</div></div>',
   entreprise:()=>'<div class="au-q"><h2>Votre entreprise</h2><p class="q-sub">Ces informations servent à vérifier vos obligations. Aucune coordonnée n’est demandée.</p>'+
+      (OPT.auditSiret?'<div class="au-siret"><div class="field"><label for="au-siret">SIRET ou SIREN <span class="opt">recommandé</span></label><input id="au-siret" type="text" inputmode="numeric" maxlength="17" value="'+esc(A.siret||'')+'" placeholder="Ex. 309 066 876" onkeydown="if(event.key===\'Enter\'){event.preventDefault();auSiret();}"></div><button type="button" class="btn btn-outline" onclick="auSiret()">Retrouver ma convention</button></div>'+siretMsg:'')+
       '<div class="au-fields">'+
         '<div class="field"><label for="au-eff">Nombre de salariés <span class="req">*</span></label><input id="au-eff" type="number" min="1" inputmode="numeric" value="'+esc(A.effectif)+'"></div>'+
         '<div class="field"><label for="au-age">Âge moyen <span class="opt">facultatif</span></label><input id="au-age" type="number" min="16" max="70" inputmode="numeric" value="'+esc(A.age)+'" placeholder="Ex. 38"></div>'+
@@ -702,10 +723,11 @@ const SCREENS={
       POSTES.map(p=>'<div class="au-lv"><b>'+p[1]+'</b>'+seg('niv',p[0],A.niv[p[0]])+'</div>').join('')+
       '<div class="au-lv"><b>'+(souhait()?'Couvrir aussi la famille':'Famille couverte')+'<br><span class="au-note">conjoint et enfants</span></b><div class="au-seg" role="group">'+[['oui','Oui'],['non','Non'],['nsp',souhait()?'À voir avec l’expert':'Je ne sais pas']].map(o=>'<button type="button" data-g="fam" data-v="'+o[0]+'" aria-pressed="'+(A.famille===o[0])+'">'+o[1]+'</button>').join('')+'</div></div></div>'+
     (souhait()?'':'<div class="au-q"><div class="au-fields">'+
-      '<div class="field"><label for="au-part">Part payée par l’entreprise</label><select id="au-part"><option value="">Sélectionner</option>'+[['moins50','Moins de 50 %'],['50','50 %'],['60','60 %'],['75','75 %'],['100','100 %']].map(o=>'<option value="'+o[0]+'"'+(A.partEmp===o[0]?' selected':'')+'>'+o[1]+'</option>').join('')+'</select></div>'+
+      '<div class="field"><label for="au-part">Part payée par l’entreprise</label><select id="au-part"><option value="">Sélectionner</option>'+(OPT.partMin50?[]:[['moins50','Moins de 50 %']]).concat([['50','50 %'],['60','60 %'],['75','75 %'],['100','100 %']]).map(o=>'<option value="'+o[0]+'"'+(A.partEmp===o[0]?' selected':'')+'>'+o[1]+'</option>').join('')+'</select></div>'+
       '<div class="field"><label for="au-cot">Cotisation mensuelle par salarié <span class="opt">facultatif</span></label><input id="au-cot" type="number" min="0" inputmode="decimal" value="'+esc(A.cotis)+'" placeholder="En euros"></div>'+
     '</div></div>'),
   prev:()=>'<div class="au-q"><h2>'+(souhait()?'Quelles garanties de prévoyance souhaitez-vous ?':'Votre prévoyance actuelle')+'</h2><p class="q-sub">Elle protège vos salariés et leur famille en cas d’arrêt de travail, d’invalidité ou de décès.</p>'+
+      (OPT.prevCadres?'<div class="au-info"><b>Obligation pour les cadres :</b> l’employeur finance au moins <b>1,50 % de la tranche A</b> (salaire jusqu’au plafond de la Sécurité sociale) en prévoyance, dont plus de la moitié en garantie décès. Pour les non-cadres, votre convention collective peut aussi imposer une prévoyance : votre expert BRH la vérifie.</div>':'')+
       '<div class="au-lv"><b>Salariés couverts</b><div class="au-seg" role="group">'+[['tous','Tous les salariés'],['cadres','Cadres seulement']].map(o=>'<button type="button" data-g="pop" data-v="'+o[0]+'" aria-pressed="'+(A.prevPop===o[0])+'">'+o[1]+'</button>').join('')+'</div></div>'+
       '<div class="au-lv"><b>Maintien des revenus en cas d’arrêt de travail</b>'+tri('maintien',A.prev.maintien)+'</div>'+
       '<div class="au-lv"><b>Rente en cas d’invalidité</b>'+tri('invalidite',A.prev.invalidite)+'</div>'+
@@ -842,7 +864,7 @@ function send(){
   let diag={}; try{ diag=JSON.parse(sessionStorage.getItem('brhProfil')||'{}'); }catch(e){}
   const payload={ type:'audit_mutuelle_prevoyance', variante:window.BRH_VARIANTE||'REF',
     contact:{name:nom,companyName:ent,email:mail,phone:tel,consent:true,consentDate:new Date().toISOString()},
-    company:{employeeCount:parseInt(A.effectif,10)||0,sector:A.secteur,idcc:ccnCode(),conventionCollective:ccnTexte(),departement:diag.departement||''},
+    company:{siret:A.siret||'',employeeCount:parseInt(A.effectif,10)||0,sector:A.secteur,idcc:ccnCode(),conventionCollective:ccnTexte(),departement:diag.departement||''},
     audit:{situation:A.situation,perimetre:A.perimetre,college:A.college,famille:A.famille,prevoyanceSalariesCouverts:A.prevPop,ageMoyen:A.age,niveaux:A.niv,partEmployeur:A.partEmp,cotisation:A.cotis,prevoyance:A.prev,formuleEquivalente:hasMut()?FORMULES[reco()].sous:null},
     diagnostic:{priorites:diag.priorites||null,dispositifsActifs:diag.dispositifsActifs||null} };
   track('audit_lead_submit',{perimetre:A.perimetre,idcc:ccnCode(),consent_status:true});

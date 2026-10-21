@@ -39,15 +39,19 @@ if (isset($_GET['q'])) {
   echo json_encode(['resultats' => $out], JSON_UNESCAPED_UNICODE); exit;
 }
 
-/* Fiche entreprise : ?siret=14 chiffres */
+/* Fiche entreprise : ?siret=14 chiffres, ou ?siren=9 chiffres (diagnostic, audit) */
 $siret = preg_replace('/\D/', '', (string) ($_GET['siret'] ?? ''));
-if (strlen($siret) !== 14) { echo json_encode(['error' => 'siret_invalide']); exit; }
-$e = pappers('entreprise', ['siret' => $siret]);
+$siren = preg_replace('/\D/', '', (string) ($_GET['siren'] ?? ''));
+if (strlen($siret) === 14)     $e = pappers('entreprise', ['siret' => $siret]);
+elseif (strlen($siren) === 9)  $e = pappers('entreprise', ['siren' => $siren]);
+else { echo json_encode(['error' => 'siret_invalide']); exit; }
 if (!$e) { echo json_encode(['error' => 'not_found']); exit; }
 
 $cc = $e['conventions_collectives'][0] ?? null;
 echo json_encode([
   'source'        => 'Pappers',
+  'siren'         => $e['siren'] ?? substr($siret, 0, 9),
+  'siret'         => $e['siege']['siret'] ?? $siret,
   'date'          => date('d/m/Y'),
   'nom'           => $e['nom_entreprise'] ?? '',
   'ville'         => $e['siege']['ville'] ?? '',

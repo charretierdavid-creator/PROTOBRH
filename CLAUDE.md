@@ -27,6 +27,8 @@ Le dépôt contient deux sites qui évoluent **ensemble** :
   (ignoré par Git) ; le déploiement le lance avant l'envoi FTP. Test local :
   `python3 outils/assembler_variantes.py && python3 -m http.server 8766 --directory _site/protobrha`.
 - Chaque page du socle charge `variante.css` et `variante.js` (fin du `<head>`) : toute nouvelle page doit les charger.
+- Une fonction métier propre à une version (ex. champ SIRET de l'audit en B) est codée une fois dans le socle, désactivée
+  par défaut, et activée par `window.BRH_OPTIONS` dans le `variante.js` de la version (B : `auditSiret`, `partMin50`, `prevCadres`).
 - Les règles de `variante.css` portent sur `html[data-variante="A"]` (ou `B`) pour passer devant les styles des pages.
 - La version (`REF`, `A`, `B`) est jointe à chaque événement de mesure et à chaque demande transmise
   (`window.BRH_VARIANTE`, donnée D104). Toute nouvelle demande transmise doit l'inclure.
@@ -78,11 +80,11 @@ Si une demande ne touche qu'un des deux sites, le dire explicitement dans le ré
 
 ## 4. Conventions du projet
 
-- **Pages du cahier des charges** : codes `É01` à `É26` (écrans), `P1`, `P2` (processus back-office), `H` (Assistant BRH),
+- **Pages du cahier des charges** : codes `É01` à `É27` (écrans), `P1`, `P2` (processus back-office), `H` (Assistant BRH),
   `VA`, `VB` (fiches des versions A et B du test A/B).
-  Une nouvelle page d'écran prend le code suivant libre (`É27`…) et doit être reliée à une étape du parcours.
+  Une nouvelle page d'écran prend le code suivant libre (`É28`…) et doit être reliée à une étape du parcours.
 - **Priorités** : `MVP`, `V2`, `ARB` (à arbitrer).
-- **Données produites** : identifiants `D01`… `D104` ; une nouvelle donnée prend le code suivant libre et s'ajoute au
+- **Données produites** : identifiants `D01`… `D105` ; une nouvelle donnée prend le code suivant libre et s'ajoute au
   dictionnaire (`data` dans `app_data.json`) avec écran, nature (P, E, C, T) et exemple.
 - **Technique** : fichiers HTML/CSS/JS autonomes, sans framework ; images intégrées quand c'est possible.
 - **Accès protégé** : les deux sites passent par `acces.php` (même modèle que Diagnostic Conseil BRH :
@@ -122,7 +124,7 @@ Les commentaires validés par David sont disponibles en JSON :
 `https://cdcbrh.monsitedetest.com/comments.php?action=backlog`
 
 Les **idées** (code page `NF`, bouton « Suggérer une idée ») décrivent une fonctionnalité absente du portail
-(champs : titre, besoin, nom). Une idée validée donne un **nouvel écran** (`É27`…) rattaché à une étape du parcours,
+(champs : titre, besoin, nom). Une idée validée donne un **nouvel écran** (`É28`…) rattaché à une étape du parcours,
 ou, si elle touche le périmètre, le budget ou la conformité, une proposition d'**arbitrage COPIL**.
 
 Pour chaque commentaire validé : proposer l'évolution correspondante, la regrouper avec les autres dans une même

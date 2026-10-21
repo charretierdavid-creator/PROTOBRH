@@ -514,7 +514,7 @@ body[data-vsel="REF"] [data-var]:not([data-var~="REF"]),body[data-vsel="A"] [dat
     var b = backlog(); if (!b.length) return '';
     return 'BACKLOG VALIDÉ — Portail BRH' + (document.getElementById('bfilter').value ? ' — ' + VLAB[document.getElementById('bfilter').value] : '') + ' — ' + new Date().toLocaleDateString('fr-FR') + ' — ' + b.length + ' évolution(s) à intégrer au prototype et au cahier des charges\n\n' +
       b.map(function(c, i){ return (i + 1) + '. [' + c.id + '] [' + VLAB[c.cible || 'TOUTES'] + '] ' + c.page + ' · ' + TITLES[c.page] + ' — ' + c.author + ' (' + fmtD(c.date) + ')\n   ' + full(c).replace(/\n/g, '\n   '); }).join('\n\n') +
-      '\n\nConsigne : intégrer chaque évolution dans la version cible (Toutes versions ou Standard : socle protobrh/ ; Version A : protobrha/ ; Version B : protobrhb/), mettre à jour le cahier des charges interactif et ajouter une entrée au journal des évolutions. Pour une idée (NF), créer un nouvel écran (É27…) rattaché à une étape du parcours, ou signaler un arbitrage COPIL.';
+      '\n\nConsigne : intégrer chaque évolution dans la version cible (Toutes versions ou Standard : socle protobrh/ ; Version A : protobrha/ ; Version B : protobrhb/), mettre à jour le cahier des charges interactif et ajouter une entrée au journal des évolutions. Pour une idée (NF), créer un nouvel écran (É28…) rattaché à une étape du parcours, ou signaler un arbitrage COPIL.';
   }
   document.getElementById('bexport').onclick = function(){
     var b = backlog(); if (!b.length){ status('Aucun commentaire au statut « Validé »' + (document.getElementById('bfilter').value ? ' affecté à : ' + VLAB[document.getElementById('bfilter').value] : '') + ' pour le moment.', 'off'); return; }
