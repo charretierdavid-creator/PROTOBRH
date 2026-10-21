@@ -468,9 +468,14 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 @media(max-width:1320px){.header-in{gap:1rem}.nav{gap:0}.nav a{padding:.5rem .5rem;font-size:.88rem}.header .btn{padding:.75rem 1rem;font-size:.9rem}}
 </style>
 <style>.sm-audit{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding:14px 16px;border-radius:12px;background:var(--green);color:#fff;text-decoration:none;font-family:var(--fh);font-weight:600;font-size:.95rem;line-height:1.35}.sm-audit small{display:block;font-family:var(--fb);font-weight:400;font-size:.8rem;opacity:.85;margin-top:2px}.sm-audit:hover{background:var(--green-hover)}</style>
+<style>.pat-in{display:grid;grid-template-columns:1.4fr 1fr;gap:34px;align-items:center;background:var(--gray-bg);border:1px solid var(--line);border-radius:var(--radius-lg);padding:34px 38px}
+.pat-kick{display:inline-block;font:700 .74rem var(--fb);text-transform:uppercase;letter-spacing:.06em;color:var(--red);margin-bottom:8px}
+.pat .h2{font-size:1.55rem;margin-bottom:10px}.pat p{color:var(--slate);font-size:.95rem;max-width:62ch}.pat-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+.pat ul{margin:0;padding:18px 20px 18px 36px;background:#fff;border:1px solid var(--line);border-radius:var(--radius);color:var(--ink);font-size:.9rem;line-height:1.75}
+@media(max-width:860px){.pat-in{grid-template-columns:1fr;padding:24px}}</style>
 <style>.nav a{white-space:nowrap}@media(max-width:1180px){.nav a{padding:.5rem .55rem;font-size:.9rem}}</style>
-<link rel="stylesheet" href="variante.css?v=20261021c">
-<script src="variante.js?v=20261021c"></script>
+<link rel="stylesheet" href="variante.css?v=20261021d">
+<script src="variante.js?v=20261021d"></script>
 </head>
 <body>
 <header class="header">
@@ -634,6 +639,15 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
       </div>
     </div>
   </div></section>
+  <!-- PENSEZ AUSSI À VOTRE PATRIMOINE (accompagnement du dirigeant, É27) -->
+  <section class="sec pat" id="patrimoine" style="padding-top:0"><div class="wrap"><div class="pat-in">
+    <div><span class="pat-kick">Pensez aussi à votre patrimoine</span>
+      <h2 class="h2">Votre entreprise et votre patrimoine, un même projet</h2>
+      <p>Protéger votre famille, transmettre ou céder vos parts aux meilleures conditions, renforcer les fonds propres de votre entreprise : le Crédit Agricole accompagne les dirigeants dans toutes les dimensions de leur patrimoine, avec les experts de votre région.</p>
+      <div class="pat-cta"><a class="btn btn-outline" href="https://www.credit-agricole.fr/entreprise/transmission-reprise/accompagnement-dirigeant.html" target="_blank" rel="noopener" onclick="track('patrimoine_click',{source:'accueil'})">Découvrir l’accompagnement du dirigeant</a>
+        <a class="btn btn-primary" href="diagnostic.html#contact">En parler à un expert</a></div></div>
+    <ul><li>Financement d’acquisition et ingénierie financière sur cession</li><li>Structuration du patrimoine pour une cession ou une transmission</li><li>Transmission et fusion d’entreprise</li><li>Capital-investissement et introduction en bourse</li></ul>
+  </div></div></section>
 
   <!-- ACCOMPAGNEMENT -->
   <section class="sec" id="avantages" style="padding-top:0"><div class="wrap acc-in acc">

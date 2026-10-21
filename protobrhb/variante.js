@@ -8,7 +8,7 @@
   window.BRH_OPTIONS = { auditSiret:true, partMin50:true, prevCadres:true };
   document.documentElement.setAttribute('data-variante', V);
   var f = document.createElement('link'); f.rel = 'stylesheet';   // police des titres, chargée sans bloquer la page
-  f.href = 'https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap';
+  f.href = 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=swap';
   document.head.appendChild(f);
   var dl = window.dataLayer = window.dataLayer || [], push = dl.push;
   dl.push = function(o){ if (o && typeof o === 'object' && !o.variante) o.variante = V; return push.apply(dl, arguments); };
@@ -24,7 +24,8 @@
     var cur = -1; STEPS.forEach(function(s, i){ if (cur < 0 && s[2].indexOf(page) >= 0) cur = i; });
     if (cur >= 0) {
       var nav = document.createElement('nav'); nav.className = 'vb-steps'; nav.setAttribute('aria-label', 'Étapes du parcours');
-      nav.innerHTML = '<ol><li class="vb-n">Votre parcours en ' + STEPS.length + ' étapes</li>' + STEPS.map(function(s, i){ return '<li' + (i === cur ? ' class="on" aria-current="step"' : '') + '><a href="' + s[0] + '">' + s[1] + '</a></li>'; }).join('') + '</ol>';
+      nav.innerHTML = '<div class="vb-steps-in"><span class="vb-n">Votre parcours en ' + STEPS.length + ' étapes<em>· étape ' + (cur + 1) + ' sur ' + STEPS.length + '</em></span><ol>' +
+        STEPS.map(function(s, i){ return '<li class="' + (i < cur ? 'done' : (i === cur ? 'on' : '')) + '"' + (i === cur ? ' aria-current="step"' : '') + '><a href="' + s[0] + '"><span>' + s[1] + '</span></a></li>'; }).join('') + '</ol></div>';
       header.parentNode.insertBefore(nav, header.nextSibling);
     }
     var foot = document.querySelector('footer.footer') || document.querySelector('footer');
@@ -34,20 +35,11 @@
     patrimoine(page); mentionsPriorites(); termeSante();
   });
 
-  /* Accompagnement patrimonial du dirigeant (idée du 19/10/2026) : accueil, en second plan, et « Bon à savoir » du diagnostic */
+  /* Accompagnement patrimonial du dirigeant (idée du 19/10/2026) : carte du « Bon à savoir » du diagnostic (version B) */
   var PAT_URL = 'https://www.credit-agricole.fr/entreprise/transmission-reprise/accompagnement-dirigeant.html';
   function patrimoine(page){
     var lien = '<a class="btn btn-outline" href="' + PAT_URL + '" target="_blank" rel="noopener" onclick="window.dataLayer.push({event:\'patrimoine_click\'})">Découvrir l’accompagnement du dirigeant</a>';
-    var offres = (page === 'index.html' || page === '') && document.getElementById('offres');
-    if (offres && !document.getElementById('vb-pat')) {
-      var s = document.createElement('section'); s.id = 'vb-pat'; s.className = 'vb-pat';
-      s.innerHTML = '<div class="wrap"><div class="vb-pat-in"><div><span class="vb-kick">Pensez aussi à votre patrimoine</span>' +
-        '<h2>Votre entreprise et votre patrimoine, un même projet</h2>' +
-        '<p>Protéger votre famille, transmettre ou céder vos parts aux meilleures conditions, renforcer les fonds propres de votre entreprise : le Crédit Agricole accompagne les dirigeants dans toutes les dimensions de leur patrimoine, avec les experts de votre région.</p>' +
-        '<div class="vb-pat-cta">' + lien + '<a class="btn btn-primary" href="diagnostic.html#contact">En parler à un expert</a></div></div>' +
-        '<ul><li>Financement d’acquisition et ingénierie financière sur cession</li><li>Structuration du patrimoine pour une cession ou une transmission</li><li>Transmission et fusion d’entreprise</li><li>Capital-investissement et introduction en bourse</li></ul></div></div>';
-      offres.parentNode.insertBefore(s, offres.nextSibling);
-    }
+    // le bloc de l'accueil est dans le socle (index.html, sites S, A et B) ; ici seulement la carte du « Bon à savoir »
     var bas = document.getElementById('bon-a-savoir');
     if (bas && !document.getElementById('basPat')) {
       var c = document.createElement('div'); c.id = 'basPat'; c.className = 'bas-card vb-bas-pat';
@@ -55,14 +47,9 @@
       bas.appendChild(c);
     }
   }
-  /* Priorités du diagnostic : obligations santé et prévoyance, benchmark mis en avant */
+  /* Priorités du diagnostic : benchmark mis en avant */
   function mentionsPriorites(){
-    var intro = document.querySelector('#block2 .prio-intro');
-    if (intro && !document.querySelector('.vb-oblig')) {
-      var n = document.createElement('p'); n.className = 'vb-oblig';
-      n.innerHTML = '<b>Bon à savoir :</b> la <b>complémentaire santé</b> est obligatoire pour tous les salariés (accord national interprofessionnel, ANI) ; la <b>prévoyance</b> l’est pour les cadres et souvent selon votre convention collective.';
-      intro.appendChild(n);
-    }
+    // obligations santé / prévoyance : fenêtre « i » à côté de « Protéger vos salariés » (socle, sites S, A et B)
     var radar = document.querySelector('#block2 .radar-col');
     if (radar && !document.querySelector('.vb-bench')) {
       var h = document.createElement('p'); h.className = 'vb-bench'; h.textContent = 'Comparez-vous aux entreprises similaires (benchmark)';

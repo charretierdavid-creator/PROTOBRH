@@ -58,7 +58,7 @@ for i, code in enumerate(ORDER):
     rel = ''.join(f'<div class="rel"><span>Dans le parcours : <b>{e(LAB[s])}</b></span>' + ''.join(f'<a class="chip{" cur" if c==code else ""}" href="#{aid(c)}" data-var="{" ".join(pvar(BY[c]))}">{c} · {e(BY[c]["title"].split(" — ")[-1])}</a>' for c in STEP_PAGES[s]) + '</div>' for s in steps)
     tile = 'proc' if p.get('process') else ('v2' if p['statut'] == 'V2' else '')
     if p.get('imgs'):
-        figs = ''.join(f'<figure><img src="{IM[imn]}" alt="Capture de l\'écran {code}" loading="lazy" data-zoom><figcaption>{("Capture de la version " + imn[1].upper() + " du 21/10/2026 (V1.1)") if imn[:3] in ("va_", "vb_") else ("Capture de la version B du 21/10/2026 (V1.3)" if imn.startswith("e27_") else "Capture du prototype du 14/10/2026 (V1.0.3)")}{" — vue " + str(k+1) if len(p["imgs"])>1 else ""}</figcaption></figure>' for k, imn in enumerate(p['imgs']))
+        figs = ''.join(f'<figure><img src="{IM[imn]}" alt="Capture de l\'écran {code}" loading="lazy" data-zoom><figcaption>{("Capture de la version " + imn[1].upper() + " du 21/10/2026") if imn[:3] in ("va_", "vb_") else ("Capture du prototype du 21/10/2026" if imn.startswith("e27_") else "Capture du prototype du 14/10/2026 (V1.0.3)")}{" — vue " + str(k+1) if len(p["imgs"])>1 else ""}</figcaption></figure>' for k, imn in enumerate(p['imgs']))
     else:
         figs = f'<div class="noimg"><b>{"Processus back-office" if p.get("process") else "Écran à maquetter"}</b><br>Pas d\'écran côté dirigeant</div>'
     reqs = ''.join(f'<tr data-var="{" ".join(r[2] if len(r) > 2 else pvar(p))}"><td>{k+1:02d}</td><td>{e(r[0])}{" " + vtags(r[2]) if len(r) > 2 else ""}</td><td><span class="prio {r[1]}">{PRIO[r[1]]}</span></td></tr>' for k, r in enumerate(p['reqs']))
