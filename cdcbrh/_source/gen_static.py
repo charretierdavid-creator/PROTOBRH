@@ -24,25 +24,29 @@ def vtags(v, full=False):
     return ''.join(f'<span class="vtag v-{x}">{VLAB[x]}</span>' for x in v)
 def story(t): return re.sub(r"(En tant que |je veux |afin (?:de |d'|que ))", r'<b>\1</b>', e(t))
 
-# ---- map image
-MAPH = G['maph']  # hauteur du schéma dans le repère 1920 px
-im = Image.open('map3.jpg').convert('RGB').resize((2400, round(2400 * MAPH / 1920)), Image.LANCZOS)
-b = io.BytesIO(); im.save(b, 'JPEG', quality=80, optimize=True)
-MAPIMG = 'data:image/jpeg;base64,' + base64.b64encode(b.getvalue()).decode()
+# ---- schéma du parcours : un par version du prototype (gen_map.py)
+GV = {'REF': G['S'], 'A': G['A'], 'B': G['B']}
 def stepid(label):
     if label == 'Acquisition': return 'A'
     if label == 'Lead qualifié': return '5.L'
     if label.startswith('Rappel expert'): return '6.L'
     return label.split(' ')[0]
 pct = lambda v, t: f'{v / t * 100:.3f}%'
-hot = []
-for c in G['cards']:
-    sid = c.get('sid') or stepid(c['b']); pages = STEP_PAGES[sid]
-    hot.append(f'<a class="hot" href="#{aid(pages[0])}" style="left:{pct(c["x"]-4,1920)};top:{pct(c["y"]-4,MAPH)};width:{pct(c["w"]+8,1920)};height:{pct(c["h"]+8,MAPH)}" title="{e(LAB[sid])} — pages : {", ".join(pages)}" aria-label="{e(LAB[sid])} : ouvrir {len(pages)} page(s)"><span>{len(pages)}</span></a>')
-for x, code in zip(G['ebs'], ['É22','É06','É07','É20','É15','É22']):
-    hot.append(f'<a class="hot eb" href="#{aid(code)}" style="left:{pct(x["x"],1920)};top:{pct(x["y"],MAPH)};width:{pct(x["w"],1920)};height:{pct(x["h"],MAPH)}" title="{e(x["text"])} — voir {code}" aria-label="{e(x["text"])} : voir {code}"></a>')
-
-steps_html = ''.join(f'<div class="step"><h3>{e(LAB[s])}</h3><div class="chips">' + ''.join(f'<a class="chip{" v2" if BY[c]["statut"]=="V2" else ""}" href="#{aid(c)}">{c}</a>' for c in STEP_PAGES[s]) + '</div></div>' for s in STEP_ORDER)
+def parcours(v):
+    g = GV[v]; MAPH = g['maph']
+    im = Image.open(g['img']).convert('RGB').resize((2400, round(2400 * MAPH / 1920)), Image.LANCZOS)
+    b = io.BytesIO(); im.save(b, 'JPEG', quality=78, optimize=True)
+    hot, sids = [], []
+    for c in g['cards']:
+        sid = c.get('sid') or stepid(c['b']); pages = STEP_PAGES[sid]; sids.append(sid)
+        hot.append(f'<a class="hot" href="#{aid(pages[0])}" style="left:{pct(c["x"]-4,1920)};top:{pct(c["y"]-4,MAPH)};width:{pct(c["w"]+8,1920)};height:{pct(c["h"]+8,MAPH)}" title="{e(LAB[sid])} — pages : {", ".join(pages)}" aria-label="{e(LAB[sid])} : ouvrir {len(pages)} page(s)"><span>{len(pages)}</span></a>')
+    for x, code in zip(g['ebs'], ['É22','É06','É07','É20','É15','É22']):
+        hot.append(f'<a class="hot eb" href="#{aid(code)}" style="left:{pct(x["x"],1920)};top:{pct(x["y"],MAPH)};width:{pct(x["w"],1920)};height:{pct(x["h"],MAPH)}" title="{e(x["text"])} — voir {code}" aria-label="{e(x["text"])} : voir {code}"></a>')
+    steps = ''.join(f'<div class="step"><h3>{e(LAB[s])}</h3><div class="chips">' + ''.join(f'<a class="chip{" v2" if BY[c]["statut"]=="V2" else ""}" href="#{aid(c)}">{c}</a>' for c in STEP_PAGES[s] if v in pvar(BY[c])) + '</div></div>' for s in STEP_ORDER if s in sids)
+    img = 'data:image/jpeg;base64,' + base64.b64encode(b.getvalue()).decode()
+    return (f'<div class="mapv" data-v="{v}"><div class="mapwrap"><div class="mapimg"><img src="{img}" alt="Parcours du dirigeant — {VLAB[v]}" loading="lazy">' + '\n'.join(hot) +
+            f'</div></div><div class="steps">{steps}</div></div>')
+maps_html = '\n'.join(parcours(v) for v in VERS)
 
 toc = ''.join(f'<h4>{e(g)}</h4>' + ''.join(f'<a href="#{aid(c)}" data-code="{c}" data-var="{" ".join(pvar(BY[c]))}"><b>{c}</b><span>{e(BY[c]["title"])}</span><i class="cc" data-cc="{c}"></i></a>' for c in cs) for g, cs in GROUPS) + '<h4>Données</h4><a href="#crm"><b>DATA</b><span>Tableau des data outputs</span></a>'
 
@@ -64,7 +68,6 @@ for i, code in enumerate(ORDER):
     alert = f'<p class="alert"><b>Point d\'attention.</b> {e(p["alert"])}</p>' if p.get('alert') else ''
     prev = f'<a class="btn" href="#{aid(ORDER[i-1])}">Page précédente · {ORDER[i-1]}</a>' if i > 0 else '<span></span>'
     nxt = f'<a class="btn" href="#{aid(ORDER[i+1])}">Page suivante · {ORDER[i+1]}</a>' if i < len(ORDER) - 1 else '<span></span>'
-    cib = ''.join(f'<option value="{x}"{" selected" if len(pvar(p)) == 1 and pvar(p)[0] == x else ""}>{VLAB[x]}</option>' for x in VERS)
     pages_html.append(f'''<section class="view pg" id="{aid(code)}" data-code="{code}" data-var="{" ".join(pvar(p))}">
 {rel}
 <article class="page">
@@ -78,7 +81,7 @@ for i, code in enumerate(ORDER):
 <h3>Données produites</h3><div class="dchips">{data}</div>
 </div><div>{figs}<h3>Appui humain</h3><p class="human">{e(p.get("human",""))}</p>{kpi}{alert}</div></div>
 <div class="thread" data-page="{code}"><div class="tlist" aria-live="polite"></div>
-<form class="comment" data-page="{code}"><label for="cm-{aid(code)}">Commentaires de l'équipe</label><input class="who" name="author" maxlength="60" placeholder="Votre nom" aria-label="Votre nom" required><select name="cible" class="cib" aria-label="Version cible"><option value="TOUTES">Toutes versions</option>{cib}</select><input id="cm-{aid(code)}" name="text" maxlength="2000" placeholder="Ajouter un commentaire…" required><input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true"><button class="btn primary sm" type="submit">Publier</button></form></div>
+<form class="comment" data-page="{code}"><label for="cm-{aid(code)}">Commentaires de l'équipe</label><input class="who" name="author" maxlength="60" placeholder="Votre nom" aria-label="Votre nom" required><input id="cm-{aid(code)}" name="text" maxlength="2000" placeholder="Ajouter un commentaire…" required><input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true"><button class="btn primary sm" type="submit">Publier</button></form></div>
 <nav class="pager">{prev}<a class="btn primary" href="#parcours">Retour au parcours</a>{nxt}</nav>
 </article></section>''')
 
@@ -95,9 +98,9 @@ for g in DICT:
         rows += f'<tr id="d-{r[0]}"><td class="id">{r[0]}</td><td>{e(r[1])}</td><td>{pg}</td><td class="c"><span class="nat {r[3]}">{r[3]}</span></td><td>{e(r[4])}</td>' + ''.join(f'<td class="c"><input type="checkbox" data-d="{r[0]}" data-k="{k}" aria-label="{u} pour {r[0]}"></td>' for k, u in enumerate(UC)) + f'<td><input type="text" data-d="{r[0]}" data-k="note" aria-label="Commentaire {r[0]}"></td></tr>'
 thead = '<thead><tr><th>ID</th><th>Donnée (output)</th><th>Pages</th><th>Nature</th><th>Format / exemple</th>' + ''.join(f'<th class="u">{u}</th>' for u in UC) + '<th>Commentaire</th></tr></thead>'
 
-versions_html = ''.join(f'<div class="vcard v-{v}"><span class="vtag v-{v}">{VLAB[v]}</span><b>{VURL[v]}</b><p>{e(VHYP[v])}</p><div class="vact"><button type="button" class="btn sm" data-vpick="{v}">Filtrer sur cette version</button>' + (f'<a class="btn sm" href="#p-V{v}">Fiche de la version</a>' if v != 'REF' else '') + '</div></div>' for v in VERS)
+versions_html = ''.join(f'<button type="button" class="vcard v-{v}" data-vpick="{v}" aria-pressed="false"><span class="vtag v-{v}">{VLAB[v]}</span><b>{VURL[v]}</b><span class="vh">{e(VHYP[v])}</span><span class="vgo">Voir le parcours de cette version</span></button>' for v in VERS)
 tpl = open('static_tpl.html').read()
-out = (tpl.replace('%%MAPIMG%%', MAPIMG).replace('%%HOT%%', '\n'.join(hot)).replace('%%STEPS%%', steps_html)
+out = (tpl.replace('%%MAPS%%', maps_html)
        .replace('%%TOC%%', toc).replace('%%VERSIONS%%', versions_html).replace('%%PAGES%%', '\n'.join(pages_html)).replace('%%CRM%%', thead + '<tbody>' + rows + '</tbody>')
        .replace('%%ORDER%%', json.dumps(ORDER, ensure_ascii=False)).replace('%%DICT%%', json.dumps(DICT, ensure_ascii=False)).replace('%%JOURNAL%%', open('../journal.json').read()).replace('%%TITLES%%', json.dumps({c: BY[c]['title'] for c in ORDER}, ensure_ascii=False)))
 open('../index.html', 'w').write(out)
