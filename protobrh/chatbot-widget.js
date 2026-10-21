@@ -136,7 +136,7 @@ function cbotProfile(){
   if(Array.isArray(c.deja)) p.deja=c.deja;
   return (p.effectif || p.priorites || p.solutionsDevis) ? p : null;
 }
-function cbotConsent(){ return cbSS('brhIAConsent',null); }           // 'oui' | 'non' | null
+function cbotConsent(){ return cbSS('brhIAConsent','oui'); }          // 'oui' (par défaut, désactivable) | 'non'
 function cbotPerso(){ return cbotConsent()==='oui' && !!cbotProfile(); }
 function cbotTop(p){ const pr=(p&&p.priorites)||{}; return Object.keys(CBOT_AXES).filter(k=>(pr[k]||0)>=3).sort((a,b)=>(pr[b]||0)-(pr[a]||0)); }
 function cbotResume(p){
@@ -177,7 +177,8 @@ function renderCtx(){
   if(!p){ box.classList.remove('show'); box.innerHTML=''; note.textContent="Assistant informatif — pour un conseil personnalisé, un expert peut vous recontacter."; return; }
   box.classList.add('show');
   if(c==='oui'){
-    box.innerHTML='<div class="q"><span class="pill">Conseil personnalisé · '+esc(cbotResume(p)||'votre diagnostic')+'</span><button class="lnk" onclick="cbotSetConsent(\'non\')">Désactiver</button></div>';
+    box.innerHTML='<div class="q"><span class="pill">Conseil personnalisé · '+esc(cbotResume(p)||'votre diagnostic')+'</span><button class="lnk" onclick="cbotSetConsent(\'non\')">Désactiver</button>'+
+      '<small>Activé par défaut : seules des données d\'entreprise sont utilisées (effectif, secteur, priorités), jamais vos coordonnées.</small></div>';
     note.textContent="Orientation indicative et non contractuelle — un expert BRH valide avec vous la solution adaptée.";
   } else if(c==='non'){
     box.innerHTML='<div class="q">Réponses générales.<button class="lnk" onclick="cbotSetConsent(\'oui\')">Personnaliser avec mon diagnostic</button></div>';
