@@ -30,6 +30,8 @@ Le dépôt contient deux sites qui évoluent **ensemble** :
 - Les règles de `variante.css` portent sur `html[data-variante="A"]` (ou `B`) pour passer devant les styles des pages.
 - La version (`REF`, `A`, `B`) est jointe à chaque événement de mesure et à chaque demande transmise
   (`window.BRH_VARIANTE`, donnée D104). Toute nouvelle demande transmise doit l'inclure.
+- Avis « Votre avis » : les trois sites écrivent dans la même base MySQL (celle de protobrh, `config.php` commun) ;
+  `feedback.php` remplit la colonne `version` (S, A, B) d'après l'adresse du site.
 - Où coder une évolution : **Toutes versions** ou **Référence** → socle `protobrh/` (attention : une évolution du
   socle s'applique aussi à A et B, sauf si leur `variante.js`/`variante.css` la neutralise) ; **Version A** ou
   **Version B** → uniquement dans `protobrha/` ou `protobrhb/`.
