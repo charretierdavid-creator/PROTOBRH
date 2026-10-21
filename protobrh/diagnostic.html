@@ -468,7 +468,15 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 .gdet th{font-size:.74rem;text-transform:uppercase;letter-spacing:.03em;color:var(--slate);font-weight:600}.gdet td.n{text-align:right;white-space:nowrap;font-weight:600;color:var(--green)}
 .gdet tr.off td{color:var(--slate);font-weight:400}.gdet p{font-size:.76rem;color:var(--slate);margin:0 0 12px}
 .gains.locked~.gdet{display:none}
-.ent-id{margin-bottom:16px;max-width:560px}.ent-id-row{display:flex;gap:10px}.ent-id-row .btn{padding:.7rem 1.1rem}
+/* bloc « Votre entreprise » : titre sur une ligne, encadré SIREN, puis les 3 champs alignés */
+#block1 .ent-grid{grid-template-columns:1fr;gap:18px}
+#block1 .block-head{align-items:center}#block1 .block-head h2{white-space:nowrap}#block1 .block-head p{max-width:none;margin-top:.15rem}
+.ent-id{display:grid;grid-template-columns:1fr minmax(300px,1.1fr);gap:8px 22px;align-items:center;background:var(--mint-2);border-radius:14px;padding:14px 18px;margin:0}
+.ent-id label{margin-bottom:2px}.ent-id .hint{margin-top:0}
+.ent-id-row{display:flex;gap:10px}.ent-id-row input{background:#fff}.ent-id-row .btn{padding:.7rem 1.1rem}
+.ent-or{font-size:.8rem;color:var(--slate);margin:-4px 0 -6px;text-transform:uppercase;letter-spacing:.05em}
+#block1 .fields-row{grid-template-columns:1.3fr 1fr 1fr}
+@media(max-width:760px){.ent-id{grid-template-columns:1fr}#block1 .fields-row{grid-template-columns:1fr}#block1 .block-head h2{white-space:normal}}
 #siren-msg.ok{color:var(--green);font-weight:600}#siren-msg.err{color:#b3261e}
 .field .opt{font-weight:500;font-size:.74rem;color:var(--slate);background:var(--mint-2);border-radius:999px;padding:1px 8px;margin-left:4px}
 .protect-extra{background:var(--mint-2);border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;margin:-8px 0 0 58px;display:flex;flex-direction:column;gap:12px}
@@ -577,8 +585,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 <script src="entreprise-lookup.js?v=20261021"></script>
 <style>.sm-audit{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding:14px 16px;border-radius:12px;background:var(--green);color:#fff;text-decoration:none;font-family:var(--fh);font-weight:600;font-size:.95rem;line-height:1.35}.sm-audit small{display:block;font-family:var(--fb);font-weight:400;font-size:.8rem;opacity:.85;margin-top:2px}.sm-audit:hover{background:var(--green-hover)}</style>
 <style>.nav a{white-space:nowrap}@media(max-width:1180px){.nav a{padding:.5rem .55rem;font-size:.9rem}}</style>
-<link rel="stylesheet" href="variante.css?v=20261021b">
-<script src="variante.js?v=20261021b"></script>
+<link rel="stylesheet" href="variante.css?v=20261021c">
+<script src="variante.js?v=20261021c"></script>
 </head>
 <body>
 <header class="header">
@@ -669,16 +677,17 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
         <span class="bh-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M8 7h2M14 7h2M8 11h2M14 11h2M8 15h2M14 15h2"/></svg></span>
         <div><h2><b>1.</b> Votre entreprise</h2><p>Quelques informations suffisent pour personnaliser vos recommandations.</p></div>
       </div>
-      <div class="field ent-id"><label for="siren">SIREN ou SIRET <span class="opt">facultatif</span></label>
+      <div class="field ent-id"><div class="ent-id-txt"><label for="siren">Gagnez du temps avec votre SIREN ou SIRET <span class="opt">facultatif</span></label>
+          <span class="hint" id="siren-msg">Secteur, département et convention collective sont préremplis, puis repris dans votre devis.</span></div>
         <div class="ent-id-row"><input type="text" id="siren" inputmode="numeric" maxlength="17" placeholder="Ex. 309 066 876" autocomplete="off" aria-describedby="siren-msg" onkeydown="if(event.key==='Enter'){event.preventDefault();chercherEntreprise();}">
-          <button type="button" class="btn btn-outline" onclick="chercherEntreprise()">Rechercher</button></div>
-        <span class="hint" id="siren-msg">Pour préremplir le secteur, le département et la convention collective, et les reprendre dans le devis.</span></div>
+          <button type="button" class="btn btn-outline" onclick="chercherEntreprise()">Rechercher</button></div></div>
+      <p class="ent-or">ou renseignez directement :</p>
       <div class="fields-row">
         <div class="field"><label for="secteur">Secteur d'activité <span class="req">*</span></label>
           <select id="secteur" onchange="onSecteur()"><option value="">Sélectionner un secteur</option><option>Industrie</option><option>BTP</option><option>Commerce</option><option>Hôtellerie-restauration</option><option>Transport et logistique</option><option>Services aux entreprises</option><option>Santé et social</option><option>Services à la personne</option><option>Artisanat alimentaire</option><option>Agriculture et paysage</option><option>Banque, assurance, immobilier</option><option>Association</option><option>Autre</option></select></div>
         <div class="field"><label for="effectif">Nombre de salariés <span class="req">*</span></label>
           <input type="number" id="effectif" min="1" step="1" value="50" inputmode="numeric" oninput="onEffectif()" aria-describedby="eff-warn">
-          <span class="hint">Nécessaire au calcul du gain fiscal.</span>
+          <span class="hint">Sert au calcul du gain fiscal.</span>
           <span class="warn" id="eff-warn" role="alert"></span></div>
         <div class="field"><label for="departement">Département <span class="req">*</span></label>
           <input type="text" id="departement" maxlength="2" placeholder="Ex. 37" autocomplete="off" autocapitalize="characters" spellcheck="false" oninput="onDepartement()" aria-describedby="dep-hint dep-warn">
