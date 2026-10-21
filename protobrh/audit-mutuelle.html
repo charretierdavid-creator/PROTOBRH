@@ -565,6 +565,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 .au-links{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
 </style>
 <style>.nav a{white-space:nowrap}@media(max-width:1180px){.nav a{padding:.5rem .55rem;font-size:.9rem}}</style>
+<link rel="stylesheet" href="variante.css?v=20261021">
+<script src="variante.js?v=20261021"></script>
 </head>
 <body>
 <header class="header">
@@ -838,7 +840,7 @@ function send(){
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){ err.textContent='Adresse e-mail invalide.'; return; }
   if(!$('au-consent').checked){ err.textContent='Votre consentement est nécessaire avant tout envoi.'; return; }
   let diag={}; try{ diag=JSON.parse(sessionStorage.getItem('brhProfil')||'{}'); }catch(e){}
-  const payload={ type:'audit_mutuelle_prevoyance',
+  const payload={ type:'audit_mutuelle_prevoyance', variante:window.BRH_VARIANTE||'REF',
     contact:{name:nom,companyName:ent,email:mail,phone:tel,consent:true,consentDate:new Date().toISOString()},
     company:{employeeCount:parseInt(A.effectif,10)||0,sector:A.secteur,idcc:ccnCode(),conventionCollective:ccnTexte(),departement:diag.departement||''},
     audit:{situation:A.situation,perimetre:A.perimetre,college:A.college,famille:A.famille,prevoyanceSalariesCouverts:A.prevPop,ageMoyen:A.age,niveaux:A.niv,partEmployeur:A.partEmp,cotisation:A.cotis,prevoyance:A.prev,formuleEquivalente:hasMut()?FORMULES[reco()].sous:null},

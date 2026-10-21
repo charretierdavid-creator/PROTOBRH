@@ -34,3 +34,52 @@ jobs:
           password: ${{ secrets.PROTOBRH_FTP_PASSWORD }}
           local-dir: ./protobrh/
           server-dir: ./
+
+  # Test A/B : versions A et B = socle protobrh/ + fichiers propres (protobrha/, protobrhb/),
+  # assemblés par outils/assembler_variantes.py. Tant que les secrets FTP d'une version
+  # n'existent pas dans GitHub, sa mise en ligne est simplement ignorée.
+  protobrha:
+    runs-on: ubuntu-latest
+    env:
+      FTP_USER: ${{ secrets.PROTOBRHA_FTP_USERNAME }}
+    steps:
+      - uses: actions/checkout@v4
+        if: env.FTP_USER != ''
+      - name: Assemblage de la version A
+        if: env.FTP_USER != ''
+        run: python3 outils/assembler_variantes.py a
+      - name: Envoi de la version A vers protobrha.monsitedetest.com
+        if: env.FTP_USER != ''
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ftp.monsitedetest.com
+          username: ${{ secrets.PROTOBRHA_FTP_USERNAME }}
+          password: ${{ secrets.PROTOBRHA_FTP_PASSWORD }}
+          local-dir: ./_site/protobrha/
+          server-dir: ./
+      - name: Version A non configurée
+        if: env.FTP_USER == ''
+        run: echo 'Secrets PROTOBRHA_FTP_USERNAME et PROTOBRHA_FTP_PASSWORD absents, mise en ligne de la version A ignorée.'
+
+  protobrhb:
+    runs-on: ubuntu-latest
+    env:
+      FTP_USER: ${{ secrets.PROTOBRHB_FTP_USERNAME }}
+    steps:
+      - uses: actions/checkout@v4
+        if: env.FTP_USER != ''
+      - name: Assemblage de la version B
+        if: env.FTP_USER != ''
+        run: python3 outils/assembler_variantes.py b
+      - name: Envoi de la version B vers protobrhb.monsitedetest.com
+        if: env.FTP_USER != ''
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ftp.monsitedetest.com
+          username: ${{ secrets.PROTOBRHB_FTP_USERNAME }}
+          password: ${{ secrets.PROTOBRHB_FTP_PASSWORD }}
+          local-dir: ./_site/protobrhb/
+          server-dir: ./
+      - name: Version B non configurée
+        if: env.FTP_USER == ''
+        run: echo 'Secrets PROTOBRHB_FTP_USERNAME et PROTOBRHB_FTP_PASSWORD absents, mise en ligne de la version B ignorée.'

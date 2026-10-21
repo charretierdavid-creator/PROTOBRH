@@ -723,6 +723,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 <script src="formules-amundi.js?v=20261009"></script>
 <script src="conventions.js?v=20261014"></script>
 <style>.nav a{white-space:nowrap}@media(max-width:1180px){.nav a{padding:.5rem .55rem;font-size:.9rem}}</style>
+<link rel="stylesheet" href="variante.css?v=20261021">
+<script src="variante.js?v=20261021"></script>
 </head>
 <body>
 <header class="header">
@@ -1604,7 +1606,7 @@ async function submitDevis(){
   if(!$('c-consent').checked){ e.textContent='Votre consentement est nécessaire pour établir et vous transmettre votre devis.'; return e.classList.add('show'); }
   const o=S.est||compute(), h=RH(), tot=S.sol.reduce((a,k)=>a+(o[k].cout||0),0);
   const ref='DEV-'+new Date().getFullYear()+'-'+Math.random().toString(36).slice(2,7).toUpperCase();
-  const lead={ reference:ref, date:new Date().toISOString(), source:'portail_brh_devis_en_ligne',
+  const lead={ reference:ref, date:new Date().toISOString(), source:'portail_brh_devis_en_ligne', variante:window.BRH_VARIANTE||'REF',
     entreprise:{siret:S.ent.siret, secteur:S.ent.secteur||'', audit_mutuelle:!!S.fromAudit, raison_sociale:S.ent.nom, ville:S.ent.ville, code_postal:S.ent.cp, naf:S.ent.naf, idcc:S.ent.idcc, effectif:S.ent.effectif, source_donnees:S.entSrc},
     contact:{prenom:$('c-prenom').value.trim(), nom:$('c-nom').value.trim(), fonction:$('c-fct').value, telephone:$('c-tel').value.trim(), email:$('c-email').value.trim(), rappel_expert:$('c-rappel').checked, consentement:true, consentement_date:new Date().toISOString()},
     rh:{salaries_concernes:h.N, cadres:h.cadres, non_cadres:h.noncadres, tranche_salaire:$('h-sal').value, etablissements:+$('h-etab').value||1, anciennete_mois:+$('h-anc').value},
@@ -1638,7 +1640,7 @@ function submitExpert(){ const e=$('errX'); e.classList.remove('show');
   if(!$('x-nom').value.trim() || $('x-tel').value.replace(/\D/g,'').length<10){ e.textContent='Indiquez votre nom et un numéro de téléphone valide.'; return e.classList.add('show'); }
   if(!$('x-consent').checked){ e.textContent='Votre consentement est nécessaire pour être recontacté(e).'; return e.classList.add('show'); }
   const ctx={nom:$('x-nom').value.trim(), telephone:$('x-tel').value.trim(), creneau:$('x-cr').value, etape:STEPS[S.step-1], solutions:S.sol, entreprise:S.ent};
-  if(DEVIS_CONFIG.LEAD_ENDPOINT){ fetch(DEVIS_CONFIG.LEAD_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'rappel_expert',source:'portail_brh_devis_en_ligne',contexte:ctx})}).catch(()=>{}); }
+  if(DEVIS_CONFIG.LEAD_ENDPOINT){ fetch(DEVIS_CONFIG.LEAD_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({variante:window.BRH_VARIANTE||'REF',type:'rappel_expert',source:'portail_brh_devis_en_ligne',contexte:ctx})}).catch(()=>{}); }
   console.info('Demande de rappel', ctx); track('devis_expert_submit',{step:S.step});
   $('exForm').classList.add('hidden'); $('exDone').classList.remove('hidden'); }
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeExpert(); });

@@ -3,10 +3,10 @@
  * Portail BRH — cahier des charges interactif
  * API de commentaires partagés (sans mot de passe).
  * GET  comments.php?action=list            -> liste des commentaires
- * POST action=add    page, author, text, rating (0 à 5) -> ajoute un avis (renvoie un jeton de suppression)
+ * POST action=add    page, author, text, rating (0 à 5), cible (TOUTES | REF | A | B) -> ajoute un avis (renvoie un jeton de suppression)
  * POST action=delete id, token | key        -> supprime un commentaire (auteur, ou Business Owner avec la clé)
  * POST action=check_admin key               -> vérifie la clé d'administration
- * POST action=set_status id, status, version, key -> nouveau | valide | rejete | integre (Business Owner)
+ * POST action=set_status id, status, version, cible, key -> nouveau | valide | rejete | integre, version affectée (Business Owner)
  * GET  comments.php?action=backlog          -> commentaires au statut « valide » (backlog à intégrer)
  * Les données sont stockées dans data/comments.json (dossier fermé au web).
  */
@@ -97,7 +97,9 @@ if (($_POST['website'] ?? '') !== '') out(['ok' => true, 'comment' => null]);
 
 if ($action === 'add') {
     $page = (string)($_POST['page'] ?? '');
-    if (!preg_match('/^(É\d{2}|P1|P2|H|NF)$/u', $page)) fail('Page inconnue');
+    if (!preg_match('/^(É\d{2}|P1|P2|H|NF|VA|VB)$/u', $page)) fail('Page inconnue');
+    $cible = (string)($_POST['cible'] ?? 'TOUTES');   // version du prototype visée (test A/B)
+    if (!in_array($cible, ['TOUTES', 'REF', 'A', 'B'], true)) fail('Version cible inconnue');
     $title  = clean((string)($_POST['title'] ?? ''), 120);   // titre d'une idée (page NF = nouvelle fonctionnalité)
     if ($page === 'NF' && $title === '') fail('Titre de l\'idée obligatoire');
     $author = clean((string)($_POST['author'] ?? ''), MAX_AUTHOR);
@@ -121,7 +123,7 @@ if ($action === 'add') {
     if (!$allowed) fail('Trop de commentaires en peu de temps : réessayez dans quelques minutes', 429);
 
     $token = bin2hex(random_bytes(16));
-    $c = ['id' => bin2hex(random_bytes(6)), 'page' => $page, 'title' => $page === 'NF' ? $title : '', 'author' => $author, 'text' => $text, 'rating' => $rating, 'status' => 'nouveau', 'date' => date('c'), 'th' => hash('sha256', $token)];
+    $c = ['id' => bin2hex(random_bytes(6)), 'page' => $page, 'title' => $page === 'NF' ? $title : '', 'cible' => $cible, 'author' => $author, 'text' => $text, 'rating' => $rating, 'status' => 'nouveau', 'date' => date('c'), 'th' => hash('sha256', $token)];
     $saved = with_file(DATA_FILE, function (array $d) use ($c) {
         if (count($d) >= MAX_COMMENTS) return ['return' => false];
         $d[] = $c;
@@ -161,11 +163,14 @@ if ($action === 'set_status') {
     $st = (string)($_POST['status'] ?? '');
     if (!in_array($st, STATUSES, true)) fail('Statut inconnu');
     $version = clean((string)($_POST['version'] ?? ''), 30);
-    $res = with_file(DATA_FILE, function (array $d) use ($id, $st, $version) {
+    $cible = (string)($_POST['cible'] ?? '');   // affectation à une version lors de la validation (test A/B)
+    if ($cible !== '' && !in_array($cible, ['TOUTES', 'REF', 'A', 'B'], true)) fail('Version cible inconnue');
+    $res = with_file(DATA_FILE, function (array $d) use ($id, $st, $version, $cible) {
         foreach ($d as $i => $c) {
             if (($c['id'] ?? '') === $id) {
                 $d[$i]['status'] = $st;
                 $d[$i]['version'] = $st === 'integre' ? $version : '';
+                if ($cible !== '') $d[$i]['cible'] = $cible;
                 $d[$i]['sdate'] = date('c');
                 return ['return' => $d[$i], 'write' => true, 'data' => $d];
             }
