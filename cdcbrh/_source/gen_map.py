@@ -23,14 +23,13 @@ ettl = dict(G['ettl'], y=G['ettl']['y'] + SHIFT)
 
 def variante(v):
     """Étapes, points de la courbe et modules complémentaires de la version v."""
-    retire = {'1.3'} | ({'2.3'} if v == 'A' else set())
-    pts = {(425, 300)} | ({(780, 350)} if v == 'A' else set())
+    retire = {'1.3'}
+    pts = {(425, 300)}
     cards = [dict(c) for c in G['cards'] if c['b'].split(' ')[0] not in retire]
     for c in cards:
         k = c['b'].split(' ')[0]
         if k == '1.2': c['txt'], c['ref'] = '4 solutions et leurs fiches « En savoir plus »', 'É02 · É03'
-        if k == '2.1': c['txt'] = 'Secteur, effectif, localisation'
-        if k == '2.2' and v == 'A': c['txt'] = 'De 1 à 4, sans comparaison au benchmark'
+        if k == '2.1': c['txt'] = 'Nombre de salariés seulement, après les priorités' if v == 'A' else 'SIREN facultatif, secteur, effectif, département'
         if k == '3.1': c['txt'] = 'Affiché immédiatement, sans e-mail' if v == 'A' else 'Affiché après saisie de l’e-mail, non contractuel'
         if k == '1.1' and v == 'B': c['txt'] = '« Le portail RH dédié aux chefs d’entreprise » · bandeau institutionnel'
     circles = [c for c in G['circles'] if (c['cx'], c['cy']) not in pts]

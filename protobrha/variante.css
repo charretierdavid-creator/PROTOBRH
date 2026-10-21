@@ -18,10 +18,13 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.03em}
 .mobile-menu a[href^="audit-mutuelle"],.mobile-menu a[href^="ressources"],.mobile-menu a[href^="newsletter"]{display:none!important}
 /* accueil : promesse, solutions et diagnostic uniquement */
 #page-home #talents,#page-home #avantages,#page-home .expertise{display:none!important}
-/* diagnostic : pas de comparaison au benchmark, résultats affichés sans e-mail */
-#block2 .radar-col{display:none!important}
-#block2 .prio-body{grid-template-columns:1fr!important}
+/* diagnostic : bloc « Votre entreprise » retiré ; seule question, le nombre de salariés, posée après les curseurs ;
+   benchmark conservé comme sur la version standard ; résultats affichés sans e-mail */
+#block1{display:none!important}
 #results-gate{display:none!important}
+.va-eff{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:22px;padding:16px 20px;background:var(--mint-2);border-radius:var(--radius)}
+.va-eff label{font-family:var(--fh);font-weight:600;font-size:1.02rem;color:var(--green);margin:0}
+.va-eff .field{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0}.va-eff input{width:120px}.va-eff .hint{margin:0}
 .simcard,.sol-card,.card{box-shadow:none!important}
 /* liens secondaires regroupés en bas de page */
 .va-more{border-top:1px solid var(--line);padding:18px 24px;text-align:center;font-size:.9rem;color:var(--slate)}
