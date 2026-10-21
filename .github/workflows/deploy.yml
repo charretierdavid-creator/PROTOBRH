@@ -38,6 +38,9 @@ jobs:
   # Test A/B : versions A et B = socle protobrh/ + fichiers propres (protobrha/, protobrhb/),
   # assemblés par outils/assembler_variantes.py. Tant que les secrets FTP d'une version
   # n'existent pas dans GitHub, sa mise en ligne est simplement ignorée.
+  # Envoi par lftp (mode passif IPv4, 4 relances) : FTP-Deploy-Action coupait la connexion de données
+  # (« ECONNRESET (data socket) ») sur les comptes FTP de protobrha et protobrhb. Aucun fichier n'est
+  # supprimé sur le serveur (config.php et data/ restent en place).
   protobrha:
     runs-on: ubuntu-latest
     env:
@@ -48,15 +51,18 @@ jobs:
       - name: Assemblage de la version A
         if: env.FTP_USER != ''
         run: python3 outils/assembler_variantes.py a
+      - name: Installation du client FTP (lftp)
+        if: env.FTP_USER != ''
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
       - name: Envoi de la version A vers protobrha.monsitedetest.com
         if: env.FTP_USER != ''
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ftp.monsitedetest.com
-          username: ${{ secrets.PROTOBRHA_FTP_USERNAME }}
-          password: ${{ secrets.PROTOBRHA_FTP_PASSWORD }}
-          local-dir: ./_site/protobrha/
-          server-dir: ./
+        env:
+          LFTP_PASSWORD: ${{ secrets.PROTOBRHA_FTP_PASSWORD }}
+        run: >
+          lftp --env-password -u "$FTP_USER" ftp.monsitedetest.com -e "set ftp:ssl-allow no;
+          set ftp:passive-mode on; set ftp:prefer-epsv no; set net:max-retries 4;
+          set net:reconnect-interval-base 5; set net:timeout 30;
+          mirror --reverse --only-newer --no-perms --parallel=1 --verbose=1 ./_site/protobrha/ ./; bye"
       - name: Version A non configurée
         if: env.FTP_USER == ''
         run: echo 'Secrets PROTOBRHA_FTP_USERNAME et PROTOBRHA_FTP_PASSWORD absents, mise en ligne de la version A ignorée.'
@@ -71,15 +77,18 @@ jobs:
       - name: Assemblage de la version B
         if: env.FTP_USER != ''
         run: python3 outils/assembler_variantes.py b
+      - name: Installation du client FTP (lftp)
+        if: env.FTP_USER != ''
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
       - name: Envoi de la version B vers protobrhb.monsitedetest.com
         if: env.FTP_USER != ''
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ftp.monsitedetest.com
-          username: ${{ secrets.PROTOBRHB_FTP_USERNAME }}
-          password: ${{ secrets.PROTOBRHB_FTP_PASSWORD }}
-          local-dir: ./_site/protobrhb/
-          server-dir: ./
+        env:
+          LFTP_PASSWORD: ${{ secrets.PROTOBRHB_FTP_PASSWORD }}
+        run: >
+          lftp --env-password -u "$FTP_USER" ftp.monsitedetest.com -e "set ftp:ssl-allow no;
+          set ftp:passive-mode on; set ftp:prefer-epsv no; set net:max-retries 4;
+          set net:reconnect-interval-base 5; set net:timeout 30;
+          mirror --reverse --only-newer --no-perms --parallel=1 --verbose=1 ./_site/protobrhb/ ./; bye"
       - name: Version B non configurée
         if: env.FTP_USER == ''
         run: echo 'Secrets PROTOBRHB_FTP_USERNAME et PROTOBRHB_FTP_PASSWORD absents, mise en ligne de la version B ignorée.'
