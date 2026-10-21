@@ -60,8 +60,9 @@ Une évolution n'est terminée que si les **trois** éléments suivants sont liv
 
 `type` vaut `Prototype`, `Cahier des charges` ou `Prototype + cahier des charges`.
 `cible` vaut `TOUTES`, `REF`, `A`, `B` ou une liste (ex. `["A","B"]`) : la version du prototype concernée.
-Un commentaire ou une idée porte la même « Version cible », confirmée par David à la validation (« Affecter à ») :
-la respecter pour choisir le dossier à modifier.
+La version d'un commentaire ou d'une idée est affectée par David à la validation (« Affecter à ») :
+la respecter pour choisir le dossier à modifier. Le cahier des charges affiche la version choisie en cliquant sur
+l'une des 3 cartes du parcours ; `gen_map.py` dessine un schéma par version (S, A, B).
 Si l'évolution vient d'un commentaire, citer son identifiant dans `origine`.
 
 Si une demande ne touche qu'un des deux sites, le dire explicitement dans le résumé.
