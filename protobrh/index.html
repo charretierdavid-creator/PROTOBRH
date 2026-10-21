@@ -734,7 +734,7 @@ function openSol(id){
   document.getElementById('smIc').innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+s.icon+'</svg>';
   document.getElementById('smPartner').textContent=s.partner+(s.partner2?' · '+s.partner2:'');
   document.getElementById('smTitle').textContent=s.title;
-  document.getElementById('smBody').innerHTML=s.offers.map(o=>'<div class="sm-offer"><b>'+o.t+'</b><span>'+o.d+'</span></div>').join('')+(window.cartesFormules?cartesFormules(s.formules):'')+'<p class="sm-note">'+s.note+'</p>'+(id==='proteger'?'<a class="sm-audit" href="audit-mutuelle.html?from=offre" onclick="if(typeof track===\'function\')track(\'cta_audit_click\',{source:\'fenetre_proteger\'})"><span>Réaliser un audit de votre mutuelle<small>Gratuit, 3 minutes, résultat immédiat et sans engagement</small></span><span aria-hidden="true">→</span></a>':'');
+  document.getElementById('smBody').innerHTML=s.offers.map(o=>'<div class="sm-offer"><b>'+o.t+'</b><span>'+o.d+'</span></div>').join('')+(window.cartesFormules?cartesFormules(s.formules):'')+(id==='proteger'&&window.cartesCAA?cartesCAA():'')+'<p class="sm-note">'+s.note+'</p>'+(id==='proteger'?'<a class="sm-audit" href="audit-mutuelle.html?from=offre" onclick="if(typeof track===\'function\')track(\'cta_audit_click\',{source:\'fenetre_proteger\'})"><span>Réaliser un audit de votre mutuelle<small>Gratuit, 3 minutes, résultat immédiat et sans engagement</small></span><span aria-hidden="true">→</span></a>':'');
   const m=document.getElementById('solModal'); m.hidden=false; document.body.style.overflow='hidden';
   const c=m.querySelector('.sm-close'); if(c) c.focus();
   if(typeof track==='function') track('solution_modal_open',{solution_name:id});
@@ -745,6 +745,7 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ const m=d
 <!-- ============ FIN MODALE SOLUTIONS ============ -->
 
 <script src="formules-amundi.js?v=20261021" defer></script>
+<script src="offres-caa.js?v=20261021" defer></script>
 <script src="chatbot-widget.js?v=20261014" defer></script>
 <script src="feedback-widget.js?v=20261021b" defer></script>
 
