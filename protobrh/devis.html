@@ -931,12 +931,13 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
             <label class="dv-opt"><input type="radio" name="sp_sit" value="renouv"><span>Changement de contrat</span></label>
           </div></div>
         <div class="dv-sub" data-show="sp_cov:sante">
-          <div class="dv-q"><span class="q-t">Niveau de garanties santé</span>
+          <div class="dv-q"><span class="q-t">Niveau de garanties santé</span><p class="q-h">Offre simplifiée de Crédit Agricole Assurances pour les entreprises de moins de 50 salariés.</p>
             <div class="dv-opts">
-              <label class="dv-opt"><input type="radio" name="sp_niv" value="essentiel"><span>Essentiel<small>socle réglementaire</small></span></label>
-              <label class="dv-opt"><input type="radio" name="sp_niv" value="confort" checked><span>Confort<small>optique, dentaire renforcés</small></span></label>
-              <label class="dv-opt"><input type="radio" name="sp_niv" value="renfort"><span>Renfort<small>garanties haut de gamme</small></span></label>
-            </div></div>
+              <label class="dv-opt"><input type="radio" name="sp_niv" value="essentiel"><span>Niveau CCN/ANI<small>socle légal · budget maîtrisé</small></span></label>
+              <label class="dv-opt"><input type="radio" name="sp_niv" value="confort" checked><span>Niveau Optimal<small>cœur de gamme · 1 acte sur 2 sans reste à charge</small></span></label>
+              <label class="dv-opt"><input type="radio" name="sp_niv" value="renfort"><span>Niveau Renforcé<small>haut de gamme · 2 actes sur 3 sans reste à charge</small></span></label>
+            </div>
+            <p class="q-h">Au choix de chaque salarié, en plus : Option 1 (dépassements d’honoraires modérés, forfaits optique et dentaire) ou Option 2 (spécialistes, forfaits renforcés).</p></div>
           <div class="dv-q"><span class="q-t">Couverture de la famille</span>
             <div class="dv-opts">
               <label class="dv-opt"><input type="radio" name="sp_fam" value="isole" checked><span>Salarié seul</span></label>
@@ -1518,7 +1519,7 @@ function compute(){
       const niv=val('sp_niv')||'confort', fam=val('sp_fam')||'isole', pe=+val('sp_part')||0.5;
       const tarif=C.SANTE_TARIF_MENSUEL[niv]*(fam==='famille_obl'?C.SANTE_COEF_FAMILLE:1);
       const cs=tarif*12*h.N*pe; cout+=cs; netSal+=tarif*12*pe;
-      const nivL={essentiel:'Essentiel',confort:'Confort',renfort:'Renfort'}[niv];
+      const nivL={essentiel:'Niveau CCN/ANI',confort:'Niveau Optimal',renfort:'Niveau Renforcé'}[niv];
       hyp.push('Santé '+nivL+' — '+eur(tarif)+' / salarié / mois, pris en charge à '+Math.round(pe*100)+' %'); resume.push('Santé '+nivL);
     }
     if(cov.includes('prev')){

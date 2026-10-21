@@ -633,9 +633,9 @@ const POSTES=[['hospi','Hospitalisation'],['courants','Soins courants'],['optiqu
 const RENFORTS={hospi:'Renfort chambre particulière',optique:'Renfort monture',dentaire:'Renfort prothèses dentaires',douces:'Renfort médecines douces'};
 const NIV=['Je ne sais pas','Socle','Intermédiaire','Renforcé'];
 const FORMULES=[
-  {nom:'Formule 1',sous:'Essentielle',n:{hospi:2,dentaire:1,optique:1,courants:1,auditif:1,douces:1}},
-  {nom:'Formule 2',sous:'Équilibre', n:{hospi:3,dentaire:2,optique:2,courants:2,auditif:2,douces:2}},
-  {nom:'Formule 3',sous:'Renforcée', n:{hospi:3,dentaire:3,optique:3,courants:3,auditif:3,douces:3}}];
+  {nom:'Socle légal',sous:'Niveau CCN/ANI',n:{hospi:2,dentaire:1,optique:1,courants:1,auditif:1,douces:1}},
+  {nom:'Cœur de gamme',sous:'Niveau Optimal', n:{hospi:3,dentaire:2,optique:2,courants:2,auditif:2,douces:2}},
+  {nom:'Haut de gamme',sous:'Niveau Renforcé', n:{hospi:3,dentaire:3,optique:3,courants:3,auditif:3,douces:3}}];
 const SECTEURS=(window.BRH_CCN&&BRH_CCN.secteurs)||[];
 const A={ situation:'', perimetre:'', effectif:'', age:'', college:'tous', secteur:'', ccn:'', idcc:'',
   niv:{hospi:0,dentaire:0,optique:0,courants:0,auditif:0,douces:0}, famille:'', partEmp:'', cotis:'', prev:{maintien:'',invalidite:'',deces:'',education:''}, prevPop:'',
@@ -769,7 +769,9 @@ function resultat(){
       '<div class="au-tw"><table><thead><tr><th>Poste</th><th>'+(souhait()?'Souhaité':'Votre contrat')+'</th>'+FORMULES.map((f,i)=>'<th class="'+(i===r?'rec':'')+'">'+f.nom+'<br>'+f.sous+'</th>').join('')+'</tr></thead><tbody>'+
       POSTES.map(p=>{ const v=A.niv[p[0]]; return '<tr><td><b>'+p[1]+'</b></td><td>'+(v?dots(v):'<span class="au-note">Non renseigné</span>')+'</td>'+
         FORMULES.map((f,i)=>{ const d=v?f.n[p[0]]-v:0; return '<td class="'+(i===r?'rec':'')+'">'+dots(f.n[p[0]])+(d>0?'<span class="delta up">mieux</span>':d<0?'<span class="delta down">moins</span>'+(RENFORTS[p[0]]?'<span class="renf">'+RENFORTS[p[0]]+' possible</span>':''):'')+'</td>'; }).join('')+'</tr>'; }).join('')+
-      '</tbody></table></div><p class="au-note">Formules illustratives pour le prototype. Dans l’offre réelle, le niveau de chaque garantie se choisit avec votre conseiller, dans le respect de votre convention collective, avec des options de renfort.</p></div>';
+      '</tbody></table></div>'+
+      '<p class="au-note">Les 3 niveaux de l’offre santé collective de Crédit Agricole Assurances'+(eff>50?' sont conçus pour les entreprises de moins de 50 salariés ; au-delà, votre expert BRH construit une offre sur mesure':' (entreprises de moins de 50 salariés)')+'. Niveau Optimal : 1 acte sur 2 sans reste à charge ; Niveau Renforcé : 2 actes sur 3. Niveaux par poste indicatifs pour le prototype, dans le respect de votre convention collective.</p>'+
+      '<p class="au-note"><b>Au choix du salarié :</b> Option 1 — dépassements d’honoraires modérés et forfaits en euros sur l’optique et le dentaire ; Option 2 — garanties majorées pour les spécialistes et forfaits renforcés.</p></div>';
   }
   h+='<div class="au-box au-inc"><h3>Inclus avec Crédit Agricole Assurances</h3><div class="inc-grid">'+
     (hasMut()?'<div><h4>Complémentaire santé</h4><ul>'+

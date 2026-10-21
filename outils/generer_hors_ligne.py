@@ -14,7 +14,7 @@ PAGES = [('index.html', 'Accueil'), ('diagnostic.html', 'Diagnostic RH'), ('audi
          ('newsletter.html', 'Newsletter'), ('newsletter-archive.html', 'Éditions de la newsletter'),
          ('newsletter-edition.html', 'Newsletter du mois'), ('newsletter-2026-09.html', 'Newsletter septembre 2026'),
          ('newsletter-2026-10.html', 'Newsletter octobre 2026')]
-INLINE = ['variante.js', 'formules-amundi.js', 'conventions.js', 'entreprise-lookup.js', 'chatbot-widget.js']
+INLINE = ['variante.js', 'formules-amundi.js', 'offres-caa.js', 'conventions.js', 'entreprise-lookup.js', 'chatbot-widget.js']
 DROP = ['feedback-widget.js']
 photo = base64.b64encode(open(os.path.join(SRC, 'photo.jpeg'), 'rb').read()).decode()
 
