@@ -15,6 +15,24 @@ Le dépôt contient deux sites qui évoluent **ensemble** :
 |---|---|---|
 | `protobrh/` | protobrh.monsitedetest.com | Prototype exploratoire (support de test, pas le produit final) |
 | `cdcbrh/` | cdcbrh.monsitedetest.com | Cahier des charges interactif (spécification vivante du prototype) |
+| `protobrha/` | protobrha.monsitedetest.com | Test A/B — version A : parcours simplifié, design épuré et moderne |
+| `protobrhb/` | protobrhb.monsitedetest.com | Test A/B — version B : parcours complet, design institutionnel |
+
+### Test A/B : un socle, trois versions
+
+- `protobrh/` est la **référence** et le **socle commun** : contenus, offres, calculs, audit, assistant, devis, PHP.
+- `protobrha/` et `protobrhb/` ne contiennent **que ce qui diffère** : `variante.css` (design) et `variante.js`
+  (identifiant de version + adaptations du parcours), et si besoin une page entière qui remplace celle du socle.
+- `outils/assembler_variantes.py` assemble socle + fichiers propres dans `_site/protobrha/` et `_site/protobrhb/`
+  (ignoré par Git) ; le déploiement le lance avant l'envoi FTP. Test local :
+  `python3 outils/assembler_variantes.py && python3 -m http.server 8766 --directory _site/protobrha`.
+- Chaque page du socle charge `variante.css` et `variante.js` (fin du `<head>`) : toute nouvelle page doit les charger.
+- Les règles de `variante.css` portent sur `html[data-variante="A"]` (ou `B`) pour passer devant les styles des pages.
+- La version (`REF`, `A`, `B`) est jointe à chaque événement de mesure et à chaque demande transmise
+  (`window.BRH_VARIANTE`, donnée D104). Toute nouvelle demande transmise doit l'inclure.
+- Où coder une évolution : **Toutes versions** ou **Référence** → socle `protobrh/` (attention : une évolution du
+  socle s'applique aussi à A et B, sauf si leur `variante.js`/`variante.css` la neutralise) ; **Version A** ou
+  **Version B** → uniquement dans `protobrha/` ou `protobrhb/`.
 
 Chaque push sur `main` est **déployé automatiquement** par Hostinger. Ne jamais pousser sur `main` sans l'accord explicite de David.
 
@@ -26,17 +44,21 @@ Une évolution n'est terminée que si les **trois** éléments suivants sont liv
 2. **Le cahier des charges** est mis à jour : modifier `cdcbrh/_source/app_data.json` (page de l'écran concerné :
    exigences, règles de gestion, données produites), puis régénérer avec `python3 cdcbrh/_source/gen_static.py`.
    Ne jamais modifier `cdcbrh/index.html` à la main.
+   Test A/B : une page propre à une version porte `"var":["A"]` (ou `["B"]`) ; une exigence propre à une version
+   prend un 3ᵉ élément, ex. `["Texte", "MVP", ["A"]]`. Sans indication, la page ou l'exigence vaut pour toutes les versions.
    Si l'évolution change le parcours (nouvelle étape ou nouveau module), mettre à jour le schéma avec
    `python3 cdcbrh/_source/gen_map.py` : les étapes du chemin critique restent sur la courbe ; les modules
    complémentaires (ressources, assistant, audit mutuelle…) vont dans la liste `ADDONS`, sous le parcours principal.
 3. **Le journal** `cdcbrh/journal.json` reçoit une nouvelle entrée **en tête de liste** :
 
 ```json
-{"version":"V0.6","date":"JJ/MM/AAAA","type":"Prototype + cahier des charges","pages":["É07"],
+{"version":"V0.6","date":"JJ/MM/AAAA","type":"Prototype + cahier des charges","cible":"TOUTES","pages":["É07"],
  "desc":"Ce qui a changé, en une phrase claire.","origine":"Commentaire validé [id] — Auteur"}
 ```
 
 `type` vaut `Prototype`, `Cahier des charges` ou `Prototype + cahier des charges`.
+`cible` vaut `TOUTES`, `REF`, `A`, `B` ou une liste (ex. `["A","B"]`) : la version du prototype concernée.
+Un commentaire ou une idée porte la même « Version cible » : la respecter pour choisir le dossier à modifier.
 Si l'évolution vient d'un commentaire, citer son identifiant dans `origine`.
 
 Si une demande ne touche qu'un des deux sites, le dire explicitement dans le résumé.
@@ -44,7 +66,7 @@ Si une demande ne touche qu'un des deux sites, le dire explicitement dans le ré
 ## 3. Ce qu'il ne faut jamais faire
 
 - Ne jamais modifier, lire pour les publier ou committer : `cdcbrh/data/` (commentaires), `cdcbrh/config.php` (clé
-  d'administration), `protobrh/config.php`, les fichiers `.htpasswd`, ni aucune clé d'API.
+  d'administration), `protobrh/config.php`, `protobrha/config.php`, `protobrhb/config.php`, les fichiers `.htpasswd`, ni aucune clé d'API.
 - Ne jamais écrire une clé d'API dans le code : elle se lit dans `config.php` (ignoré par Git).
 - Aucune donnée client réelle dans le dépôt (noms, SIRET réels, e-mails) : données fictives uniquement.
 - Ne jamais supprimer une exigence ou une page du cahier des charges sans l'accord de David.
@@ -52,10 +74,11 @@ Si une demande ne touche qu'un des deux sites, le dire explicitement dans le ré
 
 ## 4. Conventions du projet
 
-- **Pages du cahier des charges** : codes `É01` à `É26` (écrans), `P1`, `P2` (processus back-office), `H` (Assistant BRH).
+- **Pages du cahier des charges** : codes `É01` à `É26` (écrans), `P1`, `P2` (processus back-office), `H` (Assistant BRH),
+  `VA`, `VB` (fiches des versions A et B du test A/B).
   Une nouvelle page d'écran prend le code suivant libre (`É27`…) et doit être reliée à une étape du parcours.
 - **Priorités** : `MVP`, `V2`, `ARB` (à arbitrer).
-- **Données produites** : identifiants `D01`… `D103` ; une nouvelle donnée prend le code suivant libre et s'ajoute au
+- **Données produites** : identifiants `D01`… `D104` ; une nouvelle donnée prend le code suivant libre et s'ajoute au
   dictionnaire (`data` dans `app_data.json`) avec écran, nature (P, E, C, T) et exemple.
 - **Technique** : fichiers HTML/CSS/JS autonomes, sans framework ; images intégrées quand c'est possible.
 - **Accès protégé** : les deux sites passent par `acces.php` (même modèle que Diagnostic Conseil BRH :

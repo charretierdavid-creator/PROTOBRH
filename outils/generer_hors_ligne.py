@@ -1,5 +1,6 @@
 """Génère une version hors ligne (fichier unique) du prototype Portail BRH.
 Usage : python3 outils/generer_hors_ligne.py <dossier protobrh> <fichier de sortie> [<url du relais assistant-demo.php> <jeton>]
+#   Versions A/B : lancer d'abord outils/assembler_variantes.py puis passer _site/protobrha (ou _site/protobrhb).
 Chaque page est embarquée en base64 et affichée dans un iframe (srcdoc) ; les scripts partagés
 sont intégrés dans les pages ; la navigation entre pages passe par un routeur (#/page.html).
 Assistant BRH : relais en ligne assistant-demo.php (jeton de démonstration, clé Mistral jamais embarquée) ;
@@ -13,7 +14,7 @@ PAGES = [('index.html', 'Accueil'), ('diagnostic.html', 'Diagnostic RH'), ('audi
          ('newsletter.html', 'Newsletter'), ('newsletter-archive.html', 'Éditions de la newsletter'),
          ('newsletter-edition.html', 'Newsletter du mois'), ('newsletter-2026-09.html', 'Newsletter septembre 2026'),
          ('newsletter-2026-10.html', 'Newsletter octobre 2026')]
-INLINE = ['formules-amundi.js', 'conventions.js', 'chatbot-widget.js']
+INLINE = ['variante.js', 'formules-amundi.js', 'conventions.js', 'chatbot-widget.js']
 DROP = ['feedback-widget.js']
 photo = base64.b64encode(open(os.path.join(SRC, 'photo.jpeg'), 'rb').read()).decode()
 
@@ -22,6 +23,8 @@ def transform(html):
         code = open(os.path.join(SRC, js), encoding='utf-8').read()
         code = re.sub(r'</(script)', r'<\\/\1', code, flags=re.I)   # ne pas fermer la balise englobante
         html = re.sub(r'<script src="' + re.escape(js) + r'(\?v=\d+)?"( defer)?></script>', lambda m: '<script>\n' + code + '\n</script>', html)
+    css = open(os.path.join(SRC, 'variante.css'), encoding='utf-8').read().replace('</', '<\\/')   # version A/B : styles propres
+    html = re.sub(r'<link rel="stylesheet" href="variante\.css(\?v=\d+)?">', lambda m: '<style>\n' + css + '\n</style>', html)
     for js in DROP:
         html = re.sub(r'<script src="' + re.escape(js) + r'(\?v=\d+)?"( defer)?></script>\n?', '', html)
     html = html.replace('src="photo.jpeg"', 'src="data:image/jpeg;base64,' + photo + '"')
