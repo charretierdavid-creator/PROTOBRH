@@ -76,6 +76,7 @@ const RATE_PER_HOUR = 60;    // requêtes max par adresse IP et par heure
 const KNOWLEDGE_FILE  = __DIR__ . '/connaissances.txt';
 const NEWSLETTER_FILE = __DIR__ . '/newsletter-savoir.txt';  // veille produite par generer-newsletter.php (peut ne pas exister encore)
 const ORIENTATION_FILE = __DIR__ . '/orientation.txt';       // grille d'orientation (conseil personnalisé) — à valider par les filiales
+const VERSION_FILE = __DIR__ . '/connaissances-version.txt';  // particularités du site d'une version du test A/B (facultatif ; ex. protobrhb/)
 
 /* -------- limite anti-abus par IP / heure -------- */
 $ip = $_SERVER['REMOTE_ADDR'] ?? 'x';
@@ -163,6 +164,7 @@ $profile = brh_profile($rawProfile);
 /* -------- base de connaissances (PDF) + veille newsletter -------- */
 $knowledge = is_readable(KNOWLEDGE_FILE)  ? trim((string) file_get_contents(KNOWLEDGE_FILE))  : '';
 $veille    = is_readable(NEWSLETTER_FILE) ? trim((string) file_get_contents(NEWSLETTER_FILE)) : '';
+$version   = is_readable(VERSION_FILE)    ? trim((string) file_get_contents(VERSION_FILE))    : '';
 
 /* -------- consigne système (ancrage anti-invention) -------- */
 $system =
@@ -173,6 +175,7 @@ $system =
   "Si la réponse ne s'y trouve pas, dis-le simplement et propose d'être recontacté par un expert. " .
   "N'invente jamais de chiffres, de garanties, de tarifs ou de conditions.\n\n" .
   "=== BASE DOCUMENTAIRE ===\n" . $knowledge . "\n\n" .
+  ($version !== '' ? "=== CE SITE (pages, menu et parcours de la version consultée : ces informations priment sur la base documentaire pour tout ce qui concerne la navigation et les étapes) ===\n" . $version . "\n\n" : '') .
   "=== VEILLE D'ACTUALITÉ (newsletter Banque des RH info) ===\n" . ($veille !== '' ? $veille : "(aucune édition disponible pour l'instant)") . "\n" .
   "=== FIN ===";
 

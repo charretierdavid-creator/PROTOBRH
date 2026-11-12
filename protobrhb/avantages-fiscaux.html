@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Avantages fiscaux & sociaux | Banque des Ressources Humaines</title>
+<meta name="description" content="Le portail RH dédié aux chefs d'entreprise. Identifiez vos priorités RH, estimez vos avantages fiscaux et échangez avec un expert Banque des Ressources Humaines.">
+<!-- ==============================================================
+     CONTENU « AVANTAGES FISCAUX » — MODIFIABLE ICI
+     Éditez ci-dessous l'intro, les 3 chiffres clés, les lignes
+     (dispositif / description / plafond) et la mention légale.
+     Les balises <b>…</b> mettent un passage en gras.
+     ============================================================== -->
+<script>
+const FISCAL = {
+  "title": "Vos avantages fiscaux et sociaux",
+  "intro": "Les avantages salariés augmentent la rémunération globale de vos collaborateurs à moindre coût : ils sont exonérés de charges sociales, et certains d'impôt sur le revenu. Voici le cadre applicable par dispositif.",
+  "highlights": [
+    {
+      "v": "5 050 €",
+      "t": "de pouvoir d'achat supplémentaire par an et par collaborateur"
+    },
+    {
+      "v": "4 532 €",
+      "t": "de coût employeur, contre 9 152 € s'il était versé en salaire brut chargé"
+    },
+    {
+      "v": "0 €",
+      "t": "de charges sociales sur les dispositifs exonérés, dans la limite des plafonds"
+    }
+  ],
+  "sections": [
+    {
+      "title": "Sérénité financière — santé, prévoyance, épargne &amp; partage de la valeur",
+      "open": true,
+      "rows": [
+        {
+          "name": "Complémentaire santé (mutuelle entreprise)",
+          "desc": "Obligatoire, financée à au moins 50 % par l'employeur, adhésion obligatoire des salariés.",
+          "cap": "Part patronale exonérée jusqu'à <b>2 884 € / an / salarié + 1,5 % de la rémunération brute annuelle</b>, dans la limite totale de <b>5 767 €</b>."
+        },
+        {
+          "name": "Prévoyance collective",
+          "desc": "Contribution patronale uniforme, adhésion obligatoire ; protège le salarié et sa famille.",
+          "cap": "Exonération dans la même limite : <b>2 884 € / an / salarié + 1,5 % de la RBA</b> (plafond total <b>5 767 €</b>)."
+        },
+        {
+          "name": "Intéressement",
+          "desc": "Associe tous les salariés à la réussite de l'entreprise ; affectable sur un plan d'épargne.",
+          "cap": "Exonéré de cotisations sociales. Plafond global <b>20 % des salaires bruts</b> ; prime individuelle <b>≤ 75 % du PASS</b>."
+        },
+        {
+          "name": "Participation",
+          "desc": "Associe les salariés aux bénéfices ; affectable sur un plan d'épargne salariale ou retraite.",
+          "cap": "Exonérée dans la limite de <b>75 % du PASS</b> par salarié et par an."
+        },
+        {
+          "name": "Prime de Partage de la Valeur (PPV)",
+          "desc": "Prime versée dans un cadre social et fiscal favorable, une ou deux fois par an.",
+          "cap": "Exonérée de charges sociales jusqu'à <b>3 000 €</b> (<b>6 000 €</b> avec accord d'intéressement ou de participation). Jusqu'au 31/12/2026, exonération d'IR et de CSG/CRDS pour les entreprises de moins de 50 salariés et les salariés rémunérés &lt; 3 SMIC."
+        },
+        {
+          "name": "Épargne salariale &amp; retraite (PEI / PER COL-I)",
+          "desc": "Abondement de l'employeur et versements volontaires pour constituer une épargne projets ou retraite.",
+          "cap": "Abondement exonéré, plafonné à <b>8 % du PASS (PEI)</b> et <b>16 % du PASS (PER COL-I)</b>. Versements volontaires sur le PER <b>déductibles de l'impôt sur le revenu</b>, dans la limite du plafond épargne retraite."
+        }
+      ]
+    },
+    {
+      "title": "Mieux vivre au quotidien — restauration, mobilité, services, télétravail",
+      "open": false,
+      "rows": [
+        {
+          "name": "Titres-restaurant",
+          "desc": "Valeur du titre de 12,20 € à 14,64 €, prise en charge employeur de 50 % à 60 %.",
+          "cap": "Contribution patronale <b>exonérée jusqu'à 7,26 € par titre</b> (plafond journalier de dépense : 25 €)."
+        },
+        {
+          "name": "Prise en charge des transports publics",
+          "desc": "Abonnement train, bus, vélos publics… ; 50 % minimum obligatoire.",
+          "cap": "Exonérée <b>jusqu'à 75 % du coût de l'abonnement</b> ; cumulable avec le forfait mobilités durables."
+        },
+        {
+          "name": "Forfait mobilités durables",
+          "desc": "Soutien aux mobilités alternatives : vélo, covoiturage, trottinette électrique…",
+          "cap": "Exonéré jusqu'à <b>600 € / an / salarié</b> (<b>900 €</b> en cas de cumul avec la participation aux frais de transports publics)."
+        },
+        {
+          "name": "Prime de transport (carburant)",
+          "desc": "Frais de carburant et de recharge pour les salariés contraints d'utiliser leur véhicule.",
+          "cap": "Exonérée jusqu'à <b>300 € / an / salarié</b> (frais de carburant) et <b>600 € / an / salarié</b> (carburant + véhicules électriques / hybrides)."
+        },
+        {
+          "name": "Aide au financement des services à la personne (CESU)",
+          "desc": "Entretien de la maison, soutien scolaire, garde d'enfants, aide aux personnes âgées…",
+          "cap": "Exonérée jusqu'à <b>2 591 € / an / salarié</b>, avec <b>crédit d'impôt famille de 25 %</b> (plafonné à 500 000 € / an)."
+        },
+        {
+          "name": "Remboursement des frais de télétravail",
+          "desc": "Local privé, matériel informatique, connexion et fournitures.",
+          "cap": "Exonéré jusqu'à <b>2,70 € / jour</b> (59,40 € / mois) sans accord, ou <b>3,30 € / jour</b> (72,60 € / mois) avec accord collectif."
+        }
+      ]
+    },
+    {
+      "title": "Plaisir et bien-être — cadeaux, culture, vacances, sport",
+      "open": false,
+      "rows": [
+        {
+          "name": "Cadeaux et bons d'achat",
+          "desc": "Attribués par le CSE ou l'employeur, de manière égalitaire.",
+          "cap": "Exonérés jusqu'à <b>200 € / an</b> (et 200 € par an et par événement identifié par l'Urssaf)."
+        },
+        {
+          "name": "Aide au financement culturel",
+          "desc": "Places de spectacles, cinéma, musées, livres, supports et abonnements musicaux ou vidéo.",
+          "cap": "<b>Exonération totale</b>, sans limite de montant par salarié et par an."
+        },
+        {
+          "name": "Aide au financement des loisirs et des vacances",
+          "desc": "Transports, hébergements, activités de loisirs, colonies de vacances…",
+          "cap": "Exonérée <b>dans la limite des sommes réellement engagées</b> par le salarié."
+        },
+        {
+          "name": "Financement des activités physiques et sportives",
+          "desc": "Cours, équipements et activités accessibles à l'ensemble des salariés.",
+          "cap": "Financement par le CSE : <b>exonération sans limite</b>. Par l'employeur : équipements mis à disposition exonérés + <b>200 € / an / salarié</b> pour les activités ouvertes à tous."
+        }
+      ]
+    }
+  ],
+  "legal": "Montants et plafonds indicatifs, issus du guide « Avantages salariés — Édition 2026 » de la Banque des Ressources Humaines du Crédit Agricole. Cadre légal et social en vigueur, susceptible d'évoluer ; à confirmer avec votre expert. PASS = Plafond Annuel de la Sécurité Sociale."
+};
+</script>
+<style>
+/* ============================================================
+   BANQUE DES RESSOURCES HUMAINES — Charte Crédit Agricole
+   Couleurs échantillonnées sur les maquettes de référence.
+   Fichier autonome (HTML/CSS/JS), déployable sur Hostinger.
+   ============================================================ */
+:root{
+  --green:#065145;        /* vert principal : titres, boutons, texte fort */
+  --green-hover:#02392f;
+  --banner:#016265;       /* bandeau diagnostic (teal-vert) */
+  --lime:#8fb822;         /* accent : logo, benchmark, soulignés */
+  --lime-soft:#c7dd8a;
+  --mint:#e9f1ea;         /* cercles d'icônes, fonds doux */
+  --mint-2:#eef4ef;
+  --sage:#eaf0ee;         /* bandeau bas (home) */
+  --fisc:#f5f8f2;         /* carte avantages fiscaux */
+  --ink:#233029;          /* texte fort */
+  --slate:#5c6b64;        /* texte secondaire */
+  --line:#e7ece9;
+  --line-2:#dfe6e2;
+  --white:#fff;
+  --gray-bg:#f6f8f7;
+  --red:#e2231a;          /* accent CA */
+  --radius:16px;
+  --radius-lg:22px;
+  --shadow-sm:0 2px 12px rgba(6,81,69,.06);
+  --shadow:0 14px 40px rgba(6,81,69,.10);
+  --maxw:1140px;
+  --fh:'Poppins',system-ui,sans-serif;
+  --fb:'Inter',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--fb);color:var(--ink);background:var(--white);line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--fh);margin:0;line-height:1.14;letter-spacing:-.01em}
+p{margin:0}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+.hidden{display:none !important}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--lime);outline-offset:2px;border-radius:6px}
+
+/* ---------- Boutons ---------- */
+.btn{display:inline-flex;align-items:center;gap:.6rem;font-family:var(--fh);font-weight:600;font-size:.96rem;
+  border-radius:12px;padding:.85rem 1.4rem;border:1.5px solid transparent;cursor:pointer;transition:.18s;white-space:nowrap}
+.btn svg{width:18px;height:18px;flex:0 0 auto}
+.btn-primary{background:var(--green);color:#fff}
+.btn-primary:hover{background:var(--green-hover)}
+.btn-outline{background:#fff;color:var(--green);border-color:var(--line-2)}
+.btn-outline:hover{border-color:var(--green);background:var(--mint-2)}
+.btn-white{background:#fff;color:var(--green)}
+.btn-white:hover{background:var(--mint)}
+.btn-lg{padding:1rem 1.7rem;font-size:1rem}
+.btn-block{width:100%;justify-content:center}
+
+/* ---------- Header ---------- */
+.header{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.header-in{display:flex;align-items:center;gap:1.6rem;height:80px}
+.brand{background:none;border:none;padding:0;cursor:pointer;display:flex;align-items:center}
+.brand img{height:52px;width:auto}
+.nav{display:flex;gap:.2rem;margin-left:auto;align-items:center}
+.nav a{font-family:var(--fb);font-weight:500;font-size:.94rem;color:#3f4c47;padding:.5rem .7rem;border-radius:8px;
+  position:relative;transition:.15s}
+.nav a:hover{color:var(--green)}
+.nav a.active{color:var(--green);font-weight:600}
+.nav a.active::after{content:"";position:absolute;left:.7rem;right:.7rem;bottom:-2px;height:2.5px;background:var(--lime);border-radius:2px}
+.header .btn{margin-left:.6rem}
+.burger{margin-left:auto;display:none;width:46px;height:46px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;align-items:center;justify-content:center}
+.burger svg{width:24px;height:24px;stroke:var(--green)}
+.mobile-menu{display:none;background:#fff;border-bottom:1px solid var(--line)}
+.mobile-menu.open{display:block}
+.mobile-menu .wrap{display:flex;flex-direction:column;padding:12px 24px 20px;gap:2px}
+.mobile-menu a{font-family:var(--fh);font-weight:500;padding:.75rem 0;border-bottom:1px solid var(--line);color:#3f4c47}
+.mobile-menu .btn{margin-top:12px;justify-content:center}
+
+/* ---------- Photo (slots externes Hostinger) ---------- */
+.photo{position:relative;border-radius:var(--radius-lg);overflow:hidden;background:linear-gradient(135deg,var(--mint) 0%, #dcebe4 100%)}
+.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.photo::before{content:"";position:absolute;inset:0;z-index:0;
+  background:radial-gradient(circle at 50% 42%, rgba(6,81,69,.10), transparent 60%)}
+.photo .ph-lab{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;color:var(--green);opacity:.55;font-family:var(--fh);font-size:.82rem;z-index:0}
+.photo .ph-lab svg{width:38px;height:38px}
+.photo .illus{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+
+/* ---------- Titres de section ---------- */
+.h2{font-size:clamp(1.55rem,3vw,2.1rem);color:var(--green);font-weight:700}
+.sec{padding:70px 0}
+
+/* ==================== HERO (home) ==================== */
+.hero{background:#fff}
+.hero-in{display:grid;grid-template-columns:1.02fr .98fr;gap:56px;align-items:center;padding:64px 0 60px}
+.hero h1{font-size:clamp(2.1rem,4.4vw,3.15rem);color:var(--green);font-weight:700;max-width:12ch}
+.hero .sub{color:var(--slate);font-size:1.1rem;margin-top:1.3rem;max-width:42ch}
+.hero-cta{display:flex;gap:1rem;flex-wrap:wrap;margin-top:2rem}
+.hero-note{display:flex;gap:14px;margin-top:2.2rem;align-items:flex-start}
+.hero-note .bar{width:4px;align-self:stretch;background:var(--green);border-radius:4px;flex:0 0 auto}
+.hero-note p{color:var(--slate);font-size:.98rem;max-width:34ch}
+.hero .photo{aspect-ratio:4/4.1;min-height:340px}
+
+/* ==================== NOS SOLUTIONS ==================== */
+.solutions{background:var(--gray-bg)}
+.sol-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:34px}
+.scard{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:28px;box-shadow:var(--shadow-sm);
+  display:flex;flex-direction:column;min-height:220px;transition:.2s;position:relative}
+.scard:hover{box-shadow:var(--shadow);transform:translateY(-3px)}
+.scard .ic{width:54px;height:54px;border-radius:50%;background:var(--mint);display:grid;place-items:center;margin-bottom:18px}
+.scard .ic svg{width:26px;height:26px;color:var(--green)}
+.scard h3{font-size:1.18rem;color:var(--green);margin-bottom:.5rem;font-weight:600}
+.scard p{color:var(--slate);font-size:.95rem}
+.scard .arrow{margin-top:auto;align-self:flex-end;color:var(--green);padding-top:14px}
+.scard .arrow svg{width:22px;height:22px}
+
+/* ==================== BANDEAU DIAGNOSTIC ==================== */
+.diag{background:var(--banner);color:#fff;border-radius:24px;padding:44px 48px;position:relative;overflow:hidden;
+  display:grid;grid-template-columns:auto 1fr auto;gap:34px;align-items:center}
+.diag::after{content:"";position:absolute;top:22px;right:26px;width:26px;height:16px;background:var(--red);
+  clip-path:polygon(0 0,100% 0,100% 100%);border-radius:2px;opacity:.95}
+.diag .d-ic{width:118px;height:118px;border-radius:50%;background:rgba(255,255,255,.10);display:grid;place-items:center;flex:0 0 auto}
+.diag .d-ic svg{width:56px;height:56px;color:#fff;opacity:.92}
+.diag h2{color:#fff;font-size:clamp(1.5rem,2.6vw,1.95rem);font-weight:700}
+.diag .d-body p{color:rgba(255,255,255,.86);font-size:.96rem;margin-top:.7rem;max-width:58ch}
+.diag .steps{display:flex;gap:8px;margin-top:22px;align-items:center;flex-wrap:wrap}
+.diag .step{display:flex;align-items:center;gap:10px}
+.diag .step .n{width:34px;height:34px;border-radius:50%;border:1.5px solid rgba(255,255,255,.6);display:grid;place-items:center;
+  font-family:var(--fh);font-weight:600;font-size:.95rem;flex:0 0 auto}
+.diag .step span{font-size:.86rem;color:#fff;line-height:1.25;max-width:11ch}
+.diag .step .dots{width:34px;height:1px;border-top:2px dotted rgba(255,255,255,.45);margin:0 4px}
+.diag .d-cta{flex:0 0 auto}
+.diag .d-cta .btn{position:relative}
+
+/* ==================== ACCOMPAGNEMENT ==================== */
+.acc-in{display:grid;grid-template-columns:1fr 1.05fr;gap:56px;align-items:center}
+.acc-list{list-style:none;padding:0;margin:26px 0 0;display:flex;flex-direction:column;gap:22px}
+.acc-list li{display:flex;gap:16px;align-items:center}
+.acc-list .ic{width:46px;height:46px;border-radius:50%;background:var(--mint);display:grid;place-items:center;flex:0 0 auto}
+.acc-list .ic svg{width:22px;height:22px;color:var(--green)}
+.acc-list p{color:var(--ink);font-size:1rem;font-weight:500}
+.acc .photo{aspect-ratio:16/11;min-height:280px}
+
+/* ==================== BANDEAU EXPERTISE (bas home) ==================== */
+.expertise{padding-bottom:26px}
+.exp-band{background:var(--sage);border-radius:18px;padding:26px 32px;display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center}
+.exp-band .ca-badge{width:84px;height:84px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:var(--shadow-sm);flex:0 0 auto;padding:14px}
+.exp-band .ca-badge img{width:100%;height:100%;object-fit:contain;display:block}
+.exp-band h3{color:var(--green);font-size:1.2rem;font-weight:600}
+.exp-band p{color:var(--slate);font-size:.95rem;margin-top:.3rem}
+.exp-band .p-ic{width:58px;height:58px;border-radius:50%;background:#fff;border:1.5px solid var(--green);display:grid;place-items:center;flex:0 0 auto}
+.exp-band .p-ic svg{width:28px;height:28px;color:var(--green)}
+
+/* ==================== FOOTER ==================== */
+.footer{border-top:1px solid var(--line);padding:28px 0}
+.footer .f-in{display:flex;justify-content:center;gap:0;flex-wrap:wrap;align-items:center}
+.footer a,.footer span.fitem{color:#54635d;font-size:.92rem;padding:0 22px;position:relative}
+.footer a:not(:first-child)::before,.footer .fitem:not(:first-child)::before{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);width:1px;height:16px;background:var(--line-2)}
+.footer a:hover{color:var(--green)}
+.footer .f-legal{text-align:center;color:#8a968f;font-size:.78rem;margin-top:14px;padding:0 24px}
+
+/* ============================================================
+   SIMULATEUR
+   ============================================================ */
+.sim-hero{background:#fff}
+.sim-hero-in{display:grid;grid-template-columns:1.02fr .98fr;gap:56px;align-items:center;padding:56px 0 44px}
+.sim-hero .back{display:inline-flex;align-items:center;gap:.4rem;color:var(--green);font-weight:600;font-family:var(--fh);
+  font-size:.9rem;background:none;border:none;cursor:pointer;margin-bottom:16px;padding:0}
+.sim-hero .back svg{width:16px;height:16px}
+.sim-hero h1{font-size:clamp(2rem,4.2vw,3rem);color:var(--green);font-weight:700;max-width:13ch}
+.sim-hero .sub{color:var(--slate);font-size:1.08rem;margin-top:1.2rem;max-width:44ch}
+.sim-hero-cta{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.9rem}
+.sim-hero .photo{aspect-ratio:16/11;min-height:300px}
+
+.sim-body{background:var(--gray-bg);padding:36px 0 60px}
+.simcard{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);padding:34px 36px;box-shadow:var(--shadow-sm);margin-bottom:26px}
+.block-head{display:flex;gap:18px;align-items:flex-start}
+.block-head .bh-ic{width:56px;height:56px;border-radius:50%;background:var(--mint);display:grid;place-items:center;flex:0 0 auto}
+.block-head .bh-ic svg{width:27px;height:27px;color:var(--green)}
+.block-head h2{font-size:1.4rem;color:var(--green);font-weight:600}
+.block-head h2 b{font-weight:700}
+.block-head p{color:var(--slate);font-size:.93rem;margin-top:.35rem;max-width:34ch}
+
+/* section 1 : entreprise — layout titre à gauche, champs à droite */
+.ent-grid{display:grid;grid-template-columns:.9fr 2.4fr;gap:30px;align-items:start}
+.fields-row{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.field label{font-family:var(--fb);font-weight:600;font-size:.86rem;color:var(--ink);display:block;margin-bottom:7px}
+.field .req{color:var(--green)}
+.field input,.field select{width:100%;font-family:var(--fb);font-size:.95rem;padding:.72rem .85rem;border:1.5px solid var(--line-2);
+  border-radius:10px;background:#fff;color:var(--ink);transition:.15s}
+.field input:hover,.field select:hover{border-color:var(--lime)}
+.field input:focus,.field select:focus{border-color:var(--green);outline:none;box-shadow:0 0 0 3px rgba(6,81,69,.12)}
+.field .hint{font-size:.76rem;color:var(--slate);margin-top:5px}
+.field .warn{font-size:.78rem;color:#a15e00;margin-top:5px;display:none}
+.field .warn.show{display:block}
+
+/* section 2 : priorités */
+.prio-grid{display:grid;grid-template-columns:.75fr 1.25fr 1.35fr;gap:30px;align-items:start}
+.prio-intro p{color:var(--slate);font-size:.92rem;margin-top:14px}
+.radar-col{padding-top:4px}
+.radar-legend{display:flex;flex-direction:column;gap:8px;margin:6px 0 10px}
+.radar-legend span{display:flex;align-items:center;gap:.5rem;font-size:.82rem;color:var(--ink);font-weight:500}
+.radar-legend i{width:22px;height:4px;border-radius:3px;display:inline-block}
+.bench-box{border:1px solid var(--line-2);border-radius:12px;padding:12px 14px;margin-top:8px}
+.bench-box .bb-row{display:flex;justify-content:space-between;font-size:.82rem;padding:3px 0;color:var(--ink)}
+.bench-box .bb-row b{font-weight:700;color:var(--green)}
+.bench-box .bb-title{font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--slate);font-weight:700;margin-bottom:6px}
+
+/* curseurs (style maquette) */
+.sliders{display:flex;flex-direction:column;gap:24px}
+.srow{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center}
+.srow .s-ic{width:44px;height:44px;border-radius:50%;background:var(--mint);display:grid;place-items:center;flex:0 0 auto}
+.srow .s-ic svg{width:22px;height:22px;color:var(--green)}
+.srow .s-title{font-family:var(--fh);font-weight:600;font-size:1rem;color:var(--ink)}
+.srow .s-sub{font-size:.8rem;color:var(--slate)}
+.pslider{position:relative;height:44px;margin-top:6px}
+.pslider .nums{display:flex;justify-content:space-between;font-size:.82rem;color:var(--slate);font-weight:600;padding:0 2px}
+.pslider .track{position:absolute;left:11px;right:11px;top:33px;height:4px;background:#e3e8e6;border-radius:9px}
+.pslider .fill{position:absolute;left:11px;top:33px;height:4px;background:var(--green);border-radius:9px}
+.pslider .knob{position:absolute;top:35px;width:30px;height:30px;border-radius:50%;background:var(--green);color:#fff;
+  display:grid;place-items:center;font-family:var(--fh);font-weight:700;font-size:.85rem;transform:translate(-50%,-50%);
+  box-shadow:0 3px 8px rgba(6,81,69,.4);pointer-events:none;z-index:2}
+.pslider input[type=range]{position:absolute;left:0;top:20px;width:100%;height:30px;margin:0;opacity:0;cursor:pointer;z-index:3}
+
+/* bloc gain fiscal (exigence CDC §6) */
+.gain-block{margin-top:24px;background:linear-gradient(135deg,var(--green) 0%, var(--banner) 100%);color:#fff;
+  border-radius:16px;padding:22px 26px;display:flex;align-items:center;gap:22px;position:relative;overflow:hidden}
+.gain-block::after{content:"";position:absolute;right:-30px;bottom:-40px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.07)}
+.gain-block .gb-ic{width:52px;height:52px;border-radius:12px;background:rgba(255,255,255,.16);display:grid;place-items:center;flex:0 0 auto;z-index:1}
+.gain-block .gb-ic svg{width:28px;height:28px}
+.gain-block .gb-txt{z-index:1;flex:1}
+.gain-block .gb-lab{font-family:var(--fh);font-weight:600;font-size:.95rem;opacity:.92}
+.gain-block .gb-val{font-family:var(--fh);font-weight:800;font-size:clamp(1.7rem,3.4vw,2.3rem);margin:2px 0}
+.gain-block .gb-sub{font-size:.8rem;opacity:.82;max-width:60ch}
+
+/* section 3 : solutions + avantages */
+.rec-grid{display:grid;grid-template-columns:.72fr repeat(4,1fr);gap:20px;align-items:stretch}
+.rec-intro{padding-top:6px}
+.rec-intro p{color:var(--slate);font-size:.92rem;margin-top:12px}
+.rcard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column;box-shadow:var(--shadow-sm)}
+.rcard.fisc{background:var(--fisc);border-color:#e2ecdd}
+.rcard .rc-ic{width:44px;height:44px;border-radius:50%;background:var(--mint);display:grid;place-items:center;margin-bottom:12px}
+.rcard .rc-ic svg{width:22px;height:22px;color:var(--green)}
+.rcard h3{font-size:1.02rem;color:var(--ink);font-weight:600;margin-bottom:10px;line-height:1.25}
+.stars{display:flex;gap:2px;align-items:center;margin-bottom:12px}
+.stars svg{width:18px;height:18px}
+.stars .full,.stars .half{color:var(--green)}
+.stars .empty{color:#d3ddd7}
+.rcard ul{list-style:none;padding:0;margin:0 0 16px;display:flex;flex-direction:column;gap:9px}
+.rcard ul li{display:flex;gap:8px;font-size:.85rem;color:var(--slate);line-height:1.35}
+.rcard ul li::before{content:"•";color:var(--green);font-weight:700;flex:0 0 auto}
+.rcard.fisc ul li{align-items:flex-start}
+.rcard.fisc ul li::before{content:"";width:18px;height:18px;flex:0 0 auto;margin-top:1px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23065145' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M8 12l2.5 2.5L16 9'/%3E%3C/svg%3E");background-size:contain;background-repeat:no-repeat}
+.rcard .rc-link{margin-top:auto;color:var(--green);font-weight:600;font-family:var(--fh);font-size:.86rem;background:none;border:none;
+  cursor:pointer;text-align:left;padding:0;display:inline-flex;align-items:center;gap:.4rem}
+.rcard .rc-link svg{width:16px;height:16px}
+
+/* section 4 : contact */
+.contact-grid{display:grid;grid-template-columns:.8fr 1.7fr;gap:34px;align-items:start}
+.contact-lead h3{font-family:var(--fh);font-weight:700;font-size:1.35rem;color:var(--green);margin:6px 0}
+.contact-lead p{color:var(--slate);font-size:.92rem;margin-top:8px}
+.cform-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.consent{grid-column:1/-1;display:flex;gap:11px;align-items:flex-start;margin-top:2px}
+.consent input{width:19px;height:19px;margin-top:2px;accent-color:var(--green);flex:0 0 auto;cursor:pointer}
+.consent label{font-size:.82rem;color:var(--slate);line-height:1.5}
+.consent a{color:var(--green);font-weight:600;text-decoration:underline}
+.recap{grid-column:1/-1;background:var(--mint-2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:.84rem;color:var(--slate)}
+.recap b{color:var(--ink)}
+.cform-actions{grid-column:1/-1;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.form-error{grid-column:1/-1;background:#fdecec;color:#b02020;border-radius:10px;padding:.7rem 1rem;font-size:.86rem;font-weight:600;display:none}
+.form-error.show{display:block}
+.contact-link{color:var(--green);font-family:var(--fh);font-weight:600;font-size:.92rem;background:none;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem}
+.contact-link svg{width:16px;height:16px}
+.success{text-align:center;padding:26px}
+.success .s-ic{width:70px;height:70px;border-radius:50%;background:var(--green);display:grid;place-items:center;margin:0 auto 16px}
+.success .s-ic svg{width:36px;height:36px;color:#fff}
+.success h3{font-size:1.4rem;color:var(--green);margin-bottom:8px}
+.success p{color:var(--slate);max-width:46ch;margin:0 auto}
+.disclaimer{font-size:.78rem;color:var(--slate);margin-top:18px;text-align:center}
+
+/* ==================== RESPONSIVE ==================== */
+@media(max-width:960px){
+  .nav,.header .btn{display:none}
+  .burger{display:inline-flex}
+  .hero-in,.sim-hero-in,.acc-in{grid-template-columns:1fr;gap:34px;padding:44px 0}
+  .sol-cards{grid-template-columns:1fr}
+  .diag{grid-template-columns:1fr;padding:32px;gap:22px}
+  .diag .d-ic{display:none}
+  .diag .steps{flex-direction:column;align-items:flex-start}
+  .diag .step .dots{display:none}
+  .exp-band{grid-template-columns:auto 1fr;gap:16px}
+  .exp-band .p-ic{display:none}
+  .ent-grid,.prio-grid,.contact-grid{grid-template-columns:1fr;gap:22px}
+  .fields-row{grid-template-columns:1fr 1fr}
+  .rec-grid{grid-template-columns:1fr 1fr}
+  .cform-grid{grid-template-columns:1fr}
+  .sec,.sim-body{padding:44px 0}
+  .simcard{padding:24px}
+}
+@media(max-width:560px){
+  .fields-row,.rec-grid{grid-template-columns:1fr}
+  .footer a,.footer span.fitem{padding:4px 12px}
+}
+
+/* ---------- photo hero (remplaçable par photo.jpeg) ---------- */
+.photo .hero-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2}
+
+/* ===== ENRICHISSEMENTS ACCUEIL (sept. 2026) : besoins + avantages fiscaux ===== */
+.sol-cards{grid-template-columns:repeat(4,1fr)}
+.scard .sc-partner{display:inline-flex;align-items:center;gap:.35rem;font-family:var(--fh);font-weight:700;font-size:.64rem;text-transform:uppercase;letter-spacing:.04em;color:var(--green);background:var(--mint);border-radius:999px;padding:.25rem .6rem;margin-bottom:10px;align-self:flex-start}
+.scard .sc-partner svg{width:11px;height:11px}
+.scard ul.sc-offers{list-style:none;padding:0;margin:6px 0 8px;display:flex;flex-direction:column;gap:7px}
+.scard ul.sc-offers li{display:flex;gap:8px;font-size:.86rem;color:var(--slate);line-height:1.35}
+.scard ul.sc-offers li::before{content:"";width:16px;height:16px;flex:0 0 auto;margin-top:2px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23065145' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");background-size:contain;background-repeat:no-repeat}
+@media(max-width:1080px){.sol-cards{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.sol-cards{grid-template-columns:1fr}}
+
+/* bloc avantages fiscaux (accueil) */
+.fisc-block{background:var(--fisc);border:1px solid #e2ecdd;border-radius:16px;padding:26px}
+.fisc-head{display:flex;align-items:flex-start;gap:16px}
+.fisc-head .fh-ic{width:46px;height:46px;border-radius:12px;background:var(--green);display:grid;place-items:center;flex:0 0 auto}
+.fisc-head .fh-ic svg{width:24px;height:24px;color:#fff}
+.fisc-head h3{font-family:var(--fh);font-weight:700;font-size:1.18rem;color:var(--green)}
+.fisc-head p{font-size:.9rem;color:var(--slate);margin-top:4px;line-height:1.45;max-width:72ch}
+.fisc-hl{display:flex;flex-wrap:wrap;gap:14px;margin:18px 0 22px}
+.fisc-hl .hl{background:#fff;border:1px solid #e2ecdd;border-radius:12px;padding:14px 18px;flex:1;min-width:170px}
+.fisc-hl .hl b{display:block;font-family:var(--fh);font-weight:800;font-size:1.5rem;color:var(--green);line-height:1.1}
+.fisc-hl .hl span{font-size:.78rem;color:var(--slate);line-height:1.35;display:block;margin-top:3px}
+.fisc-acc{background:#fff;border:1px solid #e2ecdd;border-radius:12px;margin-bottom:12px;overflow:hidden}
+.fisc-acc>summary{list-style:none;cursor:pointer;padding:15px 18px;font-family:var(--fh);font-weight:600;font-size:.98rem;color:var(--ink);display:flex;align-items:center;gap:11px}
+.fisc-acc>summary::-webkit-details-marker{display:none}
+.fisc-acc>summary .fa-dot{width:9px;height:9px;border-radius:50%;background:var(--lime);flex:0 0 auto}
+.fisc-acc>summary .fa-chev{margin-left:auto;width:18px;height:18px;color:var(--green);transition:transform .2s ease}
+.fisc-acc[open]>summary .fa-chev{transform:rotate(90deg)}
+.fisc-tbl{padding:0 18px 6px}
+.fisc-row{padding:13px 0;border-top:1px solid var(--line)}
+.fisc-row .fr-name{font-family:var(--fh);font-weight:600;font-size:.9rem;color:var(--green)}
+.fisc-row .fr-desc{font-size:.83rem;color:var(--slate);line-height:1.45;margin-top:2px}
+.fisc-row .fr-cap{font-size:.82rem;color:var(--ink);margin-top:5px}
+.fisc-row .fr-cap b{color:var(--green);font-weight:700}
+.fisc-legal{font-size:.74rem;color:var(--slate);margin-top:12px;line-height:1.45}
+
+
+/* ===== MODULE CHATBOT — widget flottant (branché sur chatbot.php) ===== */
+:root{--green:#065145;--green-h:#02392f;--banner:#016265;--lime:#8fb822;--mint:#e9f1ea;--mint2:#eef4ef;
+  --ink:#233029;--slate:#5c6b64;--line:#e7ece9;--line2:#dfe6e2;--white:#fff;--gray-bg:#f6f8f7;
+  --fh:'Poppins',system-ui,sans-serif;--fb:'Inter',system-ui,sans-serif;}@keyframes bl{0%,60%,100%{opacity:.3}30%{opacity:1}}</style>
+<link rel="stylesheet" href="polices.css?v=20261112">
+<link rel="stylesheet" href="variante.css?v=20261112">
+<script src="variante.js?v=20261112"></script>
+</head>
+<body>
+<header class="header">
+  <div class="wrap header-in">
+    <a class="brand" href="index.html" aria-label="Banque des Ressources Humaines — accueil"><img src="logo-brh.png" alt="Banque des Ressources Humaines, by CA Entreprises"></a>
+    <nav class="nav" aria-label="Navigation principale">
+      <a href="index.html#offres">Nos offres</a>
+      <a href="diagnostic.html">Diagnostic RH</a><a href="audit-mutuelle.html?from=header">Audit santé</a><a href="simulation.html">Devis</a>
+      <a href="avantages-fiscaux.html">Avantages fiscaux</a>
+      <a href="ressources.html">Ressources</a>
+    </nav>
+    <a class="btn btn-primary" href="diagnostic.html#contact">Parler à un expert <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 8v6M23 11h-6"/><path d="M14 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="8" cy="7" r="4"/></svg></a>
+    <button class="burger" aria-label="Menu" aria-expanded="false" onclick="toggleMenu()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu"><div class="wrap">
+    <a href="index.html#offres" onclick="closeMenu()">Nos offres</a>
+    <a href="diagnostic.html">Diagnostic RH</a><a href="audit-mutuelle.html?from=header">Audit santé</a><a href="simulation.html">Devis</a>
+    <a href="avantages-fiscaux.html" onclick="closeMenu()">Avantages fiscaux</a>
+    <a href="ressources.html">Ressources</a>
+    <a class="btn btn-primary" href="diagnostic.html#contact">Parler à un expert</a>
+  </div></div>
+</header>
+<main>
+  <section class="sec" style="padding-bottom:0"><div class="wrap">
+    <h1 class="h2" style="margin-bottom:8px">Vos avantages fiscaux &amp; sociaux</h1>
+    <p style="color:var(--slate);max-width:74ch;font-size:1.02rem">Le détail, dispositif par dispositif, des exonérations de charges sociales et d’impôt sur le revenu — contenu issu du guide « Avantages salariés – Édition 2026 ».</p>
+  </div></section>
+  <!-- AVANTAGES FISCAUX (accueil) — alimenté depuis « Avantages salariés : le guide de référence – Édition 2026 » -->
+  <section class="sec" id="avantages-fiscaux" style="padding-top:0"><div class="wrap">
+    <div class="fisc-block" id="fisc-content"></div>
+  </div></section>
+</main>
+<footer class="footer"><div class="wrap">
+    <div class="f-in">
+      <span class="fitem">Banque des Ressources Humaines</span>
+      <a href="diagnostic.html" onclick="BRH.go('diagnostic.html')">Diagnostic RH en ligne</a>
+      <a href="diagnostic.html#contact" onclick="BRH.go('diagnostic.html#contact')">Contact expert</a>
+      <a href="#" onclick="return false">Mentions légales</a>
+    </div>
+    <p class="f-legal">Les estimations de gain fiscal sont indicatives, non contractuelles et à confirmer avec un expert Banque des RH. Solutions distribuées par les Caisses régionales de Crédit Agricole et leurs filiales.</p>
+  </div></footer>
+<script>
+/* Génère le bloc « Avantages fiscaux » à partir de FISCAL (éditable en tête de fichier). */
+(function(){
+  var F=(typeof FISCAL!=='undefined')?FISCAL:null, el=document.getElementById('fisc-content');
+  if(!F||!el) return;
+  var chev='<svg class="fa-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
+  var h='<div class="fisc-head"><span class="fh-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10M10 21V6M16 21v-8M20 21V4"/><path d="M2 21h20"/></svg></span><div><h3>'+F.title+'</h3><p>'+F.intro+'</p></div></div>';
+  h+='<div class="fisc-hl">'+F.highlights.map(function(x){return '<div class="hl"><b>'+x.v+'</b><span>'+x.t+'</span></div>';}).join('')+'</div>';
+  h+=F.sections.map(function(s){return '<details class="fisc-acc"'+(s.open?' open':'')+'><summary><span class="fa-dot"></span> '+s.title+chev+'</summary><div class="fisc-tbl">'+s.rows.map(function(r){return '<div class="fisc-row"><div class="fr-name">'+r.name+'</div><div class="fr-desc">'+r.desc+'</div><div class="fr-cap">'+r.cap+'</div></div>';}).join('')+'</div></details>';}).join('');
+  h+='<p class="fisc-legal">'+F.legal+'</p>';
+  el.innerHTML=h;
+})();
+</script>
+
+<script src="site-b.js?v=20261112"></script>
+<script src="chatbot-widget.js?v=20261112" defer></script>
+<script src="feedback-widget.js?v=20261021b" defer></script>
+</body></html>

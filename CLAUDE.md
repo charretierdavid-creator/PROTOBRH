@@ -16,13 +16,19 @@ Le dépôt contient deux sites qui évoluent **ensemble** :
 | `protobrh/` | protobrh.monsitedetest.com | Prototype exploratoire (support de test, pas le produit final) |
 | `cdcbrh/` | cdcbrh.monsitedetest.com | Cahier des charges interactif (spécification vivante du prototype) |
 | `protobrha/` | protobrha.monsitedetest.com | Test A/B — version A : parcours simplifié, design épuré et moderne |
-| `protobrhb/` | protobrhb.monsitedetest.com | Test A/B — version B : parcours complet, design institutionnel |
+| `protobrhb/` | protobrhb.monsitedetest.com | Test A/B — version B : accueil avec carrousel, Label BRH, simulation et devis |
 
 ### Test A/B : un socle, trois versions
 
 - `protobrh/` est la version **Standard** (code `REF`) et le **socle commun** : contenus, offres, calculs, audit, assistant, devis, PHP.
 - `protobrha/` et `protobrhb/` ne contiennent **que ce qui diffère** : `variante.css` (design) et `variante.js`
   (identifiant de version + adaptations du parcours), et si besoin une page entière qui remplace celle du socle.
+- Depuis la V1.8, `protobrhb/` contient des **pages entières** (accueil avec carrousel, `diagnostic.html` = Label BRH,
+  `simulation.html`, avantages fiscaux, ressources, newsletter) qui remplacent celles du socle, plus `site-b.js`
+  (navigation, devis consultable, passerelle Label BRH → simulation), `polices.css`, `logo-brh.png`, `img/` (photos du
+  carrousel) et `connaissances-version.txt` (complément de la base de l'assistant, lu par `chatbot.php`). L'audit mutuelle
+  et le devis du socle restent servis sur B. Les pages de `protobrhb/` chargent `variante.css`, `variante.js`, `site-b.js`,
+  `chatbot-widget.js` et `feedback-widget.js` : changer le `?v=` dans ces pages quand l'un de ces fichiers change.
 - `outils/assembler_variantes.py` assemble socle + fichiers propres dans `_site/protobrha/` et `_site/protobrhb/`
   (ignoré par Git) ; le déploiement le lance avant l'envoi FTP. Test local :
   `python3 outils/assembler_variantes.py && python3 -m http.server 8766 --directory _site/protobrha`.
@@ -80,11 +86,11 @@ Si une demande ne touche qu'un des deux sites, le dire explicitement dans le ré
 
 ## 4. Conventions du projet
 
-- **Pages du cahier des charges** : codes `É01` à `É27` (écrans), `P1`, `P2` (processus back-office), `H` (Assistant BRH),
+- **Pages du cahier des charges** : codes `É01` à `É30` (écrans ; `É28` à `É30` sont propres à la version B), `P1`, `P2` (processus back-office), `H` (Assistant BRH),
   `VA`, `VB` (fiches des versions A et B du test A/B).
-  Une nouvelle page d'écran prend le code suivant libre (`É28`…) et doit être reliée à une étape du parcours.
+  Une nouvelle page d'écran prend le code suivant libre (`É31`…) et doit être reliée à une étape du parcours.
 - **Priorités** : `MVP`, `V2`, `ARB` (à arbitrer).
-- **Données produites** : identifiants `D01`… `D106` ; une nouvelle donnée prend le code suivant libre et s'ajoute au
+- **Données produites** : identifiants `D01`… `D110` ; une nouvelle donnée prend le code suivant libre et s'ajoute au
   dictionnaire (`data` dans `app_data.json`) avec écran, nature (P, E, C, T) et exemple.
 - **Technique** : fichiers HTML/CSS/JS autonomes, sans framework ; images intégrées quand c'est possible.
 - **Accès protégé** : les deux sites passent par `acces.php` (même modèle que Diagnostic Conseil BRH :
@@ -125,7 +131,7 @@ Les commentaires validés par David sont disponibles en JSON :
 `https://cdcbrh.monsitedetest.com/comments.php?action=backlog`
 
 Les **idées** (code page `NF`, bouton « Suggérer une idée ») décrivent une fonctionnalité absente du portail
-(champs : titre, besoin, nom). Une idée validée donne un **nouvel écran** (`É28`…) rattaché à une étape du parcours,
+(champs : titre, besoin, nom). Une idée validée donne un **nouvel écran** (`É31`…) rattaché à une étape du parcours,
 ou, si elle touche le périmètre, le budget ou la conformité, une proposition d'**arbitrage COPIL**.
 
 Pour chaque commentaire validé : proposer l'évolution correspondante, la regrouper avec les autres dans une même

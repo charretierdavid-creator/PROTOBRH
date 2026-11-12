@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulation de coût — Banque des Ressources Humaines | CA Entreprises</title>
+<meta name="description" content="Configurez vos solutions RH et obtenez une estimation chiffrée : devis en ligne immédiat pour les petites structures, proposition sur mesure avec un expert au-delà.">
+<style>
+:root{
+  --green:#065145; --green-hover:#02392f; --banner:#016265; --lime:#8fb822; --lime-soft:#c7dd8a;
+  --mint:#e9f1ea; --mint-2:#eef4ef; --sage:#eaf0ee; --fisc:#f5f8f2; --gray-bg:#f7f8f6;
+  --ink:#233029; --slate:#5c6b64; --line:#e7ece9; --line-2:#dfe6e2;
+  --radius:16px; --radius-lg:22px;
+  --fh:'Poppins',sans-serif; --fb:'Inter',sans-serif;
+  --shadow-sm:0 2px 12px rgba(6,81,69,.06); --shadow:0 10px 30px rgba(6,81,69,.1);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--fb);color:var(--ink);background:#fff;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--fh);margin:0}
+p{margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.hidden{display:none !important}
+.btn{display:inline-flex;align-items:center;gap:.6rem;font-family:var(--fh);font-weight:600;font-size:.96rem;border-radius:12px;padding:.85rem 1.4rem;border:1.5px solid transparent;cursor:pointer;text-decoration:none;transition:background .15s ease,border-color .15s ease}
+.btn svg{width:18px;height:18px;flex:0 0 auto}
+.btn-primary{background:var(--green);color:#fff}
+.btn-primary:hover{background:var(--green-hover)}
+.btn-outline{background:#fff;color:var(--green);border-color:var(--line-2)}
+.btn-outline:hover{border-color:var(--green);background:var(--mint-2)}
+.btn[disabled]{opacity:.4;pointer-events:none}
+
+/* header (shared with the rest of the site) */
+.header{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.header-in{display:flex;align-items:center;gap:1.6rem;height:80px}
+.brand{background:none;border:none;padding:0;cursor:pointer;display:flex;align-items:center}
+.brand img{height:52px;width:auto}
+.nav{display:flex;gap:.2rem;margin-left:auto;align-items:center}
+.nav a{font-family:var(--fb);font-weight:500;font-size:.94rem;color:#3f4c47;padding:.5rem .7rem;border-radius:8px;text-decoration:none;position:relative}
+.nav a:hover{color:var(--green)}
+.nav a.active{color:var(--green);font-weight:600}
+.nav a.active::after{content:"";position:absolute;left:.7rem;right:.7rem;bottom:-2px;height:2.5px;background:var(--lime);border-radius:2px}
+.header .btn{margin-left:.6rem}
+.burger{margin-left:auto;display:none;width:46px;height:46px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;align-items:center;justify-content:center}
+.burger svg{width:24px;height:24px;stroke:var(--green)}
+.mobile-menu{display:none;background:#fff;border-bottom:1px solid var(--line)}
+.mobile-menu.open{display:block}
+.mobile-menu .wrap{display:flex;flex-direction:column;padding:12px 24px 20px;gap:2px}
+.mobile-menu a{font-family:var(--fh);font-weight:500;padding:.75rem 0;border-bottom:1px solid var(--line);color:#3f4c47;text-decoration:none}
+.mobile-menu .btn{margin-top:12px;justify-content:center}
+
+/* hero */
+.sim-hero{background:#fff;padding:48px 0 28px}
+.sim-hero .back{display:inline-flex;align-items:center;gap:.4rem;color:var(--green);font-weight:600;font-family:var(--fh);background:none;border:none;cursor:pointer;padding:0;margin-bottom:18px;font-size:.92rem}
+.sim-hero .back svg{width:16px;height:16px}
+.sim-hero h1{font-size:clamp(1.8rem,3.6vw,2.5rem);color:var(--green);font-weight:700;max-width:22ch}
+.sim-hero .sub{color:var(--slate);font-size:1.02rem;margin-top:1rem;max-width:66ch;line-height:1.5}
+.sim-meta{display:flex;flex-wrap:wrap;gap:22px;margin-top:18px}
+.sim-meta-item{display:inline-flex;align-items:center;gap:7px;font-family:var(--fh);font-weight:600;font-size:.8rem;color:var(--green)}
+.sim-meta-item svg{width:16px;height:16px;flex:0 0 auto}
+
+.sim-body{background:var(--gray-bg);padding:28px 0 60px}
+.simcard{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);padding:34px 36px;box-shadow:var(--shadow-sm);margin-bottom:0}
+.step-panel{display:none}
+.step-panel.active{display:block;animation:stepfade .25s ease}
+@keyframes stepfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.block-head{display:flex;gap:18px;align-items:flex-start;margin-bottom:26px}
+.block-head .bh-ic{width:56px;height:56px;border-radius:50%;background:var(--mint);display:grid;place-items:center;flex:0 0 auto}
+.block-head .bh-ic svg{width:27px;height:27px;color:var(--green)}
+.block-head h2{font-size:1.4rem;color:var(--green);font-weight:600}
+.block-head p{color:var(--slate);font-size:.93rem;margin-top:.35rem;max-width:56ch}
+.field label{font-family:var(--fb);font-weight:600;font-size:.86rem;color:var(--ink);display:block;margin-bottom:7px}
+.field .req{color:var(--green)}
+.field input,.field select{width:100%;font-family:var(--fb);font-size:.95rem;padding:.72rem .85rem;border:1.5px solid var(--line-2);border-radius:10px;background:#fff}
+.field input:focus,.field select:focus{border-color:var(--green);outline:none;box-shadow:0 0 0 3px rgba(6,81,69,.12)}
+.field .hint{font-size:.78rem;color:var(--slate);margin-top:6px}
+.step-actions{display:flex;justify-content:space-between;align-items:center;margin-top:30px;gap:14px;flex-wrap:wrap}
+.step-actions .spacer{flex:1}
+
+/* stepper */
+.stepper{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.step-chip{display:flex;align-items:center;gap:8px;padding:9px 15px;border-radius:999px;background:#fff;border:1px solid var(--line-2);font-family:var(--fh);font-weight:600;font-size:.82rem;color:var(--slate);white-space:nowrap;flex:0 0 auto}
+.step-chip .num{width:20px;height:20px;border-radius:50%;background:var(--mint);color:var(--green);display:grid;place-items:center;font-size:.72rem;font-weight:700;flex:0 0 auto}
+.step-chip .num svg{width:12px;height:12px;display:none}
+.step-chip.done{color:var(--green)}
+.step-chip.done .num{background:var(--green)}
+.step-chip.done .num span{display:none}
+.step-chip.done .num svg{display:block;color:#fff}
+.step-chip.current{border-color:var(--green);background:var(--mint-2)}
+.stepper-track{height:3px;background:var(--line);border-radius:3px;margin:14px 0 26px;position:relative;overflow:hidden}
+.stepper-track .fill{position:absolute;left:0;top:0;height:100%;background:var(--lime);border-radius:3px;transition:width .3s ease}
+
+/* step 1 — needs */
+.need-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.need-card{border:1.5px solid var(--line-2);border-radius:var(--radius);padding:22px;cursor:pointer;background:#fff;transition:border-color .15s ease,box-shadow .15s ease;display:flex;flex-direction:column}
+.need-card:hover{border-color:var(--lime)}
+.need-card.sel{border-color:var(--green);box-shadow:0 0 0 2px rgba(6,81,69,.1)}
+.need-card .nc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
+.need-card .nc-ic{width:44px;height:44px;border-radius:50%;background:var(--mint);display:grid;place-items:center}
+.need-card .nc-ic svg{width:22px;height:22px;color:var(--green)}
+.need-card .nc-check{width:24px;height:24px;border-radius:7px;border:1.5px solid var(--line-2);display:grid;place-items:center;flex:0 0 auto}
+.need-card.sel .nc-check{background:var(--green);border-color:var(--green)}
+.need-card .nc-check svg{display:none;width:14px;height:14px;color:#fff}
+.need-card.sel .nc-check svg{display:block}
+.need-card h3{font-size:1rem;color:var(--ink);font-weight:700;margin-bottom:8px}
+.need-card p{font-size:.84rem;color:var(--slate);line-height:1.4;flex:1}
+.need-badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.need-badges span{display:inline-flex;align-items:center;gap:4px;font-size:.66rem;font-weight:700;color:var(--green);background:var(--mint);border-radius:999px;padding:.25rem .55rem}
+.need-count{font-size:.88rem;color:var(--slate)}
+.need-count b{color:var(--ink)}
+
+/* step 2 — entreprise */
+.siret-row{display:grid;grid-template-columns:1.3fr 1fr;gap:28px;align-items:start}
+.siret-manual{font-size:.85rem;color:var(--green);font-weight:600;text-decoration:underline;cursor:pointer;margin-top:12px;display:inline-block;background:none;border:none;padding:0}
+.company-card{margin-top:24px;border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;background:var(--mint-2)}
+.company-card .cc-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.company-card .cc-head h4{font-size:1.02rem;color:var(--green);font-weight:700}
+.demo-badge{font-size:.66rem;font-weight:700;color:#4338ca;background:#eef0ff;border-radius:999px;padding:.3rem .65rem;letter-spacing:.02em}
+.cc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.cc-field label{display:flex;align-items:center;gap:8px;font-size:.84rem;font-weight:600;color:var(--ink);margin-bottom:7px;flex-wrap:wrap}
+.tag-found{font-size:.62rem;font-weight:700;color:var(--green);background:var(--mint);border-radius:999px;padding:.18rem .5rem}
+.tag-confirm{font-size:.62rem;font-weight:700;color:#a15e00;background:#fdf3e2;border-radius:999px;padding:.18rem .5rem}
+.cc-field input,.cc-field select{width:100%;font-family:var(--fb);font-size:.9rem;padding:.6rem .75rem;border:1.5px solid var(--line-2);border-radius:9px;background:#fff}
+.cc-note{font-size:.76rem;color:var(--slate);margin-top:16px}
+
+/* divert card */
+.divert-card{margin-top:22px;background:var(--mint);border-radius:var(--radius);padding:24px 26px;display:flex;gap:16px;align-items:flex-start}
+.divert-card .dc-ic{width:44px;height:44px;border-radius:50%;background:var(--green);display:grid;place-items:center;flex:0 0 auto}
+.divert-card .dc-ic svg{width:22px;height:22px;color:#fff}
+.divert-card h3{font-size:1.05rem;color:var(--green);font-weight:700;margin-bottom:6px}
+.divert-card p{font-size:.88rem;color:var(--ink);opacity:.85;line-height:1.45;margin-bottom:16px}
+.divert-card .dc-cta{display:flex;gap:12px;flex-wrap:wrap}
+.dc-form{margin-top:18px;padding-top:18px;border-top:1px solid rgba(6,81,69,.14)}
+.dc-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.dc-form-actions{display:flex;align-items:center;gap:16px;margin-top:16px;flex-wrap:wrap}
+.dc-badges{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;color:var(--slate)}
+.dc-badges svg{width:15px;height:15px;color:var(--green)}
+.dc-success{display:flex;align-items:center;gap:10px;margin-top:18px;padding-top:18px;border-top:1px solid rgba(6,81,69,.14);color:var(--green);font-weight:600;font-size:.92rem}
+.dc-success svg{width:22px;height:22px;flex:0 0 auto}
+@media(max-width:700px){.dc-form-grid{grid-template-columns:1fr}}
+
+/* step 3 */
+.form-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.form-error{background:#fdecec;color:#b02020;border-radius:10px;padding:.7rem 1rem;font-size:.86rem;font-weight:600;margin-top:18px;display:none}
+.form-error.show{display:block}
+.form-info{background:var(--mint);color:var(--green);border-radius:10px;padding:.7rem 1rem;font-size:.86rem;font-weight:600;margin-top:18px;display:none}
+.form-info.show{display:block}
+
+/* step 4 — config */
+.need-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px}
+.need-tab{display:inline-flex;align-items:center;gap:9px;padding:.68rem 1.1rem;border-radius:999px;font-family:var(--fh);font-weight:600;font-size:.86rem;cursor:pointer;border:1.5px solid var(--line-2);background:#fff;color:var(--ink)}
+.need-tab.active{background:var(--green);color:#fff;border-color:var(--green)}
+.need-tab .tb-check{width:17px;height:17px;border-radius:50%;background:rgba(255,255,255,.3);display:grid;place-items:center}
+.need-tab .tb-check svg{width:10px;height:10px}
+.cfg-section h4{font-size:.92rem;font-weight:700;color:var(--ink);margin-bottom:4px}
+.cfg-help{font-size:.78rem;color:var(--slate);margin-bottom:14px}
+.pill-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}
+.pill-choice{border:1.5px solid var(--line-2);border-radius:10px;padding:.65rem 1.1rem;font-family:var(--fb);font-weight:600;font-size:.88rem;color:var(--ink);background:#fff;cursor:pointer}
+.pill-choice.sel{border-color:var(--green);background:var(--mint);color:var(--green)}
+.config-panel{background:var(--mint-2);border-radius:var(--radius);padding:22px 24px;margin-top:4px;margin-bottom:18px}
+.config-panel .slider-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.config-panel .slider-row b{font-family:var(--fh);font-weight:700;color:var(--green);font-size:1rem}
+.config-panel input[type=range]{width:100%;accent-color:var(--green)}
+
+/* step 5 — estimation */
+.est-card{border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;margin-bottom:18px}
+.est-head{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.est-head .e-ic{width:40px;height:40px;border-radius:50%;background:var(--mint);display:grid;place-items:center;flex:0 0 auto}
+.est-head .e-ic svg{width:20px;height:20px;color:var(--green)}
+.est-head h3{font-size:1.02rem;color:var(--green);font-weight:700}
+.est-stats{display:flex;gap:32px;flex-wrap:wrap;margin-bottom:14px}
+.est-stat b{display:block;font-family:var(--fh);font-weight:800;font-size:1.35rem;color:var(--ink)}
+.est-stat.gain b{color:var(--green)}
+.est-stat span{font-size:.78rem;color:var(--slate)}
+.est-detail{font-size:.84rem;color:var(--slate);margin:0 0 16px}
+.est-detail li{margin-bottom:3px}
+.est-foot{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.badge-online{font-size:.66rem;font-weight:700;color:#fff;background:var(--green);border-radius:999px;padding:.32rem .65rem;letter-spacing:.02em}
+.badge-expert{font-size:.66rem;font-weight:700;color:var(--green);background:var(--mint);border-radius:999px;padding:.32rem .65rem;letter-spacing:.02em}
+.est-foot a{color:var(--green);font-weight:600;font-size:.86rem;font-family:var(--fh);text-decoration:underline;margin-left:auto}
+.est-summary{margin-top:8px;background:linear-gradient(135deg,var(--green),var(--banner));color:#fff;border-radius:var(--radius-lg);padding:30px 34px;display:flex;flex-wrap:wrap;gap:30px;align-items:center}
+.est-summary .es-txt{flex:1 1 220px}
+.est-summary .es-txt h3{color:#fff;font-size:1.12rem;font-weight:700;margin-bottom:5px}
+.est-summary .es-txt p{font-size:.82rem;opacity:.85}
+.live-total-bar{position:sticky;bottom:94px;margin-top:26px;background:var(--green);color:#fff;border-radius:var(--radius);padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;box-shadow:var(--shadow);flex-wrap:wrap;z-index:50}
+.live-total-bar .ltb-label{font-family:var(--fh);font-weight:600;font-size:.84rem;opacity:.9}
+.live-total-bar .ltb-value{font-family:var(--fh);font-weight:800;font-size:1.3rem;color:var(--lime-soft)}
+.email-capture{margin-top:16px;background:var(--mint-2);border:1px dashed var(--line-2);border-radius:var(--radius);padding:18px 22px;display:flex;flex-wrap:wrap;gap:16px 24px;align-items:center;justify-content:space-between}
+.email-capture .ec-txt{display:flex;gap:14px;align-items:flex-start;flex:1 1 260px}
+.email-capture .ec-txt svg{width:26px;height:26px;color:var(--green);flex:0 0 auto;margin-top:2px}
+.email-capture .ec-txt h4{font-size:.94rem;color:var(--green);font-weight:700;margin-bottom:3px}
+.email-capture .ec-txt p{font-size:.83rem;color:var(--slate);line-height:1.4}
+.ec-form{display:flex;gap:10px;flex-wrap:wrap;flex:0 0 auto}
+.ec-form input{font-family:var(--fb);font-size:.9rem;padding:.65rem .85rem;border:1.5px solid var(--line-2);border-radius:10px;min-width:230px}
+.ec-form input:focus{border-color:var(--green);outline:none}
+.ec-success{display:flex;align-items:center;gap:8px;color:var(--green);font-weight:600;font-size:.88rem}
+.ec-success svg{width:19px;height:19px;flex:0 0 auto}
+.email-capture .form-error{width:100%;margin-top:4px}
+@media(max-width:700px){.email-capture{flex-direction:column;align-items:stretch}.ec-form input{min-width:0;flex:1}}
+.es-stat b{display:block;font-family:var(--fh);font-weight:800;font-size:1.55rem}
+.es-stat span{font-size:.76rem;opacity:.85}
+.es-stat.hi b{color:var(--lime)}
+
+/* step 6 — proposition */
+.prop-table{width:100%;border-collapse:collapse;margin-top:6px}
+.prop-table th{text-align:left;font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--slate);font-weight:700;padding:10px 12px;border-bottom:1px solid var(--line)}
+.prop-table td{padding:16px 12px;border-bottom:1px solid var(--line);font-size:.9rem;vertical-align:middle}
+.prop-table .pt-sol{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--ink)}
+.prop-table .pt-sol .ic{width:36px;height:36px;border-radius:50%;background:var(--mint);display:grid;place-items:center;flex:0 0 auto}
+.prop-table .pt-sol .ic svg{width:18px;height:18px;color:var(--green)}
+.prop-table tfoot td{font-weight:700;color:var(--green);background:var(--mint-2)}
+.pt-actions{display:flex;gap:8px;flex-wrap:wrap}
+.pt-actions button{font-size:.78rem;font-weight:600;border-radius:8px;padding:.45rem .75rem;border:1px solid var(--line-2);background:#fff;cursor:pointer;color:var(--ink)}
+.pt-actions button:hover{border-color:var(--green);color:var(--green)}
+
+/* step 7 — devis */
+.devis-grid{display:grid;grid-template-columns:.78fr 1.4fr;gap:34px;align-items:start}
+.synth-card{background:var(--mint-2);border-radius:var(--radius);padding:24px 26px}
+.synth-card h4{font-size:1rem;color:var(--green);font-weight:700;margin-bottom:16px}
+.synth-row{display:flex;justify-content:space-between;font-size:.86rem;color:var(--ink);padding:8px 0;border-bottom:1px solid var(--line)}
+.synth-row b{font-weight:700}
+.synth-row.tot{border-bottom:none;padding-top:14px}
+.synth-row.tot b{color:var(--green);font-size:1.25rem;font-family:var(--fh)}
+.cform-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.trust-strip{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:18px;margin-top:4px;padding-top:4px}
+.trust-strip span{display:inline-flex;align-items:center;gap:7px;font-size:.8rem;font-weight:600;color:var(--slate)}
+.trust-strip svg{width:16px;height:16px;color:var(--green);flex:0 0 auto}
+.consent{grid-column:1/-1;display:flex;gap:11px;align-items:flex-start;margin-top:2px}
+.consent input{width:19px;height:19px;margin-top:2px;accent-color:var(--green);flex:0 0 auto;cursor:pointer}
+.consent label{font-size:.82rem;color:var(--slate);line-height:1.5}
+.consent a{color:var(--green);font-weight:600;text-decoration:underline}
+.cform-actions{grid-column:1/-1;display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.success{text-align:center;padding:30px}
+.success .s-ic{width:70px;height:70px;border-radius:50%;background:var(--green);display:grid;place-items:center;margin:0 auto 16px}
+.success .s-ic svg{width:36px;height:36px;color:#fff}
+.success h3{font-size:1.4rem;color:var(--green);margin-bottom:8px}
+.success p{color:var(--slate);max-width:46ch;margin:0 auto}
+
+@media(max-width:960px){
+  .need-grid{grid-template-columns:repeat(2,1fr)}
+  .siret-row,.cc-grid,.form-grid3{grid-template-columns:1fr}
+  .devis-grid{grid-template-columns:1fr}
+  .simcard{padding:26px 22px}
+}
+@media(max-width:640px){
+  .need-grid{grid-template-columns:1fr}
+  .cform-grid{grid-template-columns:1fr}
+}
+
+@media(max-width:960px){.nav,.header .btn{display:none}.burger{display:inline-flex}}</style>
+<link rel="stylesheet" href="polices.css?v=20261112">
+<link rel="stylesheet" href="variante.css?v=20261112">
+<script src="variante.js?v=20261112"></script>
+</head>
+<body>
+<header class="header">
+  <div class="wrap header-in">
+    <a class="brand" href="index.html" aria-label="Retour à l'accueil"><img src="logo-brh.png" alt="Banque des Ressources Humaines, by CA Entreprises"></a>
+    <nav class="nav" aria-label="Navigation de la simulation">
+      <a href="#step-1" class="active">Simulation</a>
+      <a href="diagnostic.html">Label BRH</a><a href="audit-mutuelle.html?from=header">Audit santé</a>
+      <a href="avantages-fiscaux.html">Avantages fiscaux</a>
+      <a href="ressources.html">Ressources</a>
+    </nav>
+    <a class="btn btn-primary" href="diagnostic.html#contact">Parler à un expert <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 8v6M23 11h-6"/><path d="M14 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="8" cy="7" r="4"/></svg></a>
+    <button class="burger" aria-label="Menu" aria-expanded="false" onclick="toggleMenu()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu"><div class="wrap">
+    <a href="index.html">Accueil</a>
+    <a href="diagnostic.html">Label BRH</a><a href="audit-mutuelle.html?from=header">Audit santé</a><a href="avantages-fiscaux.html">Avantages fiscaux</a>
+    <a href="ressources.html">Ressources</a>
+    <a class="btn btn-primary" href="diagnostic.html#contact">Parler à un expert</a>
+  </div></div>
+</header>
+
+<main id="page-simulation">
+
+  <section class="sim-hero"><div class="wrap">
+    <button class="back" onclick="BRH.go('index.html')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Retour à l'accueil</button>
+    <h1>Simulez le coût de vos avantages salariés</h1>
+    <p class="sub">Sélectionnez vos besoins, configurez vos solutions : les structures de moins de 50 salariés concernés peuvent recevoir un devis en ligne immédiat. Au-delà, un expert de votre Caisse régionale construit votre proposition sur mesure.</p>
+    <div class="sim-meta">
+      <span class="sim-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>2 minutes chrono</span>
+      <span class="sim-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Sans engagement</span>
+      <span class="sim-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Données chiffrées, confidentielles</span>
+    </div>
+  </div></section>
+
+  <div class="sim-body"><div class="wrap">
+
+    <div class="stepper" id="stepper"></div>
+    <div class="stepper-track"><div class="fill" id="stepperFill"></div></div>
+
+    <!-- STEP 1 : VOS BESOINS -->
+    <div class="simcard step-panel active" id="step-1">
+      <div class="block-head">
+        <span class="bh-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>
+        <div><h2>1. Vos besoins</h2><p>Sélectionnez une ou plusieurs solutions. Seules les questions utiles à vos choix vous seront posées.</p></div>
+      </div>
+      <div class="need-grid" id="needGrid"></div>
+      <div class="step-actions">
+        <span class="need-count" id="needCount">0 solution sélectionnée</span>
+        <span class="spacer"></span>
+        <button class="btn btn-primary" id="step1Next" onclick="goStep(2)" disabled>Continuer
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      </div>
+    </div>
+
+    <!-- STEP 2 : VOTRE ENTREPRISE -->
+    <div class="simcard step-panel" id="step-2">
+      <div class="block-head">
+        <span class="bh-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M8 7h2M14 7h2M8 11h2M14 11h2M8 15h2M14 15h2"/></svg></span>
+        <div><h2>2. Votre entreprise</h2><p>Saisissez votre SIRET : nous retrouvons les informations publiques de votre entreprise, vous n'avez plus qu'à les confirmer.</p></div>
+      </div>
+      <div class="siret-row">
+        <div class="field">
+          <label for="siret">Numéro SIRET <span class="req">*</span></label>
+          <div style="display:flex;gap:10px">
+            <input type="text" id="siret" placeholder="14 chiffres" maxlength="20" value="411 480 890 00010">
+            <button class="btn btn-outline" style="white-space:nowrap" onclick="lookupCompany()">Rechercher</button>
+          </div>
+          <p class="hint">14 chiffres, figurant sur votre Kbis ou vos bulletins de paie.</p>
+          <button type="button" class="siret-manual" onclick="toggleManual()">Je préfère saisir mes informations manuellement</button>
+        </div>
+        <div class="field">
+          <label for="companyName">Ou recherchez par nom d'entreprise</label>
+          <input type="text" id="companyName" placeholder="Nom de votre entreprise, ville…">
+        </div>
+      </div>
+
+      <div class="company-card hidden" id="companyCard">
+        <div class="cc-head">
+          <h4>Vérifiez les informations de votre entreprise</h4>
+          <span class="demo-badge">MODE DÉMONSTRATION — DONNÉES FICTIVES</span>
+        </div>
+        <div class="cc-grid">
+          <div class="cc-field"><label>Raison sociale <span class="req">*</span> <span class="tag-found">TROUVÉ</span></label><input type="text" id="ccRaison"></div>
+          <div class="cc-field"><label>Ville <span class="req">*</span> <span class="tag-found">TROUVÉ</span></label><input type="text" id="ccVille"></div>
+          <div class="cc-field"><label>Code postal <span class="req">*</span> <span class="tag-found">TROUVÉ</span></label><input type="text" id="ccCp"></div>
+          <div class="cc-field"><label>Activité (code NAF) <span class="tag-found">TROUVÉ</span></label><input type="text" id="ccNaf"></div>
+          <div class="cc-field"><label>Convention collective (IDCC) <span class="tag-confirm">À CONFIRMER</span></label><input type="text" id="ccIdcc">
+            <p class="hint">Utile pour la santé et la prévoyance.</p></div>
+          <div class="cc-field"><label>Nombre de salariés <span class="req">*</span> <span class="tag-confirm">À CONFIRMER</span></label><input type="number" id="ccEffectif" min="1" oninput="onEffectifChange()">
+            <p class="hint" id="ccEffHint">Donnée publique : à confirmer. Indiquez votre effectif actuel.</p></div>
+        </div>
+        <p class="cc-note" id="ccSource"></p>
+      </div>
+
+      <div class="divert-card hidden" id="divertCard">
+        <span class="dc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg></span>
+        <div style="flex:1">
+          <h3>Votre entreprise mérite une proposition sur mesure</h3>
+          <p>Au vu de vos effectifs, vos besoins appellent une étude personnalisée. Laissez-nous vos coordonnées : un expert de votre Caisse régionale vous recontacte sous 24h ouvrées pour construire votre proposition.</p>
+          <div class="dc-cta" id="dcCtaRow">
+            <button class="btn btn-primary" onclick="toggleDivertForm()">Être rappelé par un expert</button>
+            <button class="btn btn-outline" onclick="BRH.go('diagnostic.html')">Faire mon diagnostic RH</button>
+          </div>
+          <div class="dc-form hidden" id="dcForm">
+            <div class="dc-form-grid">
+              <div class="field"><label for="dc-tel">Téléphone <span class="req">*</span></label>
+                <input type="tel" id="dc-tel" placeholder="06 12 34 56 78"></div>
+              <div class="field"><label for="dc-email">E-mail professionnel <span class="req">*</span></label>
+                <input type="email" id="dc-email" placeholder="prenom.nom@entreprise.fr"></div>
+            </div>
+            <div class="form-error" id="dc-err"></div>
+            <div class="dc-form-actions">
+              <button class="btn btn-primary" onclick="submitDivert()">Envoyer ma demande
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+              <span class="dc-badges"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Vos données restent confidentielles</span>
+            </div>
+          </div>
+          <div class="dc-success hidden" id="dcSuccess">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>
+            <span>Merci, votre demande est transmise. Un expert de votre Caisse régionale vous recontacte sous 24h ouvrées.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-actions">
+        <button class="btn btn-outline" onclick="goStep(1)">Retour</button>
+        <span class="spacer"></span>
+        <button class="btn btn-primary" id="step2Next" onclick="goStep(3)" disabled>Continuer
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      </div>
+    </div>
+
+    <!-- STEP 3 : VOS SALARIÉS -->
+    <div class="simcard step-panel" id="step-3">
+      <div class="block-head">
+        <span class="bh-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M2 20a7 7 0 0 1 14 0"/><circle cx="18" cy="9" r="2.4"/><path d="M16 20a5.2 5.2 0 0 1 6-5"/></svg></span>
+        <div><h2>3. Vos salariés</h2><p>Quelques informations suffisent au calcul. Elles s'appliquent à toutes les solutions choisies.</p></div>
+      </div>
+      <div class="form-grid3">
+        <div class="field"><label for="s3-concernes">Salariés concernés <span class="req">*</span></label>
+          <input type="number" id="s3-concernes" min="1" value="20" oninput="onConcernesChange()">
+          <p class="hint">Salariés qui bénéficieront des solutions.</p></div>
+        <div class="field"><label for="s3-cadres">Dont cadres</label>
+          <input type="number" id="s3-cadres" min="0" value="0" oninput="onCadresChange()">
+          <p class="hint" id="s3-noncadres">Non-cadres : 20</p></div>
+        <div class="field"><label for="s3-salaire">Salaire brut annuel moyen <span class="req">*</span></label>
+          <select id="s3-salaire">
+            <option value="25000">Moins de 30 000 €</option>
+            <option value="37500">30 000 à 45 000 €</option>
+            <option value="52500" selected>45 000 à 60 000 €</option>
+            <option value="75000">60 000 à 90 000 €</option>
+            <option value="100000">Plus de 90 000 €</option>
+          </select></div>
+        <div class="field"><label for="s3-etabs">Nombre d'établissements</label>
+          <input type="number" id="s3-etabs" min="1" value="1"></div>
+        <div class="field"><label for="s3-loc">Localisation principale</label>
+          <input type="text" id="s3-loc" readonly>
+          <p class="hint">Reprise de l'étape précédente.</p></div>
+        <div class="field"><label for="s3-anciennete">Condition d'ancienneté</label>
+          <select id="s3-anciennete">
+            <option value="aucune">Aucune</option>
+            <option value="3m">3 mois</option>
+            <option value="6m">6 mois</option>
+            <option value="1a">1 an</option>
+          </select></div>
+      </div>
+      <div class="form-info" id="s3-err"></div>
+      <div class="step-actions">
+        <button class="btn btn-outline" onclick="goStep(2)">Retour</button>
+        <span class="spacer"></span>
+        <button class="btn btn-primary" onclick="goStep(4)">Continuer
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      </div>
+    </div>
+
+    <!-- STEP 4 : CONFIGUREZ VOS SOLUTIONS -->
+    <div class="simcard step-panel" id="step-4">
+      <div class="block-head">
+        <span class="bh-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="8" cy="12" r="2"/><circle cx="16" cy="18" r="2"/></svg></span>
+        <div><h2>4. Configurez vos solutions</h2><p>Répondez aux questions de chaque solution. Vos réponses sont conservées si vous passez de l'une à l'autre.</p></div>
+      </div>
+      <div class="need-tabs" id="needTabs"></div>
+      <div id="cfgPanels"></div>
+      <div class="live-total-bar" id="liveTotalBar">
+        <span class="ltb-label">Coût employeur estimé, en temps réel</span>
+        <span class="ltb-value" id="ltbValue">—</span>
+      </div>
+      <div class="step-actions">
+        <button class="btn btn-outline" onclick="goStep(3)">Retour</button>
+        <span class="spacer"></span>
+        <button class="btn btn-primary" onclick="computeEstimation();goStep(5)">Continuer
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      </div>
+    </div>
+
+    <!-- STEP 5 : ESTIMATION -->
+    <div class="simcard step-panel" id="step-5">
+      <div class="block-head">
+        <span class="bh-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M20 20V8"/></svg></span>
+        <div><h2>5. Votre estimation</h2><p>Combien cela vous coûte, et ce que cela apporte à vos salariés.</p></div>
+      </div>
+      <div id="estCards"></div>
+      <div class="est-summary">
+        <div class="es-txt"><h3>Combien cela vous coûte, et ce que cela apporte</h3><p id="esPour"></p></div>
+        <div class="es-stat"><b id="esTotalCout">—</b><span>coût employeur total estimé / an</span></div>
+        <div class="es-stat hi"><b id="esTotalGain">—</b><span>de gain net moyen par salarié / an</span></div>
+        <div class="es-stat"><b id="esEcon">—</b><span>économisés par rapport à une hausse de salaire équivalente</span></div>
+      </div>
+
+      <div class="email-capture" id="emailCaptureBlock">
+        <div class="ec-txt">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+          <div><h4>Pas le temps de finir maintenant ?</h4><p>Recevez cette estimation par e-mail, vous pourrez reprendre votre simulation plus tard.</p></div>
+        </div>
+        <div class="ec-form" id="ecForm">
+          <input type="email" id="ec-email" placeholder="prenom.nom@entreprise.fr">
+          <button class="btn btn-outline" onclick="submitEstimationEmail()">Me l'envoyer</button>
+        </div>
+        <div class="ec-success hidden" id="ecSuccess">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>
+          Estimation envoyée, à vous de voir le moment venu.
+        </div>
+        <div class="form-error" id="ec-err"></div>
+      </div>
+      <div class="step-actions">
+        <button class="btn btn-outline" onclick="goStep(4)">Retour</button>
+        <span class="spacer"></span>
+        <button class="btn btn-primary" onclick="renderProposition();goStep(6)">Continuer
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      </div>
+    </div>
+
+    <!-- STEP 6 : PROPOSITION -->
+    <div class="simcard step-panel" id="step-6">
+      <div class="block-head">
+        <span class="bh-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h2l2 12h9l2-8H7"/><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/></svg></span>
+        <div><h2>6. Votre proposition</h2><p>Toutes vos solutions réunies dans une seule proposition. Vous pouvez encore en modifier ou en retirer.</p></div>
+      </div>
+      <table class="prop-table">
+        <thead><tr><th>Solution</th><th>Hypothèse retenue</th><th>Estimation</th><th>Statut</th><th></th></tr></thead>
+        <tbody id="propBody"></tbody>
+        <tfoot><tr><td colspan="2">Total estimé</td><td id="propTotal">—</td><td colspan="2"></td></tr></tfoot>
+      </table>
+      <div class="step-actions">
+        <button class="btn btn-outline" onclick="goStep(5)">Retour</button>
+        <span class="spacer"></span>
+        <button class="btn btn-outline" onclick="BRH.go('diagnostic.html#contact')">Parler à un expert</button>
+        <button class="btn btn-primary" onclick="renderDevisSynth();goStep(7)">Recevoir mon devis
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      </div>
+    </div>
+
+    <!-- STEP 7 : DEVIS -->
+    <div class="simcard step-panel" id="step-7">
+      <div class="block-head">
+        <span class="bh-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10M10 21V6M16 21v-8M20 21V4"/><path d="M2 21h20"/></svg></span>
+        <div><h2>7. Recevez votre devis</h2><p>Indiquez vos coordonnées : vous recevez votre devis et un expert de votre Caisse régionale le finalise avec vous.</p></div>
+      </div>
+      <div id="devisForm">
+        <div class="devis-grid">
+          <div class="synth-card" id="synthCard"></div>
+          <div class="cform-grid">
+            <div class="field"><label for="d-prenom">Prénom</label><input type="text" id="d-prenom" autocomplete="given-name"></div>
+            <div class="field"><label for="d-nom">Nom</label><input type="text" id="d-nom" autocomplete="family-name"></div>
+            <div class="field"><label for="d-fonction">Fonction</label>
+              <select id="d-fonction"><option>Dirigeant(e)</option><option>DRH</option><option>Responsable administratif et financier</option><option>Autre</option></select></div>
+            <div class="field"><label for="d-tel">Téléphone <span class="req">*</span></label><input type="tel" id="d-tel" placeholder="06 12 34 56 78" autocomplete="tel"></div>
+            <div class="field" style="grid-column:1/-1"><label for="d-email">E-mail professionnel <span class="req">*</span></label><input type="email" id="d-email" placeholder="prenom.nom@entreprise.fr" autocomplete="email"></div>
+            <div class="consent"><input type="checkbox" id="d-rappel" checked><label for="d-rappel">Je souhaite être rappelé(e) par un expert pour finaliser mon devis.</label></div>
+            <div class="consent"><input type="checkbox" id="d-consent"><label for="d-consent">J'accepte que mes données et les réponses de ce devis soient utilisées par le Crédit Agricole et sa Caisse régionale pour établir mon devis et me recontacter (<a href="#" onclick="return false">politique de confidentialité</a>). <span class="req">*</span></label></div>
+            <div class="form-error" id="d-err"></div>
+            <div class="trust-strip">
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>Réponse sous 24h ouvrées</span>
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Données confidentielles</span>
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Sans engagement</span>
+            </div>
+            <div class="cform-actions">
+              <button class="btn btn-primary btn-lg" onclick="submitDevis()">Recevoir mon devis
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+              <button class="contact-link" style="background:none;border:none;cursor:pointer;color:var(--green);font-family:var(--fh);font-weight:600;font-size:.9rem" onclick="goStep(6)">Revenir à ma proposition</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="devisSuccess" class="success hidden">
+        <div class="s-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <h3>Votre devis est en cours d'envoi</h3>
+        <p id="devisSuccessMsg"></p>
+      </div>
+    </div>
+
+  </div></div>
+</main>
+
+
+<script>
+/* ============================================================
+   SIMULATION DE COÛT — parcours segmenté self-serve / pré-qualification
+   ============================================================ */
+const SELF_SERVE_CAP = 50; // au-delà : proposition sur mesure avec un expert
+
+const NEEDS = [
+  {id:'epargne', title:'Épargne salariale', partners:['Amundi','CA Titres'],
+    icon:'<circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.2"/><path d="M15.5 20a5 5 0 0 1 6.5-4.8"/>',
+    desc:"Intéressement, participation, plan d'épargne et abondement pour associer vos salariés à la performance."},
+  {id:'sante', title:'Santé & prévoyance', partners:['Crédit Agricole Assurances'],
+    icon:'<path d="M12 3l7 4v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V7l7-4Z"/><path d="M12 9v3M12 15h.01"/>',
+    desc:'Complémentaire santé et prévoyance collectives pour protéger vos salariés et leurs proches.'},
+  {id:'retraite', title:'Retraite collective', partners:['Crédit Agricole Assurances','Amundi'],
+    icon:'<path d="M5 5v14M5 9h9a3 3 0 0 1 0 6H5M14 19v2M5 21v-2"/>',
+    desc:"Un plan d'épargne retraite d'entreprise pour fidéliser vos équipes et préparer leur avenir."},
+  {id:'avantages', title:'Avantages salariés', partners:['Worklife'],
+    icon:'<path d="M4 5h2l2 12h9l2-8H7"/><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/>',
+    desc:"Titres-restaurant, mobilité, cartes cadeaux : du pouvoir d'achat au quotidien."}
+];
+
+const DEMO_VILLES=[{v:'Tours',cp:'37000'},{v:'Lyon',cp:'69003'},{v:'Nantes',cp:'44000'},{v:'Lille',cp:'59000'},{v:'Bordeaux',cp:'33000'},{v:'Rennes',cp:'35000'}];
+const DEMO_NAF=[{c:'62.02A',l:'Conseil en systèmes informatiques'},{c:'46.90Z',l:'Commerce de gros non spécialisé'},{c:'70.22Z',l:'Conseil pour les affaires et autres conseils de gestion'},{c:'43.99C',l:'Travaux de maçonnerie générale'},{c:'56.10A',l:'Restauration traditionnelle'}];
+const DEMO_IDCC=[{c:'1486',l:"Bureaux d'études techniques (Syntec)"},{c:'1596',l:'Commerce de détail et de gros à prédominance alimentaire'},{c:'3248',l:'Métallurgie'},{c:'1979',l:'Restauration rapide'}];
+const DEMO_EFF=[{l:'1 à 9 salariés',mid:5},{l:'10 à 19 salariés',mid:15},{l:'20 à 49 salariés',mid:35},{l:'50 à 99 salariés',mid:70},{l:'100 à 249 salariés',mid:170},{l:'250 salariés et plus',mid:300}];
+
+function hashStr(s){ let h=0; for(const c of s) h=(h*31+c.charCodeAt(0))>>>0; return h; }
+function lookupCompany(){
+  const raw=document.getElementById('siret').value.replace(/\D/g,'');
+  if(raw.length<9){ alert('Merci de saisir un numéro SIRET valide (14 chiffres).'); return; }
+  const h=hashStr(raw);
+  const ville=DEMO_VILLES[h%DEMO_VILLES.length];
+  const naf=DEMO_NAF[(Math.floor(h/7))%DEMO_NAF.length];
+  const idcc=DEMO_IDCC[(Math.floor(h/13))%DEMO_IDCC.length];
+  const eff=DEMO_EFF[(Math.floor(h/19))%DEMO_EFF.length];
+  state.company.siret=raw;
+  state.company.raison='Atelier Démo '+raw.slice(-4);
+  state.company.ville=ville.v; state.company.cp=ville.cp;
+  state.company.naf=naf.c+' — '+naf.l;
+  state.company.idcc=idcc.c+' — '+idcc.l;
+  state.company.effectif=eff.mid;
+  state.company.effLabel=eff.l;
+  fillCompanyCard();
+}
+function toggleManual(){
+  state.company.siret=state.company.siret||'000000000';
+  state.company.raison=''; state.company.ville=''; state.company.cp='';
+  state.company.naf=''; state.company.idcc=''; state.company.effectif=10; state.company.effLabel='';
+  fillCompanyCard();
+}
+function fillCompanyCard(){
+  document.getElementById('companyCard').classList.remove('hidden');
+  document.getElementById('ccRaison').value=state.company.raison;
+  document.getElementById('ccVille').value=state.company.ville;
+  document.getElementById('ccCp').value=state.company.cp;
+  document.getElementById('ccNaf').value=state.company.naf;
+  document.getElementById('ccIdcc').value=state.company.idcc;
+  document.getElementById('ccEffectif').value=state.company.effectif;
+  document.getElementById('ccEffHint').textContent='Donnée publique : '+(state.company.effLabel||'à confirmer')+'. Indiquez votre effectif actuel.';
+  const today=new Date().toLocaleDateString('fr-FR');
+  document.getElementById('ccSource').textContent='Source : jeu de données de démonstration, données du '+today+". L'effectif et la convention collective sont à confirmer.";
+  document.getElementById('step2Next').disabled=false;
+  onEffectifChange();
+}
+function onEffectifChange(){
+  state.company.effectif=parseInt(document.getElementById('ccEffectif').value||'0',10)||0;
+  const divert=document.getElementById('divertCard');
+  if(state.company.effectif>SELF_SERVE_CAP){ divert.classList.remove('hidden'); } else { divert.classList.add('hidden'); }
+  const locInput=document.getElementById('s3-loc');
+  if(locInput) locInput.value=(state.company.ville||'')+(state.company.cp?' ('+state.company.cp+')':'');
+  const concEl=document.getElementById('s3-concernes');
+  if(concEl){ concEl.max=state.company.effectif||SELF_SERVE_CAP; }
+}
+function toggleDivertForm(){
+  document.getElementById('dcCtaRow').classList.add('hidden');
+  document.getElementById('dcForm').classList.remove('hidden');
+  const tel=document.getElementById('dc-tel'); if(tel) tel.focus();
+}
+function submitDivert(){
+  const err=document.getElementById('dc-err');
+  const tel=document.getElementById('dc-tel').value.trim();
+  const email=document.getElementById('dc-email').value.trim();
+  const emailOk=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  if(!tel){ err.textContent='Merci de renseigner votre numéro de téléphone.'; err.classList.add('show'); return; }
+  if(!emailOk){ err.textContent='Merci de renseigner une adresse e-mail professionnelle valide.'; err.classList.add('show'); return; }
+  err.classList.remove('show');
+  const payload={type:'rappel_grand_compte', tel, email, company:state.company, needs:state.needs, date:new Date().toISOString()};
+  try{ fetch('traitement_devis.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});}catch(e){}
+  document.getElementById('dcForm').classList.add('hidden');
+  document.getElementById('dcSuccess').classList.remove('hidden');
+}
+
+/* ---------- step 1 : besoins ---------- */
+function renderNeeds(){
+  const grid=document.getElementById('needGrid'); grid.innerHTML='';
+  NEEDS.forEach(n=>{
+    const sel=state.needs.includes(n.id);
+    const card=document.createElement('div');
+    card.className='need-card'+(sel?' sel':'');
+    card.onclick=()=>toggleNeed(n.id);
+    card.innerHTML='<div class="nc-top"><span class="nc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+n.icon+'</svg></span>'+
+      '<span class="nc-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span></div>'+
+      '<h3>'+n.title+'</h3><p>'+n.desc+'</p>'+
+      '<div class="need-badges">'+n.partners.map(p=>'<span><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>'+p.toUpperCase()+'</span>').join('')+'</div>';
+    grid.appendChild(card);
+  });
+  const c=state.needs.length;
+  document.getElementById('needCount').innerHTML='<b>'+c+'</b> solution'+(c>1?'s':'')+' sélectionnée'+(c>1?'s':'');
+  document.getElementById('step1Next').disabled=c===0;
+}
+function toggleNeed(id){
+  const i=state.needs.indexOf(id);
+  if(i>-1) state.needs.splice(i,1); else state.needs.push(id);
+  renderNeeds();
+}
+
+/* ---------- step 3 ---------- */
+function onConcernesChange(){
+  const el=document.getElementById('s3-concernes');
+  const err=document.getElementById('s3-err');
+  let v=parseInt(el.value||'0',10);
+  const cap=Math.min(SELF_SERVE_CAP, state.company.effectif||SELF_SERVE_CAP);
+  if(v>cap){
+    v=cap; el.value=cap;
+    err.textContent="Nous avons ajusté ce nombre à "+cap+" salariés, le maximum pour une estimation en ligne immédiate. Besoin de couvrir plus de monde ? Un expert peut construire une proposition sur mesure.";
+    err.classList.add('show');
+  } else {
+    err.classList.remove('show'); err.textContent='';
+  }
+  const cadresEl=document.getElementById('s3-cadres');
+  if(parseInt(cadresEl.value||'0',10)>v) cadresEl.value=v;
+  onCadresChange();
+}
+function onCadresChange(){
+  const v=parseInt(document.getElementById('s3-concernes').value||'0',10);
+  const c=parseInt(document.getElementById('s3-cadres').value||'0',10);
+  document.getElementById('s3-noncadres').textContent='Non-cadres : '+Math.max(0,v-c);
+}
+
+/* ---------- step 4 : configuration ---------- */
+function renderConfigStep(){
+  const tabs=document.getElementById('needTabs'); tabs.innerHTML='';
+  if(!state.activeTab || !state.needs.includes(state.activeTab)) state.activeTab=state.needs[0];
+  NEEDS.filter(n=>state.needs.includes(n.id)).forEach(n=>{
+    const tab=document.createElement('button');
+    tab.type='button';
+    tab.className='need-tab'+(state.activeTab===n.id?' active':'');
+    tab.innerHTML='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+n.icon+'</svg>'+n.title+
+      '<span class="tb-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>';
+    tab.onclick=()=>{ state.activeTab=n.id; renderConfigStep(); };
+    tabs.appendChild(tab);
+  });
+  const panels=document.getElementById('cfgPanels');
+  panels.innerHTML='';
+  if(state.activeTab) panels.appendChild(buildConfigPanel(state.activeTab));
+  updateLiveTotal();
+}
+function updateLiveTotal(){
+  const bar=document.getElementById('ltbValue');
+  if(!bar) return;
+  let total=0;
+  state.needs.forEach(id=>{ total+=estimateNeed(id).cout; });
+  bar.textContent=fmtEur(total)+' / an';
+}
+function pillRow(options, current, onPick){
+  const row=document.createElement('div'); row.className='pill-row';
+  options.forEach(o=>{
+    const b=document.createElement('button'); b.type='button';
+    b.className='pill-choice'+(current===o.v?' sel':'');
+    b.textContent=o.l;
+    b.onclick=()=>onPick(o.v);
+    row.appendChild(b);
+  });
+  return row;
+}
+function buildConfigPanel(id){
+  const wrap=document.createElement('div'); wrap.className='cfg-section';
+  const cfg=state.config[id];
+  if(id==='avantages'){
+    const h=document.createElement('h4'); h.textContent='Avantages souhaités';
+    const help=document.createElement('p'); help.className='cfg-help'; help.textContent='Plusieurs choix possibles.';
+    wrap.appendChild(h); wrap.appendChild(help);
+    const choices=[{v:'tr',l:'Titres-restaurant'},{v:'mobilite',l:'Forfait mobilités durables'},{v:'cadeaux',l:'Cartes cadeaux & culture'}];
+    const row=document.createElement('div'); row.className='pill-row';
+    choices.forEach(c=>{
+      const b=document.createElement('button'); b.type='button';
+      b.className='pill-choice'+(cfg.choices.includes(c.v)?' sel':'');
+      b.textContent=c.l;
+      b.onclick=()=>{ const i=cfg.choices.indexOf(c.v); if(i>-1) cfg.choices.splice(i,1); else cfg.choices.push(c.v); renderConfigStep(); };
+      row.appendChild(b);
+    });
+    wrap.appendChild(row);
+    if(cfg.choices.includes('tr')){
+      const p=document.createElement('div'); p.className='config-panel';
+      p.innerHTML='<div class="slider-row"><span>Valeur du titre-restaurant</span><b>'+cfg.tr.valeur.toFixed(2)+' €</b></div>'+
+        '<input type="range" min="5" max="14" step="0.1" value="'+cfg.tr.valeur+'" oninput="state.config.avantages.tr.valeur=parseFloat(this.value);renderConfigStep()">'+
+        '<p class="cfg-help" style="margin-top:16px">Part prise en charge par l\'employeur</p>';
+      p.appendChild(pillRow([{v:50,l:'50 %'},{v:55,l:'55 %'},{v:60,l:'60 %'}], cfg.tr.part, v=>{ cfg.tr.part=v; renderConfigStep(); }));
+      wrap.appendChild(p);
+    }
+    if(cfg.choices.includes('mobilite')){
+      const p=document.createElement('div'); p.className='config-panel';
+      p.innerHTML='<div class="slider-row"><span>Forfait mobilités durables / salarié / an</span><b>'+cfg.mobilite.montant+' €</b></div>'+
+        '<input type="range" min="100" max="600" step="10" value="'+cfg.mobilite.montant+'" oninput="state.config.avantages.mobilite.montant=parseInt(this.value,10);renderConfigStep()">'+
+        '<p class="cfg-help" style="margin-top:10px">Exonéré de charges jusqu\'à 600 € / an / salarié.</p>';
+      wrap.appendChild(p);
+    }
+    if(cfg.choices.includes('cadeaux')){
+      const p=document.createElement('div'); p.className='config-panel';
+      p.innerHTML='<div class="slider-row"><span>Cartes cadeaux & culture / salarié / an</span><b>'+cfg.cadeaux.montant+' €</b></div>'+
+        '<input type="range" min="30" max="200" step="10" value="'+cfg.cadeaux.montant+'" oninput="state.config.avantages.cadeaux.montant=parseInt(this.value,10);renderConfigStep()">'+
+        '<p class="cfg-help" style="margin-top:10px">Exonéré de charges jusqu\'à 200 € / an / salarié.</p>';
+      wrap.appendChild(p);
+    }
+  } else if(id==='epargne'){
+    const h=document.createElement('h4'); h.textContent='Dispositifs souhaités';
+    const help=document.createElement('p'); help.className='cfg-help'; help.textContent='Plusieurs choix possibles.';
+    wrap.appendChild(h); wrap.appendChild(help);
+    const choices=[{v:'interessement',l:'Intéressement'},{v:'participation',l:'Participation'},{v:'abondement',l:'Abondement PEE'}];
+    const row=document.createElement('div'); row.className='pill-row';
+    choices.forEach(c=>{
+      const b=document.createElement('button'); b.type='button';
+      b.className='pill-choice'+(cfg.choices.includes(c.v)?' sel':'');
+      b.textContent=c.l;
+      b.onclick=()=>{ const i=cfg.choices.indexOf(c.v); if(i>-1) cfg.choices.splice(i,1); else cfg.choices.push(c.v); renderConfigStep(); };
+      row.appendChild(b);
+    });
+    wrap.appendChild(row);
+    if(cfg.choices.includes('abondement')){
+      const p=document.createElement('div'); p.className='config-panel';
+      p.innerHTML='<div class="slider-row"><span>Abondement employeur / salarié / an</span><b>'+cfg.abondement+' €</b></div>'+
+        '<input type="range" min="200" max="3000" step="50" value="'+cfg.abondement+'" oninput="state.config.epargne.abondement=parseInt(this.value,10);renderConfigStep()">';
+      wrap.appendChild(p);
+    }
+  } else if(id==='sante'){
+    const h=document.createElement('h4'); h.textContent='Formule souhaitée';
+    wrap.appendChild(h);
+    wrap.appendChild(pillRow([{v:'essentielle',l:'Essentielle'},{v:'confort',l:'Confort'},{v:'premium',l:'Premium'}], cfg.formule, v=>{ cfg.formule=v; renderConfigStep(); }));
+    const h2=document.createElement('h4'); h2.textContent='Part prise en charge par l\'employeur'; h2.style.marginTop='18px';
+    wrap.appendChild(h2);
+    wrap.appendChild(pillRow([{v:50,l:'50 %'},{v:60,l:'60 %'},{v:70,l:'70 %'},{v:100,l:'100 %'}], cfg.part, v=>{ cfg.part=v; renderConfigStep(); }));
+  } else if(id==='retraite'){
+    const h=document.createElement('h4'); h.textContent='Taux de cotisation';
+    wrap.appendChild(h);
+    wrap.appendChild(pillRow([{v:1,l:'1 % du salaire'},{v:3,l:'3 % du salaire'},{v:5,l:'5 % du salaire'}], cfg.taux, v=>{ cfg.taux=v; renderConfigStep(); }));
+    const h2=document.createElement('h4'); h2.textContent='Part prise en charge par l\'employeur'; h2.style.marginTop='18px';
+    wrap.appendChild(h2);
+    wrap.appendChild(pillRow([{v:50,l:'50 %'},{v:100,l:'100 %'}], cfg.part, v=>{ cfg.part=v; renderConfigStep(); }));
+  }
+  return wrap;
+}
+
+/* ---------- step 5 : estimation ---------- */
+const JOURS_TRAVAILLES=218;
+const ECONOMY_MULTIPLIER=1.81;
+function estimateNeed(id){
+  const n=parseInt(document.getElementById('s3-concernes').value||'0',10)||0;
+  const salaire=parseFloat(document.getElementById('s3-salaire').value||'52500');
+  const cfg=state.config[id];
+  let cout=0, gainParSalarie=0, detail=[];
+  if(id==='avantages'){
+    if(cfg.choices.includes('tr')){
+      const c=cfg.tr.valeur*(cfg.tr.part/100)*JOURS_TRAVAILLES;
+      cout+=c*n; gainParSalarie+=c;
+      detail.push('Titres-restaurant de '+cfg.tr.valeur.toFixed(2)+' €, '+cfg.tr.part+' % employeur, '+JOURS_TRAVAILLES+' jours');
+    }
+    if(cfg.choices.includes('mobilite')){
+      cout+=cfg.mobilite.montant*n; gainParSalarie+=cfg.mobilite.montant;
+      detail.push('Forfait mobilités durables de '+cfg.mobilite.montant+' € / an');
+    }
+    if(cfg.choices.includes('cadeaux')){
+      cout+=cfg.cadeaux.montant*n; gainParSalarie+=cfg.cadeaux.montant;
+      detail.push('Cartes cadeaux & culture de '+cfg.cadeaux.montant+' € / an');
+    }
+    if(!detail.length) detail.push('Aucun avantage configuré pour le moment.');
+  } else if(id==='epargne'){
+    if(cfg.choices.includes('abondement')){
+      cout+=cfg.abondement*n; gainParSalarie+=cfg.abondement;
+      detail.push('Abondement PEE de '+cfg.abondement+' € / salarié / an');
+    }
+    if(cfg.choices.includes('interessement')) detail.push('Accord d\'intéressement (montant variable selon performance)');
+    if(cfg.choices.includes('participation')) detail.push('Participation (montant variable selon résultat)');
+    if(!detail.length) detail.push('Aucun dispositif configuré pour le moment.');
+  } else if(id==='sante'){
+    const base={essentielle:35,confort:55,premium:85}[cfg.formule]||55;
+    const c=base*12*(cfg.part/100);
+    cout+=c*n; gainParSalarie+=c;
+    detail.push('Formule '+cfg.formule+', '+cfg.part+' % employeur');
+  } else if(id==='retraite'){
+    const c=salaire*(cfg.taux/100)*(cfg.part/100);
+    cout+=c*n; gainParSalarie+=c;
+    detail.push('Cotisation de '+cfg.taux+' % du salaire, '+cfg.part+' % employeur');
+  }
+  return { cout:Math.round(cout), gainParSalarie:Math.round(gainParSalarie), n, detail };
+}
+function fmtEur(v){ return Math.round(v).toLocaleString('fr-FR')+' €'; }
+function computeEstimation(){
+  state.estimations={};
+  let totalCout=0, totalGainTotal=0;
+  state.needs.forEach(id=>{
+    const e=estimateNeed(id);
+    state.estimations[id]=e;
+    totalCout+=e.cout; totalGainTotal+=e.gainParSalarie*e.n;
+  });
+  state.totalCout=totalCout; state.totalGainTotal=totalGainTotal;
+  renderEstimation();
+}
+function renderEstimation(){
+  const wrap=document.getElementById('estCards'); wrap.innerHTML='';
+  const n=parseInt(document.getElementById('s3-concernes').value||'0',10)||0;
+  state.needs.forEach(id=>{
+    const need=NEEDS.filter(x=>x.id===id)[0];
+    const e=state.estimations[id];
+    const card=document.createElement('div'); card.className='est-card';
+    card.innerHTML='<div class="est-head"><span class="e-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+need.icon+'</svg></span><h3>'+need.title+'</h3></div>'+
+      '<div class="est-stats">'+
+        '<div class="est-stat"><b>'+fmtEur(e.cout)+'</b><span>coût employeur estimé / an</span></div>'+
+        '<div class="est-stat gain"><b>'+fmtEur(e.gainParSalarie)+'</b><span>gain net moyen / salarié / an</span></div>'+
+      '</div>'+
+      '<ul class="est-detail">'+e.detail.map(d=>'<li>'+d+'</li>').join('')+'</ul>'+
+      '<div class="est-foot"><span class="'+(id==='sante'||id==='retraite'?'badge-expert':'badge-online')+'">'+(id==='sante'||id==='retraite'?'SUR DEVIS':'DEVIS EN LIGNE')+'</span>'+
+      '<a href="#" onclick="state.activeTab=\''+id+'\';goStep(4);return false;">Modifier</a></div>';
+    wrap.appendChild(card);
+  });
+  document.getElementById('esPour').textContent='Pour '+n+' salariés concernés.';
+  document.getElementById('esTotalCout').textContent=fmtEur(state.totalCout);
+  document.getElementById('esTotalGain').textContent=fmtEur(n?state.totalGainTotal/n:0);
+  const equiv=Math.round(state.totalGainTotal*ECONOMY_MULTIPLIER);
+  document.getElementById('esEcon').textContent=fmtEur(Math.max(0,equiv-state.totalCout));
+}
+function submitEstimationEmail(){
+  const err=document.getElementById('ec-err');
+  const email=document.getElementById('ec-email').value.trim();
+  const emailOk=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  if(!emailOk){ err.textContent='Merci de renseigner une adresse e-mail professionnelle valide.'; err.classList.add('show'); return; }
+  err.classList.remove('show');
+  const payload={type:'estimation_par_email', email, company:state.company, needs:state.needs, totalCout:state.totalCout, date:new Date().toISOString()};
+  try{ fetch('traitement_devis.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});}catch(e){}
+  document.getElementById('ecForm').classList.add('hidden');
+  document.getElementById('ecSuccess').classList.remove('hidden');
+}
+
+/* ---------- step 6 : proposition ---------- */
+function renderProposition(){
+  const body=document.getElementById('propBody'); body.innerHTML='';
+  let total=0;
+  state.needs.forEach(id=>{
+    const need=NEEDS.filter(x=>x.id===id)[0];
+    const e=state.estimations[id];
+    total+=e.cout;
+    const online = !(id==='sante'||id==='retraite');
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td><div class="pt-sol"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+need.icon+'</svg></span>'+need.title+'</div></td>'+
+      '<td>'+(e.detail[0]||'—')+'</td>'+
+      '<td>'+fmtEur(e.cout)+' / an</td>'+
+      '<td><span class="'+(online?'badge-online':'badge-expert')+'">'+(online?'DEVIS EN LIGNE':'SUR DEVIS')+'</span></td>'+
+      '<td><div class="pt-actions"><button onclick="state.activeTab=\''+id+'\';goStep(4)">Modifier</button><button onclick="removeNeed(\''+id+'\')">Retirer</button></div></td>';
+    body.appendChild(tr);
+  });
+  document.getElementById('propTotal').textContent=fmtEur(total)+' / an';
+}
+function removeNeed(id){
+  const i=state.needs.indexOf(id); if(i>-1) state.needs.splice(i,1);
+  computeEstimation(); renderProposition();
+  if(!state.needs.length) goStep(1); else renderNeeds();
+}
+
+/* ---------- step 7 : devis ---------- */
+function renderDevisSynth(){
+  const n=parseInt(document.getElementById('s3-concernes').value||'0',10)||0;
+  const html='<h4>Synthèse transmise</h4>'+
+    '<div class="synth-row"><span>Entreprise</span><b>'+(state.company.raison||'—')+'</b></div>'+
+    '<div class="synth-row"><span>Ville</span><b>'+(state.company.ville||'—')+'</b></div>'+
+    '<div class="synth-row"><span>Salariés concernés</span><b>'+n+'</b></div>'+
+    '<div class="synth-row"><span>Solutions</span><b>'+state.needs.length+'</b></div>'+
+    '<div class="synth-row tot"><span>Estimation annuelle</span><b>'+fmtEur(state.totalCout)+'</b></div>';
+  document.getElementById('synthCard').innerHTML=html;
+}
+function submitDevis(){
+  const err=document.getElementById('d-err');
+  const prenom=document.getElementById('d-prenom').value.trim();
+  const nom=document.getElementById('d-nom').value.trim();
+  const tel=document.getElementById('d-tel').value.trim();
+  const email=document.getElementById('d-email').value.trim();
+  const consent=document.getElementById('d-consent').checked;
+  const emailOk=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  if(!tel){ err.textContent='Merci de renseigner votre numéro de téléphone.'; err.classList.add('show'); return; }
+  if(!emailOk){ err.textContent='Merci de renseigner une adresse e-mail professionnelle valide.'; err.classList.add('show'); return; }
+  if(!consent){ err.textContent='Le recueil de votre consentement est obligatoire avant tout envoi.'; err.classList.add('show'); return; }
+  err.classList.remove('show');
+  const payload={
+    contact:{prenom,nom,fonction:document.getElementById('d-fonction').value,tel,email,rappel:document.getElementById('d-rappel').checked,consent:true,consentDate:new Date().toISOString()},
+    company:state.company, employees:{concernes:parseInt(document.getElementById('s3-concernes').value||'0',10)},
+    needs:state.needs, config:state.config, totalCout:state.totalCout
+  };
+  try{ fetch('traitement_devis.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});}catch(e){}
+  document.getElementById('devisForm').classList.add('hidden');
+  document.getElementById('devisSuccess').classList.remove('hidden');
+  const greeting=prenom?('Merci '+prenom+'.'):'Merci.';
+  document.getElementById('devisSuccessMsg').textContent=greeting+' Votre devis estimé à '+fmtEur(state.totalCout)+'/an est en cours de préparation. Un expert de votre Caisse régionale vous recontacte sous 24h ouvrées pour le finaliser.';
+}
+
+/* ---------- stepper / navigation ---------- */
+const STEPS=['Vos besoins','Votre entreprise','Vos salariés','Configuration','Estimation','Proposition','Votre devis'];
+const state={ step:1, needs:[], activeTab:null,
+  company:{siret:'',raison:'',ville:'',cp:'',naf:'',idcc:'',effectif:0,effLabel:''},
+  config:{
+    avantages:{choices:['tr'], tr:{valeur:10,part:60}, mobilite:{montant:400}, cadeaux:{montant:150}},
+    epargne:{choices:[], abondement:800},
+    sante:{formule:'confort',part:60},
+    retraite:{taux:3,part:60}
+  },
+  estimations:{}, totalCout:0, totalGainTotal:0
+};
+function renderStepper(){
+  const el=document.getElementById('stepper'); el.innerHTML='';
+  STEPS.forEach((label,i)=>{
+    const n=i+1;
+    const chip=document.createElement('div');
+    chip.className='step-chip'+(n<state.step?' done':'')+(n===state.step?' current':'');
+    chip.innerHTML='<span class="num">'+(n<state.step?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>':'<span>'+n+'</span>')+'</span>'+label;
+    el.appendChild(chip);
+  });
+  document.getElementById('stepperFill').style.width=Math.round((state.step-1)/(STEPS.length-1)*100)+'%';
+}
+function goStep(n){
+  if(n===2 && state.needs.length===0) return;
+  state.step=n;
+  document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('step-'+n).classList.add('active');
+  if(n===4) renderConfigStep();
+  renderStepper();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function toggleMenu(){ const m=document.getElementById('mobileMenu'),b=document.querySelector('.burger'); const o=m.classList.toggle('open'); b.setAttribute('aria-expanded',o); }
+
+/* ---------- init ---------- */
+renderNeeds();
+renderStepper();
+document.getElementById('ccEffectif');
+</script>
+<script src="site-b.js?v=20261112"></script>
+<script src="chatbot-widget.js?v=20261112" defer></script>
+<script src="feedback-widget.js?v=20261021b" defer></script>
+</body></html>

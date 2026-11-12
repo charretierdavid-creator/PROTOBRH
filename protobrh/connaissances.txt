@@ -883,3 +883,64 @@ moyen et du niveau choisi : l'assistant ne donne pas de prix, il oriente vers
 le devis en ligne ou un expert.
 Où le trouver : fenêtre « Protéger mes salariés » (accueil et diagnostic),
 résultat de l'audit, étape « Configuration » du devis (santé et prévoyance).
+
+============================================================ 36.
+PRÉVOYANCE IMPOSÉE PAR LES CONVENTIONS COLLECTIVES (IDCC)
+============================================================
+Certaines conventions collectives imposent un régime de prévoyance (décès,
+incapacité temporaire de travail, invalidité) ou des garanties minimales.
+Répertoire de travail au 21/10/2026, non exhaustif : il ne remplace ni la
+lecture des textes applicables ni un avis juridique. Si un IDCC n'y figure
+pas, cela ne prouve pas l'absence d'obligation. La complémentaire santé et le
+maintien de salaire sont des sujets distincts. Le code IDCC figure sur le
+bulletin de paie ; l'expert BRH vérifie le texte applicable (version,
+extension, champ, catégories bénéficiaires, avenants).
+BRANCHES REPÉRÉES (IDCC — salariés — point clé — statut)
+- 0573 Commerces de gros — non-cadres — régime obligatoire décès,
+  incapacité, invalidité ; accord du 23/10/2023 (depuis le 01/07/2024) ajoute
+  rente éducation et frais d'obsèques. Confirmé.
+- 3127 Services à la personne — non-cadres — garanties minimales : décès,
+  rente éducation, obsèques, arrêt de travail, invalidité ; accord du
+  06/02/2025. Confirmé.
+- 1431 Optique-lunetterie de détail — non-cadres — régime national
+  obligatoire décès, incapacité, invalidité ; accord 2011, avenant n°9 du
+  26/09/2024. Confirmé.
+- 3221 Agences de presse et 1480 Journalistes — salariés couverts par
+  l'accord du 31/01/2019 — capital décès minimal de 200 % du traitement de
+  base en tranche 1 ; pigistes : régime distinct. Confirmé.
+- 2128 Mutualité — cadres et non-cadres — décès/IAD, rente éducation,
+  incapacité, invalidité ; garanties (annexe IV) et cotisations 2026 par
+  tranches (annexe V). Confirmé.
+- 1499 Miroiterie, transformation et négoce du verre — décès, IAD,
+  obsèques, double effet, rente éducation ; accord du 01/03/2016. Confirmé.
+- 0292 Plasturgie — incapacité, invalidité, décès ; cotisation minimale
+  0,8 % (0,4 % employeur, 0,4 % salarié) ; accord du 29/10/2014. Confirmé,
+  actualisation à vérifier.
+- 1586 Industries charcutières — non-cadres : garanties minimales
+  obligatoires ; cadres : accord distinct du 03/11/2025 révisé le
+  16/04/2026. Confirmé.
+- 1605 Désinfection, désinsectisation, dératisation (3D) — non-cadres —
+  régime obligatoire ; l'avenant de 2014 a pris fin au 01/01/2025 : texte
+  successeur à vérifier. À revalider.
+- 0275 Personnel au sol du transport aérien — décès et perte totale et
+  irréversible d'autonomie, options au choix de l'entreprise. Confirmé.
+- 3017 Ports et manutention — ouvriers dockers professionnels
+  intermittents uniquement — incapacité, invalidité, IPP, décès/IAD. Confirmé.
+- 1596 / 1597 BTP ouvriers — régime national obligatoire, cotisation
+  minimale à la charge exclusive de l'employeur ; avenant n°62 du
+  20/05/2020 ; IDCC selon bâtiment ou travaux publics. Confirmé.
+- 2335 Agences générales d'assurances — tous salariés — régime obligatoire
+  et garanties minimales communes ; accord du 13/11/2018. Confirmé.
+- 2378 Travail temporaire — intérimaires — régime dédié distinct des
+  permanents ; accord du 16/11/2018. Confirmé.
+- 1505 Commerce de détail alimentaire et 3233 Industrie cimentière — textes
+  sur les catégories objectives seulement : socle de garanties non établi.
+  À vérifier.
+TEXTES DE RÉFÉRENCE
+- Code de la sécurité sociale, articles L. 911-1 et suivants (régimes
+  collectifs de protection sociale complémentaire).
+- Urssaf, fiche « prévoyance complémentaire » (contributions patronales).
+- Légifrance, liste des conventions collectives par IDCC.
+Où le trouver : devis en ligne, petit « i » à côté de « Convention
+collective » (étape 2) et dans le niveau de couverture prévoyance (étape 4) ;
+la fenêtre s'adapte à l'IDCC saisi.
