@@ -15,8 +15,25 @@ MAPH = 666 + SHIFT
 VERS = {
     'S': {'t2b': '(VERSION STANDARD)', 'site': 'protobrh · version de référence', 'img': 'map3.jpg'},
     'A': {'t2b': '(VERSION A · PARCOURS SIMPLIFIÉ)', 'site': 'protobrha · parcours raccourci, design épuré', 'img': 'map_a.jpg'},
-    'B': {'t2b': '(VERSION B · PARCOURS COMPLET)', 'site': 'protobrhb · repère d’étape, réassurance', 'img': 'map_b.jpg'},
+    'B': {'t2b': '(VERSION B · LABEL BRH + SIMULATION)', 'site': 'protobrhb · carrousel, Label BRH, simulation', 'img': 'map_b.jpg'},
 }
+# version B (site propre : accueil avec carrousel, Label BRH, simulation) : intitulé, texte et pages de chaque étape
+B_CARDS = {
+    '1.1': ('1.1 Accueil portail 360°', '« Le portail RH dédié aux chefs d’entreprise » · carrousel de 4 actualités', 'É28'),
+    '1.2': ('1.2 Explore ses 3 besoins RH', '3 enjeux et « Découvrir les solutions »', 'É28'),
+    '2.1': ('2.1 Décrit son entreprise', 'Secteur et effectif (2 questions)', 'É29'),
+    '2.2': ('2.2 Répond au Label BRH', '8 questions sur 3 enjeux', 'É29'),
+    '2.3': ('2.3 Se compare', 'Score vs moyenne des répondants', 'É29'),
+    '3.1': ('3.1 Score Label BRH', 'Sur 100, avec niveau · après coordonnées', 'É29'),
+    '3.2': ('3.2 Leviers prioritaires', 'Recommandations par enjeu', 'É29'),
+    '4.1': ('4.1 Chiffre ses leviers', 'Solutions présélectionnées', 'É29 · É30'),
+    '4.2': ('4.2 Transmet ses coordonnées', 'Consentement explicite', 'É29'),
+    '5.1': ('5.1 Choisit ses solutions', 'Une ou plusieurs des 4 offres', 'É30'),
+    '5.2': ('5.2 Identifie son entreprise', 'SIRET, effectif, salariés concernés', 'É30'),
+    '5.3': ('5.3 Configure et estime', 'Configuration, estimation, proposition', 'É30'),
+    '6.1': ('6.1 Reçoit son devis', 'Consultable, imprimable · transmis à la CR', 'É30 · P2'),
+}
+B_COLS = {'1': 'Un portail organisé autour de 3 besoins RH', '2': 'Label BRH : une dizaine de questions', '3': 'Score, niveau et leviers prioritaires', '4': 'Leviers à chiffrer'}
 OUT_AM = {'x': 1361, 'y': LANE_Y + 14, 'w': 515, 'h': LANE_H - 28}
 ebs = [dict(x, y=x['y'] + SHIFT) for x in G['ebs']]
 ettl = dict(G['ettl'], y=G['ettl']['y'] + SHIFT)
@@ -31,20 +48,20 @@ def variante(v):
         if k == '1.2': c['txt'], c['ref'] = '4 solutions et leurs fiches « En savoir plus »', 'É02 · É03'
         if k == '2.1': c['txt'] = 'Nombre de salariés seulement, après les priorités' if v == 'A' else 'SIREN facultatif, secteur, effectif, département'
         if k == '3.1': c['txt'] = 'Affiché immédiatement, sans e-mail' if v == 'A' else 'Affiché après saisie de l’e-mail, non contractuel'
-        if k == '1.1' and v == 'B': c['txt'] = '« Le portail RH dédié aux chefs d’entreprise » · bandeau institutionnel'
+        if v == 'B' and k in B_CARDS: c['b'], c['txt'], c['ref'] = B_CARDS[k]
     circles = [c for c in G['circles'] if (c['cx'], c['cy']) not in pts]
     lines = [l for l in G['lines'] if (l['x1'], l['y1']) not in pts]
-    acc_r = {'S': 'Accès : menu du haut', 'A': 'Accès : lien en bas de page', 'B': 'Accès : bandeau institutionnel'}[v]
+    acc_r = {'S': 'Accès : menu du haut', 'A': 'Accès : lien en bas de page', 'B': 'Accès : menu du haut · carrousel'}[v]
     acc_am = {'S': 'Accès : menu · vignette « Protéger mes salariés » · « Bon à savoir » du diagnostic',
               'A': 'Accès : vignette « Protéger mes salariés » · « Bon à savoir » · lien en bas de page',
-              'B': 'Accès : menu · vignette « Protéger mes salariés » · « Bon à savoir » du diagnostic'}[v]
+              'B': 'Accès : menu du haut'}[v]
     addons = [
-        {'sid': 'R', 'x': 202, 'w': 300, 'b': 'Ressources & newsletter', 'txt': 'Guides, avantages fiscaux, newsletter', 'acc': acc_r, 'ref': 'É08 · É23 – É25'},
+        {'sid': 'R', 'x': 202, 'w': 300, 'b': 'Ressources & newsletter', 'txt': 'Guides, avantages fiscaux, newsletter', 'acc': acc_r, 'ref': 'É23 – É25' if v == 'B' else 'É08 · É23 – É25'},
         {'sid': 'AS', 'x': 521, 'w': 341, 'b': 'Assistant BRH', 'txt': '« Besoin d’aide ? » sur chaque écran (IA Mistral)', 'acc': 'Accès : bouton flottant', 'ref': 'H'},
         {'sid': 'AM', 'x': 886, 'w': 451, 'b': 'Audit mutuelle et prévoyance', 'txt': '3 minutes, résultat immédiat sans coordonnées', 'acc': acc_am, 'ref': 'É26'},
     ]
     for a in addons: a.update(y=LANE_Y + 14, h=LANE_H - 28, kind='addon')
-    connect = [(215, 360, 'R', {'S': 'Menu', 'A': 'Bas de page', 'B': 'Bandeau'}[v]), (1140, 335, 'AM', 'Bon à savoir')]
+    connect = [(215, 360, 'R', {'S': 'Menu', 'A': 'Bas de page', 'B': 'Menu'}[v]), (1140, 335, 'AM', 'Menu' if v == 'B' else 'Bon à savoir')]
     return cards, circles, lines, addons, connect
 
 def box(x, y, w, h, cls, inner, style=''):
@@ -63,7 +80,7 @@ def build(v):
         H.append(box(c['x'], c['y'], c['w'], 66, 'col', ''))
         H.append(f'<div class="num" style="left:{c["n"]["x"]}px;top:{c["n"]["y"]}px;background:{c["nbg"]}">{c["num"]}</div>')
         H.append(f'<div class="cl{" big" if c["num"]=="0" else ""}" style="left:{c["l"]["x"]}px;top:{c["l"]["y"]}px">{e(c["l"]["text"])}</div>')
-        H.append(f'<div class="cs{" ctr" if c["num"]=="0" else ""}" style="left:{c["s"]["x"]}px;top:{c["s"]["y"]}px;width:{c["s"]["w"]}px">{e(c["s"]["text"])}</div>')
+        H.append(f'<div class="cs{" ctr" if c["num"]=="0" else ""}" style="left:{c["s"]["x"]}px;top:{c["s"]["y"]}px;width:{c["s"]["w"]}px">{e(B_COLS.get(c["num"], c["s"]["text"]) if v == "B" else c["s"]["text"])}</div>')
 
     svg = [f'<svg width="1920" height="{MAPH}" viewBox="0 0 1920 {MAPH}">']
     for p in G['paths']:

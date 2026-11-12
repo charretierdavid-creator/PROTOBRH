@@ -112,7 +112,7 @@
    n'est utilisé qu'avec l'accord du dirigeant et ne contient aucune donnée personnelle. */
 const CBOT_ENDPOINT = window.BRH_CBOT_ENDPOINT || 'chatbot.php';   // même dossier ; version hors ligne : relais assistant-demo.php (jeton)
 const CBOT_CONTACT  = { label:'Être recontacté par un expert', href:'diagnostic.html#contact' };
-const CBOT_DEVIS    = { label:'Obtenir mon devis en ligne', href:'devis.html' };
+const CBOT_DEVIS    = { label:'Obtenir mon devis en ligne', href: window.BRH_CBOT_DEVIS || 'devis.html' };   // page du devis propre à une version : window.BRH_CBOT_DEVIS (variante.js)
 const CBOT_SUGG = ["Qu'est-ce que la Banque des RH ?","Quelles solutions proposez-vous ?","Parler à un expert"];
 const CBOT_ENJEUX = ["Attirer des talents","Fidéliser mes salariés","Motiver et engager","Maîtriser le coût salarial","Préparer les départs en retraite"];
 const CBOT_DEJA   = ["Mutuelle","Prévoyance","Épargne salariale","Intéressement / participation","Retraite supplémentaire","Titres-restaurant","Autres avantages"];

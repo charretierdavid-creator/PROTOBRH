@@ -10,15 +10,22 @@ e = lambda s: html.escape(str(s), quote=True)
 aid = lambda code: 'p-' + code.replace('É', 'E')
 STEP_PAGES = {'A':['É01'],'1.1':['É01','É04'],'1.2':['É02','É03','É27'],'2.1':['É05'],'2.2':['É06'],'2.3':['É06'],'3.1':['É07'],'3.2':['É07'],'4.1':['É07','É27'],'4.2':['É09','É22'],'5.1':['É10','É11'],'5.2':['É12','É13','É14'],'5.3':['É15','É16','É17','É18','É19','É20'],'6.1':['É21','P2'],'5.L':['P1'],'6.L':['P1','É22'],'R':['É08','É23','É24','É25'],'AS':['H'],'AM':['É26']}
 LAB = {'A':'Acquisition','1.1':'1.1 Accueil portail 360°','1.2':'1.2 Explore les 4 besoins RH','2.1':'2.1 Décrit son entreprise','2.2':'2.2 Note ses priorités RH','2.3':'2.3 Se compare','3.1':'3.1 Gain fiscal annuel','3.2':"3.2 Pouvoir d'achat / salarié",'4.1':'4.1 Solutions priorisées','4.2':'4.2 Transmet ses coordonnées','5.1':'5.1 Choisit ses solutions','5.2':'5.2 Identifie son entreprise','5.3':'5.3 Configure et estime','5.L':'Lead qualifié','6.1':'6.1 Reçoit son devis','6.L':'Rappel expert BRH de la CR','R':'Complément · Ressources & newsletter','AS':'Complément · Assistant BRH','AM':'Complément · Audit mutuelle et prévoyance'}
+# version B : pages propres (É28 accueil, É29 Label BRH, É30 simulation) à chaque étape, et intitulés d'étape
+SPV = {'B': {'A':['É28'],'1.1':['É28'],'1.2':['É28'],'2.1':['É29'],'2.2':['É29'],'2.3':['É29'],'3.1':['É29'],'3.2':['É29'],'4.1':['É29','É30'],'4.2':['É29'],
+             '5.1':['É30'],'5.2':['É30'],'5.3':['É30'],'6.1':['É30','P2'],'6.L':['P1'],'R':['É23','É24','É25'],'AM':['É26','É16']}}
+LABV = {'B': {'1.2':'1.2 Explore ses 3 besoins RH','2.2':'2.2 Répond au Label BRH','3.1':'3.1 Score Label BRH','3.2':'3.2 Leviers prioritaires','4.1':'4.1 Chiffre ses leviers'}}
+EBV = {'B': ['É29','É29','É29','É30','É30','É29']}
 STEP_ORDER = ['A','1.1','1.2','2.1','2.2','2.3','3.1','3.2','4.1','4.2','5.1','5.2','5.3','5.L','6.1','6.L','R','AS','AM']
-GROUPS = [('Accueil & découverte',['É01','É02','É03','É04','É27']),('Diagnostic RH',['É05','É06','É07','É08','É09','É26']),('Devis — données communes',['É10','É11','É12','É13','É14']),('Devis — configuration',['É15','É16','É17','É18']),('Estimation, proposition, devis',['É19','É20','É21','É22']),('Ressources & newsletter',['É23','É24','É25']),('Back-office & transverse',['P1','P2','H']),('Test A/B',['VA','VB'])]
+GROUPS = [('Accueil & découverte',['É01','É02','É03','É04','É27']),('Diagnostic RH',['É05','É06','É07','É08','É09','É26']),('Devis — données communes',['É10','É11','É12','É13','É14']),('Devis — configuration',['É15','É16','É17','É18']),('Estimation, proposition, devis',['É19','É20','É21','É22']),('Ressources & newsletter',['É23','É24','É25']),('Back-office & transverse',['P1','P2','H']),('Test A/B',['VA','VB','É28','É29','É30'])]
 ORDER = [c for g in GROUPS for c in g[1]]
 PRIO = {'MVP':'MVP','V2':'V2','ARB':'À arbitrer'}
 VERS = ['REF', 'A', 'B']
 VLAB = {'REF': 'Standard', 'A': 'Version A', 'B': 'Version B'}
 VURL = {'REF': 'protobrh.monsitedetest.com', 'A': 'protobrha.monsitedetest.com', 'B': 'protobrhb.monsitedetest.com'}
-VHYP = {'REF': 'Version standard : parcours et design actuels (V1.0.4), le point de comparaison.', 'A': 'Parcours simplifié, design épuré et moderne.', 'B': 'Parcours complet, design institutionnel.'}
+VHYP = {'REF': 'Version standard : parcours et design actuels (V1.0.4), le point de comparaison.', 'A': 'Parcours simplifié, design épuré et moderne.', 'B': 'Accueil avec carrousel, Label BRH (score sur 100) et simulation en 7 étapes.'}
 pvar = lambda p: p.get('var') or VERS
+spages = lambda sid, v: SPV.get(v, {}).get(sid, STEP_PAGES[sid])   # pages d'une étape pour une version
+lab = lambda sid, v: LABV.get(v, {}).get(sid, LAB[sid])
 def vtags(v, full=False):
     if set(v) == set(VERS): return '<span class="vtag v-ALL">Toutes versions</span>' if full else ''
     return ''.join(f'<span class="vtag v-{x}">{VLAB[x]}</span>' for x in v)
@@ -38,11 +45,11 @@ def parcours(v):
     b = io.BytesIO(); im.save(b, 'JPEG', quality=78, optimize=True)
     hot, sids = [], []
     for c in g['cards']:
-        sid = c.get('sid') or stepid(c['b']); pages = [x for x in STEP_PAGES[sid] if v in pvar(BY[x])]; sids.append(sid)
-        hot.append(f'<a class="hot" href="#{aid(pages[0])}" style="left:{pct(c["x"]-4,1920)};top:{pct(c["y"]-4,MAPH)};width:{pct(c["w"]+8,1920)};height:{pct(c["h"]+8,MAPH)}" title="{e(LAB[sid])} — pages : {", ".join(pages)}" aria-label="{e(LAB[sid])} : ouvrir {len(pages)} page(s)"><span>{len(pages)}</span></a>')
-    for x, code in zip(g['ebs'], ['É22','É06','É07','É20','É15','É22']):
+        sid = c.get('sid') or stepid(c['b']); pages = [x for x in spages(sid, v) if v in pvar(BY[x])]; sids.append(sid)
+        hot.append(f'<a class="hot" href="#{aid(pages[0])}" style="left:{pct(c["x"]-4,1920)};top:{pct(c["y"]-4,MAPH)};width:{pct(c["w"]+8,1920)};height:{pct(c["h"]+8,MAPH)}" title="{e(lab(sid, v))} — pages : {", ".join(pages)}" aria-label="{e(lab(sid, v))} : ouvrir {len(pages)} page(s)"><span>{len(pages)}</span></a>')
+    for x, code in zip(g['ebs'], EBV.get(v, ['É22','É06','É07','É20','É15','É22'])):
         hot.append(f'<a class="hot eb" href="#{aid(code)}" style="left:{pct(x["x"],1920)};top:{pct(x["y"],MAPH)};width:{pct(x["w"],1920)};height:{pct(x["h"],MAPH)}" title="{e(x["text"])} — voir {code}" aria-label="{e(x["text"])} : voir {code}"></a>')
-    steps = ''.join(f'<div class="step"><h3>{e(LAB[s])}</h3><div class="chips">' + ''.join(f'<a class="chip{" v2" if BY[c]["statut"]=="V2" else ""}" href="#{aid(c)}">{c}</a>' for c in STEP_PAGES[s] if v in pvar(BY[c])) + '</div></div>' for s in STEP_ORDER if s in sids)
+    steps = ''.join(f'<div class="step"><h3>{e(lab(s, v))}</h3><div class="chips">' + ''.join(f'<a class="chip{" v2" if BY[c]["statut"]=="V2" else ""}" href="#{aid(c)}">{c}</a>' for c in spages(s, v) if v in pvar(BY[c])) + '</div></div>' for s in STEP_ORDER if s in sids)
     img = 'data:image/jpeg;base64,' + base64.b64encode(b.getvalue()).decode()
     return (f'<div class="mapv" data-v="{v}"><div class="mapwrap"><div class="mapimg"><img src="{img}" alt="Parcours du dirigeant — {VLAB[v]}" loading="lazy">' + '\n'.join(hot) +
             f'</div></div><div class="steps">{steps}</div></div>')
@@ -54,11 +61,12 @@ toc = ''.join(f'<h4>{e(g)}</h4>' + ''.join(f'<a href="#{aid(c)}" data-code="{c}"
 pages_html = []
 for i, code in enumerate(ORDER):
     p = BY[code]
-    steps = [s for s in STEP_ORDER if code in STEP_PAGES[s]]
-    rel = ''.join(f'<div class="rel"><span>Dans le parcours : <b>{e(LAB[s])}</b></span>' + ''.join(f'<a class="chip{" cur" if c==code else ""}" href="#{aid(c)}" data-var="{" ".join(pvar(BY[c]))}">{c} · {e(BY[c]["title"].split(" — ")[-1])}</a>' for c in STEP_PAGES[s]) + '</div>' for s in steps)
+    allp = lambda s: STEP_PAGES[s] + [c for vv in SPV.values() for c in vv.get(s, []) if c not in STEP_PAGES[s]]
+    steps = [s for s in STEP_ORDER if code in allp(s)]
+    rel = ''.join(f'<div class="rel"><span>Dans le parcours : <b>{e(LAB[s])}</b></span>' + ''.join(f'<a class="chip{" cur" if c==code else ""}" href="#{aid(c)}" data-var="{" ".join(pvar(BY[c]))}">{c} · {e(BY[c]["title"].split(" — ")[-1])}</a>' for c in allp(s)) + '</div>' for s in steps)
     tile = 'proc' if p.get('process') else ('v2' if p['statut'] == 'V2' else '')
     if p.get('imgs'):
-        figs = ''.join(f'<figure><img src="{IM[imn]}" alt="Capture de l\'écran {code}" loading="lazy" data-zoom><figcaption>{("Capture de la version " + imn[1].upper() + " du 21/10/2026") if imn[:3] in ("va_", "vb_") else "Capture du prototype du 21/10/2026 (V1.5)"}{" — vue " + str(k+1) if len(p["imgs"])>1 else ""}</figcaption></figure>' for k, imn in enumerate(p['imgs']))
+        figs = ''.join(f'<figure><img src="{IM[imn]}" alt="Capture de l\'écran {code}" loading="lazy" data-zoom><figcaption>{("Capture de la version B du 12/11/2026" if imn[:2] == "vb" else "Capture de la version A du 21/10/2026") if imn[:2] in ("va", "vb") else "Capture du prototype du 21/10/2026 (V1.5)"}{" — vue " + str(k+1) if len(p["imgs"])>1 else ""}</figcaption></figure>' for k, imn in enumerate(p['imgs']))
     else:
         figs = f'<div class="noimg"><b>{"Processus back-office" if p.get("process") else "Écran à maquetter"}</b><br>Pas d\'écran côté dirigeant</div>'
     reqs = ''.join(f'<tr data-var="{" ".join(r[2] if len(r) > 2 else pvar(p))}"><td>{k+1:02d}</td><td>{e(r[0])}{" " + vtags(r[2]) if len(r) > 2 else ""}</td><td><span class="prio {r[1]}">{PRIO[r[1]]}</span></td></tr>' for k, r in enumerate(p['reqs']))

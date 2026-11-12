@@ -1,0 +1,83 @@
+VERSION B DU PORTAIL (protobrhb) — CE QUE LE VISITEUR VOIT SUR CE SITE
+
+MENU DU HAUT
+Nos offres, Diagnostic RH (le Label BRH), Audit santé (audit de la
+complémentaire santé et de la prévoyance), Devis (la simulation),
+Avantages fiscaux, Ressources, Newsletter du mois. Bouton « Parler à un expert ».
+Sur ce site, le « Diagnostic RH » est le Label BRH et le « Devis » est la
+simulation en 7 étapes. Il n'y a pas de diagnostic à curseurs ni de bloc
+« patrimoine du dirigeant » sur ce site.
+
+ACCUEIL
+- Deux boutons : « Faire mon diagnostic RH » (Label BRH) et « Faire mon devis »
+  (simulation).
+- Carrousel de 4 actualités :
+  1. Offre du moment — Prime de Partage de la Valeur 2026 : jusqu'à 6 000 €
+     exonérés par salarié et par an avec un accord d'intéressement ou de
+     participation. Bouton « Évaluer mon éligibilité » (vers le Label BRH).
+  2. Nouveau — le Label BRH : situer sa politique RH. Bouton « Passer le Label
+     BRH ».
+  3. Ressource — Guide des avantages salariés, édition 2026. Bouton
+     « Télécharger le guide » (page Ressources).
+  4. À venir — Rendez-vous Banque des Ressources Humaines : un webinaire avec
+     les experts sur les priorités RH et les dispositifs 2026. Bouton
+     « M'inscrire » (formulaire de contact du Label BRH).
+- « Quels sont vos besoins ? » : 3 enjeux, chacun avec « Découvrir les
+  solutions » : être attractif sur le marché de l'emploi (protection sociale),
+  fidéliser et motiver mes collaborateurs (partage de la valeur), renforcer le
+  pouvoir d'achat de mes salariés.
+
+LABEL BRH (page « Diagnostic RH »)
+- Auto-évaluation de la politique avantages salariés : une dizaine de
+  questions, environ 2 minutes. 2 questions sur l'entreprise (secteur,
+  effectif), puis 8 questions sur 3 enjeux : être attractif, fidéliser,
+  pouvoir d'achat.
+- Résultat : un score sur 100 et un niveau — Engagé (40 à 59 points), Confirmé
+  (60 à 79), Exemplaire (80 à 100) ; en dessous de 40 : politique « à engager ».
+  Comparaison avec la moyenne des autres entreprises répondantes, enjeu par
+  enjeu, et leviers prioritaires.
+- Le résultat s'affiche après saisie du prénom, du nom, de l'e-mail
+  professionnel et de la fonction, avec consentement.
+- Le Label BRH est un format d'auto-évaluation : ce n'est pas une
+  certification officielle ni réglementaire.
+- Depuis les résultats : « Chiffrer mes leviers » ou « Obtenir mon devis »
+  ouvre la simulation avec les solutions présélectionnées et l'effectif repris.
+- Bas de page : formulaire « Nous contacter » pour être recontacté par un
+  expert de la Caisse régionale.
+
+SIMULATION ET DEVIS (page « Devis »)
+- 7 étapes, environ 2 minutes : 1. vos besoins, 2. votre entreprise (SIRET),
+  3. vos salariés, 4. configuration de chaque solution, 5. estimation chiffrée,
+  6. proposition, 7. votre devis. Les réponses sont conservées en cas de
+  retour en arrière.
+- 4 solutions : épargne salariale (Amundi, CA Titres), santé et prévoyance
+  (Crédit Agricole Assurances), retraite collective (Crédit Agricole
+  Assurances, Amundi), avantages salariés (Worklife).
+- Devis en ligne immédiat pour les structures de moins de 50 salariés
+  concernés. Au-delà, un expert de la Caisse régionale construit une
+  proposition sur mesure (rappel sous 24 h ouvrées).
+- La santé-prévoyance et la retraite collective sont finalisées « sur devis »
+  avec un expert.
+- À la fin, le devis est consultable à l'écran et imprimable (ou enregistrable
+  en PDF). Montants estimatifs et non contractuels.
+
+AUDIT SANTÉ (menu « Audit santé »)
+Sur ce site, on dit « complémentaire santé » plutôt que « mutuelle ». Même
+module que l'audit mutuelle décrit dans la base documentaire : audit gratuit
+de la complémentaire santé et de la prévoyance, environ 3 minutes, résultat immédiat. Depuis le
+résultat, le devis santé et prévoyance reprend le secteur et la convention
+collective ; il présente l'offre Santé collective de Crédit Agricole
+Assurances et le petit « i » sur la prévoyance imposée par la convention.
+
+AUTRES PAGES
+- Avantages fiscaux : plafonds et exonérations par dispositif.
+- Ressources : cas clients, livres blancs (dont le Guide des avantages
+  salariés 2026), articles, webinars, podcasts.
+- Newsletter du mois : « Banque des RH info », édition du mois et archives.
+
+POUR ORIENTER LE VISITEUR SUR CE SITE
+- Évaluer sa politique RH : « Diagnostic RH » (Label BRH).
+- Chiffrer une solution : « Devis » (simulation).
+- Comparer sa complémentaire santé ou sa prévoyance : « Audit santé ».
+- Parler à quelqu'un : « Parler à un expert » ou le formulaire de contact en
+  bas du Label BRH.

@@ -394,7 +394,7 @@
     "y": 356,
     "w": 150,
     "h": 91.34375,
-    "b": "1.2 Explore les 4 besoins RH"
+    "b": "1.2 Explore ses 3 besoins RH"
    },
    {
     "x": 470,
@@ -408,7 +408,7 @@
     "y": 299,
     "w": 150,
     "h": 76.59375,
-    "b": "2.2 Note ses priorités RH"
+    "b": "2.2 Répond au Label BRH"
    },
    {
     "x": 705,
@@ -422,21 +422,21 @@
     "y": 181,
     "w": 150,
     "h": 75.421875,
-    "b": "3.1 Gain fiscal annuel"
+    "b": "3.1 Score Label BRH"
    },
    {
     "x": 950,
     "y": 326,
     "w": 150,
     "h": 76.59375,
-    "b": "3.2 Pouvoir d'achat / salarié"
+    "b": "3.2 Leviers prioritaires"
    },
    {
     "x": 1065,
     "y": 240,
     "w": 150,
     "h": 60.671875,
-    "b": "4.1 Solutions priorisées"
+    "b": "4.1 Chiffre ses leviers"
    },
    {
     "x": 1310,
