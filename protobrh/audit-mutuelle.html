@@ -875,7 +875,7 @@ function send(){
   A.sent=true; render();
 }
 window.__auT=track;
-const LEAD_ENDPOINT='';   /* à brancher : Web-to-CR (SOLEAD) — même circuit que le devis */
+const LEAD_ENDPOINT='lead.php';   /* enregistrement de la demande (admin-leads.php) ; Web-to-CR (SOLEAD) à brancher */
 /* profil de l'assistant enrichi (données d'entreprise uniquement) */
 window.addEventListener('pagehide',()=>{ try{ const p=JSON.parse(sessionStorage.getItem('brhProfil')||'{}');
   if(A.effectif && !p.effectif) p.effectif=parseInt(A.effectif,10)||undefined;

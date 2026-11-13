@@ -15,7 +15,7 @@ MAPH = 666 + SHIFT
 VERS = {
     'S': {'t2b': '(VERSION STANDARD)', 'site': 'protobrh · version de référence', 'img': 'map3.jpg'},
     'A': {'t2b': '(VERSION A · PARCOURS SIMPLIFIÉ)', 'site': 'protobrha · parcours raccourci, design épuré', 'img': 'map_a.jpg'},
-    'B': {'t2b': '(VERSION B · LABEL BRH + SIMULATION)', 'site': 'protobrhb · carrousel, Label BRH, simulation', 'img': 'map_b.jpg'},
+    'B': {'t2b': '(VERSION B · LABEL BRH + DEVIS COMMUN)', 'site': 'protobrhb · accueil propre, Label BRH', 'img': 'map_b.jpg'},
 }
 # version B (site propre : accueil avec carrousel, Label BRH, simulation) : intitulé, texte et pages de chaque étape
 B_CARDS = {
@@ -26,12 +26,9 @@ B_CARDS = {
     '2.3': ('2.3 Se compare', 'Score vs moyenne des répondants', 'É29'),
     '3.1': ('3.1 Score Label BRH', 'Sur 100, avec niveau · après coordonnées', 'É29'),
     '3.2': ('3.2 Leviers prioritaires', 'Recommandations par enjeu', 'É29'),
-    '4.1': ('4.1 Chiffre ses leviers', 'Solutions présélectionnées', 'É29 · É30'),
+    '4.1': ('4.1 Chiffre ses leviers', 'Solutions présélectionnées', 'É29 · É10'),
     '4.2': ('4.2 Transmet ses coordonnées', 'Consentement explicite', 'É29'),
-    '5.1': ('5.1 Choisit ses solutions', 'Une ou plusieurs des 4 offres', 'É30'),
-    '5.2': ('5.2 Identifie son entreprise', 'SIRET, effectif, salariés concernés', 'É30'),
-    '5.3': ('5.3 Configure et estime', 'Configuration, estimation, proposition', 'É30'),
-    '6.1': ('6.1 Reçoit son devis', 'Consultable, imprimable · transmis à la CR', 'É30 · P2'),
+    '6.1': ('6.1 Reçoit son devis', 'Consultable, imprimable · transmis à la CR', 'É21 · P2'),
 }
 B_COLS = {'1': 'Un portail organisé autour de 3 besoins RH', '2': 'Label BRH : une dizaine de questions', '3': 'Score, niveau et leviers prioritaires', '4': 'Leviers à chiffrer'}
 OUT_AM = {'x': 1361, 'y': LANE_Y + 14, 'w': 515, 'h': LANE_H - 28}

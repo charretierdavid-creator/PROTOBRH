@@ -1,18 +1,17 @@
 VERSION B DU PORTAIL (protobrhb) — CE QUE LE VISITEUR VOIT SUR CE SITE
 
 MENU DU HAUT
-Nos offres, Diagnostic RH (le Label BRH), Devis (la simulation), Ressources,
+Nos offres, Diagnostic RH (le Label BRH), Devis en ligne, Ressources,
 Newsletter du mois. Bouton « Parler à un expert ». L'Audit santé (audit de la
 complémentaire santé et de la prévoyance) et les Avantages fiscaux sont dans
 le bas de page de chaque page (et dans le menu sur mobile).
-Sur ce site, le « Diagnostic RH » est le Label BRH et le « Devis » est la
-simulation en 7 étapes : depuis le Label BRH, « Obtenir mon devis » ouvre la
-simulation (et non le devis en ligne décrit dans la base documentaire). Il n'y a pas de diagnostic à curseurs ni de bloc
+Sur ce site, le « Diagnostic RH » est le Label BRH. Le devis est le devis en
+ligne décrit dans la base documentaire, commun aux trois versions. Il n'y a pas de diagnostic à curseurs ni de bloc
 « patrimoine du dirigeant » sur ce site.
 
 ACCUEIL
 - Deux boutons : « Faire mon diagnostic RH » (Label BRH) et « Faire mon devis »
-  (simulation).
+  (devis en ligne).
 - Carrousel de 4 actualités : le même que sur les autres versions (voir la
   section « Label BRH et carrousel de l'accueil » de la base documentaire).
 - Bloc « Où en est votre politique avantages salariés ? » : une dizaine de
@@ -43,25 +42,15 @@ LABEL BRH (page « Diagnostic RH », label-brh.html)
   l'enjeu inférieur à 34 ; 2 étoiles = priorité moyenne, de 34 à 66 ;
   1 étoile = à consolider, 67 ou plus).
 - Depuis les résultats : « Chiffrer mes leviers » ou « Obtenir mon devis »
-  ouvre la simulation avec les solutions présélectionnées et l'effectif repris.
+  ouvre le devis en ligne avec les solutions présélectionnées et l'effectif repris.
 - Bas de page : formulaire « Nous contacter » pour être recontacté par un
   expert de la Caisse régionale.
 
-SIMULATION ET DEVIS (page « Devis »)
-- 7 étapes, environ 2 minutes : 1. vos besoins, 2. votre entreprise (SIRET),
-  3. vos salariés, 4. configuration de chaque solution, 5. estimation chiffrée,
-  6. proposition, 7. votre devis. Les réponses sont conservées en cas de
-  retour en arrière.
-- 4 solutions : épargne salariale (Amundi, CA Titres), santé et prévoyance
-  (Crédit Agricole Assurances), retraite collective (Crédit Agricole
-  Assurances, Amundi), avantages salariés (Worklife).
-- Devis en ligne immédiat pour les structures de moins de 50 salariés
-  concernés. Au-delà, un expert de la Caisse régionale construit une
-  proposition sur mesure (rappel sous 24 h ouvrées).
-- La santé-prévoyance et la retraite collective sont finalisées « sur devis »
-  avec un expert.
-- À la fin, le devis est consultable à l'écran et imprimable (ou enregistrable
-  en PDF). Montants estimatifs et non contractuels.
+DEVIS EN LIGNE (menu « Devis en ligne »)
+Le même devis en ligne que dans la base documentaire. Depuis le Label BRH,
+« Obtenir mon devis » l'ouvre avec les solutions et l'effectif repris. À la
+fin, le devis est consultable à l'écran et imprimable (ou enregistrable en
+PDF), avec une référence et une validité de 30 jours.
 
 AUDIT SANTÉ (bas de page « Audit santé »)
 Sur ce site, on dit « complémentaire santé » plutôt que « mutuelle ». Même
@@ -79,7 +68,7 @@ AUTRES PAGES
 
 POUR ORIENTER LE VISITEUR SUR CE SITE
 - Évaluer sa politique RH : « Diagnostic RH » (Label BRH).
-- Chiffrer une solution : « Devis » (simulation).
+- Chiffrer une solution : « Devis en ligne ».
 - Comparer sa complémentaire santé ou sa prévoyance : « Audit santé » en bas
   de page.
 - Connaître les plafonds d'exonération : « Avantages fiscaux » en bas de page.

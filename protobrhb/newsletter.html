@@ -418,7 +418,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
     <a class="brand" href="index.html" aria-label="Banque des Ressources Humaines — accueil"><img src="logo-brh.png" alt="Banque des Ressources Humaines, by CA Entreprises"></a>
     <nav class="nav" aria-label="Navigation principale">
       <a href="index.html#offres">Nos offres</a>
-      <a href="label-brh.html">Diagnostic RH</a><a href="simulation.html">Devis</a>
+      <a href="label-brh.html">Diagnostic RH</a><a href="devis.html">Devis</a>
       <a href="ressources.html">Ressources</a>
     </nav>
     <a class="btn btn-primary" href="label-brh.html#contact">Parler à un expert <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 8v6M23 11h-6"/><path d="M14 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="8" cy="7" r="4"/></svg></a>
@@ -426,7 +426,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
   </div>
   <div class="mobile-menu" id="mobileMenu"><div class="wrap">
     <a href="index.html#offres" onclick="closeMenu()">Nos offres</a>
-    <a href="label-brh.html">Diagnostic RH</a><a href="audit-mutuelle.html?from=header">Audit santé</a><a href="simulation.html">Devis</a>
+    <a href="label-brh.html">Diagnostic RH</a><a href="audit-mutuelle.html?from=header">Audit santé</a><a href="devis.html">Devis</a>
     <a href="avantages-fiscaux.html" onclick="closeMenu()">Avantages fiscaux</a>
     <a href="ressources.html">Ressources</a>
     <a class="btn btn-primary" href="label-brh.html#contact">Parler à un expert</a>
@@ -475,6 +475,10 @@ function submitNews(e){
   if(!prenom||!nom){ err.textContent='Merci de renseigner votre prénom et votre nom.'; return false; }
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ err.textContent='Merci de renseigner un e-mail professionnel valide.'; f['email'].focus(); return false; }
   err.textContent='';
+  /* inscription enregistrée (admin-leads.php) : l'inscription vaut accord pour recevoir la newsletter */
+  try{ fetch('lead.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'newsletter',variante:window.BRH_VARIANTE||'',
+    contact:{prenom:prenom,nom:nom,email:email,consentement:true,consentement_date:new Date().toISOString()},
+    entreprise:{raison_sociale:(f.entreprise&&f.entreprise.value||'').trim()}})}).catch(function(){}); }catch(x){}
   f.style.display='none';
   document.getElementById('newsOk').hidden=false;
   if(typeof track==='function') track('newsletter_signup',{});

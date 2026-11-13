@@ -982,6 +982,11 @@ function unlockResults(){
   err.textContent=''; err.classList.remove('show');
   state.resultsUnlocked=true;
   state.lead={prenom:prenom,nom:nom,email:email,poste:poste,consent:true,consentDate:new Date().toISOString()};
+  /* résultats déverrouillés : coordonnées et réponses enregistrées (consentement recueilli), pour l'expert et l'administration */
+  try{ computeScore(); fetch('lead.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'label_resultats',variante:window.BRH_VARIANTE||'',
+    contact:{prenom:prenom,nom:nom,email:email,fonction:poste,consentement:true,consentement_date:state.lead.consentDate},
+    entreprise:{secteur:state.answers.secteur||'',effectif:state.answers.effectif||null},
+    labelBrh:{score:state.score,level:levelFor(state.score).label,axisScores:state.axisScores},reponses:state.answers})}).catch(function(){}); }catch(e){}
   var cn=document.getElementById('c-nom'); if(cn && !cn.value) cn.value=(prenom+' '+nom).trim();
   var ce=document.getElementById('c-email'); if(ce && !ce.value) ce.value=email;
   document.getElementById('results-gate').classList.add('hidden');
@@ -1040,11 +1045,11 @@ function submitLead(){
   if(!emailOk){ showErr(err,'Adresse email invalide.'); return; }
   if(!consent){ showErr(err,'Le recueil de votre consentement est obligatoire avant tout envoi.'); return; }
   err.classList.remove('show');
-  var payload={contact:{name:nom,jobTitle:(state.lead&&state.lead.poste)||'',companyName:ent,email:email,phone:tel,consent:true,consentDate:new Date().toISOString()},
+  var payload={type:'label_contact',variante:window.BRH_VARIANTE||'',contact:{name:nom,fonction:(state.lead&&state.lead.poste)||'',companyName:ent,email:email,phone:tel,consent:true,consentDate:new Date().toISOString()},
     company:{sector:state.answers.secteur||'',employeeCount:state.answers.effectif||null},
     labelBrh:{score:state.score,level:levelFor(state.score).label,axisScores:state.axisScores}};
   track('lead_submit',{score:state.score,level:payload.labelBrh.level,consent_status:true});
-  try{ fetch('traitement_lead.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(function(){});}catch(e){}
+  try{ fetch('lead.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(function(){});}catch(e){}
   document.getElementById('contact-form').classList.add('hidden');
   var s=document.getElementById('contact-success'); s.classList.remove('hidden');
   document.getElementById('success-msg').textContent='Merci '+nom.split(' ')[0]+'. Votre diagnostic Label BRH (score '+state.score+'/100, niveau '+payload.labelBrh.level+') est transmis. Un expert Banque des RH vous recontactera rapidement.';

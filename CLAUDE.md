@@ -29,6 +29,11 @@ Le dépôt contient deux sites qui évoluent **ensemble** :
   (`carrousel.js`, photos dans `img/`) sont dans le socle et servent aux trois versions ; sur B, `diagnostic.html` renvoie
   vers `label-brh.html`. L'audit mutuelle et le devis du socle restent servis sur B. Changer le `?v=` des pages qui chargent
   `variante.css`, `variante.js`, `label-brh.js`, `carrousel.js` ou `chatbot-widget.js` quand l'un d'eux change.
+- Depuis la V2.0, le **devis en ligne** (`devis.html`) est commun aux trois versions (sur B, `simulation.html` renvoie vers
+  `devis.html`). Les **demandes des dirigeants** (devis, rappel, diagnostic, Label BRH, audit, newsletter) sont enregistrées
+  par `lead.php` (table MySQL `leads`, créée automatiquement, même base que les avis) et consultées dans `admin-leads.php`
+  (accès séparé : `ADMIN_LOGIN` et `ADMIN_PASSWORD` dans `config.php`). Toute nouvelle collecte de coordonnées passe par
+  `lead.php`, avec un consentement explicite (`consentement: true`) et un `type` ajouté à `BRH_LEAD_TYPES` (`leads-base.php`).
 - `outils/assembler_variantes.py` assemble socle + fichiers propres dans `_site/protobrha/` et `_site/protobrhb/`
   (ignoré par Git) ; le déploiement le lance avant l'envoi FTP. Test local :
   `python3 outils/assembler_variantes.py && python3 -m http.server 8766 --directory _site/protobrha`.
@@ -86,11 +91,11 @@ Si une demande ne touche qu'un des deux sites, le dire explicitement dans le ré
 
 ## 4. Conventions du projet
 
-- **Pages du cahier des charges** : codes `É01` à `É30` (écrans ; `É28` à `É30` sont propres à la version B), `P1`, `P2` (processus back-office), `H` (Assistant BRH),
+- **Pages du cahier des charges** : codes `É01` à `É30` (écrans ; `É28` est propre à la version B, `É30` est remplacée), `P1` à `P3` (processus back-office), `H` (Assistant BRH),
   `VA`, `VB` (fiches des versions A et B du test A/B).
   Une nouvelle page d'écran prend le code suivant libre (`É31`…) et doit être reliée à une étape du parcours.
 - **Priorités** : `MVP`, `V2`, `ARB` (à arbitrer).
-- **Données produites** : identifiants `D01`… `D110` ; une nouvelle donnée prend le code suivant libre et s'ajoute au
+- **Données produites** : identifiants `D01`… `D112` ; une nouvelle donnée prend le code suivant libre et s'ajoute au
   dictionnaire (`data` dans `app_data.json`) avec écran, nature (P, E, C, T) et exemple.
 - **Technique** : fichiers HTML/CSS/JS autonomes, sans framework ; images intégrées quand c'est possible.
 - **Accès protégé** : les deux sites passent par `acces.php` (même modèle que Diagnostic Conseil BRH :

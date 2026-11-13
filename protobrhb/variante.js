@@ -1,14 +1,13 @@
-/* Version B — protobrhb.monsitedetest.com : accueil avec carrousel, Label BRH, simulation et devis en ligne.
-   Les pages de ce dossier remplacent celles du socle (protobrh/) ; l'audit mutuelle, le devis santé et prévoyance
-   et l'assistant (chatbot-widget.js, relié à Mistral) restent ceux du socle.
+/* Version B — protobrhb.monsitedetest.com : accueil propre à B, Label BRH (menu « Diagnostic RH ») et devis en ligne commun.
+   Les pages de ce dossier remplacent celles du socle (protobrh/) ; le Label BRH, l'audit mutuelle, le devis en ligne
+   (devis.html) et l'assistant (chatbot-widget.js, relié à Mistral) sont ceux du socle.
    Ce fichier identifie la version dans chaque événement de mesure et chaque demande transmise, aligne le menu
-   des pages du socle conservées sur celui du site B et remplace « mutuelle » par « complémentaire santé » (retour CAA). */
+   des pages du socle sur celui du site B et remplace « mutuelle » par « complémentaire santé » (retour CAA). */
 (function(){
   var V = 'B';
   window.BRH_VARIANTE = V;
   /* options du socle activées pour la version B (retours CAA du 20/10/2026) */
   window.BRH_OPTIONS = { auditSiret:true, partMin50:true, prevCadres:true };
-  window.BRH_CBOT_DEVIS = 'simulation.html';   /* l'assistant renvoie vers la simulation du site B */
   document.documentElement.setAttribute('data-variante', V);
   var dl = window.dataLayer = window.dataLayer || [], push = dl.push;
   dl.push = function(o){ if (o && typeof o === 'object' && !o.variante) o.variante = V; return push.apply(dl, arguments); };
@@ -17,8 +16,7 @@
   ready(function(){
     document.querySelectorAll('header .nav a, #mobileMenu a').forEach(function(a){
       var h = a.getAttribute('href') || '';
-      if (/^devis\.html$/.test(h) && !a.classList.contains('active')) { a.setAttribute('href', 'simulation.html'); a.textContent = 'Devis'; a.removeAttribute('onclick'); }
-      else if (/^newsletter\.html$/.test(h)) a.setAttribute('href', 'newsletter-edition.html');
+      if (/^newsletter\.html$/.test(h)) a.setAttribute('href', 'newsletter-edition.html');
       else if (/^audit-mutuelle\.html/.test(h)) a.textContent = 'Audit santé';
     });
     /* bandeau du haut simplifié (12/11/2026) : Audit santé et Avantages fiscaux sont en bas de page (sauf sur leur propre page) */
