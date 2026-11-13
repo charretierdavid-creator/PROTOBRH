@@ -1,9 +1,10 @@
 VERSION B DU PORTAIL (protobrhb) — CE QUE LE VISITEUR VOIT SUR CE SITE
 
 MENU DU HAUT
-Nos offres, Diagnostic RH (le Label BRH), Audit santé (audit de la
-complémentaire santé et de la prévoyance), Devis (la simulation),
-Avantages fiscaux, Ressources, Newsletter du mois. Bouton « Parler à un expert ».
+Nos offres, Diagnostic RH (le Label BRH), Devis (la simulation), Ressources,
+Newsletter du mois. Bouton « Parler à un expert ». L'Audit santé (audit de la
+complémentaire santé et de la prévoyance) et les Avantages fiscaux sont dans
+le bas de page de chaque page (et dans le menu sur mobile).
 Sur ce site, le « Diagnostic RH » est le Label BRH et le « Devis » est la
 simulation en 7 étapes. Il n'y a pas de diagnostic à curseurs ni de bloc
 « patrimoine du dirigeant » sur ce site.
@@ -22,6 +23,10 @@ ACCUEIL
   4. À venir — Rendez-vous Banque des Ressources Humaines : un webinaire avec
      les experts sur les priorités RH et les dispositifs 2026. Bouton
      « M'inscrire » (formulaire de contact du Label BRH).
+- Bloc « Où en est votre politique avantages salariés ? » : une dizaine de
+  questions, 2 minutes, score Label BRH sur 100, comparaison avec les autres
+  entreprises répondantes et leviers prioritaires. Bouton « Passer le Label
+  BRH ».
 - « Quels sont vos besoins ? » : 3 enjeux, chacun avec « Découvrir les
   solutions » : être attractif sur le marché de l'emploi (protection sociale),
   fidéliser et motiver mes collaborateurs (partage de la valeur), renforcer le
@@ -40,6 +45,11 @@ LABEL BRH (page « Diagnostic RH »)
   professionnel et de la fonction, avec consentement.
 - Le Label BRH est un format d'auto-évaluation : ce n'est pas une
   certification officielle ni réglementaire.
+- Le nombre de salariés se saisit en chiffres (ou avec le curseur).
+- « Vos leviers prioritaires » : une carte par enjeu, classées de la plus à la
+  moins prioritaire, avec 1 à 3 étoiles (3 étoiles = priorité forte, score de
+  l'enjeu inférieur à 34 ; 2 étoiles = priorité moyenne, de 34 à 66 ;
+  1 étoile = à consolider, 67 ou plus).
 - Depuis les résultats : « Chiffrer mes leviers » ou « Obtenir mon devis »
   ouvre la simulation avec les solutions présélectionnées et l'effectif repris.
 - Bas de page : formulaire « Nous contacter » pour être recontacté par un
@@ -61,7 +71,7 @@ SIMULATION ET DEVIS (page « Devis »)
 - À la fin, le devis est consultable à l'écran et imprimable (ou enregistrable
   en PDF). Montants estimatifs et non contractuels.
 
-AUDIT SANTÉ (menu « Audit santé »)
+AUDIT SANTÉ (bas de page « Audit santé »)
 Sur ce site, on dit « complémentaire santé » plutôt que « mutuelle ». Même
 module que l'audit mutuelle décrit dans la base documentaire : audit gratuit
 de la complémentaire santé et de la prévoyance, environ 3 minutes, résultat immédiat. Depuis le
@@ -78,6 +88,8 @@ AUTRES PAGES
 POUR ORIENTER LE VISITEUR SUR CE SITE
 - Évaluer sa politique RH : « Diagnostic RH » (Label BRH).
 - Chiffrer une solution : « Devis » (simulation).
-- Comparer sa complémentaire santé ou sa prévoyance : « Audit santé ».
+- Comparer sa complémentaire santé ou sa prévoyance : « Audit santé » en bas
+  de page.
+- Connaître les plafonds d'exonération : « Avantages fiscaux » en bas de page.
 - Parler à quelqu'un : « Parler à un expert » ou le formulaire de contact en
   bas du Label BRH.

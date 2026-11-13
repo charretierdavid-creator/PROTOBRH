@@ -267,6 +267,11 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 .pslider .knob{position:absolute;top:35px;width:30px;height:30px;border-radius:50%;background:var(--green);color:#fff;
   display:grid;place-items:center;font-family:var(--fh);font-weight:700;font-size:.85rem;transform:translate(-50%,-50%);
   box-shadow:0 3px 8px rgba(6,81,69,.4);pointer-events:none;z-index:2}
+.eff-in{display:flex;align-items:center;gap:10px;margin:6px 0 4px}
+.eff-in input{width:140px;font:600 1.15rem var(--fb);color:var(--green);border:1.5px solid var(--line2);border-radius:12px;padding:.6rem .8rem;background:#fff}
+.eff-in input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(6,81,69,.12)}
+.eff-in span{font-weight:600;color:var(--slate)}
+.eff-knob{position:absolute;top:24px;width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--green);box-shadow:0 2px 6px rgba(6,81,69,.25);pointer-events:none;z-index:2}
 .pslider input[type=range]{position:absolute;left:0;top:20px;width:100%;height:30px;margin:0;opacity:0;cursor:pointer;z-index:3}
 
 /* bloc gain fiscal (exigence CDC §6) */
@@ -457,6 +462,14 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 .rcard .rc-top .rc-ic{margin-bottom:0;flex:0 0 auto}
 .rcard .rc-top .rc-partner{margin:0}
 @media(max-width:960px){.rec-cards{grid-template-columns:1fr 1fr}}
+/* 12/11/2026 : les 3 leviers occupent toute la largeur, avec des étoiles de priorité */
+.rec-cards{grid-template-columns:repeat(3,1fr)}
+.rc-stars{display:flex;align-items:center;gap:3px;margin-bottom:12px}
+.rc-stars svg{width:20px;height:20px;fill:#dfe6e2}
+.rc-stars svg.on{fill:var(--lime)}
+.rc-stars span{margin-left:8px;font:700 .72rem var(--fh);letter-spacing:.04em;text-transform:uppercase;color:var(--green)}
+.rcard.rc-top3{border:1.5px solid var(--lime);box-shadow:0 10px 26px rgba(143,184,34,.18)}
+@media(max-width:860px){.rec-cards{grid-template-columns:1fr}}
 @media(max-width:640px){.rec-cards{grid-template-columns:1fr}}
 
 /* ===== V4 diagnostic : vignettes même hauteur + modale + double partenaire ===== */
@@ -565,7 +578,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 </style>
 <link rel="stylesheet" href="polices.css?v=20261112">
 <link rel="stylesheet" href="variante.css?v=20261112">
-<script src="variante.js?v=20261112"></script>
+<script src="variante.js?v=20261113"></script>
 </head>
 <body>
 <header class="header">
@@ -574,8 +587,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
     <nav class="nav" aria-label="Navigation du diagnostic">
       <a href="#" class="active" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">Label BRH</a>
       <a href="#block1">Mon évaluation</a>
-      <a href="#results">Mes résultats</a>
-      <a href="audit-mutuelle.html?from=header">Audit santé</a><a href="simulation.html">Devis</a><a href="avantages-fiscaux.html">Avantages fiscaux</a>
+      <a href="#results">Mes résultats</a><a href="simulation.html">Devis</a>
       <a href="ressources.html">Ressources</a>
     </nav>
     <a class="btn btn-primary" href="#contact">Parler à un expert <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 8v6M23 11h-6"/><path d="M14 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="8" cy="7" r="4"/></svg></a>
@@ -874,9 +886,12 @@ function renderSteps(){
         q.options.map(function(o){ var sel=state.answers[q.id]===o?' selected':''; return '<option'+sel+'>'+o+'</option>'; }).join('')+'</select></div>';
     } else if(q.type==='slider'){
       if(state.answers[q.id]===undefined) state.answers[q.id]=50;
-      html+='<div class="pslider" style="margin-top:4px"><div class="nums"><span>'+q.min+'</span><span id="sliderVal-'+q.id+'"><b>'+state.answers[q.id]+'</b> salariés</span><span>'+q.max+'</span></div>'+
+      /* effectif : saisie directe en chiffres, synchronisée avec le curseur (12/11/2026) */
+      html+='<div class="eff-in"><input type="number" id="f-'+q.id+'" min="'+q.min+'" max="99999" step="1" inputmode="numeric" value="'+state.answers[q.id]+'" oninput="onEffInput(\''+q.id+'\',this.value)" aria-label="Nombre de salariés"><span>salariés</span></div>'+
+        '<div class="pslider" style="margin-top:4px"><div class="nums"><span>'+q.min+'</span><span id="sliderVal-'+q.id+'">ou déplacez le curseur</span><span>'+q.max+' et +</span></div>'+
         '<div class="track"></div><div class="fill" id="sliderFill-'+q.id+'"></div>'+
-        '<input type="range" min="'+q.min+'" max="'+q.max+'" step="'+q.step+'" value="'+state.answers[q.id]+'" oninput="onSlider(\''+q.id+'\',this.value)"></div>';
+        '<span class="eff-knob" id="sliderKnob-'+q.id+'"></span>'+
+        '<input type="range" id="r-'+q.id+'" min="'+q.min+'" max="'+q.max+'" step="'+q.step+'" value="'+Math.min(state.answers[q.id],q.max)+'" oninput="onSlider(\''+q.id+'\',this.value)" aria-label="Nombre de salariés (curseur)"></div>';
     } else {
       html+='<div class="choice-row">'+q.options.map(function(o){
         var sel=state.answers[q.id]===o.v?' sel':'';
@@ -893,12 +908,18 @@ function paintSliderFill(){
   QUESTIONS.forEach(function(q){
     if(q.type!=='slider') return;
     var fill=document.getElementById('sliderFill-'+q.id); if(!fill) return;
-    var pct=(state.answers[q.id]-q.min)/(q.max-q.min)*100;
+    var pct=(Math.min(state.answers[q.id],q.max)-q.min)/(q.max-q.min)*100;
     fill.style.cssText='position:absolute;left:11px;top:33px;height:4px;background:var(--green);border-radius:9px;width:calc('+pct+'% - 22px)';
+    var k=document.getElementById('sliderKnob-'+q.id); if(k) k.style.left='calc('+pct+'% - '+(22*pct/100)+'px)';
   });
 }
 function onSlider(id,v){ state.answers[id]=parseInt(v,10);
-  var lab=document.getElementById('sliderVal-'+id); if(lab) lab.innerHTML='<b>'+v+'</b> salariés';
+  var f=document.getElementById('f-'+id); if(f) f.value=v;
+  paintSliderFill(); updateNav();
+}
+function onEffInput(id,v){ var n=parseInt(v,10); if(!(n>=1)) return;
+  state.answers[id]=n;
+  var q=QUESTIONS.filter(function(x){return x.id===id;})[0], r=document.getElementById('r-'+id); if(r) r.value=Math.min(n,q.max);
   paintSliderFill(); updateNav();
 }
 function onAnswer(id,v){
@@ -990,7 +1011,10 @@ function renderResults(){
   var cards=document.getElementById('rec-cards'); cards.innerHTML='';
   ranked.forEach(function(id){
     var s=SOLUTIONS.filter(function(x){return x.id===id;})[0]; if(!s) return;
-    cards.innerHTML+='<div class="rcard"><span class="rc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+s.icon+'</svg></span>'+
+    /* étoiles : priorité d'autant plus forte que le score de l'enjeu est faible (12/11/2026) */
+    var sc=state.axisScores[id]||0, nb=sc<34?3:(sc<67?2:1), pl=['','À consolider','Priorité moyenne','Priorité forte'][nb];
+    var stars='<div class="rc-stars" aria-label="'+pl+' : '+nb+' étoile'+(nb>1?'s':'')+' sur 3">'+[1,2,3].map(function(i){ return '<svg viewBox="0 0 24 24" class="'+(i<=nb?'on':'')+'" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.4.9-4.6 4.5 1.1 6.3L12 17.3l-5.7 3 1.1-6.3-4.6-4.5 6.4-.9z"/></svg>'; }).join('')+'<span>'+pl+'</span></div>';
+    cards.innerHTML+='<div class="rcard'+(nb===3?' rc-top3':'')+'">'+stars+'<span class="rc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+s.icon+'</svg></span>'+
       '<h3>'+s.title+'</h3><ul>'+s.b.map(function(b){return '<li>'+b+'</li>';}).join('')+'</ul>'+
       '<p style="font-size:.8rem;color:var(--slate);line-height:1.4;margin-top:auto">'+s.note+'</p></div>';
   });
