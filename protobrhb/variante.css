@@ -1,9 +1,6 @@
 /* Version B — protobrhb.monsitedetest.com.
    Les pages propres à B portent leur style ; ce fichier ne contient que les ajustements communs. */
 html[data-variante="B"] .nav a{white-space:nowrap}
-/* photos du carrousel de l'accueil (dossier img/) */
-html[data-variante="B"] .car-art{background:var(--mint)}
-html[data-variante="B"] .car-art img{width:100%;height:100%;object-fit:cover;display:block}
 /* menu plus long (audit mutuelle ajouté) : le logo garde sa largeur, les liens se resserrent,
    et le menu passe en version repliée dès 1100 px */
 html[data-variante="B"] .brand{flex:none}
