@@ -9,14 +9,19 @@ import sys, os, re, json, base64, datetime
 
 SRC, OUT = sys.argv[1], sys.argv[2]
 RELAIS = (sys.argv[3] + '?t=' + sys.argv[4]) if len(sys.argv) > 4 else ''
-PAGES = [('index.html', 'Accueil'), ('diagnostic.html', 'Diagnostic RH'), ('audit-mutuelle.html', 'Audit mutuelle'),
+PAGES = [('index.html', 'Accueil'), ('diagnostic.html', 'Diagnostic RH'), ('label-brh.html', 'Label BRH'), ('audit-mutuelle.html', 'Audit mutuelle'),
          ('devis.html', 'Devis en ligne'), ('avantages-fiscaux.html', 'Avantages fiscaux'), ('ressources.html', 'Ressources'),
          ('newsletter.html', 'Newsletter'), ('newsletter-archive.html', 'Éditions de la newsletter'),
          ('newsletter-edition.html', 'Newsletter du mois'), ('newsletter-2026-09.html', 'Newsletter septembre 2026'),
          ('newsletter-2026-10.html', 'Newsletter octobre 2026')]
-INLINE = ['variante.js', 'formules-amundi.js', 'offres-caa.js', 'conventions.js', 'prevoyance-ccn.js', 'entreprise-lookup.js', 'chatbot-widget.js']
+INLINE = ['variante.js', 'formules-amundi.js', 'offres-caa.js', 'conventions.js', 'prevoyance-ccn.js', 'entreprise-lookup.js', 'carrousel.js', 'label-brh.js', 'chatbot-widget.js']
 DROP = ['feedback-widget.js']
 photo = base64.b64encode(open(os.path.join(SRC, 'photo.jpeg'), 'rb').read()).decode()
+# images du carrousel, logo et polices du Label BRH : embarqués
+IMGS = {f: 'data:image/jpeg;base64,' + base64.b64encode(open(os.path.join(SRC, f), 'rb').read()).decode()
+        for f in ['img/carrousel-ppv.jpg', 'img/carrousel-label.jpg', 'img/carrousel-guide.jpg', 'img/carrousel-webinaire.jpg']}
+IMGS['logo-brh.png'] = 'data:image/png;base64,' + base64.b64encode(open(os.path.join(SRC, 'logo-brh.png'), 'rb').read()).decode()
+POLICES = open(os.path.join(SRC, 'polices.css'), encoding='utf-8').read().replace('</', '<\\/')
 
 def transform(html):
     for js in INLINE:
@@ -28,6 +33,9 @@ def transform(html):
     for js in DROP:
         html = re.sub(r'<script src="' + re.escape(js) + r'(\?v=[\w.-]+)?"( defer)?></script>\n?', '', html)
     html = html.replace('src="photo.jpeg"', 'src="data:image/jpeg;base64,' + photo + '"')
+    for f, uri in IMGS.items():
+        html = html.replace("'" + f + "'", "'" + uri + "'").replace('"' + f + '"', '"' + uri + '"')
+    html = re.sub(r'<link rel="stylesheet" href="polices\.css(\?v=[\w.-]+)?">', lambda m: '<style>\n' + POLICES + '\n</style>', html)
     html = re.sub(r"location\.href='([^']+)'", r"__go('\1')", html)
     html = html.replace('location.search', "(window.__QS||'')")
     return html

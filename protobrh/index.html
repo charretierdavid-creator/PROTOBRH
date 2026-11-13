@@ -472,9 +472,11 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 .pat-kick{display:inline-block;font:700 .74rem var(--fb);text-transform:uppercase;letter-spacing:.06em;color:var(--red);margin-bottom:8px}
 .pat .h2{font-size:1.55rem;margin-bottom:10px}.pat p{color:var(--slate);font-size:.95rem;max-width:62ch}.pat-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
 .pat ul{margin:0;padding:18px 20px 18px 36px;background:#fff;border:1px solid var(--line);border-radius:var(--radius);color:var(--ink);font-size:.9rem;line-height:1.75}
-@media(max-width:860px){.pat-in{grid-template-columns:1fr;padding:24px}}</style>
+@media(max-width:860px){.pat-in{grid-template-columns:1fr;padding:24px}}
+.pat-in>*{min-width:0}.pat-cta .btn{white-space:normal;text-align:center}
+/* petit écran : aucune illustration ne crée de défilement horizontal */html,body{overflow-x:clip}</style>
 <style>.nav a{white-space:nowrap}@media(max-width:1180px){.nav a{padding:.5rem .55rem;font-size:.9rem}}</style>
-<link rel="stylesheet" href="variante.css?v=20261112">
+<link rel="stylesheet" href="variante.css?v=20261113">
 <script src="variante.js?v=20261113"></script>
 </head>
 <body>
@@ -518,35 +520,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
       </div>
       <div class="hero-note"><span class="bar"></span><p>Attirer, fidéliser et protéger vos salariés avec des solutions concrètes.</p></div>
     </div>
-    <div class="photo">
-      <svg class="illus" viewBox="0 0 400 420" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Illustration d'un chef d'entreprise">
-        <circle cx="200" cy="205" r="152" fill="#ffffff" opacity=".55"/>
-        <path d="M64 258a148 148 0 0 1 272 0" fill="none" stroke="#8fb822" stroke-width="3" opacity=".55" stroke-linecap="round"/>
-        <circle cx="326" cy="126" r="7" fill="#8fb822"/>
-        <circle cx="70" cy="158" r="5" fill="#016265" opacity=".5"/>
-        <g transform="translate(272,60)">
-          <rect x="0" y="0" width="106" height="68" rx="12" fill="#fff" stroke="#e7ece9" stroke-width="1.5"/>
-          <circle cx="23" cy="25" r="12" fill="#e9f1ea"/>
-          <path d="M17 25l4 4 8-9" fill="none" stroke="#065145" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-          <rect x="42" y="18" width="52" height="6" rx="3" fill="#cfe3da"/>
-          <rect x="42" y="30" width="38" height="6" rx="3" fill="#e6ede8"/>
-          <rect x="16" y="48" width="74" height="6" rx="3" fill="#8fb822" opacity=".75"/>
-        </g>
-        <path d="M118 420c0-54 37-94 82-94s82 40 82 94Z" fill="#065145"/>
-        <path d="M171 334 200 372 229 334 217 420 183 420Z" fill="#fff"/>
-        <path d="M171 334 200 372 175 393Z" fill="#0c6e5c"/>
-        <path d="M229 334 200 372 225 393Z" fill="#0c6e5c"/>
-        <path d="M200 372l-9 15 9 33 9-33Z" fill="#8fb822"/>
-        <rect x="186" y="300" width="28" height="44" rx="12" fill="#e8c6a0"/>
-        <circle cx="200" cy="268" r="53" fill="#eecba4"/>
-        <circle cx="149" cy="270" r="7" fill="#e8c6a0"/><circle cx="251" cy="270" r="7" fill="#e8c6a0"/>
-        <path d="M149 260c0-35 24-60 51-60s51 24 51 58c-9-15-23-21-40-21-6 10-30 12-41 4-8 4-17 8-21 19Z" fill="#0c3b32"/>
-        <circle cx="183" cy="268" r="4" fill="#0c3b32"/><circle cx="217" cy="268" r="4" fill="#0c3b32"/>
-        <path d="M187 289q13 10 26 0" fill="none" stroke="#cc9268" stroke-width="3" stroke-linecap="round"/>
-      </svg>
-      <img src="photo.jpeg" alt="Chef d'entreprise" class="hero-photo" onerror="this.remove()">
-    </div>
+    <div class="hero-carousel" id="heroCarousel" aria-roledescription="carrousel" aria-label="Actualités de la Banque des RH"></div>
   </div></section>
+  <!-- CARROUSEL OFFRES & ACTUS (fichier partagé carrousel.js, sites S, A et B) -->
+  <script src="carrousel.js?v=20261113"></script>
 
   <!-- ENJEUX RH (rubrique d'introduction) -->
   <section class="sec talents" id="talents"><div class="wrap">

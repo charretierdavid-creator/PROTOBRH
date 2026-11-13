@@ -1,12 +1,14 @@
 /* ==============================================================
-   SITE B — navigation, devis consultable et passerelle Label BRH → simulation
-   Chargé en fin de page par toutes les pages propres à la version B (dossier protobrhb/).
+   LABEL BRH ET PAGES DU SITE B — navigation, passerelle Label BRH → devis, devis consultable
+   Chargé en fin de page par label-brh.html (sites S, A et B) et par les pages propres à la version B (protobrhb/).
+   Le devis ouvert depuis le Label BRH est la simulation sur B (window.BRH_CBOT_DEVIS = 'simulation.html',
+   résultats repris par la session), et devis.html ailleurs (solutions, effectif et secteur passés dans l'adresse).
    L'assistant est le widget commun du socle (chatbot-widget.js), relié à Mistral par chatbot.php.
-   Après modification : changer le numéro ?v=AAAAMMJJ dans les pages de protobrhb/ qui le chargent.
+   Après modification : changer le numéro ?v=AAAAMMJJ dans les pages qui le chargent.
    ============================================================== */
 /* ===== 1. Navigation et contexte de page ===== */
 (function(){
-  var page = location.pathname.split('/').pop() || 'index.html';
+  var page = window.__PAGE || location.pathname.split('/').pop() || 'index.html';   /* __PAGE : version hors ligne */
   var handoff = null; try{ handoff = JSON.parse(sessionStorage.getItem('brhLabel') || 'null'); }catch(e){}
   window.__BRH_CTX = { page:page, anchor:location.hash.slice(1), handoff:handoff };
   window.BRH = {
@@ -15,6 +17,7 @@
     go: function(url){
       url = String(url || ''); var p = url.split('#'), file = p[0], anchor = p[1] || '';
       if (!file || file === page) { var el = anchor && document.getElementById(anchor); if (el) el.scrollIntoView({behavior:'smooth', block:'start'}); else window.scrollTo({top:0, behavior:'smooth'}); return; }
+      if (typeof window.__go === 'function') { window.__go(url); return; }   /* version hors ligne */
       location.href = url;
     },
     /* résultats du Label BRH repris par la simulation (conservés le temps de la session) */
@@ -32,7 +35,7 @@
   };
 })();
 
-/* ===== 2. Simulation : devis consultable et imprimable ===== */
+/* ===== 2. Simulation du site B : devis consultable et imprimable ===== */
 (function(){
   /* ---------- 2. Simulation : devis consultable et imprimable ---------- */
   if(window.BRH && window.BRH.page === 'simulation.html' && typeof window.submitDevis === 'function'){
@@ -163,7 +166,7 @@
   function css(t){ var s=document.createElement('style'); s.textContent=t; document.head.appendChild(s); }
 
   /* =================== 1. Page Label BRH (diagnostic) =================== */
-  if(BRH.page === 'diagnostic.html' && typeof window.renderResults === 'function'){
+  if(BRH.page === 'label-brh.html' && typeof window.renderResults === 'function'){
     css(
       '.brhd-band{position:relative;overflow:hidden;background:linear-gradient(120deg,var(--green) 0%,#0b6b5a 100%);color:#fff;border-radius:var(--radius-lg);padding:30px 34px;margin-bottom:26px;display:grid;grid-template-columns:auto 1fr auto;gap:26px;align-items:center;box-shadow:0 14px 34px rgba(6,81,69,.22);scroll-margin-top:92px}'+
       '.brhd-band::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:rgba(143,184,34,.18);pointer-events:none}'+
@@ -211,8 +214,9 @@
     window.BRH_goDevis = function(needs){
       needs = (needs && needs.length) ? needs : recommendedNeeds();
       try{ track('cta_devis_from_label',{score:state.score, needs:needs.join(',')}); }catch(e){}
-      BRH.handoff(handoffData(needs));
-      BRH.go('simulation.html');
+      var devis = window.BRH_CBOT_DEVIS || 'devis.html', d = handoffData(needs);
+      if (devis === 'simulation.html') { BRH.handoff(d); BRH.go(devis); return; }   /* site B : simulation préremplie */
+      BRH.go(devis + '?from=label&sol=' + encodeURIComponent(needs.join(',')) + (d.effectif ? '&eff=' + d.effectif : '') + (d.secteur ? '&secteur=' + encodeURIComponent(d.secteur) : ''));
     };
 
     var band = null, sticky = null;
@@ -349,7 +353,7 @@
    Uniquement des données d'entreprise (effectif, secteur, priorités déduites des réponses), jamais de coordonnées.
    Une réponse faible au Label donne une priorité forte (échelle 1 à 4 du socle). */
 (function(){
-  if (BRH.page !== 'diagnostic.html' || typeof window.renderResults !== 'function') return;
+  if (BRH.page !== 'label-brh.html' || typeof window.renderResults !== 'function') return;
   var prio = function(pct){ return pct >= 100 ? 1 : pct >= 67 ? 2 : pct >= 34 ? 3 : 4; };
   var rendu = window.renderResults;
   window.renderResults = function(){
@@ -363,14 +367,4 @@
         labelBrh:{ score:state.score }, maj:new Date().toISOString() })));
     }catch(e){}
   };
-})();
-
-/* ===== 5. Accueil : mesure des clics du carrousel (D107) ===== */
-(function(){
-  var car = document.getElementById('heroCarousel'); if (!car) return;
-  car.addEventListener('click', function(e){
-    var a = e.target.closest ? e.target.closest('.car-slide a') : null; if (!a) return;
-    var s = a.closest('.car-slide'), t = s.querySelector('h3');
-    window.dataLayer.push({ event:'carrousel_click', diapositive:(+s.getAttribute('data-i') || 0) + 1, titre:t ? t.textContent.trim() : '' });
-  });
 })();

@@ -23,12 +23,12 @@ Le dépôt contient deux sites qui évoluent **ensemble** :
 - `protobrh/` est la version **Standard** (code `REF`) et le **socle commun** : contenus, offres, calculs, audit, assistant, devis, PHP.
 - `protobrha/` et `protobrhb/` ne contiennent **que ce qui diffère** : `variante.css` (design) et `variante.js`
   (identifiant de version + adaptations du parcours), et si besoin une page entière qui remplace celle du socle.
-- Depuis la V1.8, `protobrhb/` contient des **pages entières** (accueil avec carrousel, `diagnostic.html` = Label BRH,
-  `simulation.html`, avantages fiscaux, ressources, newsletter) qui remplacent celles du socle, plus `site-b.js`
-  (navigation, devis consultable, passerelle Label BRH → simulation), `polices.css`, `logo-brh.png`, `img/` (photos du
-  carrousel) et `connaissances-version.txt` (complément de la base de l'assistant, lu par `chatbot.php`). L'audit mutuelle
-  et le devis du socle restent servis sur B. Les pages de `protobrhb/` chargent `variante.css`, `variante.js`, `site-b.js`,
-  `chatbot-widget.js` et `feedback-widget.js` : changer le `?v=` dans ces pages quand l'un de ces fichiers change.
+- Depuis la V1.8, `protobrhb/` contient des **pages entières** (accueil, `simulation.html`, avantages fiscaux, ressources,
+  newsletter) qui remplacent celles du socle, et `connaissances-version.txt` (complément de la base de l'assistant, lu par
+  `chatbot.php`). Depuis la V1.9, le **Label BRH** (`label-brh.html` + `label-brh.js`) et le **carrousel de l'accueil**
+  (`carrousel.js`, photos dans `img/`) sont dans le socle et servent aux trois versions ; sur B, `diagnostic.html` renvoie
+  vers `label-brh.html`. L'audit mutuelle et le devis du socle restent servis sur B. Changer le `?v=` des pages qui chargent
+  `variante.css`, `variante.js`, `label-brh.js`, `carrousel.js` ou `chatbot-widget.js` quand l'un d'eux change.
 - `outils/assembler_variantes.py` assemble socle + fichiers propres dans `_site/protobrha/` et `_site/protobrhb/`
   (ignoré par Git) ; le déploiement le lance avant l'envoi FTP. Test local :
   `python3 outils/assembler_variantes.py && python3 -m http.server 8766 --directory _site/protobrha`.
