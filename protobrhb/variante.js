@@ -21,6 +21,11 @@
       else if (/^newsletter\.html$/.test(h)) a.setAttribute('href', 'newsletter-edition.html');
       else if (/^audit-mutuelle\.html/.test(h)) a.textContent = 'Audit santé';
     });
+    /* bandeau du haut simplifié (12/11/2026) : Audit santé et Avantages fiscaux sont en bas de page (sauf sur leur propre page) */
+    document.querySelectorAll('header .nav a').forEach(function(a){
+      var h = a.getAttribute('href') || '';
+      if (/^(audit-mutuelle|avantages-fiscaux)\.html/.test(h) && !a.classList.contains('active')) a.remove();
+    });
     termeSante();
   });
   /* « complémentaire santé » plutôt que « mutuelle » (posture d'assureur), y compris dans les contenus affichés ensuite */
