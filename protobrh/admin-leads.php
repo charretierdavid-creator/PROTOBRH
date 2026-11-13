@@ -173,7 +173,7 @@ if (isset($_GET['id'])) {
   $L = ['cree_le' => 'Date', 'version' => 'Version du prototype', 'type' => 'Origine', 'reference' => 'Référence', 'prenom' => 'Prénom', 'nom' => 'Nom', 'email' => 'E-mail',
         'telephone' => 'Téléphone', 'fonction' => 'Fonction', 'rappel_expert' => 'Rappel expert demandé', 'consentement_le' => 'Consentement recueilli le', 'raison_sociale' => 'Entreprise',
         'siret' => 'SIRET', 'code_postal' => 'Code postal', 'ville' => 'Ville', 'departement' => 'Département', 'effectif' => 'Effectif', 'secteur' => 'Secteur', 'idcc' => 'Convention collective',
-        'montant_estime' => 'Montant estimé (€/an)', 'score_label' => 'Score Label BRH', 'page' => 'Page'];
+        'montant_estime' => 'Montant estimé (€/an)', 'score_label' => 'Score Label BRH', 'etape' => 'Dernière étape atteinte', 'page' => 'Page'];
   $dl = '';
   foreach ($L as $k => $l) { $v = $r[$k]; if ($k === 'type') $v = BRH_LEAD_TYPES[$v] ?? $v; if ($k === 'rappel_expert') $v = $v ? 'Oui' : 'Non'; if ($v === null || $v === '') continue; $dl .= '<dt>' . $l . '</dt><dd>' . $e($v) . '</dd>'; }
   $json = json_decode((string) $r['donnees'], true);
@@ -193,7 +193,7 @@ if ($f['q'] !== '') { $like = '%' . $f['q'] . '%'; $where[] = '(nom LIKE ? OR pr
 $w = $where ? ' WHERE ' . implode(' AND ', $where) : '';
 $COLS = ['cree_le' => 'Date', 'version' => 'Version', 'type' => 'Origine', 'statut' => 'Suivi', 'prenom' => 'Prénom', 'nom' => 'Nom', 'email' => 'E-mail', 'telephone' => 'Téléphone',
          'fonction' => 'Fonction', 'rappel_expert' => 'Rappel', 'raison_sociale' => 'Entreprise', 'siret' => 'SIRET', 'code_postal' => 'Code postal', 'ville' => 'Ville',
-         'effectif' => 'Effectif', 'secteur' => 'Secteur', 'idcc' => 'Convention', 'montant_estime' => 'Montant estimé', 'score_label' => 'Score Label', 'reference' => 'Référence', 'consentement_le' => 'Consentement le'];
+         'effectif' => 'Effectif', 'secteur' => 'Secteur', 'idcc' => 'Convention', 'montant_estime' => 'Montant estimé', 'score_label' => 'Score Label', 'reference' => 'Référence', 'etape' => 'Dernière étape', 'consentement_le' => 'Consentement le'];
 
 if (isset($_GET['csv'])) {
   $s = $db->prepare('SELECT * FROM leads' . $w . ' ORDER BY cree_le DESC'); if ($types) $s->bind_param($types, ...$args); $s->execute(); $res = $s->get_result();
@@ -209,6 +209,14 @@ $s = $db->prepare('SELECT COUNT(*) n, SUM(statut=\'nouveau\') nv, COUNT(DISTINCT
 $k = $s->get_result()->fetch_assoc();
 $s = $db->prepare('SELECT * FROM leads' . $w . ' ORDER BY cree_le DESC LIMIT ' . ADM_PAGE . ' OFFSET ' . (($p - 1) * ADM_PAGE)); if ($types) $s->bind_param($types, ...$args); $s->execute();
 $rows = $s->get_result()->fetch_all(MYSQLI_ASSOC);
+/* parcours du devis par version : devis envoyés, devis commencés (e-mail laissé), étape d'abandon */
+$fun = $db->query("SELECT version, SUM(type='devis_en_cours') commences, SUM(type='devis_en_cours' AND etape='Devis envoyé') aboutis, SUM(type='devis') envoyes FROM leads GROUP BY version ORDER BY version");
+$aband = $db->query("SELECT version, COALESCE(etape,'—') etape, COUNT(*) n FROM leads WHERE type='devis_en_cours' AND (etape IS NULL OR etape<>'Devis envoyé') GROUP BY version, etape ORDER BY version, n DESC");
+$ab = []; if ($aband) while ($x = $aband->fetch_assoc()) $ab[$x['version']][] = $x['etape'] . ' : ' . $x['n'];
+$funHtml = '';
+if ($fun && $fun->num_rows) { $funHtml = '<h2>Parcours du devis par version (test A/B)</h2><div class="tw" style="margin-bottom:6px"><table><tr><th>Version</th><th>Devis envoyés</th><th>Devis commencés avec e-mail</th><th>dont allés au bout</th><th>Abandons, par dernière étape atteinte</th></tr>';
+  while ($x = $fun->fetch_assoc()) $funHtml .= '<tr><td>' . $e($x['version']) . '</td><td>' . (int) $x['envoyes'] . '</td><td>' . (int) $x['commences'] . '</td><td>' . (int) $x['aboutis'] . '</td><td>' . $e(implode(' · ', $ab[$x['version']] ?? [])) . '</td></tr>';
+  $funHtml .= '</table></div><p class="note">Les devis commencés ne sont suivis que si le dirigeant a laissé son e-mail avec son accord (version A).</p>'; }
 $base = ['v' => $f['v'], 'type' => $f['type'], 'statut' => $f['statut'], 'q' => $f['q'], 'du' => $f['du'], 'au' => $f['au']];
 
 $c = $nav . '<main><h1>Demandes des dirigeants</h1>' . ($info ? '<div class="msg ok">' . $e($info) . '</div>' : '') .
@@ -218,9 +226,9 @@ $c = $nav . '<main><h1>Demandes des dirigeants</h1>' . ($info ? '<div class="msg
   '<label>Du<input type="date" name="du" value="' . $e($f['du']) . '"></label><label>Au<input type="date" name="au" value="' . $e($f['au']) . '"></label>' .
   '<label>Recherche<input name="q" value="' . $e($f['q']) . '" placeholder="nom, e-mail, entreprise, SIRET"></label><button class="btn">Filtrer</button>' .
   '<a class="btn o" href="admin-leads.php?' . $e($qs($base + ['csv' => '1'])) . '">Exporter (CSV)</a></form></div>' .
-  '<div class="tw"><table><tr><th>Date</th><th>Version</th><th>Origine</th><th>Suivi</th><th>Contact</th><th>Entreprise</th><th>Effectif</th><th>Montant / score</th><th>Rappel</th></tr>';
+  $funHtml . '<h2>Toutes les demandes</h2><div class="tw"><table><tr><th>Date</th><th>Version</th><th>Origine</th><th>Suivi</th><th>Contact</th><th>Entreprise</th><th>Effectif</th><th>Montant / score</th><th>Rappel</th></tr>';
 foreach ($rows as $r) {
-  $c .= '<tr><td><a href="admin-leads.php?id=' . (int) $r['id'] . '">' . $e(substr((string) $r['cree_le'], 0, 16)) . '</a></td><td>' . $e($r['version']) . '</td><td>' . $e(BRH_LEAD_TYPES[$r['type']] ?? $r['type']) . '</td>' .
+  $c .= '<tr><td><a href="admin-leads.php?id=' . (int) $r['id'] . '">' . $e(substr((string) $r['cree_le'], 0, 16)) . '</a></td><td>' . $e($r['version']) . '</td><td>' . $e(BRH_LEAD_TYPES[$r['type']] ?? $r['type']) . (!empty($r['etape']) ? '<br><span class="note">Étape : ' . $e($r['etape']) . '</span>' : '') . '</td>' .
     '<td><span class="pill ' . $e($r['statut']) . '">' . $e(ADM_STATUTS[$r['statut']] ?? $r['statut']) . '</span></td>' .
     '<td><a href="admin-leads.php?id=' . (int) $r['id'] . '">' . $e(trim($r['prenom'] . ' ' . $r['nom']) ?: '—') . '</a><br>' . $e($r['email']) . '<br><span class="note">' . $e($r['telephone']) . '</span></td>' .
     '<td>' . $e($r['raison_sociale'] ?: '—') . '<br><span class="note">' . $e(implode(' · ', array_filter([trim($r['code_postal'] . ' ' . $r['ville']), (string) $r['siret']]))) . '</span></td>' .

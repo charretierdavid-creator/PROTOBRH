@@ -1,0 +1,45 @@
+VERSION A DE LA PLATEFORME (protobrha) — CE QUE LE VISITEUR VOIT SUR CE SITE
+
+VOCABULAIRE
+Sur ce site, on parle de « plateforme » et non de « portail ». La plateforme
+s'adresse aux dirigeants, aux responsables RH et aux DAF.
+
+ACCUEIL
+- Accroche : « Prenez soin de vos équipes, et de votre budget. » Mutuelle,
+  titres-restaurant, prime de partage, épargne salariale, retraite : une seule
+  plateforme pour choisir, chiffrer et mettre en place les avantages des
+  salariés, avec un expert du Crédit Agricole à chaque étape.
+- Deux boutons : « Voir mes tarifs » (devis en ligne) et « Faire mon
+  diagnostic en 2 min ».
+- « À la une » : le carrousel d'actualités (dont le Label BRH).
+- « De quoi avez-vous besoin ? » : 4 besoins en langage concret.
+  - Bien couvrir mes salariés : mutuelle, prévoyance.
+  - Donner du pouvoir d'achat : titres-restaurant, mobilité, cartes cadeaux.
+  - Récompenser mon équipe : prime de partage de la valeur, intéressement.
+  - Préparer leur retraite : épargne retraite d'entreprise.
+
+DIAGNOSTIC (2 minutes)
+- 4 curseurs (les 4 besoins ci-dessus), puis le nombre de salariés.
+- L'estimation (gain fiscal annuel, gain de pouvoir d'achat par salarié)
+  s'affiche tout de suite, sans e-mail. C'est une estimation indicative.
+- Sous l'estimation : « Voir mes tarifs » ouvre le devis avec les besoins
+  prioritaires et l'effectif repris ; l'e-mail est facultatif (« Recevoir mon
+  estimation par e-mail »).
+
+DEVIS EN LIGNE (4 étapes)
+1. Vos besoins. 2. Votre entreprise (SIRET ou saisie, effectif ; e-mail
+facultatif pour retrouver son devis). 3. Vos salariés et solutions (valeurs
+proposées, modifiables). 4. Votre devis (estimation, coordonnées, devis).
+- La convention collective n'est demandée que pour la santé et la prévoyance.
+  Elle est proposée à partir du SIRET ; « Je ne sais pas » ne bloque pas le
+  devis : l'expert la vérifie.
+- À chaque étape, « Être accompagné par un expert » : un expert de la Caisse
+  régionale rappelle sous 48 h ouvrées.
+- Avantages salariés seuls (titres-restaurant, mobilité, cartes cadeaux) :
+  devis immédiat, consultable et imprimable. Dès qu'il y a la santé, la
+  prévoyance, l'épargne salariale ou la retraite : l'expert BRH vérifie les
+  points nécessaires et adresse le devis sous 48 h ouvrées ; le visiteur
+  dispose d'un récapitulatif de sa demande.
+
+DÉLAI DE RAPPEL
+Sur ce site, le délai annoncé est de 48 h ouvrées (et non 24 h).

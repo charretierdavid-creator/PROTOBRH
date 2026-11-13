@@ -29,10 +29,14 @@ function brh_leads_db(): ?mysqli {
        effectif INT, secteur VARCHAR(120), idcc VARCHAR(120),
        montant_estime INT NULL, score_label INT NULL,
        statut VARCHAR(20) NOT NULL DEFAULT 'nouveau',
+       etape VARCHAR(60), jeton CHAR(32),
        donnees MEDIUMTEXT, page VARCHAR(255), ip VARCHAR(64),
        INDEX (cree_le), INDEX (email), INDEX (type)
      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
   );
+  /* colonnes ajoutées en V2.1 (suivi de l'étape atteinte d'un devis en cours) */
+  $c = $db->query("SHOW COLUMNS FROM leads LIKE 'etape'");
+  if ($c && $c->num_rows === 0) $db->query('ALTER TABLE leads ADD COLUMN etape VARCHAR(60) NULL AFTER statut, ADD COLUMN jeton CHAR(32) NULL AFTER etape');
   /* durée de conservation : 12 mois (décision du 13/11/2026), purge à chaque connexion à la base */
   $db->query('DELETE FROM leads WHERE cree_le < (NOW() - INTERVAL ' . BRH_LEADS_CONSERVATION_MOIS . ' MONTH)');
   return $db;
@@ -41,6 +45,7 @@ function brh_leads_db(): ?mysqli {
 /* libellés des types de demande */
 const BRH_LEAD_TYPES = [
   'devis' => 'Devis en ligne', 'rappel_expert' => 'Rappel expert (devis)', 'diagnostic_contact' => 'Contact — diagnostic RH',
+  'devis_en_cours' => 'Devis commencé (e-mail laissé)', 'diagnostic_estimation' => 'Estimation demandée par e-mail',
   'label_resultats' => 'Label BRH — résultats', 'label_contact' => 'Contact — Label BRH', 'audit_mutuelle_prevoyance' => 'Audit mutuelle',
   'newsletter' => 'Inscription newsletter', 'contact' => 'Contact',
 ];
