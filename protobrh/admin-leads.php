@@ -231,5 +231,5 @@ if (!$rows) $c .= '<tr><td colspan="9">Aucune demande pour ces critères.</td></
 $pages = max(1, (int) ceil(((int) $k['n']) / ADM_PAGE));
 $c .= '</table></div><div class="pg">' . ($p > 1 ? '<a class="btn o" href="admin-leads.php?' . $e($qs($base + ['p' => (string) ($p - 1)])) . '">← Précédentes</a>' : '') .
   '<span class="note">Page ' . $p . ' sur ' . $pages . '</span>' . ($p < $pages ? '<a class="btn o" href="admin-leads.php?' . $e($qs($base + ['p' => (string) ($p + 1)])) . '">Suivantes →</a>' : '') . '</div>' .
-  '<p class="note">Données personnelles recueillies avec le consentement des dirigeants : usage réservé au projet, export à conserver de façon sécurisée, suppression sur demande (fiche → « Supprimer définitivement »).</p></main>';
+  '<p class="note">Données personnelles recueillies avec le consentement des dirigeants : conservées 12 mois puis supprimées automatiquement ; usage réservé au projet, export à conserver de façon sécurisée, suppression sur demande (fiche → « Supprimer définitivement »).</p></main>';
 adm_page('Demandes', $c);

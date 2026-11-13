@@ -7,6 +7,7 @@
    - La table « leads » est créée automatiquement au premier envoi.
    - Aucune donnée n'est enregistrée sans le consentement explicite du dirigeant.
    - La version du prototype (S, A, B) est déduite de l'adresse du site.
+   - Conservation : 12 mois, puis suppression automatique (leads-base.php).
    - Consultation et export : admin-leads.php (accès séparé, mot de passe d'administration).
    ============================================================================ */
 

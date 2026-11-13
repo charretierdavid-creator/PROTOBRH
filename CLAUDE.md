@@ -91,9 +91,9 @@ Si une demande ne touche qu'un des deux sites, le dire explicitement dans le ré
 
 ## 4. Conventions du projet
 
-- **Pages du cahier des charges** : codes `É01` à `É30` (écrans ; `É28` est propre à la version B, `É30` est remplacée), `P1` à `P3` (processus back-office), `H` (Assistant BRH),
+- **Pages du cahier des charges** : codes `É01` à `É29` (écrans ; `É28` est propre à la version B ; `É30` a été supprimée en V2.0), `P1` à `P3` (processus back-office), `H` (Assistant BRH),
   `VA`, `VB` (fiches des versions A et B du test A/B).
-  Une nouvelle page d'écran prend le code suivant libre (`É31`…) et doit être reliée à une étape du parcours.
+  Une nouvelle page d'écran prend le code suivant libre (`É31`…, `É30` n'est pas réattribué) et doit être reliée à une étape du parcours.
 - **Priorités** : `MVP`, `V2`, `ARB` (à arbitrer).
 - **Données produites** : identifiants `D01`… `D112` ; une nouvelle donnée prend le code suivant libre et s'ajoute au
   dictionnaire (`data` dans `app_data.json`) avec écran, nature (P, E, C, T) et exemple.

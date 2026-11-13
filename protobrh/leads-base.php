@@ -7,6 +7,8 @@
 declare(strict_types=1);
 if (realpath($_SERVER['SCRIPT_FILENAME'] ?? '') === __FILE__) { http_response_code(404); exit; }
 
+const BRH_LEADS_CONSERVATION_MOIS = 12;   // durée de conservation des demandes des dirigeants
+
 function brh_leads_db(): ?mysqli {
   if (!defined('DB_HOST')) return null;
   mysqli_report(MYSQLI_REPORT_OFF);
@@ -31,6 +33,8 @@ function brh_leads_db(): ?mysqli {
        INDEX (cree_le), INDEX (email), INDEX (type)
      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
   );
+  /* durée de conservation : 12 mois (décision du 13/11/2026), purge à chaque connexion à la base */
+  $db->query('DELETE FROM leads WHERE cree_le < (NOW() - INTERVAL ' . BRH_LEADS_CONSERVATION_MOIS . ' MONTH)');
   return $db;
 }
 
