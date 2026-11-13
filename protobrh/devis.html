@@ -681,19 +681,38 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 .dv-modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
 .dv-modal-grid .full{grid-column:1/-1}
 
-/* document imprimable (devis indicatif) */
-#devisDoc{display:none}
+/* devis consultable à l'écran et imprimable (repris de la version B, 13/11/2026) */
+#devisDoc{position:fixed;inset:0;z-index:200;background:rgba(18,32,27,.55);display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:32px 16px}
+#devisDoc.open{display:flex}
+.brhq{background:#fff;width:100%;max-width:820px;border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.25);padding:40px 44px;color:var(--ink);font-family:var(--fb);position:relative}
+.brhq-bar{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-bottom:18px;padding-right:46px}
+.brhq-x{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line-2);background:#fff;cursor:pointer;font-size:20px;line-height:1;color:var(--slate)}
+.brhq-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;border-bottom:3px solid var(--green);padding-bottom:18px;margin-bottom:22px}
+.brhq-top img{height:46px;width:auto}
+.brhq-ref{text-align:right;font-size:.82rem;color:var(--slate);line-height:1.6}.brhq-ref b{display:block;font-family:var(--fh);font-size:1.3rem;color:var(--green);letter-spacing:.02em}
+.brhq h2{font-family:var(--fh);font-size:1.05rem;color:var(--green);margin:24px 0 10px;text-transform:uppercase;letter-spacing:.05em}
+.brhq-parties{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.brhq-box{background:var(--mint-2,#eef4ef);border-radius:12px;padding:14px 16px;font-size:.88rem;line-height:1.6}
+.brhq-box .l{font-family:var(--fh);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--slate);display:block;margin-bottom:4px}
+.brhq-tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.brhq table{width:100%;border-collapse:collapse;font-size:.86rem}
+.brhq th{text-align:left;font-family:var(--fh);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:#fff;background:var(--green);padding:10px 12px}
+.brhq th:last-child,.brhq td:last-child{text-align:right;white-space:nowrap}
+.brhq td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}.brhq td small{display:block;color:var(--slate);font-size:.78rem;margin-top:2px}
+.brhq tfoot td{font-family:var(--fh);font-weight:700;color:var(--green);font-size:1rem;border-bottom:none;background:var(--mint)}
+.brhq .st{white-space:nowrap;display:inline-block;font-family:var(--fh);font-weight:700;font-size:.64rem;letter-spacing:.04em;border-radius:999px;padding:.2rem .55rem;background:var(--mint);color:var(--green)}
+.brhq .st.confirm,.brhq .st.simu{background:#fdf1e4;color:#9a5a12}
+.brhq-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.brhq-kpi{border:1px solid var(--line-2);border-radius:12px;padding:12px 14px}.brhq-kpi b{display:block;font-family:var(--fh);font-size:1.15rem;color:var(--green)}.brhq-kpi span{font-size:.78rem;color:var(--slate)}
+.brhq-legal{font-size:.74rem;color:var(--slate);line-height:1.55;margin-top:22px;border-top:1px solid var(--line);padding-top:14px}
+@media(max-width:640px){.brhq{padding:26px 20px}.brhq table{min-width:560px;font-size:.8rem}.brhq th,.brhq td{padding:9px 8px}.brhq-parties,.brhq-kpis{grid-template-columns:1fr}.brhq-top{flex-direction:column}.brhq-ref{text-align:left}}
 @media print{
   body > *:not(#devisDoc){display:none !important}
-  #devisDoc{display:block;padding:8px;font-family:Arial,sans-serif;color:#1e2b28}
+  #devisDoc{position:static;display:block !important;background:none;padding:0;overflow:visible}
+  .brhq{box-shadow:none;border-radius:0;max-width:none;padding:0}.brhq-bar,.brhq-x{display:none !important}
+  .brhq th,.brhq tfoot td,.brhq-box,.brhq .st{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   @page{margin:16mm}
 }
-#devisDoc h1{font-size:20px;color:#065145;margin:0 0 4px}
-#devisDoc .d-meta{font-size:12px;color:#5c6b64;margin-bottom:18px}
-#devisDoc table{width:100%;border-collapse:collapse;font-size:12px;margin:10px 0 16px}
-#devisDoc th{background:#065145;color:#fff;text-align:left;padding:7px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-#devisDoc td{border-bottom:1px solid #dfe6e2;padding:7px;vertical-align:top}
-#devisDoc .d-legal{font-size:10px;color:#5c6b64;margin-top:16px}
 
 @media(max-width:1000px){
   .dv-choices{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -1096,7 +1115,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
         <p id="doneMsg"></p>
         <span class="ref" id="doneRef"></span>
         <div class="r-cta">
-          <button class="btn btn-primary" onclick="printDevis()">Télécharger mon devis (PDF) <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg></button>
+          <button class="btn btn-primary" onclick="openDoc()">Consulter mon devis <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg></button>
+          <button class="btn btn-outline" onclick="printDevis()">Imprimer / PDF</button>
           <a class="btn btn-outline" href="index.html">Retour à l'accueil</a>
         </div>
       </div>
@@ -1139,7 +1159,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 </div>
 
 <!-- DOCUMENT IMPRIMABLE (généré à la fin du parcours) -->
-<div id="devisDoc" aria-hidden="true"></div>
+<div id="devisDoc" role="dialog" aria-modal="true" aria-label="Votre devis"></div>
 
 <script>
 /* ==============================================================
@@ -1156,7 +1176,7 @@ const DEVIS_CONFIG = {
 
   /* Branchements serveur (laisser vide = mode démonstration) */
   ENTREPRISE_ENDPOINT: 'entreprise.php',   // proxy Pappers côté serveur (clé API jamais exposée)
-  LEAD_ENDPOINT: '',                        // URL d'envoi du lead vers le CRM (ex. 'lead.php')
+  LEAD_ENDPOINT: 'lead.php',                // enregistrement de la demande (base MySQL, consultée dans admin-leads.php) ; Web-to-CR (SOLEAD) à brancher
 
   /* Hypothèses générales */
   SALAIRE_MOYEN: {lt25:22000, '25_35':30000, '35_45':40000, '45_60':52000, gt60:70000},
@@ -1609,7 +1629,7 @@ async function submitDevis(){
   if(!$('c-consent').checked){ e.textContent='Votre consentement est nécessaire pour établir et vous transmettre votre devis.'; return e.classList.add('show'); }
   const o=S.est||compute(), h=RH(), tot=S.sol.reduce((a,k)=>a+(o[k].cout||0),0);
   const ref='DEV-'+new Date().getFullYear()+'-'+Math.random().toString(36).slice(2,7).toUpperCase();
-  const lead={ reference:ref, date:new Date().toISOString(), source:'portail_brh_devis_en_ligne', variante:window.BRH_VARIANTE||'REF',
+  const lead={ type:'devis', reference:ref, date:new Date().toISOString(), source:'portail_brh_devis_en_ligne', variante:window.BRH_VARIANTE||'REF',
     entreprise:{siret:S.ent.siret, secteur:S.ent.secteur||'', audit_mutuelle:!!S.fromAudit, raison_sociale:S.ent.nom, ville:S.ent.ville, code_postal:S.ent.cp, naf:S.ent.naf, idcc:S.ent.idcc, effectif:S.ent.effectif, source_donnees:S.entSrc},
     contact:{prenom:$('c-prenom').value.trim(), nom:$('c-nom').value.trim(), fonction:$('c-fct').value, telephone:$('c-tel').value.trim(), email:$('c-email').value.trim(), rappel_expert:$('c-rappel').checked, consentement:true, consentement_date:new Date().toISOString()},
     rh:{salaries_concernes:h.N, cadres:h.cadres, non_cadres:h.noncadres, tranche_salaire:$('h-sal').value, etablissements:+$('h-etab').value||1, anciennete_mois:+$('h-anc').value},
@@ -1624,16 +1644,38 @@ async function submitDevis(){
   $('doneRef').textContent='Référence '+ref;
   $('doneMsg').textContent = lead.contact.rappel_expert ? 'Votre devis indicatif est prêt. Un expert de votre Caisse régionale vous contacte rapidement pour le finaliser avec vous.' : 'Votre devis indicatif est prêt : téléchargez-le dès maintenant. Il sera confirmé par un expert avant toute souscription.';
   try{ sessionStorage.removeItem('brhDevis'); }catch(err){}
+  setTimeout(openDoc,600);   /* devis consultable dès l'envoi */
 }
 function buildDoc(l){
-  const rows=l.panier.map(p=>'<tr><td><b>'+esc(p.libelle)+'</b><br>'+esc(p.statut)+'</td><td>'+p.hypotheses.map(esc).join('<br>')+'</td><td>'+(p.cout_employeur_annuel==null?'Sur mesure':eur(p.cout_employeur_annuel))+'</td></tr>').join('');
-  $('devisDoc').innerHTML='<h1>Banque des Ressources Humaines — Proposition indicative</h1>'+
-    '<p class="d-meta">'+esc(l.reference)+' · établie le '+new Date(l.date).toLocaleDateString('fr-FR')+'<br>'+esc(l.entreprise.raison_sociale)+' · SIRET '+esc(l.entreprise.siret||'—')+' · '+esc(l.entreprise.code_postal+' '+l.entreprise.ville)+'<br>'+
-    'Contact : '+esc(l.contact.prenom+' '+l.contact.nom)+' · '+esc(l.contact.email)+' · '+esc(l.contact.telephone)+'<br>Salariés concernés : '+l.rh.salaries_concernes+'</p>'+
-    '<table><thead><tr><th>Solution</th><th>Hypothèses retenues</th><th>Coût employeur estimé / an</th></tr></thead><tbody>'+rows+'<tr><td colspan="2"><b>Total estimé</b></td><td><b>'+eur(l.estimation_totale)+'</b></td></tr></tbody></table>'+
-    '<p class="d-legal">Document indicatif et non contractuel, établi à partir des informations déclarées et d’hypothèses de calcul. Les montants, garanties et conditions définitifs sont confirmés par votre expert Banque des Ressources Humaines. Solutions distribuées par les Caisses régionales de Crédit Agricole et leurs filiales (Crédit Agricole Assurances, Amundi, Worklife).</p>';
+  const o=S.est||compute(), h=RH(), ent=l.entreprise, ct=l.contact, now=new Date(l.date), val=new Date(now.getTime()+30*864e5);
+  const logo=document.querySelector('header .brand img');
+  const rows=l.panier.map(p=>{ const s=DV_SOL[p.solution]||{};
+    return '<tr><td><b>'+esc(p.libelle)+'</b>'+(s.partners?'<small>'+esc(s.partners.join(' · '))+'</small>':'')+'</td><td>'+p.hypotheses.slice(0,3).map(esc).join('<br>')+'</td>'+
+      '<td><span class="st '+esc(s.statut||'')+'">'+esc(p.statut)+'</span></td><td>'+(p.cout_employeur_annuel==null?'Sur mesure':eur(p.cout_employeur_annuel)+' / an')+'</td></tr>'; }).join('');
+  const net=S.sol.filter(k=>k!=='sante').reduce((a,k)=>a+((o[k]&&o[k].netSal)||0)*((o[k]&&o[k].benef)||0),0), moy=h.N?net/h.N:0;
+  const eq=S.sol.reduce((a,k)=>a+((o[k]&&o[k].equiv)||0),0), eco=eq-S.sol.filter(k=>k!=='sante').reduce((a,k)=>a+((o[k]&&o[k].cout)||0),0);
+  $('devisDoc').innerHTML='<div class="brhq">'+
+    '<button class="brhq-x" type="button" aria-label="Fermer" onclick="closeDoc()">×</button>'+
+    '<div class="brhq-bar"><button class="btn btn-outline" type="button" onclick="closeDoc()">Fermer</button><button class="btn btn-primary" type="button" onclick="track(\'devis_pdf\');window.print()">Imprimer / enregistrer en PDF</button></div>'+
+    '<div class="brhq-top">'+(logo?'<img src="'+logo.src+'" alt="Banque des Ressources Humaines">':'<b>Banque des Ressources Humaines</b>')+
+      '<div class="brhq-ref"><b>DEVIS INDICATIF</b>Réf. '+esc(l.reference)+'<br>Émis le '+now.toLocaleDateString('fr-FR')+'<br>Valable 30 jours, jusqu’au '+val.toLocaleDateString('fr-FR')+'</div></div>'+
+    '<div class="brhq-parties">'+
+      '<div class="brhq-box"><span class="l">Entreprise</span><b>'+esc(ent.raison_sociale||'—')+'</b><br>'+(ent.siret?'SIRET '+esc(ent.siret)+'<br>':'')+esc((ent.code_postal||'')+' '+(ent.ville||''))+(ent.naf?'<br>NAF '+esc(ent.naf):'')+(ent.idcc?'<br>Convention : '+esc(ent.idcc):'')+'<br>'+h.N+' salarié'+(h.N>1?'s':'')+' concerné'+(h.N>1?'s':'')+'</div>'+
+      '<div class="brhq-box"><span class="l">Interlocuteur</span><b>'+esc((ct.prenom+' '+ct.nom).trim())+'</b><br>'+esc(ct.fonction||'')+'<br>'+esc(ct.email)+'<br>'+esc(ct.telephone)+(ct.rappel_expert?'<br>Rappel par un expert demandé':'')+'</div>'+
+    '</div>'+
+    '<h2>Solutions retenues</h2><div class="brhq-tw"><table><thead><tr><th>Solution</th><th>Hypothèses</th><th>Statut</th><th>Coût employeur</th></tr></thead><tbody>'+rows+'</tbody>'+
+      '<tfoot><tr><td colspan="3">Total estimé</td><td>'+eur(l.estimation_totale)+' / an</td></tr></tfoot></table></div>'+
+    '<div class="brhq-kpis"><div class="brhq-kpi"><b>'+eur(l.estimation_totale)+'</b><span>coût employeur total estimé / an</span></div>'+
+      '<div class="brhq-kpi"><b>'+(moy?eur(moy):'—')+'</b><span>gain net moyen par salarié / an</span></div>'+
+      '<div class="brhq-kpi"><b>'+(eco>0?eur(eco):'—')+'</b><span>économisés vs une hausse de salaire équivalente</span></div></div>'+
+    '<h2>Prochaines étapes</h2><div class="brhq-box">'+(ct.rappel_expert?'Un expert de votre Caisse régionale vous recontacte sous 24 h ouvrées pour valider ces hypothèses et finaliser votre devis.':'Votre expert Banque des Ressources Humaines reste disponible pour valider ces hypothèses et finaliser votre devis.')+
+      ' Les solutions « à confirmer » ou en « simulation » (santé et prévoyance, retraite collective) font l’objet d’une étude personnalisée selon votre convention collective et l’âge moyen de vos salariés.</div>'+
+    '<div class="brhq-legal">Document indicatif et non contractuel, établi à partir des informations déclarées et d’hypothèses de calcul. Les montants, garanties et conditions définitifs sont confirmés par votre expert Banque des Ressources Humaines. Solutions distribuées par les Caisses régionales de Crédit Agricole et leurs filiales.</div>'+
+    '</div>';
 }
-function printDevis(){ track('devis_pdf'); window.print(); }
+function openDoc(){ if(!window.BRH_LEAD) return; const d=$('devisDoc'); d.classList.add('open'); d.scrollTop=0; track('devis_consulte',{reference:window.BRH_LEAD.reference}); }
+function closeDoc(){ $('devisDoc').classList.remove('open'); }
+function printDevis(){ openDoc(); track('devis_pdf'); setTimeout(()=>window.print(),150); }
 
 /* ============================ EXPERT ============================ */
 function openExpert(){ const m=$('expertModal'); m.hidden=false; $('exForm').classList.remove('hidden'); $('exDone').classList.add('hidden');
@@ -1642,11 +1684,12 @@ function closeExpert(){ $('expertModal').hidden=true; }
 function submitExpert(){ const e=$('errX'); e.classList.remove('show');
   if(!$('x-nom').value.trim() || $('x-tel').value.replace(/\D/g,'').length<10){ e.textContent='Indiquez votre nom et un numéro de téléphone valide.'; return e.classList.add('show'); }
   if(!$('x-consent').checked){ e.textContent='Votre consentement est nécessaire pour être recontacté(e).'; return e.classList.add('show'); }
-  const ctx={nom:$('x-nom').value.trim(), telephone:$('x-tel').value.trim(), creneau:$('x-cr').value, etape:STEPS[S.step-1], solutions:S.sol, entreprise:S.ent};
+  const ctx={nom:$('x-nom').value.trim(), telephone:$('x-tel').value.trim(), creneau:$('x-cr').value, etape:STEPS[S.step-1], solutions:S.sol, entreprise:S.ent, consentement:true, consentement_date:new Date().toISOString()};
   if(DEVIS_CONFIG.LEAD_ENDPOINT){ fetch(DEVIS_CONFIG.LEAD_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({variante:window.BRH_VARIANTE||'REF',type:'rappel_expert',source:'portail_brh_devis_en_ligne',contexte:ctx})}).catch(()=>{}); }
   console.info('Demande de rappel', ctx); track('devis_expert_submit',{step:S.step});
   $('exForm').classList.add('hidden'); $('exDone').classList.remove('hidden'); }
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeExpert(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeExpert(); closeDoc(); } });
+document.addEventListener('click',e=>{ if(e.target && e.target.id==='devisDoc') closeDoc(); });
 
 /* ============================ MENU & INIT ============================ */
 function toggleMenu(){ const m=$('mobileMenu'),b=document.querySelector('.burger'); const o=m.classList.toggle('open'); b.setAttribute('aria-expanded',o); }

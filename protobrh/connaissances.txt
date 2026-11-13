@@ -983,3 +983,13 @@ LABEL BRH (page label-brh.html, accessible depuis le carrousel)
   certification officielle ni réglementaire. Il complète le diagnostic RH
   (priorités notées de 1 à 4 et gains estimés), qui reste accessible par le
   menu « Diagnostic RH ».
+
+DEVIS EN LIGNE — DEVIS CONSULTABLE ET IMPRIMABLE
+- Le devis en ligne est le même sur toutes les versions du portail.
+- À la dernière étape (« Recevez votre devis »), après les coordonnées et le
+  consentement, le devis s'affiche à l'écran : référence, date, validité de
+  30 jours, entreprise, interlocuteur, solutions retenues avec leurs
+  hypothèses et leur statut, total annuel estimé, gain net moyen par salarié
+  et prochaines étapes. Bouton « Imprimer / enregistrer en PDF ».
+- Le devis reste indicatif et non contractuel ; l'expert BRH de la Caisse
+  régionale le confirme.

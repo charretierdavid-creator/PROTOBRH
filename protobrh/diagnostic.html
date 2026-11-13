@@ -1123,12 +1123,12 @@ function submitLead(){
   if(!consent){ return showErr(err,'Le recueil de votre consentement est obligatoire avant tout envoi.'); }
   err.classList.remove('show');
   const {total,details}=calculateFiscalGain(state.effectif,state.priorities);
-  const payload={variante:window.BRH_VARIANTE||'REF',contact:{name:nom,companyName:ent,email,phone:tel,consent:true,consentDate:new Date().toISOString()},
+  const payload={type:'diagnostic_contact',variante:window.BRH_VARIANTE||'REF',contact:{name:nom,companyName:ent,email,phone:tel,consent:true,consentDate:new Date().toISOString()},
     company:{sector:val('secteur'),employeeCount:state.effectif,departement:depValide(),idcc:(typeof ccnCode==='function'?ccnCode():''),conventionCollective:(typeof ccnTexte==='function'?ccnTexte():'')},
     protectionActuelle:(typeof state.contrats==='object'?Object.assign({},state.contrats):null),
     priorities:Object.assign({},state.priorities),fiscalGain:{total,details}};
   track('lead_submit',{departement:payload.company.departement,total_gain:total,active_devices:Object.values(details).filter(v=>v>0).length,consent_status:true});
-  try{ fetch('traitement_lead.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});}catch(e){}
+  try{ fetch('lead.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});}catch(e){}
   document.getElementById('contact-form').classList.add('hidden');
   const s=document.getElementById('contact-success'); s.classList.remove('hidden');
   document.getElementById('success-msg').textContent='Merci '+nom.split(' ')[0]+'. Votre synthèse (gain estimé '+fmtEur(total)+') est transmise. Un expert Banque des RH'+(payload.company.departement?' de votre Caisse régionale (département '+payload.company.departement+')':'')+' vous recontactera rapidement.';
