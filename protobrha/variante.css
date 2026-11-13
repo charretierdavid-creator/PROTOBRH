@@ -29,3 +29,62 @@ h1,h2,h3,h4{font-weight:700;letter-spacing:-.03em}
 /* liens secondaires regroupés en bas de page */
 .va-more{border-top:1px solid var(--line);padding:18px 24px;text-align:center;font-size:.9rem;color:var(--slate)}
 .va-more a{color:var(--green);font-weight:600;margin:0 10px;white-space:nowrap}
+/* ===== V2.1 — atelier CR du 13/11/2026 ===== */
+/* bandeau de la maquette */
+.va-maquette{background:#1d2b28;color:#fff;font:600 .78rem/1 var(--fb);letter-spacing:.04em;text-align:center;padding:7px 12px}
+/* accroche (inspirée des plateformes d'avantages salariés : grand titre centré, dispositifs en pastilles) */
+.va-hero{position:relative;overflow:hidden;background:linear-gradient(180deg,#f3f8e4 0%,#eef5ee 70%,#fff 100%);padding:64px 24px 56px;text-align:center}
+.va-hero::before{content:"";position:absolute;inset:auto -10% -40% -10%;height:70%;background:radial-gradient(ellipse at center,rgba(143,184,34,.18),transparent 65%);pointer-events:none}
+.va-hero-in{position:relative;max-width:1180px;margin:0 auto}
+.va-kick{display:inline-block;font:600 .82rem var(--fb);color:var(--green);background:#fff;border:1px solid var(--line-2);border-radius:999px;padding:6px 14px;margin:0 0 18px}
+.va-hero h1{font-size:clamp(2.2rem,5vw,4.2rem);line-height:1.04;letter-spacing:-.045em;color:#0b3b33;margin:0 auto;max-width:22ch}
+.va-sub{max-width:62ch;margin:20px auto 0;font-size:1.06rem;line-height:1.55;color:#3f4c47}
+.va-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+.va-btn{background:#0b3b33;color:#fff!important;border:none;padding:.95rem 1.5rem;font-size:1rem;display:inline-flex;align-items:center;gap:.5rem;text-decoration:none}
+.va-btn:hover{background:#062620}.va-btn svg{width:18px;height:18px}
+.va-btn2{background:#fff;color:#0b3b33!important;border:1px solid var(--line-2);padding:.95rem 1.5rem;font-size:1rem;text-decoration:none}
+.va-stage{display:grid;grid-template-columns:1fr minmax(280px,360px) 1fr;gap:24px;align-items:center;margin-top:44px}
+.va-chips{display:flex;flex-direction:column;gap:14px}.va-chips.l{align-items:flex-end}.va-chips.r{align-items:flex-start}
+.va-chip{display:inline-flex;align-items:center;gap:8px;background:#fff;border-radius:999px;padding:11px 18px;font:600 .95rem var(--fb);color:#0b3b33;box-shadow:0 6px 18px rgba(11,59,51,.07)}
+.va-chip::before{content:"";width:10px;height:10px;border-radius:50%;background:#8FB822}.va-chip.g::before{background:#016265}.va-chip.m::before{background:#c7dd8a}
+.va-chips.l .va-chip:nth-child(2),.va-chips.r .va-chip:nth-child(3){margin-right:40px}.va-chips.r .va-chip:nth-child(2),.va-chips.l .va-chip:nth-child(3){margin-left:40px}
+.va-card{background:#fff;border-radius:28px;padding:26px 24px;text-align:left;box-shadow:0 18px 50px rgba(11,59,51,.14);border:1px solid var(--line)}
+.va-card-k{font:700 .7rem var(--fb);letter-spacing:.08em;text-transform:uppercase;color:var(--slate)}
+.va-card b{display:block;font-size:2.1rem;letter-spacing:-.04em;color:#0b3b33;margin:6px 0 4px}.va-card>span:not(.va-card-k){display:block;font-size:.9rem;color:#3f4c47;line-height:1.45}
+.va-card ul{list-style:none;padding:0;margin:16px 0 0;display:grid;gap:8px}.va-card li{position:relative;padding-left:22px;font-size:.85rem;color:#3f4c47}
+.va-card li::before{content:"";position:absolute;left:0;top:4px;width:12px;height:12px;border-radius:50%;background:#e6f0cc;box-shadow:inset 0 0 0 3px #8FB822}
+@media(max-width:900px){.va-stage{grid-template-columns:1fr}.va-chips{flex-direction:row;flex-wrap:wrap;justify-content:center}.va-chips .va-chip{margin:0!important}.va-chips.r{order:3}}
+/* carrousel « À la une », horizontal */
+.va-une{padding:40px 0 10px}.va-une .h2{margin-bottom:16px}
+.va-une .hero-carousel{aspect-ratio:auto;min-height:0;height:300px}
+.va-une .car-slide{flex-direction:row}.va-une .car-art{order:-1;flex:0 0 50%;height:auto}.va-une .car-txt{flex:1 1 0;padding:30px 40px 52px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+.va-une .car-dots{left:auto;right:28px}.va-une .car-arrow{top:50%}
+@media(max-width:760px){.va-une .hero-carousel{height:auto}.va-une .car-slide{flex-direction:column}.va-une .car-art{height:160px;flex:0 0 auto}}
+/* 4 besoins : exemples et « i » */
+.va-ex{display:block;font-weight:600;color:#016265}
+.va-i{position:relative;display:inline-grid;place-items:center;width:18px;height:18px;margin-left:8px;border-radius:50%;background:#8FB822;color:#fff;font:italic 700 .7rem/1 var(--fb);cursor:help;vertical-align:2px}
+.va-tip{display:none;position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);width:240px;background:#0b3b33;color:#fff;font:400 .8rem/1.4 var(--fb);font-style:normal;text-align:left;border-radius:12px;padding:10px 12px;z-index:20}
+.va-i:hover .va-tip,.va-i:focus .va-tip{display:block}
+/* diagnostic : « Voir mes tarifs » et e-mail facultatif sous l'estimation */
+.va-next{margin-top:18px;padding:22px 24px;border-radius:var(--radius-lg);background:var(--mint-2);border:1px solid var(--line)}
+.va-ind{margin:0 0 14px;font-size:.82rem;color:var(--slate)}
+.va-next-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}.va-next-t{font-size:.9rem;color:var(--slate)}
+.va-mail{margin-top:20px;padding-top:18px;border-top:1px solid var(--line-2)}.va-mail>label{font-weight:600;color:var(--green)}.va-mail>label span{font-weight:400;color:var(--slate)}
+.va-mail-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}.va-mail-row input{flex:1 1 260px;border:1.5px solid var(--line-2);border-radius:999px;padding:.75rem 1rem;font:inherit}
+.va-mail-c{display:flex;gap:10px;align-items:flex-start;margin-top:10px;font-size:.8rem;color:var(--slate);line-height:1.45}.va-mail-c input{margin-top:3px;accent-color:var(--green)}
+.va-mail-msg{margin:8px 0 0;font-size:.85rem;color:#a3262a}.va-mail-ok{margin:0;font-weight:600;color:var(--green)}
+/* devis en 4 étapes */
+.dv-step[data-step="3"]{display:none!important}
+.va-rh{margin:0 0 20px;padding:18px 20px;border-radius:var(--radius);background:var(--mint-2)}
+.va-rh h3{font-size:1.02rem;color:var(--green);margin:0 0 12px}.va-rh h3 span{font-weight:400;font-size:.82rem;color:var(--slate);margin-left:6px}
+.va-ccn{color:#016265!important}
+.va-mail2{grid-column:1/-1}.va-opt{font-weight:400;color:var(--slate);font-size:.85em}
+.va-acc{background:none;border:none;color:var(--green);font:600 .9rem var(--fb);text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:8px 4px;margin-left:auto}
+.dv-nav{flex-wrap:wrap}
+/* diagnostic : un seul appel au devis (sous l'estimation) ; « Solutions » retiré du menu de la page */
+#devisCta{display:none!important}
+a[href="#block3"]{display:none!important}
+.va-next-row .va-acc{margin-left:0}
+/* petit écran : aucune illustration ne crée de défilement horizontal */
+html[data-variante="A"],html[data-variante="A"] body{overflow-x:clip}
+@media(max-width:760px){.va-une .car-arrow{top:80px}}

@@ -23,6 +23,15 @@ if (strlen($raw) > 200000) { http_response_code(413); echo json_encode(['ok' => 
 $in = json_decode($raw, true);
 if (!is_array($in)) { http_response_code(400); echo json_encode(['ok' => false, 'error' => 'Requête invalide']); exit; }
 
+/* ---------- suivi d'un devis en cours : mise à jour de l'étape atteinte (identifiant + jeton remis à la création) ---------- */
+if (($in['action'] ?? '') === 'etape') {
+  $id = (int) ($in['id'] ?? 0); $jeton = (string) ($in['jeton'] ?? ''); $et = mb_substr(trim((string) ($in['etape'] ?? '')), 0, 60);
+  if ($id < 1 || !preg_match('/^[0-9a-f]{32}$/', $jeton) || $et === '') { echo json_encode(['ok' => false, 'error' => 'Requête invalide']); exit; }
+  $db = brh_leads_db(); if (!$db) { http_response_code(500); echo json_encode(['ok' => false]); exit; }
+  $s = $db->prepare('UPDATE leads SET etape = ? WHERE id = ? AND jeton = ?'); $s->bind_param('sis', $et, $id, $jeton); $s->execute();
+  echo json_encode(['ok' => $s->affected_rows >= 0]); exit;
+}
+
 /* ---------- lecture tolérante : les formulaires du portail n'utilisent pas tous les mêmes noms ---------- */
 $t = static fn($v, int $n = 190): string => mb_substr(trim(is_scalar($v) ? (string) $v : ''), 0, $n);
 $c = is_array($in['contact'] ?? null) ? $in['contact'] : (is_array($in['contexte'] ?? null) ? $in['contexte'] : []);
@@ -56,6 +65,8 @@ $ref     = $t($in['reference'] ?? '', 40);
 $montant = isset($in['estimation_totale']) ? (int) $in['estimation_totale'] : (isset($in['fiscalGain']['total']) ? (int) $in['fiscalGain']['total'] : null);
 $score   = isset($in['labelBrh']['score']) ? (int) $in['labelBrh']['score'] : (isset($in['score']) ? (int) $in['score'] : null);
 $page    = $t($in['page'] ?? ($_SERVER['HTTP_REFERER'] ?? ''), 255);
+$etape   = $t($in['etape'] ?? '', 60);
+$jeton   = bin2hex(random_bytes(16));
 
 /* ---------- contrôles ---------- */
 if (!$consent) { echo json_encode(['ok' => false, 'error' => 'Consentement requis : rien n\'a été enregistré.']); exit; }
@@ -71,9 +82,9 @@ $db = brh_leads_db();
 if (!$db) { http_response_code(500); echo json_encode(['ok' => false, 'error' => 'Connexion base impossible']); exit; }
 $stmt = $db->prepare('INSERT INTO leads (cree_le, version, type, reference, prenom, nom, email, telephone, fonction, rappel_expert,
     consentement, consentement_le, raison_sociale, siret, code_postal, ville, departement, effectif, secteur, idcc, montant_estime, score_label,
-    donnees, page, ip) VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+    donnees, page, ip, etape, jeton) VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
 if (!$stmt) { http_response_code(500); echo json_encode(['ok' => false, 'error' => 'Préparation impossible']); exit; }
-$stmt->bind_param('ssssssssissssssissiisss', $version, $type, $ref, $prenom, $nom, $email, $tel, $fonct, $rappel,
-  $consentLe, $raison, $siret, $cp, $ville, $dep, $eff, $secteur, $idcc, $montant, $score, $donnees, $page, $ip);
+$stmt->bind_param('ssssssssissssssissiisssss', $version, $type, $ref, $prenom, $nom, $email, $tel, $fonct, $rappel,
+  $consentLe, $raison, $siret, $cp, $ville, $dep, $eff, $secteur, $idcc, $montant, $score, $donnees, $page, $ip, $etape, $jeton);
 $ok = $stmt->execute();
-echo json_encode($ok ? ['ok' => true, 'id' => $db->insert_id] : ['ok' => false, 'error' => 'Enregistrement impossible']);
+echo json_encode($ok ? ['ok' => true, 'id' => $db->insert_id, 'jeton' => $jeton] : ['ok' => false, 'error' => 'Enregistrement impossible']);
