@@ -1,0 +1,17 @@
+# Cockpit BRH — cockpitbrh.monsitedetest.com (console d'administration des demandes des dirigeants)
+# HTTPS imposé, aucun listage de dossier, fichiers de configuration et bibliothèque PHP jamais servis.
+Options -Indexes
+DirectoryIndex index.php
+<IfModule mod_headers.c>
+Header always set X-Robots-Tag "noindex, nofollow"
+Header always set Referrer-Policy "no-referrer"
+</IfModule>
+<FilesMatch "^(config\.php|config\.example\.php|leads-base\.php|\.ftp-deploy-sync-state\.json)$">
+Require all denied
+</FilesMatch>
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>

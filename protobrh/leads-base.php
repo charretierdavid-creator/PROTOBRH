@@ -1,7 +1,8 @@
 <?php
 /* ============================================================================
    leads-base.php — connexion MySQL et création de la table « leads ».
-   Inclus par lead.php (enregistrement) et admin-leads.php (consultation).
+   Inclus par lead.php (enregistrement), admin-leads.php et le Cockpit BRH (cockpitbrh/, consultation et suivi ;
+   le fichier y est copié à chaque mise en ligne).
    Ne s'exécute pas seul.
    ============================================================================ */
 declare(strict_types=1);
@@ -49,3 +50,10 @@ const BRH_LEAD_TYPES = [
   'label_resultats' => 'Label BRH — résultats', 'label_contact' => 'Contact — Label BRH', 'audit_mutuelle_prevoyance' => 'Audit mutuelle',
   'newsletter' => 'Inscription newsletter', 'contact' => 'Contact',
 ];
+
+/* suivi commercial d'une demande (D82 : pris en charge, RDV, proposition, signé, perdu) — commun à admin-leads.php et au Cockpit BRH */
+const BRH_LEAD_STATUTS = [
+  'nouveau' => 'Nouveau', 'contacte' => 'Pris en charge', 'rdv' => 'RDV fixé', 'propose' => 'Proposition remise',
+  'signe' => 'Signé', 'perdu' => 'Perdu', 'traite' => 'Traité (ancien suivi)',
+];
+const BRH_LEAD_STATUTS_CLOS = ['signe', 'perdu', 'traite'];

@@ -18,3 +18,6 @@ __pycache__/
 _site/
 protobrha/config.php
 protobrhb/config.php
+
+# --- Cockpit BRH (cockpitbrh.monsitedetest.com) : configuration sur Hostinger uniquement ---
+cockpitbrh/config.php
