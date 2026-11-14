@@ -136,7 +136,8 @@
     var cta = done.querySelector('.r-cta'); done.insertBefore(slot, cta ? cta.nextSibling : null);
     IA.loading(slot, 'L’IA prépare le dossier pour votre expert…');
     var contact = l.contact || {}, panier = l.panier || [], sc = l.scoring || {};
-    var ctx = { source: 'devis en ligne', entreprise: { secteur: ent.secteur, effectif: eff, departement: dep, naf: ent.naf, idcc: ent.idcc },
+    var ctx = { source: 'devis en ligne', entreprise: { secteur: ent.secteur, effectif: eff, departement: dep, naf: ent.naf, idcc: ent.idcc,
+                              conventions_declarees: ((ent.source_donnees || {}).conventions || []).map(function (c) { return c.idcc + (c.libelle ? ' — ' + c.libelle : '') + (c.population ? ' (' + c.population + ')' : ''); }) },
                 priorites: (prof().priorites) || null, deja: prof().deja || [],
                 panier: panier.map(function (p) { return { libelle: p.libelle, formule: p.formule, statut: p.statut, cout_employeur_annuel: p.cout_employeur_annuel }; }),
                 estimation_totale: l.estimation_totale, score: (sc.points != null ? sc.points + '/100' : '') + (sc.maturite ? ' (' + sc.maturite + ')' : ''), niveau_lead: nv.lib,

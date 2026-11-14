@@ -21,6 +21,13 @@ AIDES DE L'IA SUR CE SITE
   en ligne ou expert).
 - Devis en ligne : « Comprendre mon estimation » (avec question libre et
   scénarios « Et si… ») et « Dans quel ordre avancer ? ».
+- Devis en ligne, étape « Votre entreprise » : à partir du SIRET, le portail
+  affiche toutes les conventions collectives déclarées par l'entreprise dans
+  ses déclarations sociales (DSN), comme sur l'Annuaire des entreprises. Une
+  entreprise peut en avoir plusieurs, une par catégorie de salariés (par
+  exemple cadres et ETAM du bâtiment). Le visiteur retient celle qui sert de
+  base au devis ; les autres sont transmises à l'expert, qui applique à chaque
+  catégorie de salariés la convention qui la couvre.
 - Après une demande : le visiteur voit vers quelle Caisse régionale sa
   demande est orientée et ce que l'expert reçoit pour le rappeler sans rien
   lui redemander.
