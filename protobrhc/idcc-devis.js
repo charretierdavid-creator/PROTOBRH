@@ -247,6 +247,16 @@
     paint(); source();
     if (typeof save === 'function') save();
     if (frais && typeof track === 'function') track('devis_idcc_declarees', { nombre: l.length, codes: l.map(function (c) { return c.code; }).join(','), sans_convention: sans });
+    /* serveur sans la liste des conventions (entreprise.php du socle) : fiche publique lue dans le navigateur */
+    var id = String(d.siret || d.siren || '').replace(/\D/g, '');
+    if (!frais && !l.length && !memo && window.BRH_FICHE && d.source && d.source !== 'demo' && d.source !== 'manuel' && (id.length === 14 || id.length === 9)) {
+      BRH_FICHE.fiche(id).then(function (f) {
+        if (!f || !S.ent || String(S.ent.siret || '').replace(/\D/g, '').slice(0, 9) !== id.slice(0, 9)) return;
+        if (!f.idcc_liste.length && !f.sans_convention) return;
+        fillEntreprise(Object.assign({}, d, { idcc_liste: f.idcc_liste, sans_convention: f.sans_convention, idcc: '', tranche: d.tranche || f.tranche, verifier: f.verifier,
+          secteur: S.prefSecteur ? d.secteur : '' }), true);
+      });
+    }
     return r;
   };
 

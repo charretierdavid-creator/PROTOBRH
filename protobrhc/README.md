@@ -21,6 +21,18 @@ La version C reprend le parcours **Standard** et ajoute l'IA à chaque étape, s
 - `ia.php` : relais Mistral côté serveur (clé `MISTRAL_API_KEY` dans `config.php`, porte d'accès, 80 appels/h/IP, aucune donnée personnelle transmise).
 - `connaissances-version.txt` : ce que l'Assistant BRH doit savoir de la version C.
 
+## Fiche publique de l'entreprise (14/11/2026)
+
+- `entreprise-public.js` : si le serveur ne renvoie pas les conventions collectives (entreprise.php du socle, serveur injoignable), la fiche publique est lue dans le navigateur via l'API ouverte Recherche d'entreprises (conventions DSN, tranche d'effectif INSEE, siège).
+- `diag-entreprise.js` (diagnostic) : au SIREN / SIRET, secteur déduit de la convention collective puis du NAF, tranche d'effectif publique affichée sous « Nombre de salariés » (préremplissage au bas de la tranche si rien n'est saisi, rappel si la saisie en sort), département et commune du siège, conventions multiples laissées au choix du devis.
+- `idcc-devis.js` utilise le même complément : le choix entre plusieurs conventions fonctionne même avec l'entreprise.php du socle.
+
+## Lead management (14/11/2026)
+
+Module complet de gestion des leads, sur les règles du deck « Scénarios de distribution et niveaux de lead » : niveaux abandonniste / chaud / ultra-chaud, Dossier BRH unique par dirigeant, routage scénario A (département → CR → expert BRH, SOLEAD ou cockpit) et scénario B simulé (SIRET → base clients), workflow en 6 statuts, volets filiales, e-mails journalisés (envoi activable), console nationale.
+Fichiers : `lm-base.php`, `lm-api.php`, `lead.php` (surcouche), `lm-cron.php`, `lm-suivi.php`, `suivi-dossier.html`, `cockpit-brh.html` (+ `cockpit-brh-demo.js`, démonstration `cockpit-brh.html?demo=1`), `lm-parcours.js`.
+Mode d'emploi, configuration et points à valider : `LISEZMOI_LEAD_MANAGEMENT.md`.
+
 Garde-fous : l'IA ne calcule jamais (elle cite les montants du moteur), réponses JSON imposées (température 0,2),
 statut client jamais révélé, mention « orientation indicative » sur chaque réponse, mode démonstration sans clé.
 
