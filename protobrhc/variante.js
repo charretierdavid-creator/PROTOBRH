@@ -11,6 +11,9 @@
 (function(){
   var V = 'C', IAV = '20261114';
   window.BRH_VARIANTE = V;
+  /* options du socle activées pour la version C : questions santé-prévoyance (secteur, convention collective, cadres)
+     posées seulement si le besoin est choisi (atelier CR & Distribution du 13/11/2026, point 9) */
+  window.BRH_OPTIONS = { champsSelonBesoins:true };
   document.documentElement.setAttribute('data-variante', V);
   var dl = window.dataLayer = window.dataLayer || [], push = dl.push;
   dl.push = function(o){ if (o && typeof o === 'object' && !o.variante) o.variante = V; return push.apply(dl, arguments); };
