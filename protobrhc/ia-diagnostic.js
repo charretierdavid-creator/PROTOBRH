@@ -1,3 +1,4 @@
+/* Version C 1.0 — 14/11/2026 · IA du diagnostic · historique : VERSIONS.md */
 /* ==============================================================
    IA DU PARCOURS — page Diagnostic (version C du test A/B, protobrhc)
    S'appuie sur les fonctions de diagnostic.html du socle (state, calculateFiscalGain,

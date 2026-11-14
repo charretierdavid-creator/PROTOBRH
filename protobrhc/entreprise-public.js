@@ -1,3 +1,4 @@
+/* Version C 1.4 — 14/11/2026 · fiche publique lue dans le navigateur · historique : VERSIONS.md */
 /* ==============================================================
    FICHE PUBLIQUE DE L'ENTREPRISE — complément côté navigateur (version C, protobrhc)
    Si le serveur n'a pas renvoyé la liste des conventions collectives (entreprise.php du socle,

@@ -1,4 +1,5 @@
 <?php
+/* Version C 1.0 — 14/11/2026 · relais Mistral (couche IA) · historique : VERSIONS.md */
 /* ============================================================
    MOTEUR IA DU PARCOURS — version C du test A/B (protobrhc)
    ------------------------------------------------------------

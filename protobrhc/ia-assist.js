@@ -1,3 +1,4 @@
+/* Version C 1.0 — 14/11/2026 · module IA commun · historique : VERSIONS.md */
 /* ==============================================================
    IA DU PARCOURS — module partagé (version C du test A/B, protobrhc)
    Chargé par variante.js, avant ia-accueil.js, ia-diagnostic.js et ia-devis.js.

@@ -1,5 +1,10 @@
 # Lead management du Portail BRH — version C (protobrhc)
 
+_Version C 1.3 — 14/11/2026 · mode d’emploi du lead management · historique : VERSIONS.md_
+
+
+
+
 Module de gestion des leads du prototype, construit sur les règles du deck « Scénarios de distribution et niveaux de lead » du 14/11/2026 et sur la base MySQL existante (table `leads` de `lead.php`). Il ne modifie ni le socle `protobrh/` ni les versions A et B : tous les fichiers sont dans `protobrhc/`.
 
 ## Ce que fait le module

@@ -1,4 +1,5 @@
 <?php
+/* Version C 1.3 — 14/11/2026 · tâches planifiées · historique : VERSIONS.md */
 /* ============================================================================
    lm-cron.php — tâches planifiées du lead management (version C)
    - rattrapage des demandes pas encore rattachées à un dossier ;

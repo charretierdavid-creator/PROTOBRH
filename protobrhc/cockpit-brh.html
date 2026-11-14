@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Version C 1.8 — 15/11/2026 · porte d’accès expirée : message clair et bouton « Se reconnecter » · historique : VERSIONS.md -->
 <html lang="fr">
 <head>
 <meta charset="utf-8">
@@ -245,7 +246,11 @@ var COUL = { caa:'var(--caa)', amundi:'var(--amundi)', worklife:'var(--worklife)
 /* ---------- démarrage ---------- */
 function boot(){
   api('moi').then(function(j){
-    if (!j || !j.ok) { app.innerHTML = '<main><div class="wrap"><div class="card pad"><h1>Cockpit BRH</h1><p class="err">' + esc((j && j.error) || 'Service indisponible.') + '</p></div></div></main>'; return; }
+    if (!j || !j.ok) {
+      /* porte d'accès du prototype expirée (auth:false) : on recharge la page, qui affiche l'identification du site */
+      var porte = j && j.auth === false;
+      app.innerHTML = '<main><div class="wrap"><div class="card pad"><h1>Cockpit BRH</h1><p class="err">' + esc(porte ? 'Votre session du prototype a expiré : identifiez-vous à nouveau sur le site, puis au cockpit.' : ((j && j.error) || 'Service indisponible.')) + '</p>' +
+        (porte ? '<p><a class="btn p" href="./cockpit-brh.html?r=' + Date.now() + '">Se reconnecter</a></p>' : '') + '</div></div></main>'; return; }
     if (!j.connecte) { ST.user = null; ST.configure = j.configure; return render(); }
     ST.user = j.user; ST.csrf = j.csrf; ST.ref = j.ref; ST.cr = j.cr || []; ST.envoi = j.envoi; ST.redir = j.redirection; ST.scenarioB = j.scenario_b;
     var m = location.hash.match(/d=(\d+)/); if (m) ST.sel = +m[1];
@@ -296,7 +301,7 @@ function render(){
   var bandes = '';
   if (ST.demo) bandes += '<div class="band demo"><div class="wrap">Mode démonstration : données fictives en mémoire, aucun e-mail envoyé. Les règles de gestion sont celles du serveur.</div></div>';
   else if (!ST.envoi) bandes += '<div class="band"><div class="wrap">E-mails générés et journalisés, envoi désactivé (LM_EMAIL_ENVOI dans config.php).' + (ST.redir ? ' Redirection de test active.' : '') + '</div></div>';
-  app.innerHTML = '<header class="pbar"><div class="wrap"><b>PORTAIL BRH <i>15C</i></b><span class="s">Cockpit BRH · lead management, version C</span>' +
+  app.innerHTML = '<header class="pbar"><div class="wrap"><b>PORTAIL BRH <i>15C</i></b><span class="s">Cockpit BRH · lead management, version C 1.8</span>' +
     '<div class="who"><span><b>' + esc(u.nom) + '</b> <span class="r">· ' + esc(roleLib) + '</span></span><button type="button" id="sortir">Se déconnecter</button></div></div></header>' +
     '<nav class="tabs" aria-label="Vues"><div class="wrap" role="tablist">' + vues.map(function(v){ return '<button type="button" role="tab" data-vue="' + v[0] + '" aria-selected="' + (ST.vue === v[0]) + '">' + v[1] + (v[2] ? '<span class="n" title="dossiers en retard">' + v[2] + '</span>' : '') + '</button>'; }).join('') + '</div></nav>' + bandes +
     '<main id="main"><div class="wrap">' + ({ file:vueFile, tableau:vueTableau, distribution:vueDistribution, emails:vueEmails, param:vueParam }[ST.vue] || vueFile)() + '</div></main>';
@@ -317,7 +322,7 @@ function renderLogin(){
     [['national', 'Console nationale (équipe projet)'], ['tp.expert', 'J. Marchand — experte BRH, Touraine Poitou'], ['av.expert', 'L. Garnier — expert BRH, Atlantique Vendée'],
      ['caa.prevoyance', 'CA Assurances — Prévis'], ['amundi.universels', 'Amundi / CA Titres — Universels'], ['worklife', 'Worklife']].map(function(x){
       return '<button type="button" class="btn" data-demo="' + x[0] + '">' + esc(x[1]) + '</button>'; }).join('') + '</div>' : '';
-  app.innerHTML = '<header class="pbar"><div class="wrap"><b>PORTAIL BRH <i>15C</i></b><span class="s">Cockpit BRH · lead management, version C</span></div></header><main><div class="card login"><h1>Cockpit BRH</h1><p class="lede">Lead management du portail Banque des RH : file des dossiers par niveau de lead, routage vers la Caisse régionale, suivi des volets filiales.</p>' +
+  app.innerHTML = '<header class="pbar"><div class="wrap"><b>PORTAIL BRH <i>15C</i></b><span class="s">Cockpit BRH · lead management, version C 1.8</span></div></header><main><div class="card login"><h1>Cockpit BRH</h1><p class="lede">Lead management du portail Banque des RH : file des dossiers par niveau de lead, routage vers la Caisse régionale, suivi des volets filiales.</p>' +
     (ST.configure === false && !ST.demo ? '<p class="err">Accès non configuré : ajoutez <code>LM_ADMIN_LOGIN</code> et <code>LM_ADMIN_PASSWORD</code> (10 caractères au moins) dans config.php, ou les identifiants de l’administration (ADMIN_LOGIN / ADMIN_PASSWORD).</p>' : '') +
     '<form class="fm" id="flog"><label>Identifiant<input name="login" autocomplete="username" required></label><label>Mot de passe<input name="mdp" type="password" autocomplete="current-password" required></label>' +
     '<p class="err" id="lerr"></p><button class="btn p" type="submit">Se connecter</button></form>' + demo +
@@ -693,7 +698,7 @@ document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { var 
 window.LM_APP = { ST:ST, boot:boot, render:render, action:action, chargerFiche:chargerFiche };
 var demo = /[?&]demo=1\b/.test(location.search) || location.protocol === 'file:';
 if (window.LM_DEMO) { ST.demo = true; boot(); }
-else if (demo) { var s = document.createElement('script'); s.src = 'cockpit-brh-demo.js?v=20261114'; s.onload = function(){ ST.demo = true; boot(); }; s.onerror = function(){ app.innerHTML = '<main><p class="err">Données de démonstration introuvables (cockpit-brh-demo.js).</p></main>'; }; document.head.appendChild(s); }
+else if (demo) { var s = document.createElement('script'); s.src = 'cockpit-brh-demo.js?v=1.6'; s.onload = function(){ ST.demo = true; boot(); }; s.onerror = function(){ app.innerHTML = '<main><p class="err">Données de démonstration introuvables (cockpit-brh-demo.js).</p></main>'; }; document.head.appendChild(s); }
 else boot();
 })();
 </script>

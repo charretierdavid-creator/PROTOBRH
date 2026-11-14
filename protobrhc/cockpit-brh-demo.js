@@ -1,3 +1,4 @@
+/* Version C 1.3 — 14/11/2026 · démonstration du cockpit · historique : VERSIONS.md */
 /* ==============================================================
    COCKPIT BRH — MODE DÉMONSTRATION (cockpit-brh.html?demo=1)
    Remplace lm-api.php par des données FICTIVES en mémoire, avec les mêmes

@@ -1,4 +1,5 @@
 <?php
+/* Version C 1.1 — 14/11/2026 · toutes les conventions collectives déclarées (idcc_liste) · historique : VERSIONS.md */
 /* ============================================================
    IDENTIFICATION ENTREPRISE — proxy côté serveur (VERSION C, protobrhc)
    ------------------------------------------------------------

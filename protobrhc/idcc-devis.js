@@ -1,3 +1,4 @@
+/* Version C 1.7 — 15/11/2026 · mise en page : choix des conventions sur toute la largeur, champs en double masqués ; secteur des conventions prioritaire · historique : VERSIONS.md */
 /* ==============================================================
    CONVENTIONS COLLECTIVES DÉCLARÉES — page Devis en ligne (version C, protobrhc)
    Surcouche de devis.html du socle (S, fillEntreprise, fillDvCcn, onDvCcn,
@@ -131,10 +132,14 @@
     '.dv-idcc .tg.pv{background:#eef6d9;color:#4d6a00}.dv-idcc .tg.ok{background:var(--green,#065145);color:#fff}' +
     '.dv-idcc button{font:600 .74rem var(--fb,sans-serif);color:var(--teal,#016265);background:none;border:1px solid currentColor;border-radius:999px;padding:3px 10px;cursor:pointer}' +
     '.dv-idcc .n{margin:8px 0 0;color:var(--slate,#5b6b66)}.dv-idcc a{color:var(--teal,#016265);font-weight:600}' +
-    '.dv-idcc.ask{background:#fff;border:2px solid var(--lime,#8FB822);padding:12px 14px}.dv-idcc.ask.miss{border-color:#d64545;background:#fff7f7}' +
-    '.dv-idcc .q{margin:0 0 4px;font:700 .92rem var(--fh,sans-serif);color:var(--green,#065145)}.dv-idcc .sub{margin:0 0 10px;color:var(--slate,#5b6b66)}' +
-    '.dv-idcc .opts{display:grid;gap:8px}' +
-    '.dv-idcc .opt{display:flex;align-items:flex-start;gap:10px;width:100%;text-align:left;font:400 .84rem/1.4 var(--fb,sans-serif);color:var(--ink,#1d2b28);background:#fff;border:1.5px solid var(--line-2,#dfe6e2);border-radius:12px;padding:10px 12px;cursor:pointer}' +
+    '.dv-idcc.ask{grid-column:1/-1;margin-top:0;background:var(--mint-2,#f3f8f5);border:1px solid var(--line,#e7ece9);border-radius:12px;padding:10px 14px}.dv-idcc.ask.miss{border-color:#d64545;background:#fff7f7}' +
+    '.dv-idcc .hd{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin:0 0 8px}.dv-idcc .hd .q{margin:0}.dv-idcc .hd .sub{margin:0;font-size:.78rem}' +
+    '.dv-idcc .ft2{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;margin-top:6px;font-size:.76rem;color:var(--slate,#5b6b66)}' +
+    '.dv-idcc .lnk{background:none;border:0;padding:0;color:var(--teal,#016265);font:600 .76rem inherit;text-decoration:underline;cursor:pointer}' +
+    '.dv-ccn-resume{display:block;margin-top:6px;font-size:.86rem;color:var(--green,#065145);font-weight:600}.dv-ccn-resume small{display:block;font-weight:400;color:var(--slate,#5b6b66);font-size:.76rem}' +
+    '.dv-idcc .q{margin:0;font:700 .9rem var(--fh,sans-serif);color:var(--green,#065145)}.dv-idcc .sub{color:var(--slate,#5b6b66)}' +
+    '.dv-idcc .opts{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}' +
+    '.dv-idcc .opt{display:flex;align-items:flex-start;gap:10px;width:100%;text-align:left;font:400 .84rem/1.4 var(--fb,sans-serif);color:var(--ink,#1d2b28);background:#fff;border:1.5px solid var(--line-2,#dfe6e2);border-radius:10px;padding:8px 10px;cursor:pointer;line-height:1.3}' +
     '.dv-idcc .opt:hover{border-color:var(--teal,#016265)}.dv-idcc .opt:focus-visible{outline:2px solid var(--green,#065145);outline-offset:2px}' +
     '.dv-idcc .opt[aria-checked="true"]{border-color:var(--lime,#8FB822);background:var(--mint-2,#f3f8f5);box-shadow:inset 4px 0 0 var(--lime,#8FB822)}' +
     '.dv-idcc .rd{flex:none;width:18px;height:18px;margin-top:1px;border-radius:50%;border:2px solid var(--slate,#5b6b66);background:#fff}' +
@@ -147,8 +152,23 @@
   function paint() {
     var inp = $('e-idcc'); if (!inp) return;
     var box = $('dvIdccDecl');
-    if (!box) { box = document.createElement('div'); box.id = 'dvIdccDecl'; box.className = 'dv-idcc'; box.setAttribute('aria-live', 'polite'); inp.parentNode.appendChild(box);
-      box.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('button[data-idcc]'); if (b) retenir(b.getAttribute('data-idcc')); }); }
+    if (!box) { box = document.createElement('div'); box.id = 'dvIdccDecl'; box.className = 'dv-idcc'; box.setAttribute('aria-live', 'polite');
+      box.addEventListener('click', function (e) {
+        var b = e.target.closest && e.target.closest('button[data-idcc]'); if (b) return retenir(b.getAttribute('data-idcc'));
+        if (e.target.closest && e.target.closest('[data-autre]')) { manuel = true; paint(); var se = $('e-ccn'); if (se) se.focus(); } }); }
+    var champ = inp.closest ? inp.closest('.field') : inp.parentNode;
+    var multi = conv().length > 1 && !manuel;
+    /* plusieurs conventions : choix sur toute la largeur de la fiche, juste sous la ligne de la convention */
+    var cible = multi && champ && champ.parentNode ? champ.parentNode : champ;
+    if (box.parentNode !== cible) { if (multi && champ.nextSibling) cible.insertBefore(box, champ.nextSibling); else cible.appendChild(box); }
+    if (champ) {
+      [$('e-ccn'), inp, champ.querySelector('.hint')].forEach(function (x) { if (x) x.style.display = multi ? 'none' : ''; });
+      var res = champ.querySelector('.dv-ccn-resume');
+      if (multi) { if (!res) { res = document.createElement('span'); res.className = 'dv-ccn-resume'; champ.appendChild(res); }
+        var cc = codeDe(inp.value), x = conv().filter(function (c) { return c.code === cc; })[0];
+        res.innerHTML = x ? 'IDCC ' + esc(x.code) + ' · ' + esc(x.libelle) + '<small>Retenue pour le devis, à confirmer par votre expert.</small>' : (S.ent && S.ent.idccNsp ? 'Je ne sais pas<small>Votre expert détermine la convention avec vous.</small>' : conv().length + ' conventions déclarées<small>Choisissez ci-dessous celle de votre devis.</small>');
+      } else if (res) res.parentNode.removeChild(res);
+    }
     var l = conv(), v = S.ent && S.ent.verifier, cur = codeDe(inp.value), lien = v && v.annuaire ? ' <a href="' + esc(v.annuaire) + '" target="_blank" rel="noopener">Vérifier sur l’Annuaire des entreprises</a>' : '';
     if (!l.length) {
       if (S.ent && S.ent.sansConvention) { box.style.display = ''; box.innerHTML = '<p class="t"><b>Votre entreprise déclare ne relever d’aucune convention collective.</b> <small>(déclarations sociales)</small></p><p class="n">Votre devis repose alors sur le socle légal ; votre expert le vérifie avec vous.' + lien + '</p>'; }
@@ -161,16 +181,16 @@
       var nsp = !!(S.ent && S.ent.idccNsp) && !cur, carte = function (val, on, titre, tags, cls) {
         return '<button type="button" role="radio" class="opt' + (cls ? ' ' + cls : '') + '" data-idcc="' + esc(val) + '" aria-checked="' + on + '"><span class="rd"></span><span>' + titre + (tags ? '<span class="tgs">' + tags + '</span>' : '') + '</span></button>'; };
       box.className = 'dv-idcc ask' + (box.classList.contains('miss') && !choixFait() ? ' miss' : '');
-      box.innerHTML = '<p class="q">Votre entreprise a déclaré ' + l.length + ' conventions collectives : laquelle retenir pour votre devis ?</p>' +
-        '<p class="sub">Chaque convention couvre une catégorie de salariés. Choisissez celle qui couvre la plupart des salariés concernés par votre devis. Votre expert appliquera l’autre aux salariés qu’elle couvre.</p>' +
+      box.innerHTML = '<div class="hd"><p class="q">Votre entreprise a déclaré ' + l.length + ' conventions collectives : laquelle retenir pour votre devis ?</p>' +
+        '<p class="sub">Choisissez celle de la plupart des salariés concernés ; votre expert applique l’autre à ses salariés.</p></div>' +
         '<div class="opts" role="radiogroup" aria-label="Convention collective retenue pour le devis">' +
         l.map(function (c) {
           return carte(c.code, c.code === cur, '<b>IDCC ' + esc(c.code) + ' · ' + esc(c.libelle || 'Intitulé à confirmer') + '</b>',
             (c.population ? '<span class="tg">' + esc(c.population) + '</span>' : '') + (c.prevoyance ? '<span class="tg pv">Prévoyance de branche</span>' : ''));
         }).join('') +
-        carte('nsp', nsp, '<b>Je ne sais pas</b>Votre expert détermine la convention avec vous ; votre devis n’est pas bloqué.', '', 'nsp') +
+        carte('nsp', nsp, '<b>Je ne sais pas</b>Votre expert la détermine avec vous ; votre devis n’est pas bloqué.', '', 'nsp') +
         '</div><p class="err" role="alert">Choisissez la convention collective qui sert de base à votre devis.</p>' +
-        '<p class="n">Source : déclarations sociales de votre entreprise.' + lien + '</p>';
+        '<p class="ft2"><span>Source : déclarations sociales de votre entreprise.' + lien + '</span><button type="button" class="lnk" data-autre="1">Une autre convention ?</button></p>';
       return;
     }
     box.className = 'dv-idcc';
@@ -225,9 +245,10 @@
 
   /* ============ remplissage de la fiche entreprise ============ */
   var _fill = fillEntreprise;
-  var vu = { siret: '', t: 0 };
+  var vu = { siret: '', t: 0 }, manuel = false;
   fillEntreprise = function (d, noFocus) {
     d = Object.assign({}, d || {});
+    if (Array.isArray(d.idcc_liste)) manuel = false;
     vu = { siret: String(d.siret || '').replace(/\D/g, ''), t: Date.now(), liste: Array.isArray(d.idcc_liste) };
     var frais = Array.isArray(d.idcc_liste), memo = !frais && d.source !== 'manuel' ? memoLire(d.siret) : null;
     var l = frais ? normaliser(d.idcc_liste) : (Array.isArray(d.conventions) ? d.conventions : (memo ? memo.conventions : []));
@@ -241,7 +262,10 @@
       }
       d.idcc_confirme = true;          // déclarée : statut « Trouvé » (à confirmer par l'expert, comme le rappelle l'aide)
     } else if (sans && !S.prefIdcc && !d.idcc) d.idcc = 'Aucune convention collective';
-    if (!d.secteur && !S.prefSecteur && d.source !== 'manuel' && d.source !== 'demo') d.secteur = secteurDe(l, d.naf);
+    /* secteur : celui des conventions collectives déclarées l'emporte (BRIAND : NAF 70.22Z « conseil », IDCC du bâtiment → BTP) */
+    var secCcn = l.length ? secteurDe(l, '') : '';
+    if (secCcn && d.source !== 'manuel' && d.source !== 'demo') { d.secteur = secCcn; if (S.prefSecteur && S.prefSecteur !== secCcn) S.prefSecteur = secCcn; }
+    else if (!d.secteur && !S.prefSecteur && d.source !== 'manuel' && d.source !== 'demo') d.secteur = secteurDe(l, d.naf);
     var r = _fill.call(this, d, noFocus);
     attacher(l, sans, d.verifier || (memo && memo.verifier));
     if (typeof fillDvCcn === 'function') fillDvCcn();

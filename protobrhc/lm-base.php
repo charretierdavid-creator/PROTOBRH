@@ -1,4 +1,5 @@
 <?php
+/* Version C 1.3 — 14/11/2026 · lead management : règles, routage, e-mails · historique : VERSIONS.md */
 /* ============================================================================
    lm-base.php — LEAD MANAGEMENT du Portail BRH, version C (protobrhc)
    ----------------------------------------------------------------------------
