@@ -6,7 +6,8 @@
    (sur Hostinger uniquement, jamais sur GitHub). Sans ces deux lignes, la page reste fermée.
    Sécurité : session dédiée (2 h d'inactivité), cookie HttpOnly / SameSite Strict, 5 essais erronés
    = blocage 15 minutes, jeton anti-falsification sur chaque action, page non indexée.
-   Fonctions : liste filtrable, fiche détaillée, suivi (nouveau / contacté / traité), export CSV, suppression (RGPD).
+   Fonctions : liste filtrable, fiche détaillée, suivi, export CSV, suppression (RGPD).
+   Le Cockpit BRH (cockpitbrh/) reprend ces fonctions avec tableau de bord, relances, notes et journal ; cette page sera retirée une fois le cockpit en service.
    ============================================================================ */
 declare(strict_types=1);
 header('X-Robots-Tag: noindex, nofollow');
@@ -19,7 +20,7 @@ if (is_file(__DIR__ . '/config.php')) { ob_start(); try { require_once __DIR__ .
 require_once __DIR__ . '/leads-base.php';
 
 const ADM_DUREE = 7200, ADM_ESSAIS = 5, ADM_BLOCAGE = 900, ADM_PAGE = 50;
-const ADM_STATUTS = ['nouveau' => 'Nouveau', 'contacte' => 'Contacté', 'traite' => 'Traité'];
+const ADM_STATUTS = BRH_LEAD_STATUTS;   // suivi commun avec le Cockpit BRH (cockpitbrh.monsitedetest.com)
 $e = static fn($s) => htmlspecialchars((string) $s, ENT_QUOTES, 'UTF-8');
 /* export CSV : une valeur commençant par = + - @ n'est jamais interprétée comme une formule par le tableur */
 $cell = static fn($v) => preg_match('/^[=+\-@\t\r]/', (string) $v) ? "'" . $v : (string) $v;

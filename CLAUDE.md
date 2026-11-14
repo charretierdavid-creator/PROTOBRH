@@ -34,6 +34,12 @@ Le dépôt contient deux sites qui évoluent **ensemble** :
   par `lead.php` (table MySQL `leads`, créée automatiquement, même base que les avis) et consultées dans `admin-leads.php`
   (accès séparé : `ADMIN_LOGIN` et `ADMIN_PASSWORD` dans `config.php`). Toute nouvelle collecte de coordonnées passe par
   `lead.php`, avec un consentement explicite (`consentement: true`) et un `type` ajouté à `BRH_LEAD_TYPES` (`leads-base.php`).
+- Depuis la V2.2, le **Cockpit BRH** (`cockpitbrh/`, sous-domaine `cockpitbrh.monsitedetest.com`) est la console de gestion
+  des demandes : tableau de bord, suivi commercial (`BRH_LEAD_STATUTS`, dans `leads-base.php`), relances, attribution, notes,
+  avis, journal. Un seul fichier PHP (`index.php`) et une feuille de style (`cockpit.css`) : aucun JavaScript ni style en ligne
+  (politique de sécurité stricte). La mise en ligne copie `protobrh/leads-base.php` à côté ; son `config.php` (base MySQL de
+  protobrh + `ADMIN_LOGIN` / `ADMIN_PASSWORD`) est créé à la main sur Hostinger. `admin-leads.php` (protobrh) sera retiré une
+  fois le cockpit en service.
 - `outils/assembler_variantes.py` assemble socle + fichiers propres dans `_site/protobrha/` et `_site/protobrhb/`
   (ignoré par Git) ; le déploiement le lance avant l'envoi FTP. Test local :
   `python3 outils/assembler_variantes.py && python3 -m http.server 8766 --directory _site/protobrha`.
@@ -83,7 +89,7 @@ Si une demande ne touche qu'un des deux sites, le dire explicitement dans le ré
 ## 3. Ce qu'il ne faut jamais faire
 
 - Ne jamais modifier, lire pour les publier ou committer : `cdcbrh/data/` (commentaires), `cdcbrh/config.php` (clé
-  d'administration), `protobrh/config.php`, `protobrha/config.php`, `protobrhb/config.php`, les fichiers `.htpasswd`, ni aucune clé d'API.
+  d'administration), `protobrh/config.php`, `protobrha/config.php`, `protobrhb/config.php`, `cockpitbrh/config.php`, les fichiers `.htpasswd`, ni aucune clé d'API.
 - Ne jamais écrire une clé d'API dans le code : elle se lit dans `config.php` (ignoré par Git).
 - Aucune donnée client réelle dans le dépôt (noms, SIRET réels, e-mails) : données fictives uniquement.
 - Ne jamais supprimer une exigence ou une page du cahier des charges sans l'accord de David.
@@ -95,7 +101,7 @@ Si une demande ne touche qu'un des deux sites, le dire explicitement dans le ré
   `VA`, `VB` (fiches des versions A et B du test A/B).
   Une nouvelle page d'écran prend le code suivant libre (`É31`…, `É30` n'est pas réattribué) et doit être reliée à une étape du parcours.
 - **Priorités** : `MVP`, `V2`, `ARB` (à arbitrer).
-- **Données produites** : identifiants `D01`… `D113` ; une nouvelle donnée prend le code suivant libre et s'ajoute au
+- **Données produites** : identifiants `D01`… `D117` ; une nouvelle donnée prend le code suivant libre et s'ajoute au
   dictionnaire (`data` dans `app_data.json`) avec écran, nature (P, E, C, T) et exemple.
 - **Technique** : fichiers HTML/CSS/JS autonomes, sans framework ; images intégrées quand c'est possible.
 - **Accès protégé** : les deux sites passent par `acces.php` (même modèle que Diagnostic Conseil BRH :

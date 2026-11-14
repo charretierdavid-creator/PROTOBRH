@@ -92,3 +92,37 @@ jobs:
       - name: Version B non configurée
         if: env.FTP_USER == ''
         run: echo 'Secrets PROTOBRHB_FTP_USERNAME et PROTOBRHB_FTP_PASSWORD absents, mise en ligne de la version B ignorée.'
+
+  # Cockpit BRH (cockpitbrh.monsitedetest.com) : console d'administration des demandes des dirigeants.
+  # Fichiers de cockpitbrh/ + leads-base.php du socle (même base MySQL que protobrh). config.php est créé
+  # à la main sur Hostinger et n'est jamais envoyé ni supprimé. Ignoré tant que les secrets FTP n'existent pas.
+  cockpitbrh:
+    runs-on: ubuntu-latest
+    env:
+      FTP_USER: ${{ secrets.COCKPITBRH_FTP_USERNAME }}
+    steps:
+      - uses: actions/checkout@v4
+        if: env.FTP_USER != ''
+      - name: Assemblage du cockpit
+        if: env.FTP_USER != ''
+        run: |
+          mkdir -p _site/cockpitbrh
+          cp -R cockpitbrh/. _site/cockpitbrh/
+          cp protobrh/leads-base.php _site/cockpitbrh/
+          rm -f _site/cockpitbrh/config.php
+          php -l _site/cockpitbrh/index.php
+      - name: Installation du client FTP (lftp)
+        if: env.FTP_USER != ''
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+      - name: Envoi du cockpit vers cockpitbrh.monsitedetest.com
+        if: env.FTP_USER != ''
+        env:
+          LFTP_PASSWORD: ${{ secrets.COCKPITBRH_FTP_PASSWORD }}
+        run: >
+          lftp --env-password -u "$FTP_USER" ftp.monsitedetest.com -e "set ftp:ssl-allow no;
+          set ftp:passive-mode on; set ftp:prefer-epsv no; set net:max-retries 4;
+          set net:reconnect-interval-base 5; set net:timeout 30;
+          mirror --reverse --only-newer --no-perms --parallel=1 --verbose=1 ./_site/cockpitbrh/ ./; bye"
+      - name: Cockpit non configuré
+        if: env.FTP_USER == ''
+        run: echo 'Secrets COCKPITBRH_FTP_USERNAME et COCKPITBRH_FTP_PASSWORD absents, mise en ligne du cockpit ignorée.'
