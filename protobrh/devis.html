@@ -1261,11 +1261,12 @@ function save(){ try{
     if(!el.id && !el.name) return;
     if(el.type==='checkbox'||el.type==='radio'){ if(el.name) { f['@'+el.name+'='+el.value]=el.checked; } else f[el.id]=el.checked; }
     else f[el.id]=el.value; });
-  sessionStorage.setItem('brhDevis', JSON.stringify({S:{step:S.step,maxStep:S.maxStep,sol:S.sol,ent:S.ent,entSrc:S.entSrc,tab:S.tab,done:S.done,fi:S.fi,fromAudit:S.fromAudit},f}));
+  S.savedAt=Date.now();
+  sessionStorage.setItem('brhDevis', JSON.stringify({t:S.savedAt, S:{step:S.step,maxStep:S.maxStep,sol:S.sol,ent:S.ent,entSrc:S.entSrc,tab:S.tab,done:S.done,fi:S.fi,fromAudit:S.fromAudit},f}));
 }catch(e){} }
 function restore(){ try{
   const raw=sessionStorage.getItem('brhDevis'); if(!raw) return false; const o=JSON.parse(raw);
-  Object.assign(S,o.S||{}); const f=o.f||{};
+  Object.assign(S,o.S||{}); S.savedAt=o.t||0; const f=o.f||{};
   Object.keys(f).forEach(k=>{
     if(k[0]==='@'){ const [n,v]=k.slice(1).split('='); const el=document.querySelector('#devis input[name="'+n+'"][value="'+v+'"]'); if(el) el.checked=f[k]; }
     else { const el=$(k); if(!el) return; if(el.type==='checkbox') el.checked=f[k]; else el.value=f[k]; } });
@@ -1765,6 +1766,13 @@ function applyAudit(a){
   const qf=qp.get('formule'), QF={decouverte:[['ep_form','decouverte']], integrale_epargne:[['ep_form','integrale']], integrale_retraite:[['rt_form','integrale']], convergence:[['ep_form','convergence'],['rt_form','convergence']]};
   if(!had && QF[qf]) QF[qf].forEach(x=>setRadio(x[0],x[1]));
   renderChoices(); applyChampsBesoins(); initCcnNonBloquante();
+  /* devis déjà commencé dans la session : un effectif déclaré ensuite dans le diagnostic ou le Label BRH
+     (ou transmis par l'adresse) remplace l'ancienne saisie — la déclaration la plus récente l'emporte */
+  if(had){
+    const qe=parseInt(qp.get('eff'),10)||0, pm=Date.parse(prof.maj||'')||0;
+    const e=qe || (pm>(S.savedAt||0) && prof.effectifSaisi!==false ? parseInt(prof.effectif,10)||0 : 0);
+    if(e>0 && e!==(S.ent&&S.ent.effectif)){ S.prefEff=e; if(S.ent) S.ent.effectif=e; if($('h-couv').value) $('h-couv').value=e; track('devis_effectif_repris',{effectif:e, source:qe?'adresse':(prof.source||'diagnostic')}); }
+  }
   if(had && S.ent){ const eff=S.ent.effectif; fillEntreprise(Object.assign({},S.ent,S.entSrc||{}),true); S.ent.effectif=eff; $('e-eff').value=eff||''; }
   const n = had ? Math.min(S.step, S.maxStep) : 1;
   S.step=n; document.querySelectorAll('.dv-step').forEach(s=>s.classList.toggle('active', +s.dataset.step===n));
