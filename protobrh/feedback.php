@@ -5,7 +5,7 @@
    Renseigne les 4 lignes de CONFIG (identifiants MySQL Hostinger).
    La table « feedback » est créée automatiquement au premier envoi.
    Test A/B : les sites A (protobrha) et B (protobrhb) utilisent le même config.php, donc la même
-   base que protobrh ; la colonne « version » indique d'où vient l'avis : S (standard), A ou B.
+   base que protobrh ; la colonne « version » indique d'où vient l'avis : S (standard), A, B ou C.
    ============================================================================ */
 
 declare(strict_types=1);
@@ -42,8 +42,8 @@ $n_pert=$note('pertinence'); $n_faci=$note('facilite'); $n_val=$note('valeur');
 
 $ip = mb_substr((string)($_SERVER['REMOTE_ADDR'] ?? ''), 0, 64);
 
-/* version du prototype déduite de l'adresse du site (et non de la requête) : S standard, A ou B */
-$version = preg_match('/^protobrh([ab])\./i', (string)($_SERVER['HTTP_HOST'] ?? ''), $m) ? strtoupper($m[1]) : 'S';
+/* version du prototype déduite de l'adresse du site (et non de la requête) : S standard, A, B ou C */
+$version = preg_match('/^protobrh([abc])\./i', (string)($_SERVER['HTTP_HOST'] ?? ''), $m) ? strtoupper($m[1]) : 'S';
 
 /* ===================== Connexion + insertion ===================== */
 mysqli_report(MYSQLI_REPORT_OFF);

@@ -130,7 +130,7 @@ $f = ['v' => (string) ($_GET['v'] ?? ''), 'type' => (string) ($_GET['type'] ?? '
       'du' => (string) ($_GET['du'] ?? ''), 'au' => (string) ($_GET['au'] ?? ''), 'statut' => (string) ($_GET['statut'] ?? '')];
 $where = []; $types = ''; $args = [];
 $add = static function (string $sql, string $t, $v) use (&$where, &$types, &$args) { $where[] = $sql; $types .= $t; $args[] = $v; };
-if (in_array($f['v'], ['S', 'A', 'B'], true)) $add('version=?', 's', $f['v']);
+if (in_array($f['v'], ['S', 'A', 'B', 'C'], true)) $add('version=?', 's', $f['v']);
 if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $f['du'])) $add('cree_le>=?', 's', $f['du'] . ' 00:00:00');
 if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $f['au'])) $add('cree_le<=?', 's', $f['au'] . ' 23:59:59');
 $sel = static fn(array $o, string $cur, string $tous) => '<option value="">' . $tous . '</option>' . implode('', array_map(static fn($k) => '<option value="' . htmlspecialchars((string) $k) . '"' . ((string) $k === $cur ? ' selected' : '') . '>' . htmlspecialchars((string) $o[$k]) . '</option>', array_keys($o)));
@@ -152,7 +152,7 @@ if ($vue === 'avis') {
     exit;
   }
   $c = $nav . '<main><h1>Avis des testeurs (« Votre avis »)</h1>' . ($info ? '<div class="msg ok">' . $e($info) . '</div>' : '') .
-    '<div class="card"><form class="f" method="get"><input type="hidden" name="vue" value="avis"><label>Version<select name="v">' . $sel(['S' => 'Standard', 'A' => 'A', 'B' => 'B'], $f['v'], 'Toutes') . '</select></label>' .
+    '<div class="card"><form class="f" method="get"><input type="hidden" name="vue" value="avis"><label>Version<select name="v">' . $sel(['S' => 'Standard', 'A' => 'A', 'B' => 'B', 'C' => 'C'], $f['v'], 'Toutes') . '</select></label>' .
     '<label>Du<input type="date" name="du" value="' . $e($f['du']) . '"></label><label>Au<input type="date" name="au" value="' . $e($f['au']) . '"></label>' .
     '<label>Recherche<input name="q" value="' . $e($f['q']) . '" placeholder="nom, e-mail, commentaire"></label><button class="btn">Filtrer</button>' .
     '<a class="btn o" href="admin-leads.php?' . $e($qs(['vue' => 'avis', 'v' => $f['v'], 'du' => $f['du'], 'au' => $f['au'], 'q' => $f['q'], 'csv' => '1'])) . '">Exporter (CSV)</a></form></div>' .
@@ -221,7 +221,7 @@ $base = ['v' => $f['v'], 'type' => $f['type'], 'statut' => $f['statut'], 'q' => 
 
 $c = $nav . '<main><h1>Demandes des dirigeants</h1>' . ($info ? '<div class="msg ok">' . $e($info) . '</div>' : '') .
   '<div class="k"><div><b>' . (int) $k['n'] . '</b>demandes</div><div><b>' . (int) $k['nv'] . '</b>à traiter</div><div><b>' . (int) $k['dv'] . '</b>devis</div><div><b>' . (int) $k['em'] . '</b>e-mails distincts</div></div>' .
-  '<div class="card"><form class="f" method="get"><label>Version<select name="v">' . $sel(['S' => 'Standard', 'A' => 'A', 'B' => 'B'], $f['v'], 'Toutes') . '</select></label>' .
+  '<div class="card"><form class="f" method="get"><label>Version<select name="v">' . $sel(['S' => 'Standard', 'A' => 'A', 'B' => 'B', 'C' => 'C'], $f['v'], 'Toutes') . '</select></label>' .
   '<label>Origine<select name="type">' . $sel(BRH_LEAD_TYPES, $f['type'], 'Toutes') . '</select></label><label>Suivi<select name="statut">' . $sel(ADM_STATUTS, $f['statut'], 'Tous') . '</select></label>' .
   '<label>Du<input type="date" name="du" value="' . $e($f['du']) . '"></label><label>Au<input type="date" name="au" value="' . $e($f['au']) . '"></label>' .
   '<label>Recherche<input name="q" value="' . $e($f['q']) . '" placeholder="nom, e-mail, entreprise, SIRET"></label><button class="btn">Filtrer</button>' .

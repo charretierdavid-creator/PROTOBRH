@@ -6,7 +6,7 @@
    - Même base que feedback.php (identifiants dans config.php, jamais sur GitHub).
    - La table « leads » est créée automatiquement au premier envoi.
    - Aucune donnée n'est enregistrée sans le consentement explicite du dirigeant.
-   - La version du prototype (S, A, B) est déduite de l'adresse du site.
+   - La version du prototype (S, A, B, C) est déduite de l'adresse du site.
    - Conservation : 12 mois, puis suppression automatique (leads-base.php).
    - Consultation et export : admin-leads.php (accès séparé, mot de passe d'administration).
    ============================================================================ */
@@ -73,7 +73,7 @@ if (!$consent) { echo json_encode(['ok' => false, 'error' => 'Consentement requi
 if ($email === '' && $tel === '') { echo json_encode(['ok' => false, 'error' => 'E-mail ou téléphone requis']); exit; }
 if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) { echo json_encode(['ok' => false, 'error' => 'E-mail non valide']); exit; }
 
-$version = preg_match('/^protobrh([ab])\./i', (string) ($_SERVER['HTTP_HOST'] ?? ''), $m) ? strtoupper($m[1]) : 'S';
+$version = preg_match('/^protobrh([abc])\./i', (string) ($_SERVER['HTTP_HOST'] ?? ''), $m) ? strtoupper($m[1]) : 'S';
 $ip = mb_substr((string) ($_SERVER['REMOTE_ADDR'] ?? ''), 0, 64);
 $donnees = json_encode($in, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PARTIAL_OUTPUT_ON_ERROR);
 
