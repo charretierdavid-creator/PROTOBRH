@@ -744,7 +744,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 <script src="prevoyance-ccn.js?v=20261021"></script>
 <style>.nav a{white-space:nowrap}@media(max-width:1180px){.nav a{padding:.5rem .55rem;font-size:.9rem}}</style>
 <link rel="stylesheet" href="variante.css?v=20261113b">
-<script src="variante.js?v=20261113b"></script>
+<script src="variante.js?v=20261114"></script>
 </head>
 <body>
 <header class="header">
@@ -1234,6 +1234,18 @@ const eur = n => Math.round(n).toLocaleString('fr-FR').replace(/[\u202f\u00a0]/g
 const esc = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const svg = (p,sw) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(sw||1.8)+'" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>';
 const CHK = svg('<path d="M20 6 9 17l-5-5"/>',2.6);
+/* options activées par une version du test A/B (window.BRH_OPTIONS, défini dans variante.js) */
+const DV_OPT = window.BRH_OPTIONS || {};
+/* option champsSelonBesoins (version C) : les questions propres à la santé et à la prévoyance (secteur d'activité,
+   convention collective) ne sont posées que si « Santé & prévoyance » est choisie à l'étape 1 ; le nombre de cadres
+   seulement si la santé et la prévoyance ou la retraite collective (régime « cadres uniquement ») sont choisies. */
+const dvSante = () => !DV_OPT.champsSelonBesoins || S.sol.includes('sante');
+const dvCadres = () => !DV_OPT.champsSelonBesoins || S.sol.includes('sante') || S.sol.includes('retraite');
+function applyChampsBesoins(){
+  if(!DV_OPT.champsSelonBesoins) return;
+  const vis=(id,on)=>{ const el=$(id), f=el&&el.closest('.field'); if(f) f.style.display=on?'':'none'; };
+  vis('e-sec',dvSante()); vis('e-ccn',dvSante()); vis('h-cad',dvCadres());
+}
 
 /* sauvegarde de session : l'utilisateur peut recharger ou revenir en arrière sans perdre ses réponses */
 function save(){ try{
@@ -1260,7 +1272,7 @@ function renderStepper(){
 }
 function go(n){
   if(n>S.maxStep) return;
-  S.step=n;
+  S.step=n; applyChampsBesoins();
   document.querySelectorAll('.dv-step').forEach(s=>s.classList.toggle('active', +s.dataset.step===n));
   if(n===3) prefillRH();
   if(n===4) renderTabs();
@@ -1298,7 +1310,7 @@ function toggleSol(k){
   const i=S.sol.indexOf(k); if(i>=0) S.sol.splice(i,1); else S.sol.push(k);
   S.sol.sort((a,b)=>DV_ORDER.indexOf(a)-DV_ORDER.indexOf(b));
   if(S.sol.length) hideErr('err1');
-  renderChoices(); save(); track('devis_solution_toggle',{solution:k,selected:i<0});
+  renderChoices(); applyChampsBesoins(); save(); track('devis_solution_toggle',{solution:k,selected:i<0});
 }
 
 /* ============================ ÉTAPE 2 : SIRET ============================ */
@@ -1432,14 +1444,14 @@ function prefillRH(){
 }
 function updNonCad(){ const c=+$('h-couv').value||0, k=+$('h-cad').value||0; $('nonCadHint').textContent='Non-cadres : '+Math.max(c-k,0); }
 function validateRH(){
-  hideErr('err3'); const n=S.ent.effectif, c=+$('h-couv').value, k=+$('h-cad').value||0;
+  hideErr('err3'); const n=S.ent.effectif, c=+$('h-couv').value, k=dvCadres()?(+$('h-cad').value||0):0;
   if(!c || c<1) return showErr('err3','Indiquez le nombre de salariés concernés.'),false;
   if(c>n) return showErr('err3','Le nombre de salariés concernés ne peut pas dépasser l’effectif de l’entreprise ('+n+').'),false;
   if(k>c) return showErr('err3','Le nombre de cadres ne peut pas dépasser le nombre de salariés concernés.'),false;
   if(!$('h-sal').value) return showErr('err3','Sélectionnez la tranche de salaire brut annuel moyen.'),false;
   save(); return true;
 }
-function RH(){ const c=+$('h-couv').value, k=+$('h-cad').value||0; return {N:c, cadres:k, noncadres:Math.max(c-k,0), sal:DEVIS_CONFIG.SALAIRE_MOYEN[$('h-sal').value]||35000}; }
+function RH(){ const c=+$('h-couv').value, k=dvCadres()?(+$('h-cad').value||0):0; return {N:c, cadres:k, noncadres:Math.max(c-k,0), sal:DEVIS_CONFIG.SALAIRE_MOYEN[$('h-sal').value]||35000}; }
 
 /* ============================ ÉTAPE 4 : CONFIGURATION ============================ */
 const val = n => { const el=document.querySelector('#devis input[name="'+n+'"]:checked'); return el?el.value:null; };
@@ -1630,9 +1642,9 @@ async function submitDevis(){
   const o=S.est||compute(), h=RH(), tot=S.sol.reduce((a,k)=>a+(o[k].cout||0),0);
   const ref='DEV-'+new Date().getFullYear()+'-'+Math.random().toString(36).slice(2,7).toUpperCase();
   const lead={ type:'devis', reference:ref, date:new Date().toISOString(), source:'portail_brh_devis_en_ligne', variante:window.BRH_VARIANTE||'REF',
-    entreprise:{siret:S.ent.siret, secteur:S.ent.secteur||'', audit_mutuelle:!!S.fromAudit, raison_sociale:S.ent.nom, ville:S.ent.ville, code_postal:S.ent.cp, naf:S.ent.naf, idcc:S.ent.idcc, effectif:S.ent.effectif, source_donnees:S.entSrc},
+    entreprise:{siret:S.ent.siret, secteur:S.ent.secteur||'', audit_mutuelle:!!S.fromAudit, raison_sociale:S.ent.nom, ville:S.ent.ville, code_postal:S.ent.cp, naf:S.ent.naf, idcc:dvSante()?S.ent.idcc:'', effectif:S.ent.effectif, source_donnees:S.entSrc},
     contact:{prenom:$('c-prenom').value.trim(), nom:$('c-nom').value.trim(), fonction:$('c-fct').value, telephone:$('c-tel').value.trim(), email:$('c-email').value.trim(), rappel_expert:$('c-rappel').checked, consentement:true, consentement_date:new Date().toISOString()},
-    rh:{salaries_concernes:h.N, cadres:h.cadres, non_cadres:h.noncadres, tranche_salaire:$('h-sal').value, etablissements:+$('h-etab').value||1, anciennete_mois:+$('h-anc').value},
+    rh:{salaries_concernes:h.N, cadres:dvCadres()?h.cadres:null, non_cadres:dvCadres()?h.noncadres:null, tranche_salaire:$('h-sal').value, etablissements:+$('h-etab').value||1, anciennete_mois:+$('h-anc').value},
     panier:S.sol.map(k=>({solution:k, libelle:DV_SOL[k].title, formule:o[k].formule||null, frais_formule_annuels:o[k].frais||null, statut:STATUT_LBL[DV_SOL[k].statut], hypotheses:o[k].hyp, cout_employeur_annuel:o[k].cout==null?null:Math.round(o[k].cout), gain_net_salarie:o[k].netSal==null?null:Math.round(o[k].netSal)})),
     estimation_totale:Math.round(tot), routage:{departement:S.ent.cp.slice(0,2), caisse_regionale:'à déterminer (table code postal → Caisse régionale)'},
     scoring:score(tot) };
@@ -1742,7 +1754,7 @@ function applyAudit(a){
   if(S.fromAudit){ const n=$('dvAuditNote'); if(n){ n.style.display='block'; n.textContent='Repris de votre audit mutuelle : '+[S.prefSecteur||(S.ent&&S.ent.secteur), S.prefIdcc||(S.ent&&S.ent.idcc)].filter(Boolean).join(' · ')+'. Vous pouvez les modifier.'; } }
   const qf=qp.get('formule'), QF={decouverte:[['ep_form','decouverte']], integrale_epargne:[['ep_form','integrale']], integrale_retraite:[['rt_form','integrale']], convergence:[['ep_form','convergence'],['rt_form','convergence']]};
   if(!had && QF[qf]) QF[qf].forEach(x=>setRadio(x[0],x[1]));
-  renderChoices();
+  renderChoices(); applyChampsBesoins();
   if(had && S.ent){ const eff=S.ent.effectif; fillEntreprise(Object.assign({},S.ent,S.entSrc||{}),true); S.ent.effectif=eff; $('e-eff').value=eff||''; }
   const n = had ? Math.min(S.step, S.maxStep) : 1;
   S.step=n; document.querySelectorAll('.dv-step').forEach(s=>s.classList.toggle('active', +s.dataset.step===n));
