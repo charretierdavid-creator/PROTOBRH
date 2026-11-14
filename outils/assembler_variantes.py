@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Assemble les versions A et B du prototype pour le test A/B.
+"""Assemble les versions A, B et C du prototype pour le test A/B.
 
 Chaque version = le socle commun (dossier protobrh/, version de référence)
-                 + les fichiers propres à la version (dossier protobrha/ ou protobrhb/), qui remplacent ceux du socle.
+                 + les fichiers propres à la version (dossier protobrha/, protobrhb/ ou protobrhc/), qui remplacent ceux du socle.
 
-Usage : python3 outils/assembler_variantes.py [a] [b]   (sans argument : les deux)
-Résultat : _site/protobrha/ et _site/protobrhb/ (dossier ignoré par Git), envoyés sur Hostinger par le déploiement.
+Usage : python3 outils/assembler_variantes.py [a] [b] [c]   (sans argument : toutes)
+Résultat : _site/protobrha/, _site/protobrhb/ et _site/protobrhc/ (dossier ignoré par Git), envoyés sur Hostinger par le déploiement.
 Test local : python3 -m http.server 8766 --directory _site/protobrha
 """
 import os, shutil, sys
@@ -13,7 +13,7 @@ import os, shutil, sys
 RACINE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SOCLE = os.path.join(RACINE, 'protobrh')
 # Propres à chaque site sur Hostinger : jamais copiés depuis le dépôt
-EXCLUS = {'config.php', 'data', '.ftp-deploy-sync-state.json'}
+EXCLUS = {'config.php', 'data', '.ftp-deploy-sync-state.json', 'README.md'}
 
 
 def assembler(v):
@@ -36,5 +36,5 @@ def assembler(v):
     print(f'Version {v.upper()} : socle protobrh/ + {len(propres)} fichier(s) propre(s) ({", ".join(sorted(propres))}) -> {os.path.relpath(out, RACINE)}/')
 
 
-for v in (sys.argv[1:] or ['a', 'b']):
+for v in (sys.argv[1:] or ['a', 'b', 'c']):
     assembler(v.lower())

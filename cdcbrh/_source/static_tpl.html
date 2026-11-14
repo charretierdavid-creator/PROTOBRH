@@ -264,17 +264,17 @@ form.idea .row{display:flex;gap:8px;flex-wrap:wrap}
 /* ---------- Test A/B : versions du prototype ---------- */
 .vchip{font:600 13px var(--display);color:var(--pine)!important;background:#fff;border-radius:6px;padding:9px 12px;white-space:nowrap}.vchip::before{content:"Version : ";font-weight:400;color:var(--grey)}
 .vtag{display:inline-block;font:700 11px/1 var(--display);padding:4px 7px;border-radius:4px;margin:2px 4px 2px 0;white-space:nowrap;vertical-align:middle}
-.vtag.v-REF{background:#E6ECEA;color:#3D4A45}.vtag.v-A{background:#EEF6D8;color:#4F6D0C}.vtag.v-B{background:#E1E9F5;color:#24406E}.vtag.v-ALL{background:var(--mint);color:var(--pine)}
-.vcards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:0 0 22px}
+.vtag.v-REF{background:#E6ECEA;color:#3D4A45}.vtag.v-A{background:#EEF6D8;color:#4F6D0C}.vtag.v-B{background:#E1E9F5;color:#24406E}.vtag.v-C{background:#DCEFEF;color:#016265}.vtag.v-ALL{background:var(--mint);color:var(--pine)}
+.vcards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:0 0 22px}
 .vcard{background:#fff;border:1px solid var(--line);border-top:4px solid #9AA8A3;border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;text-align:left;font:inherit;color:inherit;cursor:pointer;transition:box-shadow .15s,background .15s}
 .vcard:hover{box-shadow:0 0 0 2px var(--sage)}.vcard[aria-pressed="true"]{background:var(--mint);box-shadow:0 0 0 2px var(--pine)}
 .vcard .vh{font-size:14px;color:var(--grey)}.vcard .vgo{margin-top:auto;padding-top:6px;font:600 13px var(--display);color:var(--hl)}.vcard[aria-pressed="true"] .vgo::after{content:" ✓ affiché"}
-.mapv{display:none}body:not([data-vsel]) .mapv[data-v="REF"],body[data-vsel="REF"] .mapv[data-v="REF"],body[data-vsel="A"] .mapv[data-v="A"],body[data-vsel="B"] .mapv[data-v="B"]{display:block}
-.vcard.v-A{border-top-color:var(--lime)}.vcard.v-B{border-top-color:#24406E}
+.mapv{display:none}body:not([data-vsel]) .mapv[data-v="REF"],body[data-vsel="REF"] .mapv[data-v="REF"],body[data-vsel="A"] .mapv[data-v="A"],body[data-vsel="B"] .mapv[data-v="B"],body[data-vsel="C"] .mapv[data-v="C"]{display:block}
+.vcard.v-A{border-top-color:var(--lime)}.vcard.v-B{border-top-color:#24406E}.vcard.v-C{border-top-color:#016265}
 .vcard b{font:600 15px var(--display);color:var(--pine);word-break:break-all}
 #bfilter{font:14px inherit;padding:7px 8px;border:1px solid var(--sage);border-radius:6px;background:#fff}
-body[data-vsel="REF"] [data-var]:not([data-var~="REF"]),body[data-vsel="A"] [data-var]:not([data-var~="A"]),body[data-vsel="B"] [data-var]:not([data-var~="B"]){display:none!important}
-@media (max-width:900px){.vcards{grid-template-columns:1fr}}
+body[data-vsel="REF"] [data-var]:not([data-var~="REF"]),body[data-vsel="A"] [data-var]:not([data-var~="A"]),body[data-vsel="B"] [data-var]:not([data-var~="B"]),body[data-vsel="C"] [data-var]:not([data-var~="C"]){display:none!important}
+@media (max-width:1100px){.vcards{grid-template-columns:repeat(2,1fr)}}@media (max-width:600px){.vcards{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -341,7 +341,7 @@ body[data-vsel="REF"] [data-var]:not([data-var~="REF"]),body[data-vsel="A"] [dat
     <select id="sfilter" aria-label="Filtrer par statut"><option value="">Tous les statuts</option><option value="nouveau">Nouveau</option><option value="valide">Validé</option><option value="integre">Intégré</option><option value="rejete">Rejeté</option></select>
     <button class="btn" type="button" id="crefresh">Actualiser</button>
     <button class="btn" type="button" id="cexport">Exporter tout (CSV)</button>
-    <select id="bfilter" aria-label="Backlog de quelle version"><option value="">Backlog : toutes versions</option><option value="REF">Backlog : Standard</option><option value="A">Backlog : Version A</option><option value="B">Backlog : Version B</option></select>
+    <select id="bfilter" aria-label="Backlog de quelle version"><option value="">Backlog : toutes versions</option><option value="REF">Backlog : Standard</option><option value="A">Backlog : Version A</option><option value="B">Backlog : Version B</option><option value="C">Backlog : Version C</option></select>
     <button class="btn" type="button" id="bexport">Exporter le backlog validé (CSV)</button>
     <button class="btn primary" type="button" id="bcopy">Copier le backlog pour Claude</button>
   </div>
@@ -369,12 +369,12 @@ body[data-vsel="REF"] [data-var]:not([data-var~="REF"]),body[data-vsel="A"] [dat
   // ---------- shared comments (avec statuts) ----------
   var TITLES = %%TITLES%%, API = 'comments.php', online = false, COMMENTS = [];
   // test A/B : version du prototype affichée et version cible des commentaires, idées et évolutions
-  var VLAB = {TOUTES:'Toutes versions', REF:'Standard', A:'Version A', B:'Version B'};
+  var VLAB = {TOUTES:'Toutes versions', REF:'Standard', A:'Version A', B:'Version B', C:'Version C'};
   var vtag = function(v){ return v && v !== 'TOUTES' ? '<span class="vtag v-' + ex(v) + '">' + ex(VLAB[v] || v) + '</span>' : ''; };
-  var vvar = function(v){ return !v || v === 'TOUTES' ? 'REF A B' : (Array.isArray(v) ? v.join(' ') : v); };
+  var vvar = function(v){ return !v || v === 'TOUTES' ? 'REF A B C' : (Array.isArray(v) ? v.join(' ') : v); };
   // version du prototype affichée (parcours + pages) : choisie en cliquant sur l'une des 3 cartes du parcours
   var CUR = 'REF', VCHIP = document.getElementById('vchip');
-  function applyV(v){ CUR = (v === 'A' || v === 'B') ? v : 'REF'; document.body.setAttribute('data-vsel', CUR); VCHIP.textContent = {REF:'Standard', A:'A', B:'B'}[CUR];
+  function applyV(v){ CUR = (v === 'A' || v === 'B' || v === 'C') ? v : 'REF'; document.body.setAttribute('data-vsel', CUR); VCHIP.textContent = {REF:'Standard', A:'A', B:'B', C:'C'}[CUR];
     document.querySelectorAll('[data-vpick]').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.vpick === CUR ? 'true' : 'false'); }); set('vsel', CUR); }
   document.addEventListener('click', function(e){ var b = e.target.closest('[data-vpick]'); if (!b) return; applyV(b.dataset.vpick);
     var m = document.querySelector('.mapv[data-v="' + CUR + '"]'); if (m) m.scrollIntoView({behavior:'smooth', block:'start'}); });
@@ -396,7 +396,7 @@ body[data-vsel="REF"] [data-var]:not([data-var~="REF"]),body[data-vsel="A"] [dat
   function badge(c){ var s = stOf(c); return '<span class="sbadge s-' + s + '">' + ST[s] + (s === 'integre' && c.version ? ' · ' + ex(c.version) : '') + '</span>'; }
   function itemHTML(c, withPage){
     var mine = !!tokens()[c.id], s = stOf(c);
-    var cibSel = '<label class="acib">Affecter à <select data-acib="' + ex(c.id) + '" aria-label="Version affectée">' + ['TOUTES','REF','A','B'].map(function(v){ return '<option value="' + v + '"' + ((c.cible || 'TOUTES') === v ? ' selected' : '') + '>' + VLAB[v] + '</option>'; }).join('') + '</select></label>';
+    var cibSel = '<label class="acib">Affecter à <select data-acib="' + ex(c.id) + '" aria-label="Version affectée">' + ['TOUTES','REF','A','B','C'].map(function(v){ return '<option value="' + v + '"' + ((c.cible || 'TOUTES') === v ? ' selected' : '') + '>' + VLAB[v] + '</option>'; }).join('') + '</select></label>';
     var adm = ADMIN ? '<div class="adm">' + cibSel + ['valide','rejete','integre','nouveau'].filter(function(k){ return k !== s; }).map(function(k){ return '<button type="button" data-st="' + k + '" data-id="' + ex(c.id) + '">' + {valide:'Valider', rejete:'Rejeter', integre:'Marquer intégré', nouveau:'Remettre à « Nouveau »'}[k] + '</button>'; }).join('') + '<button type="button" class="danger" data-del="' + ex(c.id) + '">Supprimer</button></div>' : '';
     var nf = c.page === 'NF';
     return '<div class="citem st-' + s + (nf ? ' idea' : '') + '" data-id="' + ex(c.id) + '"><div class="h">' + (withPage ? (nf ? '<span class="pg idea">💡 Idée</span>' : '<a class="pg" href="#' + aid(c.page) + '">' + ex(c.page) + ' · ' + ex(TITLES[c.page] || '') + '</a>') : '') +
@@ -514,7 +514,7 @@ body[data-vsel="REF"] [data-var]:not([data-var~="REF"]),body[data-vsel="A"] [dat
     var b = backlog(); if (!b.length) return '';
     return 'BACKLOG VALIDÉ — Portail BRH' + (document.getElementById('bfilter').value ? ' — ' + VLAB[document.getElementById('bfilter').value] : '') + ' — ' + new Date().toLocaleDateString('fr-FR') + ' — ' + b.length + ' évolution(s) à intégrer au prototype et au cahier des charges\n\n' +
       b.map(function(c, i){ return (i + 1) + '. [' + c.id + '] [' + VLAB[c.cible || 'TOUTES'] + '] ' + c.page + ' · ' + TITLES[c.page] + ' — ' + c.author + ' (' + fmtD(c.date) + ')\n   ' + full(c).replace(/\n/g, '\n   '); }).join('\n\n') +
-      '\n\nConsigne : intégrer chaque évolution dans la version cible (Toutes versions ou Standard : socle protobrh/ ; Version A : protobrha/ ; Version B : protobrhb/), mettre à jour le cahier des charges interactif et ajouter une entrée au journal des évolutions. Pour une idée (NF), créer un nouvel écran (É28…) rattaché à une étape du parcours, ou signaler un arbitrage COPIL.';
+      '\n\nConsigne : intégrer chaque évolution dans la version cible (Toutes versions ou Standard : socle protobrh/ ; Version A : protobrha/ ; Version B : protobrhb/ ; Version C : protobrhc/), mettre à jour le cahier des charges interactif et ajouter une entrée au journal des évolutions. Pour une idée (NF), créer un nouvel écran (É28…) rattaché à une étape du parcours, ou signaler un arbitrage COPIL.';
   }
   document.getElementById('bexport').onclick = function(){
     var b = backlog(); if (!b.length){ status('Aucun commentaire au statut « Validé »' + (document.getElementById('bfilter').value ? ' affecté à : ' + VLAB[document.getElementById('bfilter').value] : '') + ' pour le moment.', 'off'); return; }

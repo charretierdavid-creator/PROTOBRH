@@ -1,9 +1,11 @@
 import json, html, os, subprocess, sys, tempfile
 HERE = os.path.dirname(os.path.abspath(__file__)); os.chdir(HERE)
-# Redessine le schéma du parcours de chaque version du prototype (S standard → map3.jpg, A → map_a.jpg, B → map_b.jpg)
+# Redessine le schéma du parcours de chaque version du prototype (S standard → map3.jpg, A → map_a.jpg, B → map_b.jpg, C → map_c.jpg)
 # et leurs zones cliquables (geo_map.json) à partir de geo3.json.
 # Le parcours principal reste sur la courbe ; les modules complémentaires (hors chemin critique) sont dans une ligne dédiée en dessous.
-# Usage : python3 cdcbrh/_source/gen_map.py   (Playwright + Chromium requis), puis python3 cdcbrh/_source/gen_static.py
+# Usage : python3 cdcbrh/_source/gen_map.py [S] [A] [B] [C]   (sans argument : toutes ; Playwright + Chromium requis,
+#         ou CHROME_PATH=/chemin/vers/chrome),
+#         puis python3 cdcbrh/_source/gen_static.py. Une version absente des arguments garde son schéma et ses zones.
 G = json.load(open('geo3.json'))
 e = lambda s: html.escape(str(s), quote=True)
 
@@ -11,11 +13,21 @@ LANE_Y, LANE_H = 572, 120           # ligne des modules complémentaires
 SHIFT = LANE_H + 14                 # décalage du bandeau « Un expert BRH à chaque étape »
 MAPH = 666 + SHIFT
 
-# ---- test A/B : un schéma par version du prototype (S standard, A, B)
+# ---- test A/B : un schéma par version du prototype (S standard, A, B, C)
 VERS = {
     'S': {'t2b': '(VERSION STANDARD)', 'site': 'protobrh · version de référence', 'img': 'map3.jpg'},
     'A': {'t2b': '(VERSION A · PARCOURS SIMPLIFIÉ)', 'site': 'protobrha · parcours raccourci, design épuré', 'img': 'map_a.jpg'},
     'B': {'t2b': '(VERSION B · LABEL BRH + DEVIS COMMUN)', 'site': 'protobrhb · accueil propre, Label BRH', 'img': 'map_b.jpg'},
+    'C': {'t2b': '(VERSION C · STANDARD + IA)', 'site': 'protobrhc · parcours standard, IA à chaque étape', 'img': 'map_c.jpg'},
+}
+# version C (parcours standard + couche IA) : texte des étapes où l'IA intervient
+C_TXT = {
+    '1.1': '« Expliquez votre situation » : l’IA oriente',
+    '2.2': 'De 1 à 4 · « Vous hésitez ? » (IA)',
+    '3.1': 'Après e-mail · expliqué par l’IA, « Et si… »',
+    '4.1': '« Par où commencer ? » : pistes IA ordonnées',
+    '5.3': 'Estimation expliquée et ordonnée par l’IA',
+    'Lead': 'Contexte + synthèse IA pour l’expert BRH',
 }
 # version B (site propre : accueil avec carrousel, Label BRH, simulation) : intitulé, texte et pages de chaque étape
 B_CARDS = {
@@ -46,19 +58,20 @@ def variante(v):
         if k == '2.1': c['txt'] = 'Nombre de salariés seulement, après les priorités' if v == 'A' else 'SIREN facultatif, secteur, effectif, département'
         if k == '3.1': c['txt'] = 'Affiché immédiatement, sans e-mail' if v == 'A' else 'Affiché après saisie de l’e-mail, non contractuel'
         if v == 'B' and k in B_CARDS: c['b'], c['txt'], c['ref'] = B_CARDS[k]
+        if v == 'C' and k in C_TXT: c['txt'] = C_TXT[k]
     circles = [c for c in G['circles'] if (c['cx'], c['cy']) not in pts]
     lines = [l for l in G['lines'] if (l['x1'], l['y1']) not in pts]
-    acc_r = {'S': 'Accès : menu du haut', 'A': 'Accès : lien en bas de page', 'B': 'Accès : menu du haut · carrousel'}[v]
+    acc_r = {'S': 'Accès : menu du haut', 'A': 'Accès : lien en bas de page', 'B': 'Accès : menu du haut · carrousel', 'C': 'Accès : menu du haut'}[v]
     acc_am = {'S': 'Accès : menu · vignette « Protéger mes salariés » · « Bon à savoir » du diagnostic',
               'A': 'Accès : vignette « Protéger mes salariés » · « Bon à savoir » · lien en bas de page',
-              'B': 'Accès : menu du haut'}[v]
+              'B': 'Accès : menu du haut', 'C': 'Accès : menu · vignette « Protéger mes salariés » · « Bon à savoir » du diagnostic'}[v]
     addons = [
         {'sid': 'R', 'x': 202, 'w': 300, 'b': 'Ressources & newsletter', 'txt': 'Guides, avantages fiscaux, newsletter', 'acc': acc_r, 'ref': 'É23 – É25' if v == 'B' else 'É08 · É23 – É25'},
         {'sid': 'AS', 'x': 521, 'w': 341, 'b': 'Assistant BRH', 'txt': '« Besoin d’aide ? » sur chaque écran (IA Mistral)', 'acc': 'Accès : bouton flottant', 'ref': 'H'},
         {'sid': 'AM', 'x': 886, 'w': 451, 'b': 'Audit mutuelle et prévoyance', 'txt': '3 minutes, résultat immédiat sans coordonnées', 'acc': acc_am, 'ref': 'É26'},
     ]
     for a in addons: a.update(y=LANE_Y + 14, h=LANE_H - 28, kind='addon')
-    connect = [(215, 360, 'R', {'S': 'Menu', 'A': 'Bas de page', 'B': 'Menu'}[v]), (1140, 335, 'AM', 'Menu' if v == 'B' else 'Bon à savoir')]
+    connect = [(215, 360, 'R', {'S': 'Menu', 'A': 'Bas de page', 'B': 'Menu', 'C': 'Menu'}[v]), (1140, 335, 'AM', 'Menu' if v == 'B' else 'Bon à savoir')]
     return cards, circles, lines, addons, connect
 
 def box(x, y, w, h, cls, inner, style=''):
@@ -148,7 +161,11 @@ body>div{position:absolute}svg{position:absolute;left:0;top:0}
 import re, base64
 UA = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36'
 get = lambda u: subprocess.run(['curl', '-sSL', '-A', UA, u], capture_output=True, check=True).stdout
-fcss = get('https://fonts.googleapis.com/css2?family=Poppins:wght@500;700;800&family=Lato:ital,wght@0,400;0,700;1,700&display=swap').decode()
+try:
+    fcss = get('https://fonts.googleapis.com/css2?family=Poppins:wght@500;700;800&family=Lato:ital,wght@0,400;0,700;1,700&display=swap').decode()
+except Exception:   # pas d'accès à Google Fonts : polices installées sur le poste (rendu légèrement différent)
+    fcss = ''
+    print('Attention : polices Google indisponibles, polices locales utilisées.')
 FONTS = ''
 for sub, body in re.findall(r'/\* (\S+) \*/\s*@font-face \{(.*?)\}', fcss, re.S):
     if sub != 'latin': continue
@@ -157,8 +174,10 @@ for sub, body in re.findall(r'/\* (\S+) \*/\s*@font-face \{(.*?)\}', fcss, re.S)
     FONTS += '@font-face{' + body + '}'
 
 tmp = tempfile.mkdtemp()
-geo, shots = {}, []
-for v in VERS:
+CIBLES = [x.upper() for x in sys.argv[1:]] or list(VERS)
+geo = json.load(open('geo_map.json')) if os.path.exists('geo_map.json') else {}
+shots = []
+for v in CIBLES:
     cards, addons, html_v = build(v)
     open(os.path.join(tmp, v + '.html'), 'w').write(f'''<!doctype html><html lang="fr"><head><meta charset="utf-8">
 <style>{FONTS}{CSS}</style></head><body>
@@ -169,14 +188,14 @@ for v in VERS:
               'cards': [{k: c[k] for k in ('x', 'y', 'w', 'h', 'b')} for c in cards] + [{'x': a['x'], 'y': a['y'], 'w': a['w'], 'h': a['h'], 'b': a['b'], 'sid': a['sid']} for a in addons],
               'ebs': [{k: x[k] for k in ('x', 'y', 'w', 'h', 'text')} for x in ebs]}
 js = f'''const {{ chromium }} = require('playwright');
-(async()=>{{ const b=await chromium.launch(); const p=await b.newPage({{viewport:{{width:1920,height:{MAPH}}},deviceScaleFactor:2}});
+(async()=>{{ const b=await chromium.launch(process.env.CHROME_PATH ? {{executablePath:process.env.CHROME_PATH}} : {{}}); const p=await b.newPage({{viewport:{{width:1920,height:{MAPH}}},deviceScaleFactor:2}});
 for (const v of {json.dumps(shots)}){{ await p.goto('file://{tmp}/'+v+'.html'); await p.waitForLoadState('networkidle'); await p.evaluate(()=>document.fonts.ready); await p.waitForTimeout(300);
 await p.screenshot({{path:'{tmp}/'+v+'.png'}}); }} await b.close(); }})();'''
 open(os.path.join(tmp, 'shot.js'), 'w').write(js)
 env = dict(os.environ); env.setdefault('NODE_PATH', subprocess.run(['npm', 'root', '-g'], capture_output=True, text=True).stdout.strip())
 subprocess.run(['node', os.path.join(tmp, 'shot.js')], check=True, env=env)
 from PIL import Image
-for v in VERS:
+for v in CIBLES:
     Image.open(os.path.join(tmp, v + '.png')).convert('RGB').save(VERS[v]['img'], 'JPEG', quality=85, optimize=True)
 json.dump(geo, open('geo_map.json', 'w'), ensure_ascii=False, indent=1)
-print('schémas :', ', '.join(f"{v} → {VERS[v]['img']}" for v in VERS), '·', MAPH, 'px de haut (repère 1920)')
+print('schémas :', ', '.join(f"{v} → {VERS[v]['img']}" for v in CIBLES), '·', MAPH, 'px de haut (repère 1920)')

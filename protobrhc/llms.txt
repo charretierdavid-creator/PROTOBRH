@@ -1,0 +1,23 @@
+# Banque des Ressources Humaines (BRH) – Crédit Agricole
+
+> Le portail Banque des Ressources Humaines aide les chefs d'entreprise (pros, entrepreneurs, TPE et PME, clients ou non du Crédit Agricole) à attirer, fidéliser et protéger leurs salariés, et à leur donner du pouvoir d'achat avec des dispositifs en grande partie exonérés de charges. Le parcours est hybride : diagnostic RH en ligne, simulation des gains, préconisation, devis en ligne pour les besoins simples, et accompagnement par un expert Banque des RH de la Caisse régionale pour les besoins complexes.
+
+Contenu préparé pour les assistants d'IA (approche « AI-ready » / GEO). Version de démonstration du prototype 15C (version C du test A/B), à valider par les filiales et la Conformité avant toute publication.
+
+## Ce que propose le portail
+
+- [Diagnostic RH](diagnostic.html) : en 5 minutes, le dirigeant note ses priorités (protéger, partager la valeur, pouvoir d'achat, retraite), se compare aux entreprises similaires et obtient une estimation indicative de ses gains.
+- [Devis en ligne](devis.html) : épargne salariale, santé et prévoyance, retraite collective et avantages salariés, avec une estimation du coût employeur et du gain net par salarié.
+- [Audit mutuelle](audit-mutuelle.html) : comparaison de la mutuelle et de la prévoyance en place, en tenant compte de la convention collective.
+- [Avantages fiscaux](avantages-fiscaux.html) : comparer un avantage exonéré à une hausse de salaire brut équivalente.
+- [Ressources](ressources.html) et [newsletter « Banque des RH info »](newsletter.html).
+
+## Questions fréquentes de dirigeants
+
+- Comment donner du pouvoir d'achat à mes salariés sans alourdir mes charges ? Titres-restaurant, forfait mobilités durables, cartes cadeaux, prime de partage de la valeur (PPV) et épargne salariale bénéficient de régimes sociaux et fiscaux spécifiques, selon les conditions et plafonds en vigueur.
+- La complémentaire santé est-elle obligatoire ? Oui, pour les salariés du secteur privé ; l'employeur finance au moins 50 % de la cotisation. La prévoyance dépend notamment de la convention collective.
+- Puis-je mettre en place l'intéressement ou la PPV dans une petite entreprise ? Oui, ces dispositifs sont facultatifs et accessibles aux petites entreprises, selon des conditions précisées par un expert.
+
+## Partenaires
+
+Crédit Agricole Assurances (santé, prévoyance, retraite collective), Amundi / CA Titres (épargne salariale et retraite), Worklife (avantages salariés). Les offres sont distribuées par les Caisses régionales du Crédit Agricole.

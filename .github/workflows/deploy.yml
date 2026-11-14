@@ -35,7 +35,7 @@ jobs:
           local-dir: ./protobrh/
           server-dir: ./
 
-  # Test A/B : versions A et B = socle protobrh/ + fichiers propres (protobrha/, protobrhb/),
+  # Test A/B : versions A, B et C = socle protobrh/ + fichiers propres (protobrha/, protobrhb/, protobrhc/),
   # assemblés par outils/assembler_variantes.py. Tant que les secrets FTP d'une version
   # n'existent pas dans GitHub, sa mise en ligne est simplement ignorée.
   # Envoi par lftp (mode passif IPv4, 4 relances) : FTP-Deploy-Action coupait la connexion de données
@@ -92,3 +92,29 @@ jobs:
       - name: Version B non configurée
         if: env.FTP_USER == ''
         run: echo 'Secrets PROTOBRHB_FTP_USERNAME et PROTOBRHB_FTP_PASSWORD absents, mise en ligne de la version B ignorée.'
+
+  protobrhc:
+    runs-on: ubuntu-latest
+    env:
+      FTP_USER: ${{ secrets.PROTOBRHC_FTP_USERNAME }}
+    steps:
+      - uses: actions/checkout@v4
+        if: env.FTP_USER != ''
+      - name: Assemblage de la version C
+        if: env.FTP_USER != ''
+        run: python3 outils/assembler_variantes.py c
+      - name: Installation du client FTP (lftp)
+        if: env.FTP_USER != ''
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+      - name: Envoi de la version C vers protobrhc.monsitedetest.com
+        if: env.FTP_USER != ''
+        env:
+          LFTP_PASSWORD: ${{ secrets.PROTOBRHC_FTP_PASSWORD }}
+        run: >
+          lftp --env-password -u "$FTP_USER" ftp.monsitedetest.com -e "set ftp:ssl-allow no;
+          set ftp:passive-mode on; set ftp:prefer-epsv no; set net:max-retries 4;
+          set net:reconnect-interval-base 5; set net:timeout 30;
+          mirror --reverse --only-newer --no-perms --parallel=1 --verbose=1 ./_site/protobrhc/ ./; bye"
+      - name: Version C non configurée
+        if: env.FTP_USER == ''
+        run: echo 'Secrets PROTOBRHC_FTP_USERNAME et PROTOBRHC_FTP_PASSWORD absents, mise en ligne de la version C ignorée.'

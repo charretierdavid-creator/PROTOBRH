@@ -16,13 +16,13 @@ SPV = {'B': {'A':['É28'],'1.1':['É28','É29'],'1.2':['É28'],'2.1':['É29'],'2
 LABV = {'B': {'1.2':'1.2 Explore ses 3 besoins RH','2.2':'2.2 Répond au Label BRH','3.1':'3.1 Score Label BRH','3.2':'3.2 Leviers prioritaires','4.1':'4.1 Chiffre ses leviers'}}
 EBV = {'B': ['É29','É29','É29','É20','É15','É29']}
 STEP_ORDER = ['A','1.1','1.2','2.1','2.2','2.3','3.1','3.2','4.1','4.2','5.1','5.2','5.3','5.L','6.1','6.L','R','AS','AM']
-GROUPS = [('Accueil & découverte',['É01','É02','É03','É04','É27']),('Diagnostic RH',['É05','É06','É07','É08','É09','É26']),('Devis — données communes',['É10','É11','É12','É13','É14']),('Devis — configuration',['É15','É16','É17','É18']),('Estimation, proposition, devis',['É19','É20','É21','É22']),('Ressources & newsletter',['É23','É24','É25']),('Back-office & transverse',['P1','P2','P3','H']),('Test A/B',['VA','VB','É28','É29'])]
+GROUPS = [('Accueil & découverte',['É01','É02','É03','É04','É27']),('Diagnostic RH',['É05','É06','É07','É08','É09','É26']),('Devis — données communes',['É10','É11','É12','É13','É14']),('Devis — configuration',['É15','É16','É17','É18']),('Estimation, proposition, devis',['É19','É20','É21','É22']),('Ressources & newsletter',['É23','É24','É25']),('Back-office & transverse',['P1','P2','P3','H']),('Test A/B',['VA','VB','VC','É28','É29'])]
 ORDER = [c for g in GROUPS for c in g[1]]
 PRIO = {'MVP':'MVP','V2':'V2','ARB':'À arbitrer'}
-VERS = ['REF', 'A', 'B']
-VLAB = {'REF': 'Standard', 'A': 'Version A', 'B': 'Version B'}
-VURL = {'REF': 'protobrh.monsitedetest.com', 'A': 'protobrha.monsitedetest.com', 'B': 'protobrhb.monsitedetest.com'}
-VHYP = {'REF': 'Version standard : parcours et design actuels (V1.0.4), le point de comparaison.', 'A': 'Parcours simplifié, design épuré et moderne.', 'B': 'Accueil avec carrousel, Label BRH (score sur 100) et simulation en 7 étapes.'}
+VERS = ['REF', 'A', 'B', 'C']
+VLAB = {'REF': 'Standard', 'A': 'Version A', 'B': 'Version B', 'C': 'Version C'}
+VURL = {'REF': 'protobrh.monsitedetest.com', 'A': 'protobrha.monsitedetest.com', 'B': 'protobrhb.monsitedetest.com', 'C': 'protobrhc.monsitedetest.com'}
+VHYP = {'REF': 'Version standard : parcours et design actuels (V1.0.4), le point de comparaison.', 'A': 'Parcours simplifié, design épuré et moderne.', 'B': 'Accueil avec carrousel, Label BRH (score sur 100) et simulation en 7 étapes.', 'C': 'Parcours standard avec l’IA à chaque étape : elle oriente, explique et prépare ; le moteur calcule ; l’expert conseille.'}
 pvar = lambda p: p.get('var') or VERS
 spages = lambda sid, v: SPV.get(v, {}).get(sid, STEP_PAGES[sid])   # pages d'une étape pour une version
 lab = lambda sid, v: LABV.get(v, {}).get(sid, LAB[sid])
@@ -32,7 +32,7 @@ def vtags(v, full=False):
 def story(t): return re.sub(r"(En tant que |je veux |afin (?:de |d'|que ))", r'<b>\1</b>', e(t))
 
 # ---- schéma du parcours : un par version du prototype (gen_map.py)
-GV = {'REF': G['S'], 'A': G['A'], 'B': G['B']}
+GV = {'REF': G['S'], 'A': G['A'], 'B': G['B'], 'C': G['C']}
 def stepid(label):
     if label == 'Acquisition': return 'A'
     if label == 'Lead qualifié': return '5.L'
@@ -66,7 +66,7 @@ for i, code in enumerate(ORDER):
     rel = ''.join(f'<div class="rel"><span>Dans le parcours : <b>{e(LAB[s])}</b></span>' + ''.join(f'<a class="chip{" cur" if c==code else ""}" href="#{aid(c)}" data-var="{" ".join(pvar(BY[c]))}">{c} · {e(BY[c]["title"].split(" — ")[-1])}</a>' for c in allp(s)) + '</div>' for s in steps)
     tile = 'proc' if p.get('process') else ('v2' if p['statut'] == 'V2' else '')
     if p.get('imgs'):
-        figs = ''.join(f'<figure><img src="{IM[imn]}" alt="Capture de l\'écran {code}" loading="lazy" data-zoom><figcaption>{("Capture de la version B du 12/11/2026" if imn[:2] == "vb" else "Capture de la version A du 21/10/2026") if imn[:2] in ("va", "vb") else "Capture du prototype du 21/10/2026 (V1.5)"}{" — vue " + str(k+1) if len(p["imgs"])>1 else ""}</figcaption></figure>' for k, imn in enumerate(p['imgs']))
+        figs = ''.join(f'<figure><img src="{IM[imn]}" alt="Capture de l\'écran {code}" loading="lazy" data-zoom><figcaption>{({"vb": "Capture de la version B du 12/11/2026", "vc": "Capture de la version C du 14/11/2026"}.get(imn[:2], "Capture de la version A du 21/10/2026")) if imn[:2] in ("va", "vb", "vc") else "Capture du prototype du 21/10/2026 (V1.5)"}{" — vue " + str(k+1) if len(p["imgs"])>1 else ""}</figcaption></figure>' for k, imn in enumerate(p['imgs']))
     else:
         figs = f'<div class="noimg"><b>{"Processus back-office" if p.get("process") else "Écran à maquetter"}</b><br>Pas d\'écran côté dirigeant</div>'
     reqs = ''.join(f'<tr data-var="{" ".join(r[2] if len(r) > 2 else pvar(p))}"><td>{k+1:02d}</td><td>{e(r[0])}{" " + vtags(r[2]) if len(r) > 2 else ""}</td><td><span class="prio {r[1]}">{PRIO[r[1]]}</span></td></tr>' for k, r in enumerate(p['reqs']))

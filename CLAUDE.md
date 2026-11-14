@@ -17,11 +17,13 @@ Le dépôt contient deux sites qui évoluent **ensemble** :
 | `cdcbrh/` | cdcbrh.monsitedetest.com | Cahier des charges interactif (spécification vivante du prototype) |
 | `protobrha/` | protobrha.monsitedetest.com | Test A/B — version A : parcours simplifié, design épuré et moderne |
 | `protobrhb/` | protobrhb.monsitedetest.com | Test A/B — version B : accueil avec carrousel, Label BRH, simulation et devis |
+| `protobrhc/` | protobrhc.monsitedetest.com | Test A/B — version C : parcours Standard + couche IA à chaque étape |
+| `cockpitbrh/` | (non mis en ligne) | Répertoire réservé au cockpit BRH, contenu à définir |
 
-### Test A/B : un socle, trois versions
+### Test A/B : un socle, quatre versions
 
 - `protobrh/` est la version **Standard** (code `REF`) et le **socle commun** : contenus, offres, calculs, audit, assistant, devis, PHP.
-- `protobrha/` et `protobrhb/` ne contiennent **que ce qui diffère** : `variante.css` (design) et `variante.js`
+- `protobrha/`, `protobrhb/` et `protobrhc/` ne contiennent **que ce qui diffère** : `variante.css` (design) et `variante.js`
   (identifiant de version + adaptations du parcours), et si besoin une page entière qui remplace celle du socle.
 - Depuis la V1.8, `protobrhb/` contient des **pages entières** (accueil, `simulation.html`, avantages fiscaux, ressources,
   newsletter) qui remplacent celles du socle, et `connaissances-version.txt` (complément de la base de l'assistant, lu par
@@ -29,25 +31,32 @@ Le dépôt contient deux sites qui évoluent **ensemble** :
   (`carrousel.js`, photos dans `img/`) sont dans le socle et servent aux trois versions ; sur B, `diagnostic.html` renvoie
   vers `label-brh.html`. L'audit mutuelle et le devis du socle restent servis sur B. Changer le `?v=` des pages qui chargent
   `variante.css`, `variante.js`, `label-brh.js`, `carrousel.js` ou `chatbot-widget.js` quand l'un d'eux change.
+- Depuis la V2.2, la **version C** (`protobrhc/`) = socle Standard + couche IA, sans page propre : `variante.js` charge
+  `ia-assist.js` puis le module de la page (`ia-accueil.js`, `ia-diagnostic.js`, `ia-devis.js`), qui se greffent sur les
+  fonctions du socle (`updateGain`, `submitLead`, `renderEstimation`, `renderCart`, `submitDevis`…). Renommer ou supprimer
+  l'une de ces fonctions ou de leurs identifiants (`gains`, `rec-cards`, `dvSynth`, `dvCart`…) casse la version C : vérifier
+  `protobrhc/` à chaque évolution du diagnostic ou du devis. `ia.php` relaie Mistral (clé `MISTRAL_API_KEY` du `config.php`).
+  Changer `IAV` dans `protobrhc/variante.js` quand un fichier `ia-*.js` change.
 - Depuis la V2.0, le **devis en ligne** (`devis.html`) est commun aux trois versions (sur B, `simulation.html` renvoie vers
   `devis.html`). Les **demandes des dirigeants** (devis, rappel, diagnostic, Label BRH, audit, newsletter) sont enregistrées
   par `lead.php` (table MySQL `leads`, créée automatiquement, même base que les avis) et consultées dans `admin-leads.php`
   (accès séparé : `ADMIN_LOGIN` et `ADMIN_PASSWORD` dans `config.php`). Toute nouvelle collecte de coordonnées passe par
   `lead.php`, avec un consentement explicite (`consentement: true`) et un `type` ajouté à `BRH_LEAD_TYPES` (`leads-base.php`).
-- `outils/assembler_variantes.py` assemble socle + fichiers propres dans `_site/protobrha/` et `_site/protobrhb/`
+- `outils/assembler_variantes.py` assemble socle + fichiers propres dans `_site/protobrha/`, `_site/protobrhb/` et `_site/protobrhc/`
   (ignoré par Git) ; le déploiement le lance avant l'envoi FTP. Test local :
   `python3 outils/assembler_variantes.py && python3 -m http.server 8766 --directory _site/protobrha`.
 - Chaque page du socle charge `variante.css` et `variante.js` (fin du `<head>`) : toute nouvelle page doit les charger.
 - Une fonction métier propre à une version (ex. champ SIRET de l'audit en B) est codée une fois dans le socle, désactivée
   par défaut, et activée par `window.BRH_OPTIONS` dans le `variante.js` de la version (B : `auditSiret`, `partMin50`, `prevCadres`).
 - Les règles de `variante.css` portent sur `html[data-variante="A"]` (ou `B`) pour passer devant les styles des pages.
-- La version (`REF`, `A`, `B`) est jointe à chaque événement de mesure et à chaque demande transmise
+- La version (`REF`, `A`, `B`, `C`) est jointe à chaque événement de mesure et à chaque demande transmise
   (`window.BRH_VARIANTE`, donnée D104). Toute nouvelle demande transmise doit l'inclure.
 - Avis « Votre avis » : les trois sites écrivent dans la même base MySQL (celle de protobrh, `config.php` commun) ;
-  `feedback.php` remplit la colonne `version` (S, A, B) d'après l'adresse du site.
+  `feedback.php` et `lead.php` remplissent la colonne `version` (S, A, B, C) d'après l'adresse du site.
 - Où coder une évolution : **Toutes versions** ou **Référence** → socle `protobrh/` (attention : une évolution du
-  socle s'applique aussi à A et B, sauf si leur `variante.js`/`variante.css` la neutralise) ; **Version A** ou
-  **Version B** → uniquement dans `protobrha/` ou `protobrhb/`.
+  socle s'applique aussi à A et B, sauf si leur `variante.js`/`variante.css` la neutralise) ; **Version A**, **Version B** ou
+  **Version C** → uniquement dans `protobrha/`, `protobrhb/` ou `protobrhc/`. La version C hérite du socle : une évolution
+  « Référence » s'y applique aussi.
 
 Chaque push sur `main` est **déployé automatiquement** par Hostinger. Ne jamais pousser sur `main` sans l'accord explicite de David.
 
@@ -72,10 +81,10 @@ Une évolution n'est terminée que si les **trois** éléments suivants sont liv
 ```
 
 `type` vaut `Prototype`, `Cahier des charges` ou `Prototype + cahier des charges`.
-`cible` vaut `TOUTES`, `REF`, `A`, `B` ou une liste (ex. `["A","B"]`) : la version du prototype concernée.
+`cible` vaut `TOUTES`, `REF`, `A`, `B`, `C` ou une liste (ex. `["A","B"]`) : la version du prototype concernée.
 La version d'un commentaire ou d'une idée est affectée par David à la validation (« Affecter à ») :
 la respecter pour choisir le dossier à modifier. Le cahier des charges affiche la version choisie en cliquant sur
-l'une des 3 cartes du parcours ; `gen_map.py` dessine un schéma par version (S, A, B).
+l'une des 4 cartes du parcours ; `gen_map.py` dessine un schéma par version (S, A, B, C) ; `gen_map.py C` ne redessine que C.
 Si l'évolution vient d'un commentaire, citer son identifiant dans `origine`.
 
 Si une demande ne touche qu'un des deux sites, le dire explicitement dans le résumé.
@@ -92,7 +101,7 @@ Si une demande ne touche qu'un des deux sites, le dire explicitement dans le ré
 ## 4. Conventions du projet
 
 - **Pages du cahier des charges** : codes `É01` à `É29` (écrans ; `É28` est propre à la version B ; `É30` a été supprimée en V2.0), `P1` à `P3` (processus back-office), `H` (Assistant BRH),
-  `VA`, `VB` (fiches des versions A et B du test A/B).
+  `VA`, `VB`, `VC` (fiches des versions A, B et C du test A/B).
   Une nouvelle page d'écran prend le code suivant libre (`É31`…, `É30` n'est pas réattribué) et doit être reliée à une étape du parcours.
 - **Priorités** : `MVP`, `V2`, `ARB` (à arbitrer).
 - **Données produites** : identifiants `D01`… `D113` ; une nouvelle donnée prend le code suivant libre et s'ajoute au
