@@ -13,7 +13,7 @@ import os, shutil, sys
 RACINE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SOCLE = os.path.join(RACINE, 'protobrh')
 # Propres à chaque site sur Hostinger : jamais copiés depuis le dépôt
-EXCLUS = {'config.php', 'data', '.ftp-deploy-sync-state.json'}
+EXCLUS = {'config.php', 'data', '.ftp-deploy-sync-state.json', 'README.md'}
 
 
 def assembler(v):

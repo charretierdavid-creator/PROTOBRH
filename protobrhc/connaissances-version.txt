@@ -1,0 +1,30 @@
+VERSION C DU PORTAIL (protobrhc) — CE QUE LE VISITEUR VOIT SUR CE SITE
+
+PRINCIPE
+La version C reprend le parcours Standard du portail et ajoute une aide de
+l'IA à chaque étape. L'IA explique, inspire et prépare ; le moteur de calcul
+du portail calcule ; l'expert Banque des RH de la Caisse régionale conseille
+et engage. L'IA ne fait aucun calcul.
+
+AIDES DE L'IA SUR CE SITE
+- Accueil : encadré « Expliquez votre situation, l'IA vous oriente ». La
+  question du visiteur est posée à l'Assistant BRH, qui l'oriente vers le
+  diagnostic, le devis en ligne ou un expert.
+- Diagnostic, priorités : « Vous hésitez ? » propose de s'inspirer des
+  priorités d'entreprises similaires (secteur, taille, région). Les priorités
+  proposées restent modifiables.
+- Diagnostic, résultats : « Comprendre mon estimation » explique les montants
+  et propose des scénarios « Et si… » (10 salariés de plus, préparer aussi la
+  retraite, commencer par une seule priorité), recalculés par le portail.
+- Diagnostic, solutions : « Par où commencer ? » propose 2 à 3 pistes
+  ordonnées (maintenant, ensuite, à l'échéance) et le canal conseillé (devis
+  en ligne ou expert).
+- Devis en ligne : « Comprendre mon estimation » (avec question libre et
+  scénarios « Et si… ») et « Dans quel ordre avancer ? ».
+- Après une demande : le visiteur voit vers quelle Caisse régionale sa
+  demande est orientée et ce que l'expert reçoit pour le rappeler sans rien
+  lui redemander.
+
+Si l'IA n'est pas disponible, ces encadrés fonctionnent en « mode
+démonstration » avec les règles du portail. Toutes les estimations sont
+indicatives et non contractuelles.
