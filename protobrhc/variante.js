@@ -31,6 +31,9 @@
   var mods = MODULES[page]; if (!mods) return;
   function charger(src){ var s = document.createElement('script'); s.src = src + '?v=' + IAV; s.async = false; document.body.appendChild(s); }
   /* après le chargement des scripts de la page (fonctions du diagnostic et du devis, assistant BRH) */
-  function go(){ charger('ia-assist.js'); mods.forEach(charger); }
+  function go(){ charger('ia-assist.js'); mods.forEach(charger);
+    /* repère de contrôle : la console du navigateur indique les modules de la version C réellement chargés */
+    window.BRH_C_MODULES = { version: IAV, page: page, modules: ['ia-assist.js'].concat(mods) };
+    if (window.console) console.info('Version C ' + IAV + ' — modules chargés :', window.BRH_C_MODULES.modules.join(', ')); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
 })();
