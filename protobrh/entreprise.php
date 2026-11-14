@@ -60,6 +60,16 @@ function tranche(?string $c): string {
         '51' => '2 000 à 4 999 salariés', '52' => '5 000 à 9 999 salariés', '53' => '10 000 salariés et plus'];
   return $t[(string) $c] ?? '';
 }
+/* Premier dirigeant personne physique déclaré au registre : prénom usuel, nom, fonction (minimisation : ni date de naissance ni nationalité).
+   Proposé au visiteur à l'étape « Recevez votre devis » (« Vous êtes … ? »), jamais prérempli ni transmis sans son accord. */
+function dirigeant_gouv($liste): ?array {
+  foreach ((array) $liste as $d) {
+    if (($d['type_dirigeant'] ?? '') !== 'personne physique' || empty($d['nom'])) continue;
+    $p = trim(explode(' ', trim((string) ($d['prenoms'] ?? '')))[0] ?? '');
+    return ['prenom' => mb_convert_case(mb_strtolower($p), MB_CASE_TITLE), 'nom' => mb_strtoupper((string) $d['nom']), 'qualite' => (string) ($d['qualite'] ?? '')];
+  }
+  return null;
+}
 /* Première convention collective déclarée (9999 = « sans convention » dans Sirene) */
 function idcc($liste): string {
   foreach ((array) $liste as $c) { $c = trim((string) $c); if ($c !== '' && $c !== '9999') return $c; }
@@ -102,6 +112,8 @@ if ($SOURCE === 'api_gouv') {
     'cp'            => $et['code_postal'] ?? '',
     'naf'           => $et['activite_principale'] ?? $e['activite_principale'] ?? '',
     'tranche'       => tranche($e['tranche_effectif_salarie'] ?? null),
+    'tranche_annee' => (string) ($e['annee_tranche_effectif_salarie'] ?? ''),
+    'dirigeant'     => dirigeant_gouv($e['dirigeants'] ?? []),
     'idcc'          => idcc($et['liste_idcc'] ?? ($e['complements']['liste_idcc'] ?? [])),
     'idcc_confirme' => false,
   ], JSON_UNESCAPED_UNICODE); exit;
@@ -126,6 +138,11 @@ elseif (strlen($siren) === 9)  $e = pappers('entreprise', ['siren' => $siren]);
 else echec('siret_invalide');
 if (!$e) echec('not_found');
 $cc = $e['conventions_collectives'][0] ?? null;
+$dir = null;
+foreach (($e['representants'] ?? []) as $r) {
+  if (!empty($r['personne_morale']) || empty($r['nom'])) continue;
+  $dir = ['prenom' => trim(explode(' ', (string) ($r['prenom_usuel'] ?? $r['prenom'] ?? ''))[0]), 'nom' => mb_strtoupper((string) $r['nom']), 'qualite' => (string) ($r['qualite'] ?? '')]; break;
+}
 echo json_encode([
   'source'        => 'Pappers',
   'siren'         => $e['siren'] ?? substr($siret, 0, 9),
@@ -136,6 +153,8 @@ echo json_encode([
   'cp'            => $e['siege']['code_postal'] ?? '',
   'naf'           => trim(($e['code_naf'] ?? '') . ' — ' . ($e['libelle_code_naf'] ?? ''), ' —'),
   'tranche'       => $e['effectif'] ?? '',
+  'tranche_annee' => (string) ($e['annee_effectif'] ?? ''),
+  'dirigeant'     => $dir,
   'idcc'          => $cc ? trim(($cc['idcc'] ?? '') . ' — ' . ($cc['nom'] ?? ''), ' —') : '',
   'idcc_confirme' => (bool) ($cc['confirmee'] ?? false),
 ], JSON_UNESCAPED_UNICODE);

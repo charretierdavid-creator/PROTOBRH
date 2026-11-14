@@ -539,6 +539,11 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 .dv-chip svg{width:11px;height:11px}
 @supports not (grid-template-rows:subgrid){.dv-choice{display:flex;flex-direction:column}}
 
+/* tranche publique, écart d'effectif, proposition « Vous êtes … ? » */
+.dv-tranche{display:inline-block;background:var(--mint-2,#E3EFEA);color:#065145;border-radius:8px;padding:2px 8px;margin:2px 0}
+.dv-ecart{display:block;color:#8a5a00;margin-top:4px}
+.dv-dirig{grid-column:1/-1;border:1.5px solid #8FB822;background:#F4F9EC;border-radius:12px;padding:.8rem 1rem;margin:0 0 1rem}
+.dv-dirig p{margin:0 0 .5rem}.dv-dirig small{display:block;color:var(--slate,#5b6b70);margin-top:.5rem;font-size:.76rem}
 /* champs */
 .dv-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
 .dv-grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -1262,7 +1267,7 @@ function save(){ try{
     if(el.type==='checkbox'||el.type==='radio'){ if(el.name) { f['@'+el.name+'='+el.value]=el.checked; } else f[el.id]=el.checked; }
     else f[el.id]=el.value; });
   S.savedAt=Date.now();
-  sessionStorage.setItem('brhDevis', JSON.stringify({t:S.savedAt, S:{step:S.step,maxStep:S.maxStep,sol:S.sol,ent:S.ent,entSrc:S.entSrc,tab:S.tab,done:S.done,fi:S.fi,fromAudit:S.fromAudit},f}));
+  sessionStorage.setItem('brhDevis', JSON.stringify({t:S.savedAt, S:{step:S.step,maxStep:S.maxStep,sol:S.sol,ent:S.ent,entSrc:S.entSrc,tab:S.tab,done:S.done,fi:S.fi,fromAudit:S.fromAudit,dirChoix:S.dirChoix},f}));
 }catch(e){} }
 function restore(){ try{
   const raw=sessionStorage.getItem('brhDevis'); if(!raw) return false; const o=JSON.parse(raw);
@@ -1287,7 +1292,7 @@ function go(n){
   if(n===4) renderTabs();
   if(n===5) renderEstimation();
   if(n===6) renderCart();
-  if(n===7) renderRecap();
+  if(n===7){ renderRecap(); proposerDirigeant(); }
   renderStepper(); save();
   const top=$('devis').getBoundingClientRect().top+window.scrollY-90;
   window.scrollTo({top,behavior:'smooth'});
@@ -1364,7 +1369,7 @@ function demoEntreprise(siret){
   const villes=[['Tours','37000'],['Orléans','45000'],['Angers','49000'],['Poitiers','86000'],['Blois','41000']];
   const h=+siret.slice(-3)%villes.length;
   return {source:'demo', nom:'Atelier Démo '+siret.slice(-4), ville:villes[h][0], cp:villes[h][1], naf:'62.02A — Conseil en systèmes informatiques',
-          tranche:'10 à 19 salariés', idcc:'1486 — Bureaux d’études techniques (Syntec)', idcc_confirme:false, date:new Date().toLocaleDateString('fr-FR')};
+          tranche:'10 à 19 salariés', tranche_annee:'2023', dirigeant:{prenom:'Camille', nom:'MARTIN', qualite:'Président (fictif)'}, idcc:'1486 — Bureaux d’études techniques (Syntec)', idcc_confirme:false, date:new Date().toLocaleDateString('fr-FR')};
 }
 function demoSearch(q){
   const base=q.replace(/\b\w/g,c=>c.toUpperCase());
@@ -1375,7 +1380,7 @@ function setStatus(k,found){ const b=document.querySelector('[data-st="'+k+'"]')
 function fillEntreprise(d,noFocus){
   /* code IDCC seul (API publique) : intitulé ajouté depuis la liste partagée conventions.js */
   const ic=String(d.idcc||'').trim(); if(/^\d{1,4}$/.test(ic) && window.BRH_CCN && BRH_CCN.label(ic)) d=Object.assign({},d,{idcc:ic+' — '+BRH_CCN.label(ic)});
-  S.ent={siret:d.siret||'', nom:d.nom||'', ville:d.ville||'', cp:d.cp||'', naf:d.naf||'', idcc:d.idcc||'', tranche:d.tranche||'', secteur:d.secteur||'', idccNsp:!!d.idccNsp};
+  S.ent={siret:d.siret||'', nom:d.nom||'', ville:d.ville||'', cp:d.cp||'', naf:d.naf||'', idcc:d.idcc||'', tranche:d.tranche||'', trancheAnnee:d.tranche_annee||d.trancheAnnee||'', dirigeant:d.dirigeant||null, secteur:d.secteur||'', idccNsp:!!d.idccNsp};
   S.entSrc={source:d.source||'manuel', date:d.date||''};
   /* convention et secteur déclarés dans le diagnostic ou l'audit mutuelle : prioritaires sur une valeur non confirmée */
   if(S.prefIdcc && !d.idcc_confirme) S.ent.idcc=S.prefIdcc;
@@ -1384,7 +1389,7 @@ function fillEntreprise(d,noFocus){
   fillDvSecteur();
   ['nom','ville','cp','naf'].forEach(k=>setStatus(k, !!S.ent[k] && d.source!=='manuel'));
   setStatus('idcc', !!d.idcc_confirme); setStatus('eff', false);
-  $('effHint').textContent = d.tranche ? 'Donnée publique : '+d.tranche+'. Indiquez votre effectif actuel.' : 'Indiquez votre effectif salarié actuel.';
+  majEffHint();
   const badge = d.source==='demo' ? '<span class="dv-status demo">Mode démonstration — données fictives</span>' : (d.source==='manuel' ? '' : '<span class="dv-status found">Entreprise reconnue</span>');
   $('dvSrcBadge').innerHTML=badge;
   $('dvSrc').textContent = d.source==='manuel' ? 'Informations saisies par vos soins.' :
@@ -1393,6 +1398,16 @@ function fillEntreprise(d,noFocus){
   if(S.prefEff && !$('e-eff').value) $('e-eff').value=S.prefEff;
   fillDvCcn();
   if(!noFocus) $('e-eff').focus(); save();
+}
+/* tranche d'effectif publique (INSEE) affichée sous le nombre de salariés, avec alerte d'écart (D38) */
+function trancheBornes(t){ const n=String(t||'').replace(/\s/g,'').match(/\d+/g); if(!n) return null;
+  if(/plus/.test(t)) return [+n[0],Infinity]; if(/^0salari/.test(String(t).replace(/\s/g,''))) return [0,0]; return [+n[0], +(n[1]||n[0])]; }
+function ecartEffectif(){ const t=S.ent&&S.ent.tranche, b=trancheBornes(t), v=parseInt($('e-eff').value,10); return !!(b && !isNaN(v) && (v<b[0]||v>b[1])); }
+function majEffHint(){
+  const h=$('effHint'), t=S.ent&&S.ent.tranche; if(!h) return;
+  if(!t){ h.textContent='Indiquez votre effectif salarié actuel.'; return; }
+  h.innerHTML='<span class="dv-tranche">Tranche publique'+(S.ent.trancheAnnee?' (INSEE '+esc(S.ent.trancheAnnee)+')':' (INSEE)')+' : <b>'+esc(t)+'</b></span> '+
+    (ecartEffectif()?'<span class="dv-ecart">Votre effectif diffère de la tranche publique : pas d’inquiétude, votre expert le vérifiera.</span>':'Indiquez votre effectif actuel.');
 }
 function manualEntry(){ fillEntreprise({source:'manuel', siret:$('siret').value.replace(/\D/g,'')}); $('e-nom').focus(); }
 
@@ -1449,6 +1464,25 @@ function validateEntreprise(){
   if(isNaN(n) || n<DEVIS_CONFIG.EFFECTIF_MIN || n>DEVIS_CONFIG.EFFECTIF_MAX){ routeEffectif(isNaN(n)?0:n); return false; }
   $('dvRoute').classList.remove('show'); save(); return true;
 }
+
+/* « Vous êtes … ? » : dirigeant déclaré au registre, proposé à l'étape 7 ; rien n'est prérempli sans clic sur « Oui » */
+function proposerDirigeant(){
+  const old=$('dvDirig'); if(old) old.remove();
+  const d=S.ent&&S.ent.dirigeant; if(!d || !d.nom || S.dirChoix || $('c-nom').value.trim()) return;
+  const box=document.createElement('div'); box.id='dvDirig'; box.className='dv-dirig'; box.setAttribute('role','group'); box.setAttribute('aria-label','Identité du dirigeant');
+  box.innerHTML='<p>Vous êtes <b>'+esc((d.prenom?d.prenom+' ':'')+d.nom)+'</b>'+(d.qualite?', '+esc(d.qualite):'')+' ?</p>'+
+    '<div><button type="button" class="btn btn-primary" onclick="choixDirigeant(true)">Oui, c’est moi</button> <button type="button" class="btn btn-outline" onclick="choixDirigeant(false)">Non</button></div>'+
+    '<small>Dirigeant déclaré au registre national des entreprises. Vos coordonnées ne sont transmises qu’avec votre accord, en bas de ce formulaire.</small>';
+  const g=document.querySelector('.dv-step[data-step="7"] .cform-grid'); if(g) g.insertBefore(box,g.firstChild);
+}
+function choixDirigeant(oui){
+  const d=S.ent&&S.ent.dirigeant; S.dirChoix=oui?'oui':'non';
+  if(oui && d){ $('c-prenom').value=d.prenom||''; $('c-nom').value=d.nom||''; $('c-fct').value='Dirigeant(e)'; $('c-tel').focus(); }
+  else $('c-prenom').focus();
+  const b=$('dvDirig'); if(b) b.remove(); save(); track('devis_dirigeant_propose',{choix:S.dirChoix});
+}
+function sourceIdentite(){ const d=S.ent&&S.ent.dirigeant;
+  return (S.dirChoix==='oui' && d && $('c-nom').value.trim()===d.nom && $('c-prenom').value.trim()===(d.prenom||'')) ? 'registre_confirme' : 'saisie'; }
 
 /* ============================ ÉTAPE 3 : RH ============================ */
 function prefillRH(){
@@ -1655,8 +1689,8 @@ async function submitDevis(){
   const o=S.est||compute(), h=RH(), tot=S.sol.reduce((a,k)=>a+(o[k].cout||0),0);
   const ref='DEV-'+new Date().getFullYear()+'-'+Math.random().toString(36).slice(2,7).toUpperCase();
   const lead={ type:'devis', reference:ref, date:new Date().toISOString(), source:'portail_brh_devis_en_ligne', variante:window.BRH_VARIANTE||'REF',
-    entreprise:{siret:S.ent.siret, secteur:S.ent.secteur||'', audit_mutuelle:!!S.fromAudit, raison_sociale:S.ent.nom, ville:S.ent.ville, code_postal:S.ent.cp, naf:S.ent.naf, idcc:dvSante()?((DV_OPT.ccnNonBloquante && S.ent.idccNsp && !S.ent.idcc)?DV_CCN_NSP:S.ent.idcc):'', effectif:S.ent.effectif, source_donnees:S.entSrc},
-    contact:{prenom:$('c-prenom').value.trim(), nom:$('c-nom').value.trim(), fonction:$('c-fct').value, telephone:$('c-tel').value.trim(), email:$('c-email').value.trim(), rappel_expert:$('c-rappel').checked, consentement:true, consentement_date:new Date().toISOString()},
+    entreprise:{siret:S.ent.siret, secteur:S.ent.secteur||'', audit_mutuelle:!!S.fromAudit, raison_sociale:S.ent.nom, ville:S.ent.ville, code_postal:S.ent.cp, naf:S.ent.naf, effectif_public:S.ent.tranche||'', ecart_effectif:ecartEffectif(), idcc:dvSante()?((DV_OPT.ccnNonBloquante && S.ent.idccNsp && !S.ent.idcc)?DV_CCN_NSP:S.ent.idcc):'', effectif:S.ent.effectif, source_donnees:S.entSrc},
+    contact:{prenom:$('c-prenom').value.trim(), nom:$('c-nom').value.trim(), fonction:$('c-fct').value, telephone:$('c-tel').value.trim(), email:$('c-email').value.trim(), rappel_expert:$('c-rappel').checked, source_identite:sourceIdentite(), consentement:true, consentement_date:new Date().toISOString()},
     rh:{salaries_concernes:h.N, cadres:dvCadres()?h.cadres:null, non_cadres:dvCadres()?h.noncadres:null, tranche_salaire:$('h-sal').value, etablissements:+$('h-etab').value||1, anciennete_mois:+$('h-anc').value},
     panier:S.sol.map(k=>({solution:k, libelle:DV_SOL[k].title, formule:o[k].formule||null, frais_formule_annuels:o[k].frais||null, statut:STATUT_LBL[DV_SOL[k].statut], hypotheses:o[k].hyp, cout_employeur_annuel:o[k].cout==null?null:Math.round(o[k].cout), gain_net_salarie:o[k].netSal==null?null:Math.round(o[k].netSal)})),
     estimation_totale:Math.round(tot), routage:{departement:S.ent.cp.slice(0,2), caisse_regionale:'à déterminer (table code postal → Caisse régionale)'},
@@ -1719,7 +1753,7 @@ document.addEventListener('click',e=>{ if(e.target && e.target.id==='devisDoc') 
 /* ============================ MENU & INIT ============================ */
 function toggleMenu(){ const m=$('mobileMenu'),b=document.querySelector('.burger'); const o=m.classList.toggle('open'); b.setAttribute('aria-expanded',o); }
 function closeMenu(){ $('mobileMenu').classList.remove('open'); const b=document.querySelector('.burger'); if(b) b.setAttribute('aria-expanded','false'); }
-document.addEventListener('input',e=>{ if(!e.target.closest('#devis')) return; if(e.target.id==='e-eff'){ $('dvRoute').classList.remove('show'); fillDvCcn(); } if(e.target.id==='h-couv'||e.target.id==='h-cad') updNonCad(); if(S.step===4){ applyShow(); updOutputs(); renderTabsState(); } save(); });
+document.addEventListener('input',e=>{ if(!e.target.closest('#devis')) return; if(e.target.id==='e-eff'){ $('dvRoute').classList.remove('show'); fillDvCcn(); majEffHint(); } if(e.target.id==='h-couv'||e.target.id==='h-cad') updNonCad(); if(S.step===4){ applyShow(); updOutputs(); renderTabsState(); } save(); });
 document.addEventListener('change',e=>{ if(!e.target.closest('#devis')) return; if(S.step===4){ if(/^(ep|rt)_form$/.test(e.target.name)) syncFormules(e.target.name); applyShow(); updOutputs(); renderTabsState(); } save(); });
 function renderTabsState(){ document.querySelectorAll('#dvTabs .dv-tab').forEach((t,i)=>t.classList.toggle('done',panelOk(S.sol[i]))); }
 /* audit mutuelle → configuration santé & prévoyance (formules illustratives de l'audit) */
