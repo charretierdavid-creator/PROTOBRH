@@ -19,19 +19,40 @@ if (!defined('PAPPERS_API_KEY')) define('PAPPERS_API_KEY', '');
 
 if (PAPPERS_API_KEY === '') { echo json_encode(['error' => 'not_configured']); exit; }
 
+/* Cause du dernier échec, renvoyée avec l'erreur pour le diagnostic (jamais la clé) :
+   http = code HTTP de Pappers (0 = appel sortant impossible), message = réponse de Pappers ou de cURL. */
+$PAPPERS_ECHEC = null;
 function pappers(string $path, array $q): ?array {
+  global $PAPPERS_ECHEC;
   $q['api_token'] = PAPPERS_API_KEY;
   $ch = curl_init('https://api.pappers.fr/v2/' . $path . '?' . http_build_query($q));
   curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 10]);
-  $r = curl_exec($ch); $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE); curl_close($ch);
-  return ($r === false || $code >= 400) ? null : json_decode((string) $r, true);
+  $r = curl_exec($ch); $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE); $err = curl_error($ch); curl_close($ch);
+  if ($r === false || $code >= 400) {
+    $j = is_string($r) ? json_decode($r, true) : null;
+    $msg = $r === false ? $err : (string) (is_array($j) ? ($j['error'] ?? $j['message'] ?? '') : mb_substr((string) $r, 0, 200));
+    $PAPPERS_ECHEC = ['http' => $code, 'message' => str_replace(PAPPERS_API_KEY, '***', $msg), 'cause' => pappers_cause($code)];
+    return null;
+  }
+  return json_decode((string) $r, true);
+}
+function pappers_cause(int $code): string {
+  if ($code === 0)   return 'Appel sortant vers api.pappers.fr impossible depuis le serveur (réseau, pare-feu ou cURL).';
+  if ($code === 401) return 'Clé Pappers refusée : vérifier PAPPERS_API_KEY dans config.php.';
+  if ($code === 402 || $code === 429) return 'Crédits ou quota Pappers épuisés.';
+  if ($code === 404) return 'Entreprise introuvable chez Pappers (SIRET ou SIREN à vérifier).';
+  return 'Réponse inattendue de Pappers.';
+}
+function echec(string $code): void {
+  global $PAPPERS_ECHEC;
+  echo json_encode(array_merge(['error' => $code], $PAPPERS_ECHEC ? ['pappers' => $PAPPERS_ECHEC] : []), JSON_UNESCAPED_UNICODE); exit;
 }
 
 /* Recherche par nom : ?q=... */
 if (isset($_GET['q'])) {
   $q = mb_substr(trim((string) $_GET['q']), 0, 80);
   $d = pappers('recherche', ['q' => $q, 'par_page' => 5]);
-  if (!$d) { echo json_encode(['error' => 'unavailable']); exit; }
+  if (!$d) echec('unavailable');
   $out = [];
   foreach (($d['resultats'] ?? []) as $e) {
     $out[] = ['nom' => $e['nom_entreprise'] ?? '', 'ville' => $e['siege']['ville'] ?? '', 'siret' => $e['siege']['siret'] ?? ''];
@@ -45,7 +66,7 @@ $siren = preg_replace('/\D/', '', (string) ($_GET['siren'] ?? ''));
 if (strlen($siret) === 14)     $e = pappers('entreprise', ['siret' => $siret]);
 elseif (strlen($siren) === 9)  $e = pappers('entreprise', ['siren' => $siren]);
 else { echo json_encode(['error' => 'siret_invalide']); exit; }
-if (!$e) { echo json_encode(['error' => 'not_found']); exit; }
+if (!$e) echec('not_found');
 
 $cc = $e['conventions_collectives'][0] ?? null;
 echo json_encode([
