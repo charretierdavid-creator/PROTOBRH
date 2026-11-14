@@ -1,7 +1,7 @@
 /* ==============================================================
    IDENTIFICATION DE L'ENTREPRISE PAR SIREN OU SIRET — partagé
    Utilisé par diagnostic.html (champ facultatif) et audit-mutuelle.html (version B).
-   Appelle entreprise.php (proxy Pappers, clé côté serveur) ; sans clé ou sans réseau,
+   Appelle entreprise.php (API publique Recherche d’entreprises, ou Pappers en option) ; en cas d’échec,
    renvoie des données fictives de démonstration (source « demo »).
    Après modification : changer le numéro ?v=AAAAMMJJ dans les pages qui le chargent.
    ============================================================== */

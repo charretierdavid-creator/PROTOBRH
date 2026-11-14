@@ -11,7 +11,9 @@ const DB_NAME = 'REMPLACER-NOM-DE-LA-BASE';
 const DB_USER = 'REMPLACER-UTILISATEUR';
 const DB_PASS = 'REMPLACER-MOT-DE-PASSE';
 
-// Identification entreprise du devis (entreprise.php) — laisser vide pour le mode démonstration
+// Identification entreprise (entreprise.php) : par défaut, API publique Recherche d'entreprises (gratuite, sans clé).
+// Pour utiliser Pappers (payant) à la place : ENTREPRISE_SOURCE = 'pappers' et renseigner la clé.
+const ENTREPRISE_SOURCE = 'api_gouv';
 const PAPPERS_API_KEY = '';
 
 // Porte d'accès (écran d'identification commun aux deux sites)
