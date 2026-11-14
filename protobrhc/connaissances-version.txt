@@ -32,6 +32,13 @@ AIDES DE L'IA SUR CE SITE
   demande est orientée et ce que l'expert reçoit pour le rappeler sans rien
   lui redemander.
 
+- Suivi de la demande : après un devis, le dirigeant reçoit une référence
+  de dossier (BRH-26-…) et un lien de suivi. Il y voit les étapes (déposé,
+  attribué, pris en charge, qualifié, proposé, clôturé), le nom de son expert
+  dès la prise en charge et son rendez-vous. Il peut demander à être rappelé
+  ou arrêter les e-mails de relance. Ne jamais parler de « niveau de lead »
+  ni dire si l'entreprise est reconnue comme cliente.
+
 Si l'IA n'est pas disponible, ces encadrés fonctionnent en « mode
 démonstration » avec les règles du portail. Toutes les estimations sont
 indicatives et non contractuelles.
