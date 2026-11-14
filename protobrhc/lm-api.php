@@ -1,7 +1,7 @@
 <?php
 /* ============================================================================
    lm-api.php — API JSON du cockpit BRH (lead management, version C)
-   Appelée par cockpit-brh.html. Accès séparé de la porte d'accès des testeurs :
+   Appelée par cockpit-brh.html. Double contrôle : porte d'accès du prototype (brh_acces_api), puis connexion propre au cockpit :
      - compte national d'amorçage : LM_ADMIN_LOGIN / LM_ADMIN_PASSWORD dans config.php
        (à défaut ADMIN_LOGIN / ADMIN_PASSWORD, ceux de admin-leads.php) ;
      - autres comptes (national, expert BRH d'une CR, filiale) créés dans le cockpit,
@@ -11,6 +11,7 @@
    chaque écriture, contrôle des droits sur chaque dossier, requêtes préparées.
    ============================================================================ */
 declare(strict_types=1);
+require_once __DIR__ . '/acces.php'; brh_acces_api();   // règle du prototype : porte d'accès d'abord, puis la connexion propre au cockpit
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 header('X-Robots-Tag: noindex, nofollow');

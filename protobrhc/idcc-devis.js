@@ -21,7 +21,7 @@
    ============================================================== */
 (function () {
   'use strict';
-  if (typeof S === 'undefined' || typeof fillEntreprise !== 'function') return;
+  if (typeof S === 'undefined' || typeof fillEntreprise !== 'function') { if (window.console) console.warn('idcc-devis.js : fonctions du devis introuvables (S, fillEntreprise), module inactif'); return; }
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
   var codeDe = function (t) { var m = String(t || '').match(/^\s*(\d{1,4})\b/); return m ? String(parseInt(m[1], 10)) : ''; };
@@ -225,8 +225,10 @@
 
   /* ============ remplissage de la fiche entreprise ============ */
   var _fill = fillEntreprise;
+  var vu = { siret: '', t: 0 };
   fillEntreprise = function (d, noFocus) {
     d = Object.assign({}, d || {});
+    vu = { siret: String(d.siret || '').replace(/\D/g, ''), t: Date.now(), liste: Array.isArray(d.idcc_liste) };
     var frais = Array.isArray(d.idcc_liste), memo = !frais && d.source !== 'manuel' ? memoLire(d.siret) : null;
     var l = frais ? normaliser(d.idcc_liste) : (Array.isArray(d.conventions) ? d.conventions : (memo ? memo.conventions : []));
     var sans = frais ? !!d.sans_convention : !!(d.sansConvention || (memo && memo.sans));
@@ -337,6 +339,28 @@
       .catch(function () {});
   }
   reprendre();
+
+  /* filet de sécurité : si la page appelle sa propre copie du remplissage (socle plus récent), la réponse
+     d'entreprise.php est relue ici et la fiche est complétée avec toutes les conventions déclarées */
+  var _fetch = window.fetch;
+  if (_fetch) window.fetch = function (u, o) {
+    var p = _fetch.apply(this, arguments);
+    try {
+      if (/(^|\/)entreprise\.php\?(siret|siren)=/.test(String(u))) {
+        p.then(function (r) { return r.clone().json(); }).then(function (j) {
+          if (!j || j.error || !Array.isArray(j.idcc_liste)) return;
+          setTimeout(function () {
+            var sj = String(j.siret || '').replace(/\D/g, '');
+            if (vu.siret === sj && vu.liste && Date.now() - vu.t < 4000) return;   // déjà traité par le module
+            if (window.console) console.info('idcc-devis.js : conventions déclarées appliquées par relecture de la réponse (' + j.idcc_liste.length + ')');
+            fillEntreprise(Object.assign({}, j), true);
+          }, 120);
+        }).catch(function () {});
+      }
+    } catch (e) {}
+    return p;
+  };
+  if (window.console) console.info('idcc-devis.js chargé : choix des conventions collectives déclarées actif');
 
   window.BRH_IDCC = { normaliser: normaliser, principale: principale, secteurDe: secteurDe, libelle: libelle, conventions: conv };
 })();
