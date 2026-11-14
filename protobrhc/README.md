@@ -11,7 +11,12 @@ La version C reprend le parcours **Standard** et ajoute l'IA à chaque étape, s
 | Préconiser | diagnostic.html, devis.html | 2 à 3 pistes justifiées et ordonnées | `ia-diagnostic.js`, `ia-devis.js` |
 | Convertir | diagnostic.html, devis.html | Routage vers la Caisse régionale, e-mail de prise en charge, synthèse pour l'expert | `ia-diagnostic.js`, `ia-devis.js` |
 
-- `variante.js` : identifiant de version (`C`) et chargement des modules IA de la page.
+- `variante.js` : identifiant de version (`C`) et chargement des modules de la page (devis : `entreprise-lookup.js` du socle, `idcc-devis.js`, puis `ia-devis.js`).
+- `entreprise.php` (surcouche du socle, 14/11/2026) : renvoie **toutes** les conventions collectives déclarées (`idcc_liste`), et plus seulement la première.
+  Sources sans clé : API publique Recherche d'entreprises, qui alimente le site public annuaire-entreprises.data.gouv.fr (champs `liste_idcc` de l'établissement et de l'entreprise, issus des DSN : c'est aussi la source de Pappers), complétée par siret2idcc (ministères sociaux) pour les intitulés officiels et le lien Légifrance (désactivable : `const IDCC_SIRET2IDCC = false;` dans config.php).
+  Le site Pappers n'est pas lu page par page : ses conditions d'utilisation l'interdisent et ses pages bloquent les robots. L'API Pappers reste une option payante, comme dans le socle.
+- `idcc-devis.js` (devis, étape 2) : préremplit la convention principale (non-cadres de préférence, ou celle déjà indiquée dans l'audit / le diagnostic), affiche toutes les conventions déclarées avec la catégorie couverte et le repère « prévoyance de branche », place ces conventions en tête de la liste déroulante, déduit le secteur des conventions (puis du NAF), rappelle les autres conventions à l'étape 4 et les transmet à l'expert (lead : `entreprise.idcc` = « 2609 — Bâtiment, ETAM (+ IDCC 2420) », détail dans `entreprise.source_donnees.conventions` ; devis PDF ; synthèse IA).
+  Cas de test : BRIAND, SIRET 890 331 754 00014, NAF 70.22Z (conseil) mais IDCC 2420 (cadres du bâtiment) et 2609 (ETAM du bâtiment) → secteur BTP, convention retenue 2609, 2420 signalée.
 - `ia-assist.js` : module commun (appel à `ia.php`, mode démonstration, styles des encadrés).
 - `ia.php` : relais Mistral côté serveur (clé `MISTRAL_API_KEY` dans `config.php`, porte d'accès, 80 appels/h/IP, aucune donnée personnelle transmise).
 - `connaissances-version.txt` : ce que l'Assistant BRH doit savoir de la version C.

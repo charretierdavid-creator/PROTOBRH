@@ -9,7 +9,7 @@
    (clé dans config.php). Sans clé, chaque encadré fonctionne en « mode démonstration ».
    Identifie aussi la version (C) dans chaque événement de mesure et chaque demande transmise. */
 (function(){
-  var V = 'C', IAV = '20261114';
+  var V = 'C', IAV = '20261114c';
   window.BRH_VARIANTE = V;
   /* options du socle activées pour la version C : questions santé-prévoyance (secteur, convention collective, cadres)
      posées seulement si le besoin est choisi ; convention collective jamais bloquante, avec « Je ne sais pas »
@@ -20,10 +20,13 @@
   dl.push = function(o){ if (o && typeof o === 'object' && !o.variante) o.variante = V; return push.apply(dl, arguments); };
 
   var page = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
-  var MODULES = { 'index.html': 'ia-accueil.js', 'diagnostic.html': 'ia-diagnostic.js', 'devis.html': 'ia-devis.js' };
-  var mod = MODULES[page]; if (!mod) return;
+  /* devis : conventions collectives déclarées (idcc-devis.js, avec entreprise-lookup.js du socle pour le secteur
+     déduit du NAF) chargées avant la couche IA, pour que la synthèse de l'expert reçoive toutes les conventions */
+  var MODULES = { 'index.html': ['ia-accueil.js'], 'diagnostic.html': ['ia-diagnostic.js'],
+                  'devis.html': ['entreprise-lookup.js', 'idcc-devis.js', 'ia-devis.js'] };
+  var mods = MODULES[page]; if (!mods) return;
   function charger(src){ var s = document.createElement('script'); s.src = src + '?v=' + IAV; s.async = false; document.body.appendChild(s); }
   /* après le chargement des scripts de la page (fonctions du diagnostic et du devis, assistant BRH) */
-  function go(){ charger('ia-assist.js'); charger(mod); }
+  function go(){ charger('ia-assist.js'); mods.forEach(charger); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', go); else go();
 })();
