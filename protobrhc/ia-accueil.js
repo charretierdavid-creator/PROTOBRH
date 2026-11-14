@@ -1,3 +1,4 @@
+/* Version C 1.0 — 14/11/2026 · IA de l’accueil · historique : VERSIONS.md */
 /* ==============================================================
    IA DU PARCOURS — page d'accueil (version C du test A/B, protobrhc)
    Étape 1 « Découvrir » :

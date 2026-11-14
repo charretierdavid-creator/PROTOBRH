@@ -1,4 +1,5 @@
 <?php
+/* Version C 1.3 — 14/11/2026 · intégration au lead management · historique : VERSIONS.md */
 /* ============================================================================
    lead.php — enregistre les demandes des dirigeants (leads) dans MySQL.
    Appelé par : devis en ligne (devis, rappel expert), diagnostic RH (contact),

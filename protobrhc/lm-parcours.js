@@ -1,3 +1,4 @@
+/* Version C 1.3 — 14/11/2026 · remontée des leads depuis le parcours · historique : VERSIONS.md */
 /* ==============================================================
    LEAD MANAGEMENT — remontée des leads depuis le parcours (version C, protobrhc)
    Surcouche du socle, sans modifier les pages. Niveaux du deck du 14/11/2026 :

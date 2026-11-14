@@ -1,3 +1,4 @@
+/* Version C 1.4 — 14/11/2026 · diagnostic : secteur, tranche d’effectif, département · historique : VERSIONS.md */
 /* ==============================================================
    DIAGNOSTIC RH — préremplissage par SIREN / SIRET (version C, protobrhc)
    Surcouche de diagnostic.html (chercherEntreprise, BRH_ENT.chercher, state, onSecteur,

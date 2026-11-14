@@ -1,3 +1,4 @@
+/* Version C 1.8 — 15/11/2026 · numéro de version 1.8 (console, adresses des modules) · historique : VERSIONS.md */
 /* Version C — protobrhc.monsitedetest.com : version Standard (socle protobrh/) + couche IA à chaque étape du parcours.
    Principe : l'IA explique, inspire et prépare ; le moteur du portail calcule ; l'expert BRH conseille et engage.
      Découvrir    (index.html)      : « Expliquez votre situation, l'IA vous oriente » + FAQ structurée et llms.txt (GEO)
@@ -9,7 +10,7 @@
    (clé dans config.php). Sans clé, chaque encadré fonctionne en « mode démonstration ».
    Identifie aussi la version (C) dans chaque événement de mesure et chaque demande transmise. */
 (function(){
-  var V = 'C', IAV = '20261114e';
+  var V = 'C', IAV = '1.8';
   window.BRH_VARIANTE = V;
   /* options du socle activées pour la version C : questions santé-prévoyance (secteur, convention collective, cadres)
      posées seulement si le besoin est choisi ; convention collective jamais bloquante, avec « Je ne sais pas »

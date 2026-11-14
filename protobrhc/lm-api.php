@@ -1,4 +1,5 @@
 <?php
+/* Version C 1.8 — 15/11/2026 · correctif : session du cockpit séparée de celle de la porte d’accès (le cockpit ne détruit plus la connexion au site) · historique : VERSIONS.md */
 /* ============================================================================
    lm-api.php — API JSON du cockpit BRH (lead management, version C)
    Appelée par cockpit-brh.html. Double contrôle : porte d'accès du prototype (brh_acces_api), puis connexion propre au cockpit :
@@ -25,7 +26,12 @@ function lm_erreur(string $m, int $code = 400): void { lm_sortir(['ok' => false,
 
 /* ---------- session ---------- */
 $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
+/* Deux sessions distinctes : la porte d'accès (BRHACCES, déjà ouverte puis fermée par brh_acces_api) et le cockpit (BRHLM).
+   Après la porte, PHP garde l'identifiant BRHACCES en mémoire : sans le remplacer ici, le cockpit écrirait dans la session
+   de la porte et la détruirait à la connexion (session_regenerate_id) ou à la déconnexion (session_destroy). */
 session_name('BRHLM');
+$sidLm = (string) ($_COOKIE['BRHLM'] ?? '');
+session_id(preg_match('/^[A-Za-z0-9,-]{22,256}$/', $sidLm) ? $sidLm : session_create_id());
 session_set_cookie_params(['lifetime' => 0, 'path' => '/', 'secure' => $https, 'httponly' => true, 'samesite' => 'Strict']);
 session_start();
 $A = (string) ($_GET['a'] ?? '');
@@ -64,7 +70,7 @@ if ($A === 'connexion' && $POST) {
   $_SESSION['lm'] = ['u' => $u, 't' => time(), 'csrf' => bin2hex(random_bytes(16))];
   lm_sortir(['ok' => true]);
 }
-if ($A === 'deconnexion') { $_SESSION = []; session_destroy(); lm_sortir(['ok' => true]); }
+if ($A === 'deconnexion') { $_SESSION = []; session_destroy(); setcookie('BRHLM', '', ['expires' => time() - 3600, 'path' => '/', 'secure' => $https, 'httponly' => true, 'samesite' => 'Strict']); lm_sortir(['ok' => true]); }
 
 $S = $_SESSION['lm'] ?? null;
 if ($S && (time() - (int) $S['t']) > LM_SESSION_DUREE) { unset($_SESSION['lm']); $S = null; }

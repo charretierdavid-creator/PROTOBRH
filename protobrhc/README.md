@@ -1,5 +1,10 @@
 # protobrhc — version C du test A/B : version Standard + couche IA
 
+_Version C 1.6 — 15/11/2026 · renvoi vers VERSIONS.md · historique : VERSIONS.md_
+
+
+
+
 Même principe que `protobrha/` et `protobrhb/` : ce dossier ne contient **que ce qui diffère** du socle `protobrh/`.
 La version C reprend le parcours **Standard** et ajoute l'IA à chaque étape, sans modifier les pages du socle.
 
@@ -20,6 +25,8 @@ La version C reprend le parcours **Standard** et ajoute l'IA à chaque étape, s
 - `ia-assist.js` : module commun (appel à `ia.php`, mode démonstration, styles des encadrés).
 - `ia.php` : relais Mistral côté serveur (clé `MISTRAL_API_KEY` dans `config.php`, porte d'accès, 80 appels/h/IP, aucune donnée personnelle transmise).
 - `connaissances-version.txt` : ce que l'Assistant BRH doit savoir de la version C.
+
+Numéros de version : chaque fichier indique en première ligne sa version (C 1.0 à C 1.6) ; historique et version de chaque fichier dans `VERSIONS.md`.
 
 ## Fiche publique de l'entreprise (14/11/2026)
 

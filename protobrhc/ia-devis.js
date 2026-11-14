@@ -1,3 +1,4 @@
+/* Version C 1.1 — 14/11/2026 · conventions déclarées transmises à la synthèse de l’expert · historique : VERSIONS.md */
 /* ==============================================================
    IA DU PARCOURS — page Devis en ligne (version C du test A/B, protobrhc)
    Surcouche de devis.html du socle (S, compute, RH, renderEstimation,

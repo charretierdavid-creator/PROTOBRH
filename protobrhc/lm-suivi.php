@@ -1,4 +1,5 @@
 <?php
+/* Version C 1.3 — 14/11/2026 · suivi du dossier par le dirigeant · historique : VERSIONS.md */
 /* ============================================================================
    lm-suivi.php — suivi du Dossier BRH par le dirigeant (version C)
    Appelé par suivi-dossier.html?d=BRH-26-000123&j=<jeton> (lien des e-mails et de la fin de devis).
