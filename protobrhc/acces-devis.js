@@ -1,21 +1,27 @@
-/* Version C 1.13 — 15/11/2026 · accès au devis jusqu’à 300 salariés : « Bon à savoir » du diagnostic remplacé par la proposition de devis ; forfait social à partir de 50 salariés · historique : VERSIONS.md */
+/* Version C 2.4 — 15/11/2026 · toutes les entreprises de 1 à 500 salariés (diagnostic, devis, audit) ; bouton « Faire réaliser un devis » à droite de « 3. Nos solutions » ; forfait social (1.13) · historique : VERSIONS.md */
 /* ==============================================================
-   ACCÈS AU DEVIS EN LIGNE JUSQU'À 300 SALARIÉS (version C, protobrhc) — décision du 15/11/2026
+   ACCÈS AU DEVIS EN LIGNE DE 1 À 500 SALARIÉS (version C, protobrhc) — décisions du 15/11/2026
+   « Nous traitons tous les cas de 1 à 500 salariés » : aucune mention « 5 à 1 000 salariés », ni de seuil à 5, 50 ou 300.
    Surcouche du socle, sans modifier les pages.
      Diagnostic (diagnostic.html)
-       - le bloc « Bon à savoir » (avantages fiscaux, Convergence, audit) est retiré ;
-       - à sa place : la proposition d'accès au devis en ligne (bloc #devisCta du socle), visible de 5 à
-         300 salariés (au lieu de 50) ; au-delà, la même place propose d'être rappelé par un expert.
+       - effectif : plus d'avertissement « Outil ciblé 5 à 1 000 salariés » ; au-delà de 500, un échange avec un
+         expert est proposé ;
+       - le bloc « Bon à savoir » est retiré ; à sa place, la proposition d'accès au devis (bloc #devisCta du socle),
+         de 1 à 500 salariés ; au-delà, la même place propose d'être rappelé par un expert ;
+       - bouton « Faire réaliser un devis » à droite du titre « 3. Nos solutions », qui reprend l'effectif et les
+         solutions prioritaires (au-delà de 500 salariés : « Être rappelé par un expert »).
      Devis (devis.html)
-       - effectif accepté jusqu'à 300 salariés (au lieu de 50) ;
+       - effectif accepté de 1 à 500 salariés ;
        - à partir de 50 salariés, le forfait social est ajouté au coût employeur :
            abondement PEE / PEI 20 %, participation 20 %, abondement PER COL 16 %,
            intéressement et prime de partage de la valeur 20 % à partir de 250 salariés.
          Taux à faire valider par Amundi / CA Titres (le socle ne gérait que les moins de 50 salariés).
+     Audit mutuelle (audit-mutuelle.html)
+       - « Obtenir un devis en ligne » proposé de 1 à 500 salariés (le socle le limitait à 5 à 50).
    ============================================================== */
 (function () {
   'use strict';
-  var MAX = 300;
+  var MIN = 1, MAX = 500;
   var $ = function (id) { return document.getElementById(id); };
   var page = (window.BRH_PAGE || location.pathname.split('/').pop() || 'index.html').toLowerCase();
 
@@ -24,13 +30,24 @@
     var bas = $('bon-a-savoir'), cta = $('devisCta');
     if (bas) bas.style.display = 'none';
     if (cta && bas && bas.parentNode) bas.parentNode.insertBefore(cta, bas);   // la proposition de devis prend la place du « Bon à savoir »
-    if (typeof DEVIS_LINK === 'object' && DEVIS_LINK) DEVIS_LINK.max = MAX;
+    if (typeof DEVIS_LINK === 'object' && DEVIS_LINK) { DEVIS_LINK.min = MIN; DEVIS_LINK.max = MAX; }
+    /* effectif : plus de message « Outil ciblé 5 à 1 000 salariés » ; au-delà de 500, un expert */
+    if (typeof CONFIG === 'object' && CONFIG) { CONFIG.minEmployeesWarning = MIN; CONFIG.maxEmployeesWarning = MAX; }
+    if (typeof onEffectif === 'function') {
+      var _oe = onEffectif;
+      onEffectif = function () {
+        var r = _oe.apply(this, arguments), w = $('eff-warn'), n = typeof state === 'object' ? +state.effectif || 0 : 0;
+        if (w && n > MAX) { w.textContent = 'Au-delà de ' + MAX + ' salariés, un expert Banque des Ressources Humaines construit votre proposition avec vous.'; if (w.classList) w.classList.add('show'); }
+        else if (w && /1 000|5 à/.test(w.textContent || '')) { w.textContent = ''; if (w.classList) w.classList.remove('show'); }
+        return r;
+      };
+    }
     var titre = cta && cta.querySelector('.dc-txt h2'), texte = cta && cta.querySelector('.dc-txt p'), btn = $('devisCtaBtn'), alt = cta && cta.querySelector('.dc-alt');
     var T0 = { h: titre ? titre.textContent : '', p: texte ? texte.textContent : '', b: btn ? btn.innerHTML : '' };
     function maj() {
       if (!cta || typeof state !== 'object') return;
       var n = +state.effectif || 0;
-      if (n > MAX) {   /* au-delà de 300 salariés : un expert construit la proposition */
+      if (n > MAX) {   /* au-delà de 500 salariés : un expert construit la proposition */
         cta.classList.remove('hidden');
         if (titre) titre.textContent = 'Votre entreprise mérite une proposition sur mesure';
         if (texte) texte.textContent = 'Au-delà de ' + MAX + ' salariés, un expert Banque des Ressources Humaines construit votre proposition avec vous, à partir de ce diagnostic.';
@@ -44,15 +61,39 @@
         if (typeof updateDevisCta === 'function') updateDevisCta();
       }
     }
-    if (typeof refresh === 'function') { var _r = refresh; refresh = function () { var x = _r.apply(this, arguments); maj(); return x; }; }
+    /* bouton « Faire réaliser un devis » à droite du titre « 3. Nos solutions » */
+    var b3 = document.querySelector('#block3 .block-head');
+    if (b3 && !$('recDevisCta')) {
+      var a = document.createElement('a'); a.className = 'btn btn-primary rec-devis'; a.id = 'recDevisCta'; a.href = 'devis.html'; a.textContent = 'Faire réaliser un devis';
+      b3.appendChild(a);
+      var stl = document.createElement('style');
+      stl.textContent = '#block3 .block-head{flex-wrap:wrap}#block3 .block-head .rec-devis{margin-left:auto;align-self:center;white-space:nowrap}';
+      document.head.appendChild(stl);
+      a.addEventListener('click', function (e) {
+        if (a.getAttribute('href') === '#contact' && typeof goToContact === 'function') { if (e && e.preventDefault) e.preventDefault(); goToContact(); }
+        if (typeof track === 'function') track('cta_devis_solutions', { effectif: typeof state === 'object' ? state.effectif : null });
+      });
+    }
+    function majBouton() {
+      var a = $('recDevisCta'); if (!a || typeof state !== 'object') return;
+      var n = +state.effectif || 0;
+      if (n > MAX) { a.setAttribute('href', '#contact'); a.textContent = 'Être rappelé par un expert'; return; }
+      var src = $('devisCtaBtn'), h = src && src.getAttribute ? src.getAttribute('href') : '';
+      if (!h || h === '#contact') {
+        var sol = typeof DEVIS_LINK === 'object' ? Object.keys(DEVIS_LINK.map).filter(function (k) { return (state.priorities[k] || 0) >= 3; }).map(function (k) { return DEVIS_LINK.map[k]; }) : [];
+        h = 'devis.html?eff=' + (n || '') + (sol.length ? '&sol=' + sol.join(',') : '');
+      }
+      a.setAttribute('href', h); a.textContent = 'Faire réaliser un devis';
+    }
+    if (typeof refresh === 'function') { var _r = refresh; refresh = function () { var x = _r.apply(this, arguments); maj(); majBouton(); return x; }; }
     if (typeof updateDevisCta === 'function') updateDevisCta();
-    maj();
-    window.BRH_ACCES_DEVIS = { max: MAX, maj: maj };
+    maj(); majBouton();
+    window.BRH_ACCES_DEVIS = { min: MIN, max: MAX, maj: maj, majBouton: majBouton };
   }
 
   /* ============================== DEVIS ============================== */
   if (page === 'devis.html' && typeof DEVIS_CONFIG === 'object' && DEVIS_CONFIG) {
-    DEVIS_CONFIG.EFFECTIF_MAX = MAX;
+    DEVIS_CONFIG.EFFECTIF_MIN = MIN; DEVIS_CONFIG.EFFECTIF_MAX = MAX;
     if (typeof compute === 'function') {
       var _c = compute;
       compute = function () {
@@ -78,5 +119,20 @@
         return out;
       };
     }
+  }
+
+  /* ============================== AUDIT MUTUELLE ============================== */
+  if (page === 'audit-mutuelle.html' && typeof resultat === 'function' && typeof A === 'object') {
+    var _res = resultat;
+    resultat = function () {
+      var h = _res.apply(this, arguments), eff = parseInt(A.effectif, 10) || 0;
+      /* le socle ne propose le devis en ligne qu'à 5 à 50 salariés : la version C l'ouvre de 1 à 500 */
+      if (eff >= MIN && eff <= MAX && h.indexOf('Obtenir un devis en ligne') < 0 && h.indexOf('<div class="opt" style="grid-column:1/-1">') >= 0) {
+        var code = typeof ccnCode === 'function' ? ccnCode() : '', q = 'eff=' + eff + '&sol=sante&from=audit' + (code ? '&idcc=' + encodeURIComponent(code) : '') + (A.secteur ? '&secteur=' + encodeURIComponent(A.secteur) : '');
+        h = h.replace('<div class="opt" style="grid-column:1/-1">', '<div class="opt"><h4>Obtenir un devis en ligne</h4><p>Votre effectif et votre convention sont repris. Estimation immédiate, à votre rythme.</p><a class="btn btn-primary" href="devis.html?' + q + '" onclick="window.__auT&&__auT(\'audit_to_devis\')">Mon devis santé et prévoyance</a></div><div class="opt">');
+      }
+      /* l'assistant de la version C est Julia */
+      return h.replace('Poser une question à l’Assistant BRH', 'Poser une question à Julia');
+    };
   }
 })();

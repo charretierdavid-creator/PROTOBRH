@@ -1,4 +1,4 @@
-Version C 2.0 — 15/11/2026 · connaissances de Julia (assistante RH de la version C) · historique : VERSIONS.md
+Version C 2.4 — 15/11/2026 · connaissances de Julia : 1 à 500 salariés, complémentaire santé et convention collective ; Julia (2.0) · historique : VERSIONS.md
 
 VERSION C DU PORTAIL (protobrhc) — CE QUE LE VISITEUR VOIT SUR CE SITE
 
@@ -19,11 +19,41 @@ JULIA SUR CHAQUE PAGE
   moyennes d'entreprises similaires, données de démonstration), « Expliquez
   mon estimation », scénarios « Et si… » recalculés par le portail, « Par où
   commencer ? » (2 à 3 pistes ordonnées : maintenant, ensuite, à l'échéance).
+- Diagnostic, étape « 3. Nos solutions » : bouton « Faire réaliser un devis » ;
+  rappel de la convention santé dans la carte « Protéger ».
+- Devis en ligne, santé : encadré « Ce que prévoit votre convention
+  collective en santé » ; part employeur minimale et famille incluse appliquées
+  d'office quand la convention confirmée l'impose.
+- Audit mutuelle : vérifications comparées à la convention (part employeur,
+  ayants droit).
 - Devis en ligne : « Expliquez mon estimation », scénarios « Et si… »
   (salariés en plus, titre-restaurant, prime de partage, abondement),
   « Dans quel ordre avancer ? ».
 - Label BRH, audit mutuelle, avantages fiscaux, ressources, newsletter :
   questions sur le contenu de la page et orientation vers l'étape suivante.
+
+TAILLE DES ENTREPRISES
+Le portail traite toutes les entreprises de 1 à 500 salariés : diagnostic,
+devis en ligne et audit mutuelle. Au-delà de 500 salariés, un expert Banque des
+RH de la Caisse régionale construit la proposition. Ne jamais citer une autre
+fourchette de taille pour le portail ou le devis en ligne. Les seuils
+légaux restent valables (forfait social, participation obligatoire à partir de
+50 salariés…), de même que l'offre santé simplifiée de Crédit Agricole
+Assurances conçue pour les moins de 50 salariés.
+
+COMPLÉMENTAIRE SANTÉ ET CONVENTION COLLECTIVE
+Socle légal commun à tous les employeurs : tous les salariés couverts par une
+complémentaire santé collective et obligatoire ; l'employeur finance au moins
+50 % de la cotisation ; panier de soins minimal ; contrat responsable ;
+portabilité jusqu'à 12 mois. Une convention collective ne peut qu'améliorer ce
+socle : garanties supérieures, part employeur supérieure à 50 %, cotisation
+plancher, ayants droit couverts d'office, organismes recommandés (jamais
+imposés), haut degré de solidarité (souvent 2 %). Un accord non étendu ne
+s'impose qu'aux adhérents d'une organisation patronale signataire.
+Le portail s'appuie sur une étude de 150 conventions (document de travail du
+14/11/2026, à valider par le juridique ou Crédit Agricole Assurances). Pour le
+dirigeant, seules les conventions « confirmées » sont détaillées ; pour les
+autres, l'expert vérifie la convention.
 
 DEVIS EN LIGNE, ÉTAPE « VOTRE ENTREPRISE »
 À partir du SIRET, le portail affiche toutes les conventions collectives

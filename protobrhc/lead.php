@@ -1,5 +1,5 @@
 <?php
-/* Version C 2.0 — 15/11/2026 · lead management sorti de C : relais vers le module (cockpitbrh.monsitedetest.com), repli sur la table leads du socle · historique : VERSIONS.md */
+/* Version C 2.5 — 15/11/2026 · relais vers le module lead management 2.0 (cockpitbrh.monsitedetest.com), protocole inchangé ; repli sur la table leads du socle (2.0) · historique : VERSIONS.md */
 /* ============================================================================
    lead.php (version C) — reçoit les demandes des dirigeants (devis, rappel, diagnostic, Label BRH,
    audit, newsletter) envoyées par les pages avec  fetch('lead.php', …).
@@ -21,8 +21,8 @@
         mode « base partagée », reprendra ces demandes. L'argumentaire de vente de l'IA est gardé
         dans la colonne « donnees » de la demande (clé argumentaire_ia).
 
-   Dans les deux cas : rien n'est enregistré sans consentement explicite, et le niveau du lead
-   (abandonniste, chaud, ultra-chaud) n'est jamais renvoyé au navigateur du dirigeant.
+   Dans les deux cas : rien n'est enregistré sans consentement explicite, et le type de lead
+   (qualifié, ultra-qualifié, demande de devis) n'est jamais renvoyé au navigateur du dirigeant.
    ============================================================================ */
 
 declare(strict_types=1);

@@ -35,7 +35,8 @@ Le cockpit, les dossiers, les e-mails et le suivi du dirigeant sont dans le modu
 ## Autres fichiers propres à C
 
 - `entreprise.php`, `entreprise-public.js`, `diag-entreprise.js`, `idcc-devis.js` : conventions collectives déclarées et fiche publique (secteur, tranche d’effectif, département). Cas de test : BRIAND, SIRET 890 331 754 00014 (IDCC 2420 et 2609).
-- `acces-devis.js` : devis ouvert jusqu’à 300 salariés.
+- `acces-devis.js` : toutes les entreprises de 1 à 500 salariés (diagnostic, devis, audit : plus aucune mention « 5 à 1 000 salariés ») ; bouton « Faire réaliser un devis » à droite de « 3. Nos solutions » dans le diagnostic.
+- `sante-ccn.js` : obligations santé par convention collective (étude de 150 IDCC du 14/11/2026, document de travail à valider par le juridique ou Crédit Agricole Assurances). Dirigeant : lignes « Confirmé » seulement (encadré du devis, part employeur minimale et famille incluse appliquées, vérifications de l’audit, carte « Protéger » du diagnostic, Julia) ; expert : toutes les lignes avec leur statut (argumentaire, demande transmise).
 - `variante.js` et `variante.css` : accueil propre à C — accroche « Prenez soin de vos équipes, et de votre budget. », titre « De quoi avez-vous besoin ? » au lieu de « Nos solutions », marges entre les blocs réduites (textes modifiables dans `ACCUEIL`, en tête de `variante.js`) ; « Audit mutuelle » retiré du bandeau haut.
 - `llms.txt` : résumé pour les IA tierces (GEO).
 

@@ -1,27 +1,36 @@
-/* Version C 2.0 — 15/11/2026 · lead management sorti de C : couche parcours seule (identique au module LM), encart de suivi laissé à fin-parcours.js ; argumentaire (1.13) · historique : VERSIONS.md */
+/* Version C 2.5 — 15/11/2026 · couche parcours identique au module LM 2.0 (connecteurs/lm-parcours.js) : 3 types de leads, offres consultées et pages vues, « déjà client ? », preuve de suite ; encart de suivi laissé à fin-parcours.js · historique : VERSIONS.md */
 /* ==============================================================
-   PARCOURS — remontée des demandes depuis le parcours (version C, protobrhc)
-   Depuis la C 2.0, le lead management lui-même (niveaux, dossiers, cockpit) est dans le module commun
-   (cockpitbrh.monsitedetest.com) ; ce fichier n'en garde que la couche parcours, la même que
-   connecteurs/lm-parcours.js du module (C la charge elle-même : data-parcours="non" côté module).
-   Surcouche du socle, sans modifier les pages. Niveaux du deck du 14/11/2026 :
-     Diagnostic RH (diagnostic.html)
-       - à l'affichage des résultats, case FACULTATIVE « recevoir mon résultat et être recontacté » :
-         si elle est cochée, l'e-mail et le résultat partent (lead ABANDONNISTE, relances J+1 et J+7).
-     Devis en ligne (devis.html)
-       - étape « Votre estimation » : « Recevoir mon estimation par e-mail » (e-mail + accord) → lead CHAUD
-         (offre choisie, devis non terminé), estimation envoyée au dirigeant, étape suivie ensuite ;
-       - étape « Recevez votre devis » : « Votre entreprise est-elle déjà cliente du Crédit Agricole ? »
-         (déclaratif du dirigeant, scénario A), avec les coordonnées ;
-       - envoi du devis → lead ULTRA-CHAUD rattaché au même dossier ; lien « Suivre mon dossier ».
-   Le niveau est calculé côté serveur (lm-base.php) ; rien n'est affiché au visiteur sur son niveau.
+   LEAD MANAGEMENT — remontée des leads depuis le parcours (module LM 2.0, sites S, A, B, C)
+   Surcouche des pages du socle, sans les modifier ; chargée par connecteurs/lm-hub.js (data-parcours="oui")
+   ou directement par le site (version C). Chaque bloc ne s'ajoute que si la page a les éléments attendus.
+   Trois types de leads (cahier des charges LM 2.0 v0.3, § 3) :
+     QUALIFIÉ — Diagnostic RH (diagnostic.html) : case FACULTATIVE « recevoir mon résultat et être recontacté »
+       à l'affichage des résultats (relances J+1 et J+7), ou formulaire « 4. Nous contacter » (rappel demandé) ;
+     ULTRA-QUALIFIÉ — Devis en ligne (devis.html), étape « Votre estimation » : « Recevoir mon estimation par e-mail » ;
+     DEMANDE DE DEVIS — envoi du devis, rattaché au même dossier ; lien « Suivre mon dossier ».
+   Q16 : « Votre entreprise est-elle déjà cliente du Crédit Agricole ? » (facultatif) au « Nous contacter »,
+   à l'estimation et au devis ; le statut reste « à vérifier » par l'expert.
+   Q13 : offres consultées (fiches solution, formules, audit) et pages vues, gardées pour cet onglet seulement
+   (sessionStorage, sans cookie ni suivi d'une visite à l'autre) et transmises seulement avec une demande consentie.
+   Le type est calculé côté serveur (lm2-base.php) ; rien n'est affiché au visiteur sur son type.
    ============================================================== */
 (function () {
   'use strict';
+  if (window.__BRH_LM_PARCOURS) return;   // déjà chargé (par le site et par lm-hub.js)
+  window.__BRH_LM_PARCOURS = true;
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
   var MAILRE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-  var V = window.BRH_VARIANTE || 'C';
+  var V = window.BRH_VARIANTE || '';
+  var CL_OPTS = [['oui', 'Oui'], ['non', 'Non'], ['nsp', 'Je ne sais pas']];
+  function questionClient(id, nom) {   /* Q16 : même question, même mémoire de session sur tous les écrans */
+    var f = document.createElement('div'); f.className = 'lm-q'; f.id = id; var dj = memo('brhLmClient') || '';
+    f.innerHTML = '<span class="q-t" id="' + id + 'T">Votre entreprise est-elle déjà cliente du Crédit Agricole ? <span class="lm-opt">facultatif</span></span>' +
+      '<div class="dv-opts" role="radiogroup" aria-labelledby="' + id + 'T">' + CL_OPTS.map(function (x) { return '<label class="dv-opt"><input type="radio" name="' + nom + '" value="' + x[0] + '"' + (dj === x[0] ? ' checked' : '') + '><span>' + x[1] + '</span></label>'; }).join('') + '</div>' +
+      '<span class="hint">Votre demande arrive ainsi directement à la bonne Caisse régionale.</span>';
+    return f;
+  }
+  document.addEventListener('change', function (e) { var t = e.target; if (t && /^lmCl/.test(t.name || '') && t.checked) memo('brhLmClient', t.value); }, true);
   function poster(corps) {
     return fetch('lead.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(corps) })
       .then(function (r) { return r.json(); }).catch(function () { return null; });
@@ -45,6 +54,29 @@
     '.lm-suivi b{font-family:var(--fh,inherit);color:var(--green,#065145)}.lm-suivi .btn{margin-top:10px}';
   document.head.appendChild(st);
   var page = (window.BRH_PAGE || location.pathname.split('/').pop() || 'index.html').toLowerCase();   // BRH_PAGE : pages de test
+
+  /* ============================== OFFRES CONSULTÉES ET PAGES VUES (Q13) ============================== */
+  var PAGES = { 'index.html': 'Accueil', 'diagnostic.html': 'Diagnostic RH', 'devis.html': 'Devis en ligne', 'audit-mutuelle.html': 'Audit mutuelle', 'label-brh.html': 'Label BRH',
+    'avantages-fiscaux.html': 'Avantages fiscaux', 'ressources.html': 'Ressources', 'simulation.html': 'Simulation', 'newsletter.html': 'Newsletter' };
+  var FICHES = { partage: 'Prime de partage de la valeur', proteger: 'Santé et prévoyance', retraite: 'Retraite collective', pouvoir: 'Pouvoir d’achat (avantages salariés)',
+    decouverte: 'Formule Découverte (épargne salariale)', integrale_epargne: 'Formule Intégrale (épargne salariale)', integrale_retraite: 'Formule Intégrale (retraite)', convergence: 'Formule Convergence (épargne et retraite)' };
+  function parcours() { var p = memo('brhLmParcours'); return p && typeof p === 'object' ? p : { offres_consultees: [], pages: [] }; }
+  function vu(cle, lib) { if (!lib) return; var p = parcours(); p[cle] = (p[cle] || []).filter(function (x) { return x !== lib; }).concat([lib]).slice(-20); memo('brhLmParcours', p); }
+  vu('pages', PAGES[page] || page.replace(/\.html$/, ''));
+  if (page === 'audit-mutuelle.html') vu('offres_consultees', 'Audit mutuelle');
+  if (page === 'label-brh.html') vu('offres_consultees', 'Label BRH');
+  function brancherFiches() {   /* fiches « En savoir plus » des solutions et des formules : enveloppées une seule fois */
+    [['openSol', function (id) { var l = typeof SOLUTIONS !== 'undefined' && SOLUTIONS.filter ? (SOLUTIONS.filter(function (x) { return x.id === id; })[0] || {}) : {}; return FICHES[id] || l.title || l.titre || l.name || String(id); }],
+     ['openFormule', function (k) { return FICHES[k] || 'Formule ' + String(k); }]].forEach(function (x) {
+      var f = window[x[0]]; if (typeof f !== 'function' || f.__lm) return;
+      var g = function (k) { try { vu('offres_consultees', x[1](k)); } catch (e) {} return f.apply(this, arguments); }; g.__lm = true;
+      try { window[x[0]] = g; } catch (e) {}
+    });
+  }
+  brancherFiches();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', brancherFiches);
+  if (window.addEventListener) window.addEventListener('load', brancherFiches);
+  window.BRH_LM_PARCOURS = { lire: parcours, noter: vu };
 
   /* ============================== CONTACT PARTAGÉ ENTRE LES ÉCRANS ==============================
      « Une information, une fois » : les coordonnées tapées sur un écran (diagnostic, label RH, audit
@@ -141,6 +173,11 @@
     met(['departement'], pf.departement || (pe.cp ? String(pe.cp).slice(0, 2) : ''), 'département');
     if (!(c.email || c.mail) && ct.email) { c.email = ct.email; ajout.push('e-mail'); }
     if (ajout.length) b.complete_par_session = ajout;
+    /* Q13, Q16 : parcours de la session et « déjà client ? », seulement avec une demande consentie */
+    var pc = parcours(); if (!b.parcours && ((pc.offres_consultees || []).length || (pc.pages || []).length)) b.parcours = { offres_consultees: pc.offres_consultees || [], pages: pc.pages || [] };
+    var dj = memo('brhLmClient'); if (dj && !e.client_declare && !b.client_declare) e.client_declare = dj;
+    /* preuve que ce navigateur a fait la demande précédente du dossier : le module renvoie alors le lien de suivi */
+    var su = memo('brhLmSuite'); if (su && su.id && su.jeton && !b.suite) b.suite = { id: su.id, jeton: su.jeton };
     /* coordonnées de cette demande, gardées pour la suite du parcours */
     if (c.email || c.mail) noter('email', c.email || c.mail);
     if (c.prenom) noter('prenom', c.prenom); if (c.nom && c.prenom) noter('nom', c.nom); else if (c.nom || c.name) noter('complet', c.nom || c.name);
@@ -158,6 +195,7 @@
           var p = _f0.call(this, u, o);
           if (b && !b.action) {
             var rep = p.then(function (r) { return r.clone().json(); }).catch(function () { return null; });
+            rep.then(function (j) { if (j && j.ok && j.id && j.jeton) memo('brhLmSuite', { id: j.id, jeton: j.jeton }); });
             window.BRH_LM_DERNIER = rep;                     // dernière demande : identifiant et jeton du lead
             if (b.type === 'devis') window.BRH_LM_REPONSE = rep;
           }
@@ -169,6 +207,11 @@
   }
 
   /* ============================== DIAGNOSTIC RH ============================== */
+  /* « 4. Nous contacter » (lead qualifié, rappel demandé) : « déjà client ? » facultatif (Q16) */
+  if (page === 'diagnostic.html') {
+    var ceD = $('c-email'), cfD = ceD && ceD.closest ? ceD.closest('.field') : null;
+    if (cfD && cfD.parentNode && !$('lmClientD')) cfD.parentNode.insertBefore(questionClient('lmClientD', 'lmClD'), cfD.nextSibling);
+  }
   if (page === 'diagnostic.html' && typeof unlockResults === 'function') {
     var gate = document.querySelector('#results-gate .rg-form');
     if (gate && !$('lmGateOk')) {
@@ -188,7 +231,7 @@
             entreprise: { effectif: state.effectif, secteur: sect, departement: dep }, priorities: state.priorities, fiscalGain: { total: g.total || 0, details: g.details || {} } })
             .then(function (j) { if (j && j.ok) memo('brhLmDiag', { email: em, dossier: j.dossier || null }); });
           memo('brhLmContact', { email: em });
-          if (typeof track === 'function') track('lm_lead_abandonniste', { source: 'diagnostic' });
+          if (typeof track === 'function') track('lm_lead_qualifie', { source: 'diagnostic' });
         }
       } catch (e) {}
       return r;
@@ -197,7 +240,7 @@
 
   /* ============================== DEVIS EN LIGNE ============================== */
   if (page === 'devis.html' && typeof S !== 'undefined' && typeof next === 'function') {
-    /* ---- étape « Votre estimation » : recevoir son estimation par e-mail et reprendre plus tard (lead CHAUD) ----
+    /* ---- étape « Votre estimation » : recevoir son estimation par e-mail et reprendre plus tard (lead ULTRA-QUALIFIÉ) ----
        Placé après les montants (échange clair : le dirigeant reçoit son estimation) et non plus à l'étape
        « Votre entreprise », déjà la plus chargée (SIRET, convention collective). Décision du 15/11/2026. */
     var ancre = $('ia-dv-explique') || $('dvSynth');
@@ -208,20 +251,14 @@
         '<button type="button" class="btn btn-outline" id="lmEstBtn">M’envoyer mon estimation</button></div>' +
         '<div class="consent"><input type="checkbox" id="lmEmOk"><label for="lmEmOk">J’accepte que mon e-mail et les réponses de ce devis soient utilisées par le Crédit Agricole et sa Caisse régionale pour m’adresser mon estimation et me recontacter à ce sujet, même si je ne vais pas jusqu’au bout.</label></div>' +
         '<p class="lm-est-m" id="lmEstMsg" role="status"></p>';
+      bx.insertBefore(questionClient('lmClientE', 'lmClE'), bx.querySelector ? bx.querySelector('.consent') : null);
       ancre.parentNode.insertBefore(bx, ancre.nextSibling);
     }
-    /* ---- fin du devis : « Votre entreprise est-elle déjà cliente ? » avec les coordonnées ---- */
+    /* ---- fin du devis (DEMANDE DE DEVIS) : « Votre entreprise est-elle déjà cliente ? » avec les coordonnées ---- */
     var ce0 = $('c-email'), cf0 = ce0 && ce0.closest ? ce0.closest('.field') : null;
-    if (cf0 && cf0.parentNode && !$('lmClient')) {
-      var f2 = document.createElement('div'); f2.className = 'lm-q'; f2.id = 'lmClient';
-      f2.innerHTML = '<span class="q-t" id="lmClT">Votre entreprise est-elle déjà cliente du Crédit Agricole ? <span class="lm-opt">facultatif</span></span>' +
-        '<div class="dv-opts" role="radiogroup" aria-labelledby="lmClT">' +
-        [['oui', 'Oui'], ['non', 'Non'], ['nsp', 'Je ne sais pas']].map(function (x) { return '<label class="dv-opt"><input type="radio" name="lmCl" value="' + x[0] + '"><span>' + x[1] + '</span></label>'; }).join('') + '</div>' +
-        '<span class="hint">Votre demande arrive ainsi directement à la bonne Caisse régionale.</span>';
-      cf0.parentNode.insertBefore(f2, cf0.nextSibling);
-    }
+    if (cf0 && cf0.parentNode && !$('lmClient')) cf0.parentNode.insertBefore(questionClient('lmClient', 'lmCl'), cf0.nextSibling);
     var suivi = memo('brhLmSuivi');
-    var declare = function () { var x = document.querySelector('input[name="lmCl"]:checked'); return x ? x.value : ''; };
+    var declare = function () { var x = document.querySelector('input[name="lmCl"]:checked'); return x ? x.value : (memo('brhLmClient') || ''); };
     var majDeclare = function () { if (S.entSrc) S.entSrc.client_declare = declare(); if (S.ent) S.ent.client_declare = declare(); };
     document.addEventListener('change', function (e) { if (e.target && e.target.name === 'lmCl') majDeclare(); });
     function etape(lib) { if (suivi && suivi.id && suivi.jeton) poster({ action: 'etape', id: suivi.id, jeton: suivi.jeton, etape: lib }); }
@@ -237,13 +274,13 @@
       suivi = { attente: true };
       poster({ type: 'devis_en_cours', variante: V, etape: 'Votre estimation', envoyer_estimation: true,
         contact: { email: em, consentement: true, consentement_date: new Date().toISOString() },
-        entreprise: { raison_sociale: e.nom, siret: e.siret, code_postal: e.cp, ville: e.ville, effectif: e.effectif, secteur: e.secteur, idcc: e.idcc },
+        entreprise: { raison_sociale: e.nom, siret: e.siret, code_postal: e.cp, ville: e.ville, effectif: e.effectif, secteur: e.secteur, idcc: e.idcc, client_declare: memo('brhLmClient') || '' },
         solutions: S.sol, estimation_totale: estimationTotale() })
         .then(function (j) { if (j && j.ok && j.jeton) { suivi = { id: j.id, jeton: j.jeton, dossier: j.dossier || null }; memo('brhLmSuivi', suivi); } else suivi = null; });
       var ce = $('c-email'); if (ce && !ce.value) ce.value = em;
       noter('email', em); memo('brhLmContact', { email: em });
       msg.textContent = 'C’est noté : votre estimation est envoyée à ' + em + '. Poursuivez votre devis pour recevoir votre proposition.'; msg.className = 'lm-est-m ok';
-      if (typeof track === 'function') track('lm_lead_chaud', { source: 'devis_estimation' });
+      if (typeof track === 'function') track('lm_lead_ultra_qualifie', { source: 'devis_estimation' });
     }
     var bE = $('lmEstBtn'); if (bE) bE.addEventListener('click', ouvrir);
     window.BRH_LM_ESTIMATION = ouvrir;
@@ -256,7 +293,7 @@
       var p = _fetch.apply(this, arguments);
       try {
         if (String(u).indexOf('lead.php') === 0 && o && typeof o.body === 'string' && /"type":"devis"/.test(o.body)) {
-          p.then(function (r) { return r.clone().json(); }).then(function (j) { if (j && j.ok && j.suivi) afficherSuivi(j); }).catch(function () {});
+          p.then(function (r) { return r.clone().json(); }).then(function (j) { if (j && j.ok && (j.suivi || j.suivi_email)) afficherSuivi(j); }).catch(function () {});
         }
       } catch (e) {}
       return p;
@@ -266,7 +303,8 @@
       if (window.BRH_FIN_PARCOURS) return;
       var done = $('dvDone'); if (!done || $('lmSuiviBox')) return;
       var b = document.createElement('div'); b.className = 'lm-suivi'; b.id = 'lmSuiviBox';
-      b.innerHTML = '<b>Votre dossier ' + esc(j.dossier) + '</b><br>Suivez son avancement, du dépôt à la clôture, et retrouvez le nom de votre expert dès qu’il le prend en charge.' + (j.caisse ? ' Caisse régionale : ' + esc(j.caisse) + '.' : '') + '<br><a class="btn btn-outline" href="' + esc(j.suivi) + '">Suivre mon dossier</a>';
+      b.innerHTML = '<b>Votre dossier ' + esc(j.dossier) + '</b><br>Suivez son avancement, du dépôt à la clôture, et retrouvez le nom de votre expert dès qu’il le prend en charge.' + (j.caisse ? ' Caisse régionale : ' + esc(j.caisse) + '.' : '') +
+        (j.suivi ? '<br><a class="btn btn-outline" href="' + esc(j.suivi) + '">Suivre mon dossier</a>' : '<br>Le lien personnel de suivi de votre dossier vous est envoyé par e-mail.');
       var cta = done.querySelector('.r-cta'); done.insertBefore(b, cta || null);
       try { sessionStorage.removeItem('brhLmSuivi'); } catch (e) {}
     }

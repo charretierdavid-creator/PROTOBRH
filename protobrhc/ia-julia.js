@@ -1,4 +1,4 @@
-/* Version C 2.2 — 15/11/2026 · rubrique Julia à la largeur totale du bandeau au-dessus, champ de question élargi, texte de gauche sur 2 lignes courtes ; rubrique claire (2.1) · historique : VERSIONS.md */
+/* Version C 2.4 — 15/11/2026 · entreprises de 1 à 500 salariés ; obligations santé de la convention collective (sante-ccn.js) dans les réponses ; pleine largeur (2.2) · historique : VERSIONS.md */
 /* ==============================================================
    JULIA — l'IA de la version C, une seule et même rubrique en haut de chaque page
    « Julia, votre assistante RH vous accompagne tout au long du parcours »
@@ -28,7 +28,7 @@
   /* ---------- pages vers lesquelles Julia peut renvoyer (liste fermée, aussi envoyée à ia.php) ---------- */
   var LIENS = {
     diagnostic: { url: 'diagnostic.html', lib: 'Faire mon diagnostic RH', desc: 'diagnostic en 3 minutes : priorités RH, gains estimés, pistes prioritaires', page: 'diagnostic.html' },
-    devis:      { url: 'devis.html', lib: 'Obtenir mon devis en ligne', desc: 'devis indicatif de 5 à 300 salariés : épargne salariale, santé-prévoyance, retraite, avantages salariés', page: 'devis.html' },
+    devis:      { url: 'devis.html', lib: 'Obtenir mon devis en ligne', desc: 'devis indicatif de 1 à 500 salariés : épargne salariale, santé-prévoyance, retraite, avantages salariés', page: 'devis.html' },
     label:      { url: 'label-brh.html', lib: 'Découvrir le Label BRH', desc: 'une dizaine de questions pour évaluer sa politique avantages salariés et se comparer', page: 'label-brh.html' },
     audit:      { url: 'audit-mutuelle.html', lib: 'Auditer ma mutuelle', desc: 'audit gratuit de la santé et de la prévoyance au regard de la convention collective', page: 'audit-mutuelle.html' },
     fiscal:     { url: 'avantages-fiscaux.html', lib: 'Voir les avantages fiscaux', desc: 'exonérations sociales et fiscales, dispositif par dispositif', page: 'avantages-fiscaux.html' },
@@ -126,7 +126,12 @@
     ex.push(A('Dans quel ordre avancer ?', 'preconise'), Q('Est-ce que je paie des charges sur la prime de partage ?'));
     return ex;
   }
+  /* convention collective santé de la page (sante-ccn.js) : détails seulement si la ligne est confirmée */
+  function conventionSante() { var M = window.BRH_SANTE_CCN; try { return M ? M.public(M.courante()) : null; } catch (e) { return null; } }
   function contexte() {
+    var cs = conventionSante(), r = contexte0(); if (cs) r.convention_sante = cs; return r;
+  }
+  function contexte0() {
     try {
       if (DIAG) { var c = { effectif: state.effectif, secteur: val('secteur'), departement: dep(), priorites: Object.assign({}, state.priorities), resultats_affiches: !!state.resultsUnlocked };
         if (state.resultsUnlocked) c.estimation_du_portail = resultatsDiag(state.effectif, state.priorities); return c; }
@@ -163,8 +168,8 @@
       'Les ressources du portail rassemblent des cas clients, des livres blancs, des articles et des webinaires. Pour démarrer, le guide des avantages fiscaux et sociaux donne une vue d’ensemble, dispositif par dispositif.\nPour un exemple proche de votre activité, filtrez les cas clients par thème ; votre expert peut aussi vous en présenter d’autres.',
       [], ['ressources', 'fiscal']],
     [/devis|prix|co[uû]t|tarif|combien|solutions? choisir/i,
-      'Le devis en ligne chiffre en quelques minutes le coût de vos solutions pour l’entreprise et le gain net pour vos salariés, de 5 à 300 salariés. Au-delà, ou pour la santé et la prévoyance sur mesure, un expert Banque des RH construit la proposition avec vous.\nLe devis est indicatif : votre expert le confirme avant toute souscription.',
-      ['De 5 à 300 salariés', 'Devis indicatif, confirmé par un expert'], ['devis', 'expert']],
+      'Le devis en ligne chiffre en quelques minutes le coût de vos solutions pour l’entreprise et le gain net pour vos salariés, de 1 à 500 salariés. Au-delà, ou pour la santé et la prévoyance sur mesure, un expert Banque des RH construit la proposition avec vous.\nLe devis est indicatif : votre expert le confirme avant toute souscription.',
+      ['De 1 à 500 salariés', 'Devis indicatif, confirmé par un expert'], ['devis', 'expert']],
     [/fid[ée]li|attirer|recrut|garder|motiv|commencer|d[ée]marrer|par o[uù]/i,
       'Pour fidéliser, commencez par ce que vos salariés ressentent vite : avantages du quotidien et bonne couverture santé. Ajoutez ensuite le partage de la valeur pour les associer aux résultats.\nLe diagnostic RH classe vos priorités en 3 minutes et estime les gains ; vous pouvez ensuite obtenir votre devis en ligne.',
       ['Le quotidien d’abord, puis le partage de la valeur', 'Diagnostic en 3 minutes'], ['diagnostic', 'devis']],
@@ -174,7 +179,12 @@
   ];
   function repliJulia(question) {
     var q = String(question || '');
-    for (var i = 0; i < REGLES.length; i++) if (REGLES[i][0].test(q)) return { reponse: REGLES[i][1], points: REGLES[i][2], liens: REGLES[i][3] };
+    var M = window.BRH_SANTE_CCN, cc = null; try { cc = M ? M.courante() : null; } catch (e) {}
+    for (var i = 0; i < REGLES.length; i++) if (REGLES[i][0].test(q)) {
+      var rep = REGLES[i][1];
+      if (i === 0 && cc) rep += '\n' + (cc.c ? M.phrase(cc) + ' Ce point vient d’un document de travail que votre expert Banque des RH confirme avec vous.' : 'Les exigences de votre convention (IDCC ' + cc.i + ') sont vérifiées par votre expert Banque des RH ; le socle légal s’applique au minimum.');
+      return { reponse: rep, points: REGLES[i][2], liens: REGLES[i][3] };
+    }
     return { reponse: 'En mode démonstration, je n’ai pas de réponse toute faite à cette question. Le plus simple : faire le diagnostic RH en 3 minutes, ou demander à être rappelé par un expert Banque des RH de votre Caisse régionale, qui vous répond avec les règles applicables à votre entreprise.',
              points: [], liens: ['diagnostic', 'expert'] };
   }
@@ -425,16 +435,19 @@
   /* ---------- diagnostic et devis : par où commencer, dans quel ordre ---------- */
   function preconise(a) {
     var ctx, eff;
-    if (DIAG) { ctx = profilDiag(); eff = +ctx.effectif || 0; }
+    if (DIAG) { ctx = profilDiag(); ctx.convention_sante = conventionSante(); eff = +ctx.effectif || 0; }
     else { var p = memo('brhProfil'), h = RH(); eff = h.N || +((S.ent || {}).effectif) || 0;
-      ctx = { effectif: eff, secteur: (S.ent && S.ent.secteur) || p.secteur || '', priorites: p.priorites || {}, deja: p.deja || [], panier: S.sol.slice(),
+      ctx = { effectif: eff, secteur: (S.ent && S.ent.secteur) || p.secteur || '', priorites: p.priorites || {}, deja: p.deja || [], panier: S.sol.slice(), convention_sante: conventionSante(),
               statuts: S.sol.map(function (k) { return (typeof DV_SOL !== 'undefined' && DV_SOL[k] && typeof STATUT_LBL !== 'undefined') ? DV_SOL[k].title + ' : ' + STATUT_LBL[DV_SOL[k].statut] : k; }) }; }
     return IA.run('preconise', ctx, IA.repli.preconise).then(function (r) {
       var d = r.data || IA.repli.preconise(ctx);
       var pistes = (d.pistes || []).slice(0, 3).map(function (x) {
         return '<li><div><b>' + esc(x.titre) + '</b><br>' + esc(x.pourquoi) + '<br>' + (x.quand ? '<span class="julia-tag q">' + esc(x.quand) + '</span>' : '') + (x.canal ? '<span class="julia-tag">' + esc(x.canal) + '</span>' : '') + '</div></li>'; }).join('');
-      var suite = DIAG ? (eff >= 5 && eff <= 300 ? ['devis', 'expert'] : ['expert']) : ['expert'];
-      remplir(a, paras(d.constat) + (pistes ? '<ol class="julia-pistes">' + pistes + '</ol>' : '') + (d.prochaine_etape ? '<p><b>Prochaine étape :</b> ' + esc(d.prochaine_etape) + '</p>' : '')
+      var suite = DIAG ? (eff >= 1 && eff <= 500 ? ['devis', 'expert'] : ['expert']) : ['expert'];
+      var M = window.BRH_SANTE_CCN, cc = null; try { cc = M ? M.courante() : null; } catch (e) {}
+      var sante = (d.pistes || []).some(function (x) { return x.solution === 'sante' || /mutuelle|santé|prévoyance/i.test(x.titre || ''); });
+      var rappel = sante && cc && cc.c && M.phrase(cc) ? '<p class="julia-sc">' + esc(M.phrase(cc)) + '</p>' : '';
+      remplir(a, paras(d.constat) + (pistes ? '<ol class="julia-pistes">' + pistes + '</ol>' : '') + rappel + (d.prochaine_etape ? '<p><b>Prochaine étape :</b> ' + esc(d.prochaine_etape) + '</p>' : '')
         + liens(suite) + note(r.source, false));
       return d;
     });
