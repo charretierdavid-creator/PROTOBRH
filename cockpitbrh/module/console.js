@@ -1,4 +1,4 @@
-/* Module LM 2.0 — 15/11/2026 · application de la console (expert BRH, accès ponctuel, administration) · historique : VERSIONS.md */
+/* Module LM 2.0.1 — 15/11/2026 · application de la console (expert BRH, accès ponctuel, administration) · historique : VERSIONS.md */
 /* ==============================================================
    console.js — console du lead management simplifié (cahier des charges v0.3, réponses par défaut Q1 à Q22)
    Écrans : E1 file et fiche, E2 transfert, E3 e-mail IA, E4 accès ponctuel, E6 annuaire, E7 script d'appel,
@@ -122,7 +122,7 @@
     if (s.vue) b += '<div class="band warn"><div class="wrap"><span>Vous voyez la console comme l’expert BRH de la Caisse régionale ' + esc(s.cr ? s.cr.nom : '') + ' ' + sig('demo') + ' (données fictives).</span><button class="btn s" data-a="quitterVue">Revenir à l’administration</button></div></div>';
     $('bands').innerHTML = b;
   }
-  function onglet(v) { ST.tab = v; coque(); rendre(); if (v === 'annuaire' && !ST.ann) chargerAnnuaire().then(rendre); if (v === 'admin') admCharger(); }
+  function onglet(v) { ST.tab = v; if (v === 'annuaire' && !ST.ann) ST.annErr = ''; coque(); rendre(); if (v === 'annuaire' && !ST.ann) chargerAnnuaire().then(rendre); if (v === 'admin') admCharger(); }
   function rendre() { if (ST.tab === 'annuaire') return vueAnnuaire(); if (ST.tab === 'admin') return vueAdmin(); vueLeads(); }
 
   /* ================= E1 — liste et fiche ================= */
@@ -137,7 +137,8 @@
   }
   function chargerAnnuaire(cr) {
     var c = cr || (ST.s.cr && ST.s.cr.code); if (!c) return Promise.resolve(null);
-    return api('annuaire', { cr: c }).then(function (r) { if (!cr || (ST.s.cr && cr === ST.s.cr.code)) ST.ann = r; return r; }).catch(function () { return null; });
+    return api('annuaire', { cr: c }).then(function (r) { if (!cr || (ST.s.cr && cr === ST.s.cr.code)) { ST.ann = r; ST.annErr = ''; } return r; })
+      .catch(function (e) { if (!cr) ST.annErr = (e && e.message) || 'Erreur inattendue'; return null; });   // LM 2.0.1 : l'erreur est affichée dans l'onglet
   }
   function visibles() {
     var f = ST.f, q = L.norm(f.q), me = moi();
@@ -450,6 +451,14 @@
   function vueAnnuaire() {
     var A = ST.ann;
     var h = '<h1>Annuaire pro et filiales</h1><p class="lede">Les destinataires possibles de vos transferts et leur périmètre. Lecture seule : l’annuaire est tenu par l’administrateur. Sigle « Réel » pour les CR pilotes, « Fictif » pour la démonstration.</p>';
+    /* LM 2.0.1 : sans Caisse régionale (administrateur) ou en cas d'erreur, un message remplace « Chargement… » */
+    if (!A && !(ST.s && ST.s.cr)) {
+      $('app').innerHTML = h + (estAdmin()
+        ? '<div class="alert i">L’administrateur n’est rattaché à aucune Caisse régionale : l’annuaire de chaque CR se consulte et se met à jour dans <b>Administration → Caisses régionales et annuaire</b>.</div><p><button class="btn p" data-a="onglet" data-v="admin">Ouvrir l’administration</button></p>'
+        : '<div class="alert">Aucune Caisse régionale n’est rattachée à votre compte : demandez à l’administrateur de compléter votre fiche dans l’annuaire.</div>');
+      return;
+    }
+    if (!A && ST.annErr) { $('app').innerHTML = h + '<div class="alert e">L’annuaire n’a pas pu être chargé : ' + esc(ST.annErr) + '</div><p><button class="btn" data-a="onglet" data-v="annuaire">Réessayer</button></p>'; return; }
     if (!A) { $('app').innerHTML = h + '<p class="empty">Chargement…</p>'; return; }
     var I = A.interlocuteurs || [], ex = I.filter(function (i) { return i.role === 'expert_brh'; }), pros = I.filter(function (i) { return i.role === 'expert_brh_pro'; });
     var pers = function (i, extra) { return '<div class="p"><b>' + esc(nomI(i)) + '</b>' + rf(i.donnees) + (i.principal ? ' <span class="chip o">principal</span>' : '') + (i.actif ? '' : ' <span class="chip o">inactif</span>') + '<span class="sm">' + esc([i.email, i.telephone].filter(Boolean).join(' · ')) + '</span>' + (extra || '') + '</div>'; };
