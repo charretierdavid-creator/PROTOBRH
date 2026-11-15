@@ -1,4 +1,4 @@
-/* Version C 1.3 — 14/11/2026 · démonstration du cockpit · historique : VERSIONS.md */
+/* Version C 1.13 — 15/11/2026 · démonstration : argumentaires de vente sur deux dossiers · historique : VERSIONS.md */
 /* ==============================================================
    COCKPIT BRH — MODE DÉMONSTRATION (cockpit-brh.html?demo=1)
    Remplace lm-api.php par des données FICTIVES en mémoire, avec les mêmes
@@ -114,6 +114,7 @@
     o.leads.forEach(function(l, i){ var tl = t + (l.dh || 0) * H; d.leads.push({ id:9000 + id * 10 + i, cree_le:iso(tl), type:l.type, type_lib:REF.types[l.type], etape:l.etape || null, reference:l.type === 'devis' ? 'DEV-2026-' + (id * 7).toString(36).toUpperCase() : null, niveau:l.niveau,
       panier:l.panier || null, rh:l.rh || null, estimation:l.estimation == null ? null : l.estimation, priorites:null, gain:l.gain == null ? null : l.gain, label:l.label || null }); });
     d.volets = volets(d.solutions, niv, {});
+    d.argumentaire = o.arg || null;
     var te = t + ((o.leads[o.leads.length - 1].dh) || 0) * H;
     d.echeance = iso(echeance(niv, te, d.rappel));
     if (niv === 'abandonniste') d.prochaine_relance = iso(plusJours(t, 1, 10));
@@ -144,9 +145,19 @@
   var RH = function(n, c){ return { salaries_concernes:n, cadres:c, non_cadres:n - c, tranche_salaire:'25_35' }; };
   [
     { h:20, rs:'Boulangerie Lemoine SAS', pr:'Claire', nm:'Lemoine', mail:'c.lemoine@exemple.fr', tel:'06 12 34 56 78', siret:'51234567800021', cp:'37000', ville:'Tours', eff:18, sect:'Artisanat alimentaire', idcc:'843 — Boulangerie-pâtisserie artisanale', decl:'oui', sol:['sante', 'epargne', 'avantages'], mt:21400,
-      syn:'boulangerie de 18 salariés ; mutuelle conforme à la convention (60 % employeur), épargne salariale (Découverte), titres-restaurant à 10 €.', leads:[{ type:'devis_en_cours', niveau:'chaud', etape:'Votre entreprise' }, { type:'devis', niveau:'ultra_chaud', dh:0.4, estimation:21400, panier:[PS(), PE(), PA], rh:RH(18, 2) }] },
+      syn:'boulangerie de 18 salariés ; mutuelle conforme à la convention (60 % employeur), épargne salariale (Découverte), titres-restaurant à 10 €.',
+      arg:{ titre:'Boulangerie de 18 salariés · fidéliser l’équipe et sécuriser la protection sociale', source:'devis', le:null,
+        synthese:['Artisanat alimentaire, 18 salariés, Tours (IDCC 843)', 'Priorités : protection sociale et pouvoir d’achat', 'Panier : santé et prévoyance, épargne salariale (Découverte), titres-restaurant', 'Estimation du devis : 21 400 € / an'],
+        questions:['Quels contrats de mutuelle et de prévoyance sont en place, et à quelle échéance ?', 'Souhaitez-vous associer vos salariés aux résultats (intéressement) ?', 'Qui décide avec vous (associé, expert-comptable) ?'],
+        pieces:['Contrat de mutuelle et de prévoyance en cours', 'Derniers bulletins de paie', 'Convention collective appliquée (IDCC 843)'],
+        angle:'Partir de la conformité santé et prévoyance de la branche, puis proposer l’épargne salariale et les titres-restaurant comme leviers de fidélisation.' }, leads:[{ type:'devis_en_cours', niveau:'chaud', etape:'Votre entreprise' }, { type:'devis', niveau:'ultra_chaud', dh:0.4, estimation:21400, panier:[PS(), PE(), PA], rh:RH(18, 2) }] },
     { h:30, rs:'Transports Valmy', pr:'Karim', nm:'Benali', mail:'k.benali@exemple.fr', tel:'06 22 41 18 90', siret:'80214365700017', cp:'86000', ville:'Poitiers', eff:42, sect:'Transport et logistique', idcc:'16 — Transports routiers', decl:'non', sol:['sante', 'retraite'], mt:48200,
-      syn:'transporteur de 42 salariés ; santé et prévoyance (Renfort), retraite collective (PERCOL).', leads:[{ type:'devis', niveau:'ultra_chaud', estimation:48200, panier:[PS('Renfort'), PR], rh:RH(42, 6) }], suite:[['pec', 3], ['rdv', 5, 30], ['prop', 22], ['volet', 23, 'caa', 'propose', 'Proposition Prévis envoyée']] },
+      syn:'transporteur de 42 salariés ; santé et prévoyance (Renfort), retraite collective (PERCOL).',
+      arg:{ titre:'Transporteur de 42 salariés · préparer la retraite et protéger les conducteurs', source:'devis', le:null,
+        synthese:['Transport et logistique, 42 salariés, Poitiers (IDCC 16)', 'Priorités : protection et retraite', 'Panier : santé et prévoyance (Renfort), PER COL', 'Prospect : connaissance client (KYC) à réaliser'],
+        questions:['Quelle est la répartition conducteurs / sédentaires ?', 'Un PER COL ou un PERCO existe-t-il déjà ?', 'Quel est le taux d’absentéisme sur les 12 derniers mois ?'],
+        pieces:['Convention collective et accords de branche (IDCC 16)', 'Contrats de prévoyance en cours', 'Kbis et statuts (ouverture de relation)'],
+        angle:'Mettre en avant la prévoyance adaptée aux métiers de la route, puis le PER COL comme outil de fidélisation des conducteurs.' }, leads:[{ type:'devis', niveau:'ultra_chaud', estimation:48200, panier:[PS('Renfort'), PR], rh:RH(42, 6) }], suite:[['pec', 3], ['rdv', 5, 30], ['prop', 22], ['volet', 23, 'caa', 'propose', 'Proposition Prévis envoyée']] },
     { h:26, rs:'Cabinet Arvel Avocats', pr:'Sophie', nm:'Arvel', mail:'s.arvel@exemple.fr', tel:'06 31 52 77 04', siret:'54127896300012', cp:'37100', ville:'Tours', eff:7, sect:'Services aux entreprises', idcc:'1000 — Cabinets d’avocats', decl:'oui', sol:['epargne'],
       syn:'cabinet de 7 salariés ; épargne salariale choisie, devis interrompu à la configuration.', leads:[{ type:'devis_en_cours', niveau:'chaud', etape:'Configuration' }], suite:[['pec', 4], ['rdv', 6, 50]] },
     { h:44, rs:'Studio Kéa', pr:'Hugo', nm:'Kéa', mail:'h.kea@exemple.fr', tel:'07 61 22 90 13', siret:'52468135700034', cp:'86100', ville:'Châtellerault', eff:12, sect:'Services aux entreprises', decl:'oui', sol:['avantages', 'epargne'],
@@ -227,7 +238,7 @@
       var d = trouver(p.id); if (!d || !voit(SES, d)) return ko('Dossier introuvable.');
       var x = Object.assign(item(d), { email:d.email, prenom:d.prenom, nom:d.nom, telephone:d.telephone, fonction:d.fonction, siret:d.siret, code_postal:d.code_postal, secteur:d.secteur, idcc:d.idcc, ca:d.ca,
         client_declare:d.client_declare, portefeuille:d.portefeuille, conseiller_pro:d.conseiller_pro, synthese:d.synthese, resultat:d.resultat, niveau_le:d.niveau_le, statut_le:d.statut_le, relances:d.relances,
-        prochaine_relance:d.prochaine_relance, consent_relance:d.consent_relance, version:'C', jalons:d.jalons, lien_suivi:'suivi-dossier.html?demo=1&d=' + d.reference + '&j=' + d.jeton });
+        prochaine_relance:d.prochaine_relance, consent_relance:d.consent_relance, version:'C', jalons:d.jalons, argumentaire:d.argumentaire, lien_suivi:'suivi-dossier.html?demo=1&d=' + d.reference + '&j=' + d.jeton });
       var em = E.filter(function(e){ return e.dossier_id === d.id; }).reverse(); if (SES.role === 'filiale') em = em.filter(function(e){ return e.modele.indexOf('dirigeant_') === 0; });
       return ok({ dossier:x, leads:d.leads, journal:J.filter(function(j){ return j.dossier_id === d.id; }).slice().reverse(), emails:em,
         experts:USERS.filter(function(u){ return u.role === 'expert' && u.actif && u.cr_code === d.cr_code; }).map(function(u){ return { id:u.id, nom:u.nom, referent:u.referent }; }) });

@@ -1,5 +1,5 @@
 <?php
-/* Version C 1.11 — 15/11/2026 · e-mail « Votre estimation » envoyé à la demande du dirigeant ; e-mail de reprise sans promesse de réponses conservées · historique : VERSIONS.md */
+/* Version C 1.13 — 15/11/2026 · argumentaire de vente du dossier (colonne ajoutée automatiquement) ; e-mail « Votre estimation » (1.11) · historique : VERSIONS.md */
 /* ============================================================================
    lm-base.php — LEAD MANAGEMENT du Portail BRH, version C (protobrhc)
    ----------------------------------------------------------------------------
@@ -109,9 +109,12 @@ function lm_db(): ?mysqli {
     echeance DATETIME NULL, pris_le DATETIME NULL, alerte_sla_le DATETIME NULL, rdv_le DATETIME NULL,
     relances TINYINT NOT NULL DEFAULT 0, prochaine_relance DATETIME NULL, consent_relance TINYINT NOT NULL DEFAULT 1,
     montant INT NULL, solutions VARCHAR(120) NULL, volets TEXT NULL, synthese TEXT NULL, resultat TEXT NULL,
-    origine VARCHAR(40) NULL, dernier_type VARCHAR(40) NULL, dernier_lead_id INT NULL, jeton CHAR(32) NOT NULL, jalons TEXT NULL,
+    origine VARCHAR(40) NULL, dernier_type VARCHAR(40) NULL, dernier_lead_id INT NULL, jeton CHAR(32) NOT NULL, jalons TEXT NULL, argumentaire TEXT NULL,
     UNIQUE KEY (reference), INDEX (cle), INDEX (statut), INDEX (niveau), INDEX (cr_code), INDEX (user_id), INDEX (echeance), INDEX (prochaine_relance)
   ) $T");
+  /* colonnes ajoutées après la première installation */
+  $col = $db->query("SHOW COLUMNS FROM lm_dossiers LIKE 'argumentaire'");
+  if ($col && $col->num_rows === 0) $db->query('ALTER TABLE lm_dossiers ADD COLUMN argumentaire TEXT NULL');
   $db->query("CREATE TABLE IF NOT EXISTS lm_dossier_leads (lead_id INT PRIMARY KEY, dossier_id INT NOT NULL, type VARCHAR(40), niveau VARCHAR(16), cree_le DATETIME NOT NULL, INDEX (dossier_id)) $T");
   $db->query("CREATE TABLE IF NOT EXISTS lm_journal (id INT AUTO_INCREMENT PRIMARY KEY, dossier_id INT NOT NULL, cree_le DATETIME NOT NULL, user_id INT NULL,
     acteur VARCHAR(160), action VARCHAR(30) NOT NULL, detail TEXT, INDEX (dossier_id), INDEX (cree_le)) $T");
@@ -594,6 +597,20 @@ function lm_etape(mysqli $db, int $leadId, string $etape): void {
   if ($der && $der['detail'] === $txt) return;
   lm_journal($db, $id, 'etape', $txt);
   lm_maj($db, $id, ['maj_le' => lm_maintenant()]);
+}
+
+/* ---------------- argumentaire de vente préparé par l'IA (lead.php, action « argumentaire ») ---------------- */
+function lm_argumentaire(mysqli $db, int $leadId, array $a, string $source): bool {
+  $x = lm_ligne($db, 'SELECT dossier_id FROM lm_dossier_leads WHERE lead_id = ?', 'i', [$leadId]);
+  if (!$x) return false;
+  $liste = static function ($v): array { $o = []; foreach ((array) $v as $t) { $t = lm_txt($t, 400); if ($t !== '') $o[] = $t; if (count($o) >= 8) break; } return $o; };
+  $arg = ['titre' => lm_txt($a['titre'] ?? '', 200), 'synthese' => $liste($a['synthese'] ?? []), 'questions' => $liste($a['questions'] ?? []),
+          'pieces' => $liste($a['pieces'] ?? []), 'angle' => lm_txt($a['angle'] ?? '', 800), 'source' => lm_txt($source, 20), 'le' => lm_maintenant()];
+  if (!$arg['synthese'] && !$arg['questions'] && $arg['angle'] === '') return false;
+  $id = (int) $x['dossier_id'];
+  lm_maj($db, $id, ['argumentaire' => json_encode($arg, JSON_UNESCAPED_UNICODE), 'maj_le' => lm_maintenant()]);
+  lm_journal($db, $id, 'argumentaire', 'Argumentaire de vente préparé par l’IA (' . ($arg['source'] ?: 'portail') . ') : ' . ($arg['titre'] ?: 'synthèse, questions, pièces, angle d’approche'));
+  return true;
 }
 
 /* ---------------- droits ---------------- */

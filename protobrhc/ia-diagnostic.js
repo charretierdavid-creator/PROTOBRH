@@ -1,4 +1,4 @@
-/* Version C 1.0 — 14/11/2026 · IA du diagnostic · historique : VERSIONS.md */
+/* Version C 1.13 — 15/11/2026 · synthèse pour l’expert retirée de l’écran du dirigeant et transmise au cockpit (argumentaire de vente) · historique : VERSIONS.md */
 /* ==============================================================
    IA DU PARCOURS — page Diagnostic (version C du test A/B, protobrhc)
    S'appuie sur les fonctions de diagnostic.html du socle (state, calculateFiscalGain,
@@ -146,8 +146,9 @@
         slot.innerHTML = '<div class="ia-route"><span>Département ' + esc(cr.dep || '—') + '</span>→<span>' + esc(cr.nom) + '</span>→<span>Expert Banque des RH</span></div>'
           + '<div class="ia-mail"><div class="h">E-mail envoyé automatiquement · Objet : votre demande est prise en charge</div>'
           + 'Bonjour,<br>Votre demande a été transmise à <b>' + esc(cr.nom) + '</b>. Votre expert Banque des Ressources Humaines, <b>[nom attribué par la Caisse]</b>, vous rappelle sous 24 h ouvrées, avec votre diagnostic sous les yeux : vous n’aurez rien à répéter.</div>'
-          + expertView(s) + IA.source(r.source)
-          + '<p class="ia-ai-note">Aperçu de démonstration : en V0.0, SOLEAD envoie cette synthèse à l’expert BRH ; la console nationale trace l’attribution.' + (cr.connue ? '' : ' Table département → Caisse régionale à compléter.') + '</p>';
+          + '<p class="ia-ai-note">Votre expert reçoit votre diagnostic et une synthèse préparée pour l’échange : vous n’aurez rien à répéter.</p>';
+        /* synthèse détaillée (questions, pièces, angle) : transmise au cockpit de l'expert, plus affichée au dirigeant */
+        if (window.BRH_LM && BRH_LM.argumentaire) BRH_LM.argumentaire(s, 'diagnostic');
         IA.track('ia_lead_synthese', { source: r.source, page: 'diagnostic' });
       });
       return r0;

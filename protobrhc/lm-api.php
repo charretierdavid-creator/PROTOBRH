@@ -1,5 +1,5 @@
 <?php
-/* Version C 1.8 — 15/11/2026 · correctif : session du cockpit séparée de celle de la porte d’accès (le cockpit ne détruit plus la connexion au site) · historique : VERSIONS.md */
+/* Version C 1.13 — 15/11/2026 · fiche : argumentaire de vente ; sessions séparées (1.8) · historique : VERSIONS.md */
 /* ============================================================================
    lm-api.php — API JSON du cockpit BRH (lead management, version C)
    Appelée par cockpit-brh.html. Double contrôle : porte d'accès du prototype (brh_acces_api), puis connexion propre au cockpit :
@@ -196,7 +196,7 @@ if ($A === 'dossier') {
     'secteur' => $d['secteur'], 'idcc' => $d['idcc'], 'ca' => $d['ca'] !== null ? (int) $d['ca'] : null, 'client_declare' => $d['client_declare'], 'portefeuille' => $d['portefeuille'],
     'conseiller_pro' => $d['conseiller_pro'], 'synthese' => $d['synthese'], 'resultat' => $d['resultat'], 'niveau_le' => $d['niveau_le'], 'statut_le' => $d['statut_le'],
     'relances' => (int) $d['relances'], 'prochaine_relance' => $d['prochaine_relance'], 'consent_relance' => (int) $d['consent_relance'] === 1, 'version' => $d['version'],
-    'lien_suivi' => lm_lien_suivi($d), 'jalons' => json_decode((string) $d['jalons'], true) ?: ['depose' => $d['cree_le']]], 'leads' => $leads, 'journal' => $journal, 'emails' => $emails, 'experts' => $experts]);
+    'lien_suivi' => lm_lien_suivi($d), 'jalons' => json_decode((string) $d['jalons'], true) ?: ['depose' => $d['cree_le']], 'argumentaire' => json_decode((string) ($d['argumentaire'] ?? ''), true) ?: null], 'leads' => $leads, 'journal' => $journal, 'emails' => $emails, 'experts' => $experts]);
 }
 
 if ($A === 'stats') {
