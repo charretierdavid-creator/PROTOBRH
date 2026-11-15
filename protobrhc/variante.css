@@ -1,3 +1,20 @@
-/* Version C 1.0 — 14/11/2026 · design de la version C · historique : VERSIONS.md */
+/* Version C 2.3 — 15/11/2026 · accueil : accroche remplacée sans affichage de l'ancienne, blocs resserrés ; « Audit mutuelle » retiré du bandeau haut (2.0) · historique : VERSIONS.md */
 /* Version C — protobrhc.monsitedetest.com : design du socle (version Standard).
-   Les styles des encadrés IA sont injectés par ia-assist.js. Toute règle propre à C porte sur html[data-variante="C"]. */
+   Les styles de Julia sont injectés par ia-julia.js. Toute règle propre à C porte sur html[data-variante="C"]. */
+
+/* Bandeau haut : « Audit mutuelle » n'apparaît plus dans la navigation (demande du 15/11/2026).
+   La page reste accessible depuis les offres « Protéger », le diagnostic, le devis et Julia. */
+html[data-variante="C"] .header .nav a[href^="audit-mutuelle.html"],
+html[data-variante="C"] .mobile-menu a[href^="audit-mutuelle.html"]{display:none!important}
+
+/* Accueil (15/11/2026) : textes du socle masqués le temps que variante.js pose la nouvelle accroche et le titre
+   « De quoi avez-vous besoin ? » (la classe c-accueil est retirée aussitôt, même en cas d'erreur). */
+html.c-accueil #page-home .hero h1,html.c-accueil #page-home .hero .sub,html.c-accueil #page-home .hero-note,html.c-accueil #offres .h2{visibility:hidden}
+html[data-variante="C"] #page-home .hero h1{max-width:20ch}
+/* Accueil : marges blanches entre les blocs réduites (bandeau 64/60 px → 40/24 px, sections 70 px → 44 px, « talents » 64 → 40 px) */
+html[data-variante="C"] #page-home .hero-in{padding:40px 0 24px}
+html[data-variante="C"] #page-home .hero .sub{margin-top:1rem}
+html[data-variante="C"] #page-home .hero-note{margin-top:1.4rem}
+html[data-variante="C"] #page-home .sec{padding-top:44px;padding-bottom:44px}
+html[data-variante="C"] #page-home .sec.talents{padding-top:40px;padding-bottom:40px}
+html[data-variante="C"] #page-home .julia-band{padding-bottom:0}
