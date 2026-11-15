@@ -121,8 +121,8 @@ jobs:
 
   # Cockpit BRH (module lead management) : seul le contenu de cockpitbrh/module/ est envoyé à la racine
   # du sous-domaine cockpitbrh.monsitedetest.com (tests/, outils/ et sites/ restent dans le dépôt).
-  # Le .htaccess du module n'est pas dans le dépôt : il est déposé à la main sur le serveur AVANT de créer
-  # les secrets COCKPITBRH_FTP_USERNAME et COCKPITBRH_FTP_PASSWORD. config.php reste sur le serveur.
+  # Le .htaccess du module (cockpitbrh/module/.htaccess) part avec le module. config.php n'est pas dans
+  # le dépôt : il est créé à la main sur le serveur et n'est jamais écrasé ni supprimé.
   # Aucun fichier n'est supprimé sur le serveur.
   cockpitbrh:
     runs-on: ubuntu-latest
