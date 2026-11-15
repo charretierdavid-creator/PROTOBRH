@@ -1,5 +1,5 @@
 <?php
-/* Version C 1.0 — 14/11/2026 · relais Mistral (couche IA) · historique : VERSIONS.md */
+/* Version C 2.0 — 15/11/2026 · action « julia » : question libre de l’assistante RH sur chaque page, 2 liens au plus · historique : VERSIONS.md */
 /* ============================================================
    MOTEUR IA DU PARCOURS — version C du test A/B (protobrhc)
    ------------------------------------------------------------
@@ -13,6 +13,11 @@
                  (les montants viennent du moteur de calcul, l'IA ne calcule pas)
      preconise : 2 à 3 pistes justifiées et séquencées (grille d'orientation)
      synthese  : synthèse du lead pour l'expert BRH / le conseiller pro
+                 (argumentaire de vente, jamais affiché au dirigeant)
+     julia     : réponse de Julia, l'assistante RH présente sur chaque page,
+                 à une question libre (page, contexte calculé par le moteur,
+                 deux derniers échanges) ; au plus 2 liens choisis dans la
+                 liste des pages fournie par le navigateur
 
    Réponse : {"ok":true,"data":{...},"source":"mistral"}
              ou {"ok":false,"debug":"..."} → la page affiche alors
@@ -75,12 +80,12 @@ if ($ENC) { $d = base64_decode(trim($RAW), true); if ($d !== false) $in = json_d
 else      { $in = json_decode($RAW, true) ?: []; }
 $action = (string) ($in['action'] ?? '');
 $ctx    = is_array($in['ctx'] ?? null) ? $in['ctx'] : [];
-if (!in_array($action, ['inspire', 'explique', 'preconise', 'synthese'], true)) ia_fail('Action inconnue');
+if (!in_array($action, ['inspire', 'explique', 'preconise', 'synthese', 'julia'], true)) ia_fail('Action inconnue');
 if (strlen((string) json_encode($ctx)) > 12000) ia_fail('Contexte trop volumineux');
 
 /* -------- nettoyage : liste blanche, aucune donnée personnelle (nom, e-mail, téléphone) -------- */
 function ia_clean($v, int $depth = 0) {
-  if ($depth > 4) return null;
+  if ($depth > 6) return null;   // 6 : détail par solution du devis transmis à Julia (contexte → estimation → detail → solution)
   if (is_array($v)) {
     $o = [];
     foreach (array_slice($v, 0, 30, true) as $k => $x) {
@@ -104,6 +109,8 @@ $ctxJson = json_encode($ctx, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 
 $knowledge   = is_readable(__DIR__ . '/connaissances.txt') ? trim((string) file_get_contents(__DIR__ . '/connaissances.txt')) : '';
 $orientation = is_readable(__DIR__ . '/orientation.txt')   ? trim((string) file_get_contents(__DIR__ . '/orientation.txt'))   : '';
+$version     = is_readable(__DIR__ . '/connaissances-version.txt') ? trim((string) file_get_contents(__DIR__ . '/connaissances-version.txt')) : '';
+$temperature = 0.2;
 
 /* -------- consignes communes -------- */
 $base = "Tu es l'IA du Portail Banque des Ressources Humaines (BRH) du Crédit Agricole, qui accompagne des chefs d'entreprise "
@@ -137,6 +144,18 @@ switch ($action) {
           . "\"pistes\":[{\"titre\":\"dispositif\",\"solution\":\"epargne|sante|retraite|avantages\",\"pourquoi\":\"1 à 2 phrases reliées au profil\",\"quand\":\"Maintenant|Ensuite|À l'échéance\",\"canal\":\"Devis en ligne|Avec un expert\"}],"
           . "\"prochaine_etape\":\"1 phrase\"}";
     $max = 700; $useKb = true; break;
+  case 'julia':
+    $task = "TÂCHE : tu es Julia, l'assistante RH du portail. Le dirigeant te pose une QUESTION depuis la PAGE indiquée. "
+          . "Réponds-lui directement, comme une conseillère RH bienveillante : d'abord la réponse utile, puis l'étape suivante. "
+          . "Tu peux t'appuyer sur la base documentaire, sur le CONTEXTE (montants calculés par le moteur du portail, à citer tels quels) "
+          . "et sur les deux derniers échanges (HISTORIQUE). Tu peux donner des ordres de grandeur ou des règles générales présents dans la base "
+          . "documentaire, en précisant qu'ils sont indicatifs ; si la réponse dépend de la situation de l'entreprise ou n'est pas dans la base, "
+          . "dis-le simplement et propose l'expert BRH. Si la question sort du champ RH, avantages salariés, épargne salariale, santé, prévoyance, "
+          . "retraite ou du portail, recentre poliment. Ne parle jamais de niveau de lead, de score ni de prospect. "
+          . "LIENS : choisis 0, 1 ou 2 identifiants dans LIENS_POSSIBLES, les plus utiles pour la suite, jamais la page en cours. "
+          . "Format : {\"reponse\":\"60 à 150 mots, paragraphes courts séparés par \\n, **gras** autorisé\",\"points\":[\"0 à 3 points clés courts\"],"
+          . "\"liens\":[\"identifiant\"],\"chiffres\":true|false (true si ta réponse cite un montant ou un taux)}";
+    $max = 600; $useKb = true; $temperature = 0.4; break;
   default: /* synthese */
     $task = "TÂCHE : rédige pour l'expert BRH (ou le conseiller pro) de la Caisse régionale la synthèse du lead fourni, pour qu'il le reprenne "
           . "sans rien redemander au dirigeant. Pas de donnée personnelle. "
@@ -148,13 +167,15 @@ switch ($action) {
 $system = $base . "\n\n" . $task
   . ($useKb && $knowledge !== '' ? "\n\n=== BASE DOCUMENTAIRE ===\n" . $knowledge : '')
   . ($action === 'preconise' && $orientation !== '' ? "\n\n=== GRILLE D'ORIENTATION ===\n" . $orientation : '')
+  . ($action === 'julia' && $version !== '' ? "\n\n=== CE SITE (VERSION C) ===\n" . $version : '')
+  . ($action === 'julia' && $orientation !== '' ? "\n\n=== GRILLE D'ORIENTATION ===\n" . $orientation : '')
   . "\n=== FIN ===";
 
 $payload = json_encode([
   'model'           => $MODEL,
   'messages'        => [['role' => 'system', 'content' => $system], ['role' => 'user', 'content' => "DONNÉES :\n" . $ctxJson]],
   'max_tokens'      => $max,
-  'temperature'     => 0.2,
+  'temperature'     => $temperature,
   'response_format' => ['type' => 'json_object'],
 ], JSON_UNESCAPED_UNICODE);
 
@@ -172,4 +193,13 @@ $txt = (string) ($j['choices'][0]['message']['content'] ?? '');
 $txt = preg_replace('/^```(?:json)?\s*|\s*```$/', '', trim($txt));
 $data = json_decode($txt, true);
 if (!is_array($data)) ia_fail('Réponse IA non exploitable');
+/* Julia : liens limités à la liste fournie par la page, 2 au plus ; aucune mention interne */
+if ($action === 'julia') {
+  $permis = [];
+  foreach ((array) ($ctx['liens_possibles'] ?? []) as $l) if (is_array($l) && isset($l['id'])) $permis[] = (string) $l['id'];
+  $interne = static fn($t): string => (string) preg_replace('/\b(lead|prospect)s?\s+(ultra[- ]?)?(chaud|tiède|froid|abandonniste)s?\b/iu', 'demande', is_scalar($t) ? (string) $t : '');
+  $data['liens'] = array_values(array_slice(array_filter(array_map(static fn($x) => is_scalar($x) ? (string) $x : '', (array) ($data['liens'] ?? [])), static fn($x) => in_array($x, $permis, true)), 0, 2));
+  $data['reponse'] = $interne($data['reponse'] ?? '');
+  $data['points'] = array_values(array_slice(array_filter(array_map($interne, is_array($data['points'] ?? null) ? $data['points'] : [])), 0, 3));
+}
 echo json_encode(['ok' => true, 'data' => $data, 'source' => 'mistral', 'model' => $MODEL], JSON_UNESCAPED_UNICODE);

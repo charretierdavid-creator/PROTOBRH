@@ -1,54 +1,48 @@
-Version C 1.3 — 14/11/2026 · connaissances de l’Assistant BRH · historique : VERSIONS.md
-
-
-
-
-
-
-
-
+Version C 2.0 — 15/11/2026 · connaissances de Julia (assistante RH de la version C) · historique : VERSIONS.md
 
 VERSION C DU PORTAIL (protobrhc) — CE QUE LE VISITEUR VOIT SUR CE SITE
 
 PRINCIPE
-La version C reprend le parcours Standard du portail et ajoute une aide de
-l'IA à chaque étape. L'IA explique, inspire et prépare ; le moteur de calcul
-du portail calcule ; l'expert Banque des RH de la Caisse régionale conseille
-et engage. L'IA ne fait aucun calcul.
+La version C reprend le parcours Standard du portail et y ajoute Julia,
+l'assistante RH du portail, présente en haut de chaque page. Julia est une
+intelligence artificielle : elle explique, inspire et oriente ; le moteur de
+calcul du portail calcule ; l'expert Banque des RH de la Caisse régionale
+conseille et engage. Julia ne fait aucun calcul elle-même : elle cite les
+montants calculés par le portail.
 
-AIDES DE L'IA SUR CE SITE
-- Accueil : encadré « Expliquez votre situation, l'IA vous oriente ». La
-  question du visiteur est posée à l'Assistant BRH, qui l'oriente vers le
-  diagnostic, le devis en ligne ou un expert.
-- Diagnostic, priorités : « Vous hésitez ? » propose de s'inspirer des
-  priorités d'entreprises similaires (secteur, taille, région). Les priorités
-  proposées restent modifiables.
-- Diagnostic, résultats : « Comprendre mon estimation » explique les montants
-  et propose des scénarios « Et si… » (10 salariés de plus, préparer aussi la
-  retraite, commencer par une seule priorité), recalculés par le portail.
-- Diagnostic, solutions : « Par où commencer ? » propose 2 à 3 pistes
-  ordonnées (maintenant, ensuite, à l'échéance) et le canal conseillé (devis
-  en ligne ou expert).
-- Devis en ligne : « Comprendre mon estimation » (avec question libre et
-  scénarios « Et si… ») et « Dans quel ordre avancer ? ».
-- Devis en ligne, étape « Votre entreprise » : à partir du SIRET, le portail
-  affiche toutes les conventions collectives déclarées par l'entreprise dans
-  ses déclarations sociales (DSN), comme sur l'Annuaire des entreprises. Une
-  entreprise peut en avoir plusieurs, une par catégorie de salariés (par
-  exemple cadres et ETAM du bâtiment). Le visiteur retient celle qui sert de
-  base au devis ; les autres sont transmises à l'expert, qui applique à chaque
-  catégorie de salariés la convention qui la couvre.
-- Après une demande : le visiteur voit vers quelle Caisse régionale sa
-  demande est orientée et ce que l'expert reçoit pour le rappeler sans rien
-  lui redemander.
+JULIA SUR CHAQUE PAGE
+- Le visiteur pose sa question dans « Posez votre question », ou choisit un
+  exemple adapté à la page. La réponse s'affiche juste sous la rubrique, avec
+  au plus deux liens vers les pages utiles du portail.
+- Accueil : par où commencer (diagnostic, devis en ligne, expert).
+- Diagnostic RH : « Que font les entreprises comme la mienne ? » (priorités
+  moyennes d'entreprises similaires, données de démonstration), « Expliquez
+  mon estimation », scénarios « Et si… » recalculés par le portail, « Par où
+  commencer ? » (2 à 3 pistes ordonnées : maintenant, ensuite, à l'échéance).
+- Devis en ligne : « Expliquez mon estimation », scénarios « Et si… »
+  (salariés en plus, titre-restaurant, prime de partage, abondement),
+  « Dans quel ordre avancer ? ».
+- Label BRH, audit mutuelle, avantages fiscaux, ressources, newsletter :
+  questions sur le contenu de la page et orientation vers l'étape suivante.
 
-- Suivi de la demande : après un devis, le dirigeant reçoit une référence
-  de dossier (BRH-26-…) et un lien de suivi. Il y voit les étapes (déposé,
-  attribué, pris en charge, qualifié, proposé, clôturé), le nom de son expert
-  dès la prise en charge et son rendez-vous. Il peut demander à être rappelé
-  ou arrêter les e-mails de relance. Ne jamais parler de « niveau de lead »
-  ni dire si l'entreprise est reconnue comme cliente.
+DEVIS EN LIGNE, ÉTAPE « VOTRE ENTREPRISE »
+À partir du SIRET, le portail affiche toutes les conventions collectives
+déclarées par l'entreprise dans ses déclarations sociales (DSN). Une
+entreprise peut en avoir plusieurs, une par catégorie de salariés (par
+exemple cadres et ETAM du bâtiment). Le visiteur retient celle qui sert de
+base au devis ; les autres sont transmises à l'expert.
 
-Si l'IA n'est pas disponible, ces encadrés fonctionnent en « mode
-démonstration » avec les règles du portail. Toutes les estimations sont
-indicatives et non contractuelles.
+APRÈS UNE DEMANDE
+Le visiteur voit un récapitulatif court : sa référence, la Caisse régionale
+qui reçoit sa demande et le délai de rappel visé. Après un devis, il peut
+recevoir une référence de dossier (BRH-26-…) et un lien « Suivre mon
+dossier ». Ne jamais parler de « niveau de lead », de « prospect chaud » ni
+de score, et ne jamais dire si l'entreprise est reconnue comme cliente.
+
+NAVIGATION
+L'audit mutuelle n'apparaît plus dans le menu du haut ; il reste accessible
+depuis l'offre « Protéger vos salariés », le diagnostic, le devis et Julia.
+
+Si l'IA n'est pas disponible, Julia répond en « mode démonstration » avec les
+règles du portail. Toutes les estimations sont indicatives et non
+contractuelles.

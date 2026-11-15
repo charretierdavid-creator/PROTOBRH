@@ -1,7 +1,8 @@
-/* Version C 1.0 — 14/11/2026 · module IA commun · historique : VERSIONS.md */
+/* Version C 2.0 — 15/11/2026 · module IA commun, utilisé par Julia (ia-julia.js) et la fin de parcours (fin-parcours.js) · historique : VERSIONS.md */
 /* ==============================================================
    IA DU PARCOURS — module partagé (version C du test A/B, protobrhc)
-   Chargé par variante.js, avant ia-accueil.js, ia-diagnostic.js et ia-devis.js.
+   Chargé par variante.js sur toutes les pages, avant ia-julia.js (Julia, l'assistante RH)
+   et fin-parcours.js (récapitulatif court, argumentaire de vente pour l'expert).
    - BRH_IA.run(action, ctx, repli) : appelle ia.php (Mistral) ; si l'IA
      n'est pas joignable (clé absente, hors ligne…), applique la règle
      locale « repli » : la page reste démontrable, avec la mention
