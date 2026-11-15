@@ -1,4 +1,4 @@
-/* Version C 2.5 — 15/11/2026 · couche parcours du lead management 2.0 sur toutes les pages ; IAV 2.5 ; sante-ccn.js, acces-devis.js, Julia (2.4) · historique : VERSIONS.md */
+/* Version C 2.6 — 15/11/2026 · version 2.6 : estimation du devis (estimation-c.js), études santé et prévoyance par convention sur toutes les pages (prevoyance-idcc.js), page de test BRH_PAGE ; couche parcours partout (2.5) · historique : VERSIONS.md */
 /* Version C — protobrhc.monsitedetest.com : version Standard (socle protobrh/) + IA à chaque étape du parcours.
    Depuis la C 2.0, l'IA prend un seul visage : « Julia, votre assistante RH », en haut de chaque page
    (ia-julia.js). Elle explique, inspire et oriente ; le moteur du portail calcule ; l'expert BRH conseille et engage.
@@ -12,7 +12,7 @@
    ia.php relaie les appels à Mistral (clé dans config.php). Sans clé, Julia répond en « mode démonstration ».
    Identifie aussi la version (C) dans chaque événement de mesure et chaque demande transmise. */
 (function(){
-  var V = 'C', IAV = '2.5';
+  var V = 'C', IAV = '2.6';
   window.BRH_VARIANTE = V;
   /* profil de la session AVANT le script de la page : le diagnostic réécrit brhProfil à son chargement
      (valeurs par défaut) ; la version C reprend ainsi ce que le dirigeant avait déjà indiqué ailleurs */
@@ -25,7 +25,7 @@
   var dl = window.dataLayer = window.dataLayer || [], push = dl.push;
   dl.push = function(o){ if (o && typeof o === 'object' && !o.variante) o.variante = V; return push.apply(dl, arguments); };
 
-  var page = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+  var page = String(window.BRH_PAGE || location.pathname.split('/').pop() || 'index.html').toLowerCase();   // BRH_PAGE : pages de test et aperçus
   /* ACCUEIL de la version C (demande de David du 15/11/2026) : accroche du bandeau remplacée, titre « Nos solutions »
      remplacé par « De quoi avez-vous besoin ? ». Les textes du socle sont masqués (variante.css, classe c-accueil)
      jusqu'au remplacement, pour qu'ils n'apparaissent jamais, même un instant. Modifier les textes ici. */
@@ -59,8 +59,11 @@
      - acces-devis.js : toutes les entreprises de 1 à 500 salariés (diagnostic, devis, audit), bouton « Faire réaliser un devis ». */
   var MODULES = { 'diagnostic.html': ['entreprise-public.js', 'diag-entreprise.js', 'sante-ccn.js', 'fin-parcours.js', 'lm-parcours.js', 'acces-devis.js'],
                   'label-brh.html': ['lm-parcours.js'], 'audit-mutuelle.html': ['sante-ccn.js', 'lm-parcours.js', 'acces-devis.js'], 'newsletter.html': ['lm-parcours.js'],
-                  'devis.html': ['entreprise-lookup.js', 'entreprise-public.js', 'idcc-devis.js', 'sante-ccn.js', 'fin-parcours.js', 'lm-parcours.js', 'acces-devis.js'] };
+                  'devis.html': ['entreprise-lookup.js', 'entreprise-public.js', 'idcc-devis.js', 'sante-ccn.js', 'fin-parcours.js', 'lm-parcours.js', 'estimation-c.js', 'acces-devis.js'] };
   var mods = (MODULES[page] || []).slice();
+  /* C 2.6 : études santé et prévoyance par convention collective sur toutes les pages (Julia s'en sert partout) */
+  if (mods.indexOf('sante-ccn.js') < 0) mods.unshift('sante-ccn.js');
+  mods.splice(mods.indexOf('sante-ccn.js') + 1, 0, 'prevoyance-idcc.js');
   if (mods.indexOf('lm-parcours.js') < 0) mods.push('lm-parcours.js');   // C 2.5 : couche parcours sur toutes les pages (offres consultées, pages vues : Q13 du lead management 2.0)
   mods = mods.concat(['ia-julia.js']);   // Julia : sur toutes les pages
   function charger(src){ var s = document.createElement('script'); s.src = src + '?v=' + IAV; s.async = false; document.body.appendChild(s); }

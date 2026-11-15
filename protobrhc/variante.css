@@ -1,4 +1,4 @@
-/* Version C 2.3 — 15/11/2026 · accueil : accroche remplacée sans affichage de l'ancienne, blocs resserrés ; « Audit mutuelle » retiré du bandeau haut (2.0) · historique : VERSIONS.md */
+/* Version C 2.6 — 15/11/2026 · même largeur pour tous les blocs de chaque écran (bandeaux du haut alignés sur les sections : marge latérale de 24 px) ; accueil resserré (2.3) ; « Audit mutuelle » retiré du bandeau haut (2.0) · historique : VERSIONS.md */
 /* Version C — protobrhc.monsitedetest.com : design du socle (version Standard).
    Les styles de Julia sont injectés par ia-julia.js. Toute règle propre à C porte sur html[data-variante="C"]. */
 
@@ -12,9 +12,19 @@ html[data-variante="C"] .mobile-menu a[href^="audit-mutuelle.html"]{display:none
 html.c-accueil #page-home .hero h1,html.c-accueil #page-home .hero .sub,html.c-accueil #page-home .hero-note,html.c-accueil #offres .h2{visibility:hidden}
 html[data-variante="C"] #page-home .hero h1{max-width:20ch}
 /* Accueil : marges blanches entre les blocs réduites (bandeau 64/60 px → 40/24 px, sections 70 px → 44 px, « talents » 64 → 40 px) */
-html[data-variante="C"] #page-home .hero-in{padding:40px 0 24px}
+html[data-variante="C"] #page-home .hero-in{padding:40px 24px 24px}
 html[data-variante="C"] #page-home .hero .sub{margin-top:1rem}
 html[data-variante="C"] #page-home .hero-note{margin-top:1.4rem}
 html[data-variante="C"] #page-home .sec{padding-top:44px;padding-bottom:44px}
 html[data-variante="C"] #page-home .sec.talents{padding-top:40px;padding-bottom:40px}
 html[data-variante="C"] #page-home .julia-band{padding-bottom:0}
+
+/* C 2.6 — même largeur pour tous les blocs d'un écran : les bandeaux du haut (.hero-in, .sim-hero-in) n'avaient pas de marge
+   latérale (1 140 px) alors que toutes les autres sections ont la marge du .wrap (24 px, soit 1 092 px de contenu) ;
+   le bandeau Julia se cale sur eux (ia-julia.js). Mesuré écran par écran avec outils/apercu_c.py --mesure. */
+html[data-variante="C"] .hero-in,html[data-variante="C"] .sim-hero-in{padding-left:24px;padding-right:24px}
+/* Newsletter : la colonne de gauche ne s'élargit plus à cause de la ligne d'exemples de Julia (le formulaire gardait une colonne
+   étroite) ; ses trois blocs (Julia, « Rendez-vous chaque mois », « Lire la newsletter du mois ») prennent la même largeur. */
+html[data-variante="C"] .news-left{min-width:0}
+html[data-variante="C"] .news-left .news-badge{display:flex}
+html[data-variante="C"] .news-left .news-read{max-width:none}

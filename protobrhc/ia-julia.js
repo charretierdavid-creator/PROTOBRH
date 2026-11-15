@@ -1,4 +1,4 @@
-/* Version C 2.4 — 15/11/2026 · entreprises de 1 à 500 salariés ; obligations santé de la convention collective (sante-ccn.js) dans les réponses ; pleine largeur (2.2) · historique : VERSIONS.md */
+/* Version C 2.6 — 15/11/2026 · prévoyance de la convention collective (prevoyance-idcc.js) et conventions citées dans la question, transmises à l’IA ; santé (2.4) ; pleine largeur (2.2) · historique : VERSIONS.md */
 /* ==============================================================
    JULIA — l'IA de la version C, une seule et même rubrique en haut de chaque page
    « Julia, votre assistante RH vous accompagne tout au long du parcours »
@@ -128,8 +128,23 @@
   }
   /* convention collective santé de la page (sante-ccn.js) : détails seulement si la ligne est confirmée */
   function conventionSante() { var M = window.BRH_SANTE_CCN; try { return M ? M.public(M.courante()) : null; } catch (e) { return null; } }
-  function contexte() {
-    var cs = conventionSante(), r = contexte0(); if (cs) r.convention_sante = cs; return r;
+  /* C 2.6 : convention prévoyance de la page (prevoyance-idcc.js), même règle */
+  function conventionPrev() { var M = window.BRH_PREV_IDCC; try { return M ? M.public(M.courante()) : null; } catch (e) { return null; } }
+  /* C 2.6 : conventions citées dans la question (« IDCC 1486 », « convention 2596 », « la 1979 ») : lignes publiques des deux études */
+  function conventionsCitees(q) {
+    var S1 = window.BRH_SANTE_CCN, P1 = window.BRH_PREV_IDCC, vus = {}, r = [];
+    String(q || '').replace(/\b(\d{1,4})\b/g, function (m, n) {
+      var k = String(+n); if (vus[k] || r.length >= 3) return m;
+      var s = S1 && S1.pour(k), p = P1 && P1.pour(k);
+      if ((s || p) && (/idcc|convention|ccn|branche/i.test(q) || +n >= 16)) { vus[k] = 1; r.push({ idcc: k, sante: s ? S1.public(s) : null, prevoyance: p ? P1.public(p) : null }); }
+      return m;
+    });
+    return r;
+  }
+  function contexte(q) {
+    var cs = conventionSante(), cp = conventionPrev(), r = contexte0(); if (cs) r.convention_sante = cs; if (cp) r.convention_prevoyance = cp;
+    var ci = q ? conventionsCitees(q) : []; if (ci.length) r.conventions_citees = ci;
+    return r;
   }
   function contexte0() {
     try {
@@ -183,6 +198,12 @@
     for (var i = 0; i < REGLES.length; i++) if (REGLES[i][0].test(q)) {
       var rep = REGLES[i][1];
       if (i === 0 && cc) rep += '\n' + (cc.c ? M.phrase(cc) + ' Ce point vient d’un document de travail que votre expert Banque des RH confirme avec vous.' : 'Les exigences de votre convention (IDCC ' + cc.i + ') sont vérifiées par votre expert Banque des RH ; le socle légal s’applique au minimum.');
+      if (i === 0) {   /* C 2.6 : prévoyance de la convention (page ou question), lignes confirmées seulement */
+        var P2 = window.BRH_PREV_IDCC, ci = conventionsCitees(q), cp = null;
+        try { cp = P2 ? (ci.length && ci[0].prevoyance ? P2.pour(ci[0].idcc) : P2.courante()) : null; } catch (e) {}
+        if (cp) rep += '\n' + (cp.c && P2.phrase(cp) ? P2.phrase(cp) + ' (document de travail confirmé par votre expert)' : 'En prévoyance, les exigences de la convention IDCC ' + cp.i + ' sont vérifiées par votre expert Banque des RH ; pour les cadres, 1,50 % de la tranche A reste obligatoire.');
+        if (!cc && ci.length && ci[0].sante && window.BRH_SANTE_CCN) { var cs2 = window.BRH_SANTE_CCN.pour(ci[0].idcc); if (cs2) rep += '\n' + (cs2.c ? window.BRH_SANTE_CCN.phrase(cs2) : 'En santé, la convention IDCC ' + cs2.i + ' est vérifiée par votre expert.'); }
+      }
       return { reponse: rep, points: REGLES[i][2], liens: REGLES[i][3] };
     }
     return { reponse: 'En mode démonstration, je n’ai pas de réponse toute faite à cette question. Le plus simple : faire le diagnostic RH en 3 minutes, ou demander à être rappelé par un expert Banque des RH de votre Caisse régionale, qui vous répond avec les règles applicables à votre entreprise.',
@@ -198,7 +219,7 @@
      question, qui prend toute la place restante ; ligne 2 = exemples sur une seule ligne (défilement horizontal si besoin). */
   var CSS = ''
     + '.julia-on #cbotLaunch,.julia-on #cbot,.julia-on #cbotNudge{display:none!important}'
-    + '.julia-band{padding:0 0 28px}.julia-inline{margin:18px 0 8px}'
+    + '.julia-band{padding:0 0 28px}.julia-inline{margin:18px 0 8px;contain:inline-size}'   /* C 2.6 : la ligne d'exemples n'élargit plus la colonne qui l'accueille */
     + '.julia{background:var(--fisc,#f5f8f2);color:var(--ink,#233029);border:1px solid var(--line,#e7ece9);border-radius:var(--radius,16px);padding:12px 16px 10px;font-family:var(--fb,inherit);scroll-margin-top:90px}'
     + '.julia-l1{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px 22px;align-items:center}'
     + '.julia-id{display:flex;align-items:center;gap:10px;min-width:0}'
@@ -245,6 +266,8 @@
     + '.julia-fab .julia-av{width:30px;height:30px;font-size:.85rem}'
     + '.julia-sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}'
     + '@media(max-width:640px){.julia-l1{grid-template-columns:1fr;gap:8px}.julia-t span{display:inline;white-space:normal}}'
+    /* C 2.6 : dans une colonne étroite (newsletter, label), le champ de question passe sous « Julia » pour rester large */
+    + '.julia-inline{container-type:inline-size}@container (max-width:600px){.julia-l1{grid-template-columns:1fr;gap:8px}.julia-t span{display:inline;white-space:normal}}'
     + '@media(max-width:640px){.julia{padding:10px 12px 8px}.julia-rep{padding:12px 12px 10px}.julia-fab{right:14px;bottom:14px}}'
     + '@media(prefers-reduced-motion:reduce){.julia-load i{animation:none;opacity:.7}}';
   var st = D.createElement('style'); st.textContent = CSS; D.head.appendChild(st);
@@ -362,7 +385,7 @@
 
   /* ---------- question libre ---------- */
   function libre(a, q) {
-    var ctx = { page: page, titre_page: D.title || '', question: q, contexte: contexte(), historique: histo.slice(-2), liens_possibles: liensPossibles() };
+    var ctx = { page: page, titre_page: D.title || '', question: q, contexte: contexte(q), historique: histo.slice(-2), liens_possibles: liensPossibles() };
     return IA.run('julia', ctx, function () { return repliJulia(q); }).then(function (r) {
       var d = (r.data && typeof r.data === 'object') ? r.data : repliJulia(q), rep = String(d.reponse || '').trim() || repliJulia(q).reponse;
       histo.push({ q: q.slice(0, 200), r: rep.replace(/\s+/g, ' ').slice(0, 280) }); if (histo.length > 4) histo.shift();

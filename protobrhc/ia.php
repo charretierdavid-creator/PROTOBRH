@@ -1,5 +1,5 @@
 <?php
-/* Version C 2.4 — 15/11/2026 · entreprises de 1 à 500 salariés (consignes, base documentaire et grille adaptées) ; Julia et convention collective santé ; action « julia » (2.0) · historique : VERSIONS.md */
+/* Version C 2.6 — 15/11/2026 · Julia : prévoyance de la convention collective et conventions citées (étude du 15/11/2026) ; santé (2.4) ; 1 à 500 salariés ; action « julia » (2.0) · historique : VERSIONS.md */
 /* ============================================================
    MOTEUR IA DU PARCOURS — version C du test A/B (protobrhc)
    ------------------------------------------------------------
@@ -166,6 +166,9 @@ switch ($action) {
           . "CONVENTION SANTÉ : si CONTEXTE.convention_sante est au statut « confirmé », tu peux citer ses exigences (régime de branche, part employeur, "
           . "ayants droit, points à vérifier) en précisant qu'il s'agit d'un document de travail que l'expert confirme ; si elle est « à vérifier », "
           . "n'en décris pas le contenu : rappelle le socle légal et dis que l'expert vérifie la convention. "
+          . "CONVENTION PRÉVOYANCE : même règle pour CONTEXTE.convention_prevoyance (régime de branche, population couverte, exigences, part employeur, "
+          . "capital décès) ; rappelle que la loi n'impose la prévoyance qu'aux cadres (1,50 % de la tranche A à la charge de l'employeur) et que le reste vient de la branche. "
+          . "CONVENTIONS CITÉES : si CONTEXTE.conventions_citees est présent, réponds pour ces conventions avec la même règle (détails seulement si « confirmé »). "
           . "LIENS : choisis 0, 1 ou 2 identifiants dans LIENS_POSSIBLES, les plus utiles pour la suite, jamais la page en cours. "
           . "Format : {\"reponse\":\"60 à 150 mots, paragraphes courts séparés par \\n, **gras** autorisé\",\"points\":[\"0 à 3 points clés courts\"],"
           . "\"liens\":[\"identifiant\"],\"chiffres\":true|false (true si ta réponse cite un montant ou un taux)}";
@@ -173,6 +176,7 @@ switch ($action) {
   default: /* synthese */
     $task = "TÂCHE : rédige pour l'expert BRH (ou le conseiller pro) de la Caisse régionale la synthèse du lead fourni, pour qu'il le reprenne "
           . "sans rien redemander au dirigeant. Pas de donnée personnelle. "
+          . "Si CONTEXTE.convention_sante ou CONTEXTE.convention_prevoyance sont fournis, intègre leurs exigences et leur statut (« confirmé » ou « à vérifier »). "
           . "Format : {\"titre\":\"1 ligne : type d'entreprise, taille, enjeu\",\"synthese\":[\"5 lignes courtes : profil, besoins prioritaires, gains estimés (cités), panier, existant et échéances\"],"
           . "\"questions\":[\"3 questions à poser lors du rappel\"],\"pieces\":[\"2 à 3 pièces à demander\"],\"angle\":\"1 phrase : l'angle d'approche conseillé\"}";
     $max = 650; $useKb = true;
