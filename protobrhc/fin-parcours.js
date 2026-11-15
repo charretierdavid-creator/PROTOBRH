@@ -1,4 +1,4 @@
-/* Version C 2.0 — 15/11/2026 · fin de parcours compacte (devis, diagnostic) sans niveau de lead ; argumentaire de vente préparé par l'IA et transmis au dossier · historique : VERSIONS.md */
+/* Version C 2.4 — 15/11/2026 · argumentaire de vente enrichi des obligations santé de la convention collective (toutes les lignes, avec leur statut) ; fin de parcours compacte (2.0) · historique : VERSIONS.md */
 /* ==============================================================
    FIN DE PARCOURS — version C (protobrhc). Remplace la fin de parcours d'ia-devis.js et d'ia-diagnostic.js (C 1.x).
    Ce que voit le dirigeant, en court (décision du 15/11/2026 : récapitulatif trop long, « lead ultra-chaud » visible) :
@@ -22,9 +22,17 @@
   var prof = function () { try { return JSON.parse(sessionStorage.getItem('brhProfil') || '{}') || {}; } catch (e) { return {}; } };
   function attendre(p, ms) { return p ? Promise.race([p, new Promise(function (r) { setTimeout(function () { r(null); }, ms); })]).then(function (j) { return j || {}; }, function () { return {}; }) : Promise.resolve({}); }
   function nomCaisse(lm, dep) { if (lm && lm.caisse) return lm.caisse; var c = IA.caisse(dep); return c.connue ? c.nom : ''; }
+  /* convention collective santé pour l'expert : toute la ligne de l'étude, statut compris (sante-ccn.js) */
+  function conventionExpert() { var M = window.BRH_SANTE_CCN; try { return M ? M.expert(M.courante()) : null; } catch (e) { return null; } }
   function argumentaire(ctx, source) {
+    var cs = conventionExpert(); if (cs) ctx.convention_sante = cs;
     return IA.run('synthese', ctx, IA.repli.synthese).then(function (r) {
       var s = r.data || IA.repli.synthese(ctx);
+      if (cs) {   /* la convention figure toujours dans l'argumentaire, même si l'IA l'a omise */
+        s.synthese = (s.synthese || []).concat(['Santé, convention IDCC ' + cs.idcc + ' (' + cs.branche + ', ' + cs.statut + ') : ' + cs.regime_sante_branche + ' ; ' + cs.exigences + ' ; ayants droit : ' + cs.ayants_droit]);
+        s.questions = (s.questions || []).concat(cs.vigilance && cs.vigilance.length ? ['Convention : ' + cs.vigilance.join(' ; ') + ' — l’entreprise est-elle concernée ?'] : []);
+        if (!/^Confirmé/.test(cs.statut)) s.pieces = (s.pieces || []).concat(['Texte de la convention collective (ligne « ' + cs.statut + ' » de l’étude santé)']);
+      }
       if (window.BRH_LM && BRH_LM.argumentaire) BRH_LM.argumentaire(s, source);
       IA.track('ia_lead_synthese', { source: r.source, page: source });
       return s;

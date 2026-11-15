@@ -1,4 +1,4 @@
-/* Version C 2.3 — 15/11/2026 · accueil : nouvelle accroche, « De quoi avez-vous besoin ? », blocs resserrés ; Julia pleine largeur (2.2) ; Julia sur chaque page, lead management sorti de C, fin de parcours compacte (2.0) · historique : VERSIONS.md */
+/* Version C 2.5 — 15/11/2026 · couche parcours du lead management 2.0 sur toutes les pages ; IAV 2.5 ; sante-ccn.js, acces-devis.js, Julia (2.4) · historique : VERSIONS.md */
 /* Version C — protobrhc.monsitedetest.com : version Standard (socle protobrh/) + IA à chaque étape du parcours.
    Depuis la C 2.0, l'IA prend un seul visage : « Julia, votre assistante RH », en haut de chaque page
    (ia-julia.js). Elle explique, inspire et oriente ; le moteur du portail calcule ; l'expert BRH conseille et engage.
@@ -12,7 +12,7 @@
    ia.php relaie les appels à Mistral (clé dans config.php). Sans clé, Julia répond en « mode démonstration ».
    Identifie aussi la version (C) dans chaque événement de mesure et chaque demande transmise. */
 (function(){
-  var V = 'C', IAV = '2.3';
+  var V = 'C', IAV = '2.5';
   window.BRH_VARIANTE = V;
   /* profil de la session AVANT le script de la page : le diagnostic réécrit brhProfil à son chargement
      (valeurs par défaut) ; la version C reprend ainsi ce que le dirigeant avait déjà indiqué ailleurs */
@@ -55,11 +55,14 @@
        préremplis depuis le SIREN / SIRET dans le diagnostic (diag-entreprise.js) et le devis (idcc-devis.js) ;
      - parcours (lm-parcours.js) : coordonnées partagées entre écrans, estimation par e-mail, « déjà client ? » ;
      - fin-parcours.js : récapitulatif court après l'envoi, argumentaire de vente transmis au dossier ;
-     - acces-devis.js : devis ouvert jusqu'à 300 salariés. */
-  var MODULES = { 'diagnostic.html': ['entreprise-public.js', 'diag-entreprise.js', 'fin-parcours.js', 'lm-parcours.js', 'acces-devis.js'],
-                  'label-brh.html': ['lm-parcours.js'], 'audit-mutuelle.html': ['lm-parcours.js'], 'newsletter.html': ['lm-parcours.js'],
-                  'devis.html': ['entreprise-lookup.js', 'entreprise-public.js', 'idcc-devis.js', 'fin-parcours.js', 'lm-parcours.js', 'acces-devis.js'] };
-  var mods = (MODULES[page] || []).concat(['ia-julia.js']);   // Julia : sur toutes les pages
+     - sante-ccn.js : obligations santé de la convention collective (étude du 14/11/2026, lignes confirmées pour le dirigeant) ;
+     - acces-devis.js : toutes les entreprises de 1 à 500 salariés (diagnostic, devis, audit), bouton « Faire réaliser un devis ». */
+  var MODULES = { 'diagnostic.html': ['entreprise-public.js', 'diag-entreprise.js', 'sante-ccn.js', 'fin-parcours.js', 'lm-parcours.js', 'acces-devis.js'],
+                  'label-brh.html': ['lm-parcours.js'], 'audit-mutuelle.html': ['sante-ccn.js', 'lm-parcours.js', 'acces-devis.js'], 'newsletter.html': ['lm-parcours.js'],
+                  'devis.html': ['entreprise-lookup.js', 'entreprise-public.js', 'idcc-devis.js', 'sante-ccn.js', 'fin-parcours.js', 'lm-parcours.js', 'acces-devis.js'] };
+  var mods = (MODULES[page] || []).slice();
+  if (mods.indexOf('lm-parcours.js') < 0) mods.push('lm-parcours.js');   // C 2.5 : couche parcours sur toutes les pages (offres consultées, pages vues : Q13 du lead management 2.0)
+  mods = mods.concat(['ia-julia.js']);   // Julia : sur toutes les pages
   function charger(src){ var s = document.createElement('script'); s.src = src + '?v=' + IAV; s.async = false; document.body.appendChild(s); }
   /* après le chargement des scripts de la page (fonctions du diagnostic et du devis, assistant BRH) */
   function go(){ accueil(); charger('ia-assist.js'); mods.forEach(charger);

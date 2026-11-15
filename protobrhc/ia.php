@@ -1,5 +1,5 @@
 <?php
-/* Version C 2.0 — 15/11/2026 · action « julia » : question libre de l’assistante RH sur chaque page, 2 liens au plus · historique : VERSIONS.md */
+/* Version C 2.4 — 15/11/2026 · entreprises de 1 à 500 salariés (consignes, base documentaire et grille adaptées) ; Julia et convention collective santé ; action « julia » (2.0) · historique : VERSIONS.md */
 /* ============================================================
    MOTEUR IA DU PARCOURS — version C du test A/B (protobrhc)
    ------------------------------------------------------------
@@ -110,6 +110,16 @@ $ctxJson = json_encode($ctx, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 $knowledge   = is_readable(__DIR__ . '/connaissances.txt') ? trim((string) file_get_contents(__DIR__ . '/connaissances.txt')) : '';
 $orientation = is_readable(__DIR__ . '/orientation.txt')   ? trim((string) file_get_contents(__DIR__ . '/orientation.txt'))   : '';
 $version     = is_readable(__DIR__ . '/connaissances-version.txt') ? trim((string) file_get_contents(__DIR__ . '/connaissances-version.txt')) : '';
+/* version C : le portail traite toutes les entreprises de 1 à 500 salariés ; les textes du socle (base documentaire,
+   grille d'orientation) parlent encore d'un devis en ligne de 5 à 50 salariés : ils sont ajustés ici, sans modifier le socle */
+function ia_portee_c(string $t): string {
+  $t = str_replace(['devis en ligne (5 à 50 salariés)', 'devis en ligne (5 à 50 salariés)'], 'devis en ligne (1 à 500 salariés)', $t);
+  $t = preg_replace('/^- 5 à 50 salariés :/mu', '- 1 à 50 salariés :', $t);
+  $t = preg_replace('/^- Plus de 50 salariés : (.*?)prochaine étape proposée = [^\n]*$/mu',
+    '- 51 à 500 salariés : $1prochaine étape proposée = devis en ligne sur le portail (forfait social inclus) puis échange avec un expert BRH de la Caisse régionale.' . "\n" . '- Au-delà de 500 salariés : échange avec un expert BRH de la Caisse régionale (offre sur mesure).', $t);
+  return (string) $t;
+}
+$knowledge = ia_portee_c($knowledge); $orientation = ia_portee_c($orientation);
 $temperature = 0.2;
 
 /* -------- consignes communes -------- */
@@ -138,8 +148,8 @@ switch ($action) {
     $max = 550; $useKb = true; break;
   case 'preconise':
     $task = "TÂCHE : à partir du PROFIL, propose 2 à 3 pistes prioritaires en appliquant la GRILLE D'ORIENTATION, puis séquence-les dans le temps. "
-          . "Ne repropose pas ce qui est déjà en place : propose de le compléter. Pour 5 à 50 salariés, la prochaine étape peut être le devis en ligne ; "
-          . "au-delà, l'échange avec un expert BRH. "
+          . "Ne repropose pas ce qui est déjà en place : propose de le compléter. De 1 à 500 salariés, la prochaine étape peut être le devis en ligne ; "
+          . "au-delà de 500 salariés, l'échange avec un expert BRH. "
           . "Format : {\"constat\":\"1 phrase qui résume le profil et l'enjeu\","
           . "\"pistes\":[{\"titre\":\"dispositif\",\"solution\":\"epargne|sante|retraite|avantages\",\"pourquoi\":\"1 à 2 phrases reliées au profil\",\"quand\":\"Maintenant|Ensuite|À l'échéance\",\"canal\":\"Devis en ligne|Avec un expert\"}],"
           . "\"prochaine_etape\":\"1 phrase\"}";
@@ -152,6 +162,10 @@ switch ($action) {
           . "documentaire, en précisant qu'ils sont indicatifs ; si la réponse dépend de la situation de l'entreprise ou n'est pas dans la base, "
           . "dis-le simplement et propose l'expert BRH. Si la question sort du champ RH, avantages salariés, épargne salariale, santé, prévoyance, "
           . "retraite ou du portail, recentre poliment. Ne parle jamais de niveau de lead, de score ni de prospect. "
+          . "Le portail traite toutes les entreprises de 1 à 500 salariés ; au-delà, un expert construit la proposition. "
+          . "CONVENTION SANTÉ : si CONTEXTE.convention_sante est au statut « confirmé », tu peux citer ses exigences (régime de branche, part employeur, "
+          . "ayants droit, points à vérifier) en précisant qu'il s'agit d'un document de travail que l'expert confirme ; si elle est « à vérifier », "
+          . "n'en décris pas le contenu : rappelle le socle légal et dis que l'expert vérifie la convention. "
           . "LIENS : choisis 0, 1 ou 2 identifiants dans LIENS_POSSIBLES, les plus utiles pour la suite, jamais la page en cours. "
           . "Format : {\"reponse\":\"60 à 150 mots, paragraphes courts séparés par \\n, **gras** autorisé\",\"points\":[\"0 à 3 points clés courts\"],"
           . "\"liens\":[\"identifiant\"],\"chiffres\":true|false (true si ta réponse cite un montant ou un taux)}";
