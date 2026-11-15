@@ -1,6 +1,9 @@
-/* Version C 1.13 — 15/11/2026 · argumentaire de vente transmis au dossier (BRH_LM.argumentaire) ; nom de l’entreprise dans tous les formulaires (1.12) · historique : VERSIONS.md */
+/* Version C 2.0 — 15/11/2026 · lead management sorti de C : couche parcours seule (identique au module LM), encart de suivi laissé à fin-parcours.js ; argumentaire (1.13) · historique : VERSIONS.md */
 /* ==============================================================
-   LEAD MANAGEMENT — remontée des leads depuis le parcours (version C, protobrhc)
+   PARCOURS — remontée des demandes depuis le parcours (version C, protobrhc)
+   Depuis la C 2.0, le lead management lui-même (niveaux, dossiers, cockpit) est dans le module commun
+   (cockpitbrh.monsitedetest.com) ; ce fichier n'en garde que la couche parcours, la même que
+   connecteurs/lm-parcours.js du module (C la charge elle-même : data-parcours="non" côté module).
    Surcouche du socle, sans modifier les pages. Niveaux du deck du 14/11/2026 :
      Diagnostic RH (diagnostic.html)
        - à l'affichage des résultats, case FACULTATIVE « recevoir mon résultat et être recontacté » :
@@ -259,6 +262,8 @@
       return p;
     };
     function afficherSuivi(j) {
+      /* version C : le récapitulatif court de fin-parcours.js porte déjà « Suivre mon dossier » */
+      if (window.BRH_FIN_PARCOURS) return;
       var done = $('dvDone'); if (!done || $('lmSuiviBox')) return;
       var b = document.createElement('div'); b.className = 'lm-suivi'; b.id = 'lmSuiviBox';
       b.innerHTML = '<b>Votre dossier ' + esc(j.dossier) + '</b><br>Suivez son avancement, du dépôt à la clôture, et retrouvez le nom de votre expert dès qu’il le prend en charge.' + (j.caisse ? ' Caisse régionale : ' + esc(j.caisse) + '.' : '') + '<br><a class="btn btn-outline" href="' + esc(j.suivi) + '">Suivre mon dossier</a>';
