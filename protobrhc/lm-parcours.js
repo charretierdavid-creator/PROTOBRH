@@ -1,4 +1,4 @@
-/* Version C 1.11 — 15/11/2026 · devis : e-mail demandé à l’étape « Votre estimation » (Recevoir mon estimation) et non plus à l’étape « Votre entreprise » ; « déjà client ? » en fin de devis · historique : VERSIONS.md */
+/* Version C 1.12 — 15/11/2026 · nom de l’entreprise reconnue par SIRET reporté dans tous les formulaires de contact (même page et écrans suivants), newsletter incluse ; e-mail à l’étape Estimation (1.11) · historique : VERSIONS.md */
 /* ==============================================================
    LEAD MANAGEMENT — remontée des leads depuis le parcours (version C, protobrhc)
    Surcouche du socle, sans modifier les pages. Niveaux du deck du 14/11/2026 :
@@ -52,7 +52,8 @@
     'diagnostic.html': { 'gate-email':'email', 'c-nom':'complet', 'c-ent':'entreprise', 'c-tel':'telephone', 'c-email':'email' },
     'label-brh.html': { 'gate-prenom':'prenom', 'gate-nom':'nom', 'gate-email':'email', 'gate-poste':'fonction', 'c-nom':'complet', 'c-ent':'entreprise', 'c-tel':'telephone', 'c-email':'email' },
     'audit-mutuelle.html': { 'au-nom':'complet', 'au-ent':'entreprise', 'au-tel':'telephone', 'au-mail':'email' },
-    'devis.html': { 'c-prenom':'prenom', 'c-nom':'nom', 'c-fct':'fonction', 'c-tel':'telephone', 'c-email':'email', 'x-nom':'complet', 'x-tel':'telephone', 'lmEm':'email' }
+    'devis.html': { 'c-prenom':'prenom', 'c-nom':'nom', 'c-fct':'fonction', 'c-tel':'telephone', 'c-email':'email', 'x-nom':'complet', 'x-tel':'telephone', 'lmEm':'email' },
+    'newsletter.html': { 'nf-prenom':'prenom', 'nf-nom':'nom', 'nf-email':'email', 'nf-entreprise':'entreprise' }
   }[page] || {};
   function contact() { return memo('brhContact') || {}; }
   function noter(role, v) {
@@ -64,21 +65,44 @@
     c.maj = new Date().toISOString(); memo('brhContact', c);
   }
   function valeur(role, c) { return role === 'complet' ? [c.prenom, c.nom].filter(Boolean).join(' ') : (c[role] || ''); }
+  /* nom de l'entreprise : celui de la fiche publique (SIRET) l'emporte sur un nom tapé ailleurs */
+  function nomEntreprise(c) { var pe = (memo('brhProfil') || {}).entreprise || {}; return pe.nom || c.entreprise || ''; }
   function preremplir() {
     var c = contact(), n = 0;
     Object.keys(CHAMPS).forEach(function (id) {
-      var el = $(id), v = valeur(CHAMPS[id], c); if (!el || !v || String(el.value || '').trim()) return;
+      var el = $(id), role = CHAMPS[id], v = role === 'entreprise' ? nomEntreprise(c) : valeur(role, c); if (!el || !v) return;
+      var cur = String(el.value || '').trim();
+      /* champ vide, ou déjà prérempli par ce module avec une valeur devenue ancienne (nouveau SIRET) */
+      if (cur && !(el.getAttribute && el.getAttribute('data-lm-auto') === cur && cur !== v)) return;
       if (el.tagName === 'SELECT') { if (![].some.call(el.options || [], function (o) { return o.value === v || o.textContent === v; })) return; }
-      el.value = v; n++;
+      el.value = v; if (el.setAttribute) el.setAttribute('data-lm-auto', v); n++;
     });
-    if (!c.entreprise) { var pe = (memo('brhProfil') || {}).entreprise; if (pe && pe.nom) ['c-ent', 'au-ent'].forEach(function (id) { var el = $(id); if (el && !String(el.value || '').trim()) el.value = pe.nom; }); }
     return n;
   }
+  /* entreprise reconnue par SIRET sur cette page (diagnostic, audit mutuelle) : gardée pour toute la session
+     et reportée aussitôt dans les formulaires de contact de la page et des écrans suivants */
+  function retenirEntreprise(d) {
+    if (!d || d.source === 'demo' || !d.nom) return;
+    try {
+      var p = memo('brhProfil') || {};
+      p.entreprise = Object.assign({}, p.entreprise || {}, { source: d.source || '', siren: d.siren || String(d.siret || '').slice(0, 9), siret: d.siret || (p.entreprise || {}).siret || '',
+        nom: d.nom, ville: d.ville || '', cp: d.cp || '', naf: d.naf || '', idcc: d.idcc || '' });
+      if (d.cp && !p.departement) p.departement = (window.BRH_ENT && BRH_ENT.departement) ? BRH_ENT.departement(d.cp) : String(d.cp).slice(0, 2);
+      memo('brhProfil', p);
+    } catch (e) {}
+    preremplir();
+  }
+  if (window.BRH_ENT && typeof BRH_ENT.chercher === 'function' && !BRH_ENT.__lm) {
+    var _ch = BRH_ENT.chercher; BRH_ENT.__lm = true;
+    BRH_ENT.chercher = function () { return _ch.apply(this, arguments).then(function (d) { setTimeout(function () { retenirEntreprise(d); }, 0); return d; }); };
+  }
+  /* formulaires affichés plus tard (contact du diagnostic, dernier écran de l'audit) : préremplis à l'entrée dans un champ */
+  document.addEventListener('focusin', function (e) { if (e.target && e.target.id && CHAMPS[e.target.id]) preremplir(); }, true);
   document.addEventListener('change', function (e) { var t = e.target; if (t && t.id && CHAMPS[t.id]) noter(CHAMPS[t.id], t.value); }, true);
   preremplir();
   /* l'audit mutuelle redessine son écran à chaque étape : préremplissage après chaque rendu */
   if (page === 'audit-mutuelle.html' && typeof render === 'function') { var _render = render; render = function () { var r = _render.apply(this, arguments); preremplir(); return r; }; }
-  window.BRH_CONTACT = { lire: contact, noter: noter, preremplir: preremplir };
+  window.BRH_CONTACT = { lire: contact, noter: noter, preremplir: preremplir, retenirEntreprise: retenirEntreprise };
 
   /* ============================== DEMANDES ENVOYÉES À lead.php ==============================
      Chaque demande est complétée avec ce que le dirigeant a déjà donné dans la session, sans jamais

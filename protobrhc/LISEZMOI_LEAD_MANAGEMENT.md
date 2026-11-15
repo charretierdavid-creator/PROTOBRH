@@ -8,6 +8,7 @@ _Version C 1.11 — 15/11/2026 · parcours du devis mis à jour (estimation par 
 
 
 
+
 Module de gestion des leads du prototype, construit sur les règles du deck « Scénarios de distribution et niveaux de lead » du 14/11/2026 et sur la base MySQL existante (table `leads` de `lead.php`). Il ne modifie ni le socle `protobrh/` ni les versions A et B : tous les fichiers sont dans `protobrhc/`.
 
 ## Ce que fait le module

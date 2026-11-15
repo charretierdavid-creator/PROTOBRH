@@ -1,6 +1,6 @@
 # Versions de protobrhc (version C du portail)
 
-_Version en cours : **C 1.11** — 15/11/2026_
+_Version en cours : **C 1.12** — 15/11/2026_
 
 Règle : chaque fichier porte en première ligne la version du paquet dans laquelle il a changé pour la dernière fois. Le nom du zip reprend la version (`protobrhC_AAAAMMJJ_vX.Y_objet.zip`). Dans le navigateur, la console affiche « Version C X.Y — modules chargés : … » ; le cockpit affiche la version dans son en-tête.
 
@@ -20,6 +20,7 @@ Règle : chaque fichier porte en première ligne la version du paquet dans laque
 | C 1.9 | 15/11/2026 | Cohérence des informations entre écrans : contact partagé, demandes complétées, convention et entreprise transmises entre diagnostic, devis et audit, fin de devis alignée sur le dossier | protobrhC_20261115_v1.9_publication.zip |
 | C 1.10 | 15/11/2026 | Mise en page cohérente avec le site : éléments ajoutés par la version C (e-mail, consentement, « déjà client ? », conventions, suivi du dossier) aux styles du socle | protobrhC_20261115_v1.10_publication.zip |
 | C 1.11 | 15/11/2026 | Devis : e-mail demandé à l’étape « Votre estimation » (« Recevoir mon estimation par e-mail », envoi immédiat) ; « Votre entreprise est-elle déjà cliente ? » en fin de devis ; étape « Votre entreprise » allégée | protobrhC_20261115_v1.11_publication.zip |
+| C 1.12 | 15/11/2026 | Nom de l’entreprise reconnue par SIRET reporté dans tous les formulaires de contact (diagnostic, label, audit, newsletter), y compris quand le SIRET est saisi sur la page même | protobrhC_20261115_v1.12_publication.zip |
 
 ## Version de chaque fichier
 
@@ -37,8 +38,8 @@ Règle : chaque fichier porte en première ligne la version du paquet dans laque
 | `LISEZMOI_LEAD_MANAGEMENT.md` | C 1.11 | parcours du devis mis à jour (estimation par e-mail, « déjà client ? » en fin de devis) |
 | `cockpit-brh.html` | C 1.11 | tableau de bord : e-mails « estimation demandée » |
 | `lm-base.php` | C 1.11 | e-mail « Votre estimation » envoyé à la demande du dirigeant ; e-mail de reprise sans promesse de réponses conservées |
-| `lm-parcours.js` | C 1.11 | devis : e-mail demandé à l’étape « Votre estimation » (Recevoir mon estimation) et non plus à l’étape « Votre entreprise » ; « déjà client ? » en fin de devis |
-| `variante.js` | C 1.11 | version 1.11 |
+| `lm-parcours.js` | C 1.12 | nom de l’entreprise reconnue par SIRET reporté dans tous les formulaires de contact (même page et écrans suivants), newsletter incluse ; e-mail à l’étape Estimation (1.11) |
+| `variante.js` | C 1.12 | version 1.12 ; lm-parcours.js aussi sur la newsletter |
 | `cockpit-brh-demo.js` | C 1.3 | démonstration du cockpit |
 | `connaissances-version.txt` | C 1.3 | connaissances de l’Assistant BRH |
 | `lm-cron.php` | C 1.3 | tâches planifiées |
