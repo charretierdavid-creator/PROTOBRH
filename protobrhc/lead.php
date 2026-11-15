@@ -1,5 +1,5 @@
 <?php
-/* Version C 2.5 — 15/11/2026 · relais vers le module lead management 2.0 (cockpitbrh.monsitedetest.com), protocole inchangé ; repli sur la table leads du socle (2.0) · historique : VERSIONS.md */
+/* Version C 2.6.1 — 16/11/2026 · relais vers le module lead management 2.0 (cockpitbrh.monsitedetest.com) ; si le module refuse ou ne répond pas, repli sur la table leads du socle (plus de file d'attente silencieuse) · historique : VERSIONS.md */
 /* ============================================================================
    lead.php (version C) — reçoit les demandes des dirigeants (devis, rappel, diagnostic, Label BRH,
    audit, newsletter) envoyées par les pages avec  fetch('lead.php', …).
@@ -11,8 +11,9 @@
    1. MODULE BRANCHÉ — LM_HUB_URL et LM_HUB_CLE présents dans le config.php du site :
         la demande est transmise, de serveur à serveur, à collecte.php du module, qui renvoie
         id, jeton, dossier, caisse, canal et lien de suivi. Le suivi d'étape et l'argumentaire de
-        vente passent par le même chemin. Module injoignable : la demande consentie est mise en
-        file d'attente (hors du dossier public si possible) et renvoyée aux appels suivants.
+        vente passent par le même chemin. Module injoignable ou refus (clé inconnue, base du module
+        non configurée) : la demande consentie est enregistrée dans la table « leads » du socle (cas 2)
+        et l'anomalie est écrite dans le journal d'erreurs du serveur (C 2.6.1).
           const LM_HUB_URL = 'https://cockpitbrh.monsitedetest.com/';
           const LM_HUB_CLE = '…';   // clé de ce site, la même que dans LM_CLES du module
    2. MODULE NON BRANCHÉ (repli) — ces constantes sont absentes :
@@ -88,7 +89,6 @@ if ($HUB) {
     foreach (glob($dir . '/*.json.envoi') ?: [] as $f) if (filemtime($f) < time() - 600) @rename($f, substr($f, 0, -6));
   };
 
-  $attente = $attenteDossier();
   $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? ''); $page = (string) ($_SERVER['HTTP_REFERER'] ?? '');
   [$code, $rep] = $envoyer($raw, $ip, $page);
   $joignable = $code >= 200 && $code < 300 && $rep !== null;
@@ -97,20 +97,21 @@ if ($HUB) {
   } elseif ($rep !== null && in_array($code, [400, 405, 413, 429], true)) {
     lead_sortir($rep, $code === 429 ? 429 : 200);
   } elseif (empty($in['action'])) {
-    $c = is_array($in['contact'] ?? null) ? $in['contact'] : (is_array($in['contexte'] ?? null) ? $in['contexte'] : []);
-    $consent = !empty($c['consentement']) || !empty($c['consent']) || !empty($in['consentement']) || !empty($in['consent']);
-    if (!$consent) { lead_sortir(['ok' => false, 'error' => 'Consentement requis : rien n\'a été enregistré.']); exit; }
-    $proteger($attente);
-    $ok = (bool) @file_put_contents($attente . '/' . date('YmdHis') . '-' . bin2hex(random_bytes(6)) . '.json', json_encode(['corps' => $raw, 'ip' => $ip, 'page' => $page]), LOCK_EX);
-    if (!$ok) error_log('lead.php (version C, relais) : file d\'attente impossible dans ' . $attente);
-    lead_sortir($ok ? ['ok' => true, 'en_attente' => true] : ['ok' => false, 'error' => 'Service momentanément indisponible'], $ok ? 200 : 503);
+    /* C 2.6.1 : module injoignable OU refus (403 clé inconnue, 500 base du module non configurée…) → la demande est
+       enregistrée dans la table leads du socle (partie 2 ci-dessous), visible dans admin-leads.php et reprise par le
+       module en mode « base partagée ». Plus de file d'attente silencieuse : avant la 2.6.1, une clé refusée gardait
+       les demandes dans des fichiers jamais renvoyés (et, sous public_html, dans un dossier potentiellement public). */
+    error_log('lead.php (version C, relais) : module lead management indisponible ou refus (HTTP ' . $code . ($rep !== null && isset($rep['error']) ? ' : ' . (string) $rep['error'] : '') . ') — demande enregistrée dans la table leads du socle');
+    $repliHub = true;
   } else {
     lead_sortir(['ok' => false, 'error' => 'Service momentanément indisponible'], 503);
   }
-  if (function_exists('fastcgi_finish_request')) fastcgi_finish_request();
-  elseif (function_exists('litespeed_finish_request')) litespeed_finish_request();
-  if ($joignable) $vider($attente);
-  exit;
+  if (empty($repliHub)) {
+    if (function_exists('fastcgi_finish_request')) fastcgi_finish_request();
+    elseif (function_exists('litespeed_finish_request')) litespeed_finish_request();
+    if ($joignable) $vider($attenteDossier());   // demandes mises en attente par une version antérieure : renvoyées dès que le module répond
+    exit;
+  }
 }
 
 /* =====================================================================================
