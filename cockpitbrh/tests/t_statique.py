@@ -1,4 +1,4 @@
-# Module LM 2.0 — 15/11/2026 · contrôles statiques du module (syntaxe, PHP, sécurité, contrat console ↔ API ↔ démonstration, tables, traçabilité du cahier des charges) · historique : VERSIONS.md
+# Module LM 2.0.1 — 15/11/2026 · contrôles statiques du module (syntaxe, PHP, sécurité, contrat console ↔ API ↔ démonstration, tables, traçabilité du cahier des charges) · historique : VERSIONS.md
 """Usage : python3 -I t_statique.py <dossier module> <dossier sites>
  1. syntaxe : node --check (JS), php -l si PHP est installé, sinon lib/verif_php2.py (requêtes, variables, fonctions, constantes) ;
  2. en-tête « Module LM 2.0 — 15/11/2026 » en tête de chaque fichier et VERSIONS.md à jour ;
@@ -50,15 +50,15 @@ for f in TEXTE:
     if f.startswith('.git'): continue
     t = lire(M, f).split('\n')
     tete = '\n'.join(t[:2])
-    verifier('en-tête de version : ' + f, 'Module LM 2.0 — 15/11/2026' in tete or f == 'robots.txt' or f == '.gitignore', t[0][:120])
+    verifier('en-tête de version : ' + f, re.search(r'Module LM 2\.0(\.\d+)? — \d\d/\d\d/\d{4}', tete) or f == 'robots.txt' or f == '.gitignore', t[0][:120])
 VERS = lire(os.path.join(M, '..'), 'VERSIONS.md') if os.path.isfile(os.path.join(M, '..', 'VERSIONS.md')) else ''
-verifier('VERSIONS.md : version en cours LM 2.0', '_Version en cours : **LM 2.0**' in VERS)
+verifier('VERSIONS.md : version en cours LM 2.0', re.search(r'_Version en cours : \*\*LM 2\.0(\.\d+)?\*\*', VERS))
 for f in TEXTE:
     if f in ('robots.txt', '.gitignore'): continue
     verifier('VERSIONS.md : fichier listé ' + f, '`module/' + f + '`' in VERS, f)
 h = lire(M, 'console.html')
 for src in re.findall(r'<script src="([^"?]+)\?v=([\d.]+)"', h):
-    verifier('console.html charge ' + src[0] + ' (présent, ?v=2.0)', src[0] in F and src[1] == '2.0', src)
+    verifier('console.html charge ' + src[0] + ' (présent, ?v=2.0)', src[0] in F and re.fullmatch(r'2\.0(\.\d+)?', src[1]), src)
 verifier('console.html charge la démonstration seulement avec ?demo=1', "demo=1" in h and 'console-demo.js?v=2.0' in h)
 
 # 3. sécurité

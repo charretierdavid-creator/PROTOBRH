@@ -1,6 +1,6 @@
 # Module lead management BRH — historique des versions
 
-_Version en cours : **LM 2.0** — 15/11/2026_
+_Version en cours : **LM 2.0.1** — 15/11/2026_
 
 Module autonome, déployé sur le sous-domaine `cockpitbrh.monsitedetest.com` (dossier `cockpitbrh/` du dépôt), commun aux sites du portail S (socle `protobrh`), A, B et C. Depuis la LM 2.0, il applique le cahier des charges « Lead management simplifié » v0.3 du 15/11/2026, avec les propositions par défaut des questions Q1 à Q22 retenues par David CHARRETIER.
 
@@ -11,6 +11,7 @@ Module autonome, déployé sur le sous-domaine `cockpitbrh.monsitedetest.com` (d
 | LM 1.0 | 15/11/2026 | Première version autonome, extraite de la version C 1.13 : niveaux abandonniste, chaud, ultra-chaud ; Dossier BRH ; routage A / B ; 6 statuts ; volets filiales ; e-mails journalisés ; trois modes de branchement ; `collecte.php`, `sites/lead.php`, `lm-hub.js`. |
 | LM 1.1 | 15/11/2026 | Adresse du module : `cockpitbrh.monsitedetest.com`. Aucune règle de gestion modifiée. |
 | LM 2.0 | 15/11/2026 | **Lead management simplifié** (cahier des charges v0.3). Trois types de leads (qualifié, ultra-qualifié, demande de devis) et cinq statuts ; console de l’expert BRH réduite à 3 indicateurs, une liste, une fiche et 5 actions ; statut client déclaratif puis vérifié ; aide au choix de l’expert BRH PRO ou du conseiller pro, expliquée ; transferts avec accès ponctuel (lien personnel 14 jours, code par e-mail si l’envoi réel est actif) ; script d’appel et e-mail personnalisé par l’IA (Mistral, sans donnée personnelle) avec repli sans IA ; compte rendu d’appel ; « Mon dossier » du dirigeant en 5 étapes et accès Universels par code SMS (simulé) ; administration : 5 CR pilotes (Touraine Poitou, Pyrénées Gascogne, Centre Loire, Franche-Comté, Paris et Île-de-France) et 17 CR de démonstration, annuaire réel ou fictif, import CSV, envoi réel des e-mails depuis contact@monsitedetest.com (SMTP), modèles, délais, file « à attribuer », journal ; démonstration sans serveur (`console.html?demo=1`). Nouvelles tables `lm2_*` (les tables `lm_*` de la 1.x ne sont ni lues ni modifiées) ; reprise de la table `leads`. Couche parcours 2.0 : offres consultées et pages vues (session, avec consentement), « déjà client ? » au diagnostic et à l’estimation. Relecture indépendante du PHP : 30 remarques corrigées (sécurité du lien de suivi, accès après réouverture, alertes, tâches planifiées). |
+| LM 2.0.1 | 15/11/2026 | Correctif de la console : l’onglet « Annuaire pro et filiales » ne reste plus sur « Chargement… ». Vu par l’administrateur (rattaché à aucune CR), il renvoie vers Administration → Caisses régionales et annuaire ; en cas d’erreur du serveur, le message s’affiche avec « Réessayer ». `console.js` et ses tests uniquement ; aucune règle de gestion modifiée. |
 
 ## Version de chaque fichier
 
@@ -26,7 +27,7 @@ Module autonome, déployé sur le sous-domaine `cockpitbrh.monsitedetest.com` (d
 | `module/lm-cron.php` | LM 2.0 | Tâches planifiées : intégration, relances, alertes, récapitulatif de 8 h, nouvel essai des e-mails |
 | `module/lm-db.php` | LM 2.0 | Connexion MySQL et table des demandes `leads` (inchangée depuis 1.0) |
 | `module/console.html` | LM 2.0 | Console : écrans E1 à E9 (look console v1) |
-| `module/console.js` | LM 2.0 | Application de la console |
+| `module/console.js` | LM 2.0.1 | Application de la console |
 | `module/console-demo.js` | LM 2.0 | Démonstration sans serveur (`console.html?demo=1`), mêmes réponses que l’API |
 | `module/suivi-dossier.html` | LM 2.0 | « Mon dossier » du dirigeant (E5), démonstration `?demo=1` |
 | `module/universels-demo.html` | LM 2.0 | Espace Universels de démonstration (Q10) |

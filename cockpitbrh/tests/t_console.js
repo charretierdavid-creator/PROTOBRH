@@ -1,4 +1,4 @@
-/* Module LM 2.0 — 15/11/2026 · tests de la console avec la démonstration (mêmes réponses que lm2-api.php) : E1 à E9, droits par point de vue, règles de gestion · historique : VERSIONS.md
+/* Module LM 2.0.1 — 15/11/2026 · tests de la console avec la démonstration (mêmes réponses que lm2-api.php) : E1 à E9, droits par point de vue, règles de gestion · historique : VERSIONS.md
    Usage : node t_console.js <dossier module> */
 'use strict';
 const path = require('path');
@@ -120,6 +120,12 @@ const bouton = (v, extra) => ({ getAttribute: k => (k === 'data-v' ? v : (extra 
   verifier('Lead clôturé : actions remplacées par un message (RG-29)', T.dom.ids.fiche.innerHTML.includes('Une nouvelle demande du dirigeant rouvre le dossier') && !T.dom.ids.fiche.innerHTML.includes('>Transférer</button>'));
 
   /* ---------- E6 : annuaire ---------- */
+  /* LM 2.0.1 : erreur du serveur affichée au lieu d'un « Chargement… » sans fin, puis « Réessayer » */
+  { const D = T.ctx.LM2_DEMO, orig = D.appel; ST.ann = null;
+    D.appel = (a, c) => a === 'annuaire' ? Promise.resolve({ ok: false, error: 'Base injoignable (test)' }) : orig.call(D, a, c);
+    C.onglet('annuaire'); await attendre(20); h = T.app();
+    verifier('LM 2.0.1 : erreur de chargement de l’annuaire affichée, pas de « Chargement… » sans fin', h.includes('L’annuaire n’a pas pu être chargé : Base injoignable (test)') && h.includes('data-v="annuaire">Réessayer') && !h.includes('Chargement…'));
+    D.appel = orig; }
   C.onglet('annuaire'); await attendre(20); h = T.app();
   verifier('E6 : experts BRH PRO par département avec périmètre', h.includes('Périmètre : Eure-et-Loir (28)') && h.includes('Périmètre : Loir-et-Cher (41)'));
   verifier('E6 : agences des grandes villes, 2 conseillers pro par agence', ['Agence de Chartres', 'Agence de Dreux', 'Agence de Châteaudun', 'Agence de Blois', 'Agence de Vendôme', 'Agence de Romorantin'].every(a => h.includes(a)));
@@ -156,6 +162,9 @@ const bouton = (v, extra) => ({ getAttribute: k => (k === 'data-v' ? v : (extra 
   /* ---------- E8, E9 : administrateur ---------- */
   T.C.CHANGES.perspective({ value: 'admin' }); await attendre(40);
   verifier('Admin : session administrateur, onglet Administration', ST.s.role === 'admin' && T.dom.ids.tabsIn.innerHTML.includes('Administration'));
+  /* LM 2.0.1 : l'administrateur n'a pas de CR : l'onglet annuaire renvoie vers l'administration */
+  ST.ann = null; C.onglet('annuaire'); await attendre(20); h = T.app();
+  verifier('LM 2.0.1 : annuaire vu par l’administrateur = renvoi vers Administration, pas de « Chargement… » sans fin', h.includes('Administration → Caisses régionales et annuaire') && h.includes('data-v="admin">Ouvrir l’administration') && !h.includes('Chargement…'));
   C.onglet('admin'); await attendre(40); h = T.app();
   verifier('E8 : liste des CR avec sigles PILOTE et DÉMO', (h.match(/<span class="sig pilote">PILOTE<\/span>/g) || []).length >= 5 && h.includes('<span class="sig demo">DÉMO</span>'));
   verifier('Q15 : les 5 CR pilotes', ['Touraine Poitou', 'Pyrénées Gascogne', 'Centre Loire', 'Franche-Comté', 'Paris et Île-de-France'].every(n => new RegExp(n + '<span class="sig pilote">').test(h)));
