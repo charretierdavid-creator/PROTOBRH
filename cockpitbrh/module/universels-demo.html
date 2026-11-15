@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<!-- Module LM 2.0 — 15/11/2026 · espace Universels de démonstration (Amundi / CA Titres), ouvert après le code SMS de « Mon dossier » (RG-43, Q10 : espace simulé sur le prototype) · historique : VERSIONS.md -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Espace Universels — démonstration</title>
+<style>
+:root{--amundi:#2B4C7E;--amundi-s:#E6ECF5;--ink:#233029;--slate:#5c6b64;--line:#e1e6ee}
+*{box-sizing:border-box}body{margin:0;font:15px/1.55 "Inter","Avenir Next","Segoe UI",system-ui,sans-serif;color:var(--ink);background:#F6F8FC}
+.top{background:var(--amundi);color:#fff}.top .w{display:flex;align-items:center;gap:12px;height:64px}.top b{font:700 1.1rem "Poppins","Avenir Next",sans-serif}.top span{margin-left:auto;font-size:.84rem;opacity:.85}
+.w{max-width:900px;margin:0 auto;padding:0 20px}main{padding:28px 0 60px}
+h1{font:700 1.6rem "Poppins","Avenir Next",sans-serif;color:var(--amundi);margin:0 0 6px}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0}
+.card h2{font:600 1rem "Poppins","Avenir Next",sans-serif;color:var(--amundi);margin:0 0 10px}
+.demo{background:#FBF1DE;color:#6B4D00;border:1px solid #EED7AE;border-radius:10px;padding:10px 14px;font-size:.88rem}
+ol{margin:0;padding-left:20px}li{margin:4px 0}
+a{color:var(--amundi);font-weight:600}
+</style>
+</head>
+<body>
+<div class="top"><div class="w"><b>Universels</b><span>Amundi / CA Titres · épargne salariale et retraite</span></div></div>
+<main><div class="w">
+<h1>Bienvenue dans votre espace Universels</h1>
+<p class="demo">Démonstration du prototype : cet espace est simulé. L’espace réel, l’envoi du SMS et le parcours d’adhésion sont à cadrer avec Amundi / CA Titres (question Q10 du cahier des charges).</p>
+<div class="card"><h2>Votre vérification est faite</h2><p style="margin:0">Le code reçu par SMS a confirmé votre identité. Dans l’espace réel, vous retrouverez ici votre contrat d’épargne salariale et de retraite collective, les documents à signer et le suivi des versements.</p></div>
+<div class="card"><h2>Prochaines étapes avec votre expert</h2><ol><li>Choisir la formule (PEI, PER COL-I ou Convergence) avec votre expert Banque des Ressources Humaines.</li><li>Signer le contrat en ligne dans Universels.</li><li>Informer vos salariés : ils reçoivent leurs accès personnels.</li></ol></div>
+<p><a id="retour" href="suivi-dossier.html?demo=1">Revenir à mon dossier</a></p>
+<script>(function () { var q = new URLSearchParams(location.search), d = q.get('d') || '', j = q.get('j') || '';
+  if (/^BRH-\d{2}-\d{6}$/.test(d) && /^[0-9a-f]{32}$/.test(j)) document.getElementById('retour').href = 'suivi-dossier.html?d=' + encodeURIComponent(d) + '&j=' + j; })();</script>
+</div></main>
+</body>
+</html>

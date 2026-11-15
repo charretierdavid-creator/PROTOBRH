@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<!-- Module LM 2.0 — 15/11/2026 · « Mon dossier » du dirigeant : frise en 5 étapes, interlocuteur, rendez-vous, e-mails reçus, rappel, relances, accès Universels par code SMS (E5) · historique : VERSIONS.md -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Mon dossier — Banque des Ressources Humaines</title>
+<!-- Lien personnel reçu par e-mail (E1, E3) : suivi-dossier.html?d=BRH-26-000123&j=<jeton>. Données : lm2-suivi.php.
+     Le dirigeant ne voit jamais le type de lead, le délai interne, le segment, le statut client ni les notes internes (RG-42).
+     Démonstration : suivi-dossier.html?demo=1 (dossier fictif, code SMS simulé). -->
+<style>
+:root{--green:#065145;--green-hover:#02392f;--lime:#8fb822;--mint-2:#eef4ef;--ink:#233029;--slate:#5c6b64;--line:#e7ece9;--line-2:#dfe6e2;--gray-bg:#f6f8f7;--amundi:#2B4C7E;--amundi-s:#E6ECF5;
+  --fh:'Poppins',"Avenir Next","Segoe UI",system-ui,sans-serif;--fb:'Inter',"Avenir Next","Segoe UI",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--fb);color:var(--ink);background:var(--gray-bg);line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2{font-family:var(--fh);margin:0;line-height:1.15;color:var(--green)}
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+:focus-visible{outline:3px solid var(--lime);outline-offset:2px;border-radius:6px}
+.header{background:#fff;border-bottom:1px solid var(--line)} .header .wrap{display:flex;align-items:center;gap:14px;height:72px}
+.header img{height:44px;width:auto} .header span{margin-left:auto;font-size:.86rem;color:var(--slate)}
+main{padding:28px 0 60px}
+h1{font-size:clamp(1.5rem,3vw,2rem)}
+.ref{color:var(--slate);font-size:.92rem;margin:6px 0 20px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin-bottom:16px;box-shadow:0 2px 12px rgba(6,81,69,.06)}
+.card h2{font-size:1.05rem;font-weight:600;margin-bottom:12px}
+.frise{display:grid;grid-template-columns:repeat(5,1fr);margin:8px 0 4px}
+.frise div{text-align:center;position:relative;font-size:.82rem;color:var(--slate);padding-top:30px}
+.frise div::before{content:"";position:absolute;top:6px;left:50%;transform:translateX(-50%);width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid var(--line-2);z-index:1}
+.frise div::after{content:"";position:absolute;top:14px;left:-50%;width:100%;height:3px;background:var(--line-2)}
+.frise div:first-child::after{display:none}
+.frise div.ok{color:var(--green);font-weight:600}.frise div.ok::before{background:var(--green);border-color:var(--green)}.frise div.ok::after{background:var(--green)}
+.frise div.cur::before{background:var(--lime);border-color:var(--lime);box-shadow:0 0 0 5px rgba(143,184,34,.22)}
+@media(max-width:640px){.frise{grid-template-columns:1fr;gap:10px}.frise div{text-align:left;padding:0 0 0 32px}.frise div::before{left:9px;top:2px}.frise div::after{display:none}}
+dl{display:grid;grid-template-columns:190px 1fr;gap:8px 16px;margin:0;font-size:.94rem}dt{color:var(--slate)}dd{margin:0;font-weight:600}
+@media(max-width:640px){dl{grid-template-columns:1fr}dd{margin-bottom:6px}}
+.btn{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--fh);font-weight:600;font-size:.95rem;border-radius:12px;padding:.8rem 1.3rem;border:1.5px solid transparent;cursor:pointer;text-decoration:none}
+.btn-primary{background:var(--green);color:#fff}.btn-primary:hover{background:var(--green-hover)}
+.btn-outline{background:#fff;color:var(--green);border-color:var(--line-2)}.btn-outline:hover{border-color:var(--green)}
+.btn-am{background:var(--amundi);color:#fff}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.acts{display:flex;gap:10px;flex-wrap:wrap}
+.field{display:grid;gap:6px;margin:10px 0;max-width:420px} .field label{font-weight:600;font-size:.86rem}
+.field input,.field select{font:inherit;padding:.7rem .85rem;border:1.5px solid var(--line-2);border-radius:10px;background:#fff}
+.code{letter-spacing:.4em;font-size:1.3rem;text-align:center;max-width:220px}
+.msg{background:var(--mint-2);border-radius:12px;padding:12px 16px;color:var(--green);font-weight:600;margin:10px 0 0}
+.err{color:#b3261e;font-size:.9rem;margin:8px 0 0}
+.note{color:var(--slate);font-size:.84rem;margin:6px 0 0}
+.mails{list-style:none;margin:0;padding:0;font-size:.9rem} .mails li{display:flex;gap:12px;padding:7px 0;border-bottom:1px solid var(--line)} .mails li span{color:var(--slate);min-width:150px}
+.uni{border-color:#C9D3E6;background:linear-gradient(180deg,#fff, #F6F8FC)} .uni h2{color:var(--amundi)}
+.demo{background:#FBF1DE;color:#6B4D00;font-size:.84rem;padding:8px 0;border-bottom:1px solid #EED7AE}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="demo hidden" id="bandeDemo"><div class="wrap">Démonstration : dossier fictif, aucun SMS ni e-mail envoyé.</div></div>
+<header class="header"><div class="wrap"><img src="logo-brh.png" alt="Banque des Ressources Humaines — Crédit Agricole"><span>Mon dossier</span></div></header>
+<main><div class="wrap" id="app"><p>Chargement de votre dossier…</p></div></main>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var q = new URLSearchParams(location.search), DEMO = q.get('demo') === '1';
+  var REF = q.get('d') || '', JT = q.get('j') || '';
+  var D = null, attente = 0, minuteur = null;
+  function lire(s) { var m = String(s || '').match(/^(\d{4})-(\d\d)-(\d\d)[ T](\d\d):(\d\d)/); return m ? new Date(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]) : new Date(s); }
+  function date(s) { if (!s) return ''; var d = lire(s); return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) + ' à ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); }
+  function jour(s) { var d = lire(s); return d.toLocaleDateString('fr-FR') + ' ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); }
+  /* ---------- démonstration ---------- */
+  var DEMO_D = { reference: 'BRH-26-000142', cree_le: '2026-11-12 10:12:00', entreprise: 'Atelier Menuiserie Roy', prenom: 'Bruno', etape: 3, etapes: ['Demande reçue', 'Prise en charge', 'Étude', 'Proposition', 'Finalisé'],
+    caisse: 'Crédit Agricole Val de France', interlocuteur: { nom: 'Manon Guillot', role: 'Conseiller professionnel', agence: 'Agence de Dreux', telephone: null, email: null },
+    rdv: { le: '2026-11-19 10:00:00', note: 'En agence de Dreux' }, solutions: ['Épargne salariale', 'Retraite collective'], relances: true, rappel: false, telephone_connu: true, clos: false,
+    emails: [{ le: '2026-11-13 09:02:00', objet: 'Votre demande BRH-26-000142 : votre interlocuteur', envoye: false }, { le: '2026-11-12 10:12:00', objet: 'Votre demande BRH-26-000142 est bien reçue', envoye: false }],
+    universels: { propose: true, ouvert: true, mobile: '06 •• •• •• 78', simule: true } };
+  var demoOtp = null;
+  function appel(corps) {
+    if (DEMO) {
+      var a = corps && corps.action;
+      if (!a) return Promise.resolve({ ok: true, dossier: JSON.parse(JSON.stringify(DEMO_D)) });
+      if (a === 'stop') { DEMO_D.relances = false; return Promise.resolve({ ok: true, message: 'C’est noté : vous ne recevrez plus de relances. Votre dossier reste consultable ici.' }); }
+      if (a === 'rappel') { DEMO_D.rappel = true; return Promise.resolve({ ok: true, message: 'C’est noté : votre demande de rappel est transmise à votre expert.' }); }
+      if (a === 'universels_code') { demoOtp = { code: String(Math.floor(100000 + Math.random() * 900000)), essais: 0, exp: Date.now() + 600000 }; return Promise.resolve({ ok: true, masque: DEMO_D.universels.mobile, code_demo: demoOtp.code }); }
+      if (a === 'universels_verifier') {
+        if (!demoOtp || Date.now() > demoOtp.exp) return Promise.resolve({ ok: false, error: 'Code expiré : demandez un nouveau code.' });
+        if (demoOtp.essais >= 3) return Promise.resolve({ ok: false, error: 'Trois essais au plus : demandez un nouveau code.' });
+        if (String(corps.code).replace(/\D/g, '') !== demoOtp.code) { demoOtp.essais++; return Promise.resolve({ ok: false, error: 'Code incorrect (' + (3 - demoOtp.essais) + ' essai(s) restant(s)).' }); }
+        return Promise.resolve({ ok: true, url: 'universels-demo.html?demo=1' });
+      }
+    }
+    var o = corps ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Object.assign({ d: REF, j: JT }, corps)) } : {};
+    return fetch(corps ? 'lm2-suivi.php' : 'lm2-suivi.php?d=' + encodeURIComponent(REF) + '&j=' + encodeURIComponent(JT), o).then(function (r) { return r.json(); }).catch(function () { return { ok: false, error: 'Service momentanément indisponible : réessayez plus tard.' }; });
+  }
+  function charger() {
+    appel(null).then(function (r) { if (!r.ok) { $('app').innerHTML = '<h1>Mon dossier</h1><div class="card"><p class="err">' + esc(r.error || 'Dossier introuvable.') + '</p></div>'; return; } D = r.dossier; rendre(); });
+  }
+  function rendre() {
+    var d = D, i = d.interlocuteur;
+    var h = '<h1>' + (d.prenom ? 'Bonjour ' + esc(d.prenom) + ', voici votre dossier' : 'Votre dossier') + '</h1><p class="ref">Dossier ' + esc(d.reference) + (d.entreprise ? ' · ' + esc(d.entreprise) : '') + ' · demande du ' + esc(jour(d.cree_le)) + (d.caisse ? ' · ' + esc(d.caisse) : '') + '</p>';
+    h += '<div class="card"><h2>Où en est votre demande ?</h2><div class="frise">' + d.etapes.map(function (e, k) { return '<div class="' + (k + 1 < d.etape ? 'ok' : (k + 1 === d.etape ? 'ok cur' : '')) + '">' + esc(e) + '</div>'; }).join('') + '</div></div>';
+    h += '<div class="card"><h2>Votre interlocuteur</h2>' + (i ? '<dl><dt>Nom</dt><dd>' + esc(i.nom) + '</dd><dt>Rôle</dt><dd>' + esc(i.role) + '</dd>' + (i.agence ? '<dt>Agence</dt><dd>' + esc(i.agence) + '</dd>' : '') + (d.caisse ? '<dt>Caisse régionale</dt><dd>' + esc(d.caisse) + '</dd>' : '') +
+      (i.telephone ? '<dt>Téléphone</dt><dd>' + esc(i.telephone) + '</dd>' : '') + '</dl>' : '<p class="note" style="margin:0">Un expert Banque des Ressources Humaines' + (d.caisse ? ' du ' + esc(d.caisse) : '') + ' étudie votre demande. Son nom apparaîtra ici dès qu’il la prendra en charge.</p>') +
+      (d.rdv ? '<p class="msg">Rendez-vous le ' + esc(date(d.rdv.le)) + (d.rdv.note ? ' · ' + esc(d.rdv.note) : '') + '</p>' : '') + '</div>';
+    if (d.universels && d.universels.propose) h += '<div class="card uni" id="uni"><h2>Votre espace Universels (Amundi / CA Titres)</h2>' + (d.universels.ouvert ?
+      '<p class="note" style="margin:0 0 10px">Épargne salariale et retraite : accédez à votre espace dédié. Pour votre sécurité, un code à 6 chiffres est envoyé par SMS au mobile de votre dossier' + (d.universels.mobile ? ' (' + esc(d.universels.mobile) + ')' : '') + '.</p><div id="uniZone"><button class="btn btn-am" id="uniBtn">Accéder à mon espace Universels</button></div>'
+      : '<p class="note" style="margin:0">L’accès à votre espace s’ouvre dès que votre expert a pris en charge votre demande.</p>') + '</div>';
+    h += '<div class="card"><h2>Vous souhaitez échanger ?</h2><div class="acts">' + (d.clos ? '' : '<button class="btn btn-primary" id="rapBtn"' + (d.rappel ? ' disabled' : '') + '>' + (d.rappel ? 'Rappel demandé' : 'Demander à être rappelé') + '</button>') +
+      (d.relances ? '<button class="btn btn-outline" id="stopBtn">Ne plus recevoir les relances</button>' : '') + '</div><div id="rapZone"></div><p id="actMsg" class="msg hidden" role="status"></p>' +
+      '<p class="note">Pour changer de numéro de téléphone, adressez-vous à votre interlocuteur : il ne se modifie pas depuis cette page, pour votre sécurité.</p></div>';
+    h += '<div class="card"><h2>E-mails reçus</h2>' + (d.emails.length ? '<ul class="mails">' + d.emails.map(function (e) { return '<li><span>' + esc(jour(e.le)) + '</span>' + esc(e.objet) + '</li>'; }).join('') + '</ul>' : '<p class="note" style="margin:0">Aucun e-mail pour le moment.</p>') + '</div>';
+    h += '<p class="note">Ce lien est personnel : ne le transférez pas. Il reste valable pendant la vie de votre dossier et 30 jours après sa clôture. Vos données sont utilisées par le Crédit Agricole et sa Caisse régionale pour traiter votre demande.</p>';
+    $('app').innerHTML = h;
+    var b = $('rapBtn'); if (b) b.addEventListener('click', rappel);
+    var s = $('stopBtn'); if (s) s.addEventListener('click', function () { appel({ action: 'stop' }).then(message); });
+    var u = $('uniBtn'); if (u) u.addEventListener('click', demanderCode);
+  }
+  function message(r) { var m = $('actMsg'); m.classList.remove('hidden'); m.className = r.ok ? 'msg' : 'err'; m.textContent = r.ok ? r.message : r.error; if (r.ok) setTimeout(charger, 1800); }
+  function rappel() {
+    var z = $('rapZone');
+    z.innerHTML = (D.telephone_connu ? '' : '<div class="field"><label for="rapTel">Votre numéro de téléphone</label><input id="rapTel" type="tel" autocomplete="tel"></div>') +
+      '<div class="field"><label for="rapCr">Moment préféré</label><select id="rapCr"><option value="">Indifférent</option><option>Le matin</option><option>Entre midi et deux</option><option>L’après-midi</option><option>En fin de journée</option></select></div><button class="btn btn-primary" id="rapOk">Envoyer ma demande</button>';
+    $('rapOk').addEventListener('click', function () { appel({ action: 'rappel', telephone: ($('rapTel') || {}).value || '', creneau: $('rapCr').value }).then(function (r) { if (r.ok) z.innerHTML = ''; message(r); }); });
+  }
+  /* RG-43 : code à 6 chiffres par SMS, 10 minutes, 3 essais, renvoi après 30 secondes */
+  function demanderCode() {
+    var z = $('uniZone');
+    appel({ action: 'universels_code' }).then(function (r) {
+      if (!r.ok) { z.innerHTML = '<p class="err">' + esc(r.error) + '</p><button class="btn btn-am" id="uniBtn">Réessayer</button>'; $('uniBtn').addEventListener('click', demanderCode); return; }
+      z.innerHTML = '<p class="note" style="margin:0">Code envoyé par SMS au ' + esc(r.masque) + '. Il est valable 10 minutes.</p>' + (r.code_demo ? '<p class="note">Prototype : SMS simulé, votre code est <b>' + esc(r.code_demo) + '</b>.</p>' : '') +
+        '<div class="field"><label for="uniCode">Code reçu par SMS</label><input id="uniCode" class="code" inputmode="numeric" maxlength="6" autocomplete="one-time-code"></div>' +
+        '<div class="acts"><button class="btn btn-am" id="uniOk">Valider</button><button class="btn btn-outline" id="uniRenvoi" disabled>Renvoyer le code (30 s)</button></div><p class="err hidden" id="uniErr" role="alert"></p>';
+      attente = 30; clearInterval(minuteur);
+      minuteur = setInterval(function () { attente--; var rb = $('uniRenvoi'); if (!rb) return clearInterval(minuteur); if (attente <= 0) { rb.disabled = false; rb.textContent = 'Renvoyer le code'; clearInterval(minuteur); } else rb.textContent = 'Renvoyer le code (' + attente + ' s)'; }, 1000);
+      $('uniRenvoi').addEventListener('click', demanderCode);
+      $('uniOk').addEventListener('click', function () {
+        appel({ action: 'universels_verifier', code: $('uniCode').value }).then(function (v) {
+          if (v.ok) { location.href = v.url; return; }
+          var e = $('uniErr'); e.textContent = v.error; e.classList.remove('hidden');
+        });
+      });
+    });
+  }
+  if (DEMO) $('bandeDemo').classList.remove('hidden');
+  if (!DEMO && (!/^BRH-\d{2}-\d{6}$/.test(REF) || !/^[0-9a-f]{32}$/.test(JT))) $('app').innerHTML = '<h1>Mon dossier</h1><div class="card"><p class="err">Lien de suivi incomplet : ouvrez le lien reçu par e-mail.</p></div>';
+  else charger();
+})();
+</script>
+</body>
+</html>
