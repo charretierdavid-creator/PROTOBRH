@@ -1,5 +1,5 @@
 <?php
-/* Version C 1.9 — 15/11/2026 · réponse : Caisse régionale et canal du dossier · historique : VERSIONS.md */
+/* Version C 1.13 — 15/11/2026 · action « argumentaire » : synthèse de l’IA rattachée au dossier ; Caisse régionale et canal dans la réponse (1.9) · historique : VERSIONS.md */
 /* ============================================================================
    lead.php — enregistre les demandes des dirigeants (leads) dans MySQL.
    Appelé par : devis en ligne (devis, rappel expert), diagnostic RH (contact),
@@ -41,6 +41,18 @@ if (($in['action'] ?? '') === 'etape') {
       if ($c->get_result()->fetch_assoc()) { require_once __DIR__ . '/lm-base.php'; $lm = lm_db(); if ($lm) lm_etape($lm, $id, $et); } } catch (\Throwable $x) {}
   }
   echo json_encode(['ok' => $okEt]); exit;
+}
+
+/* ---------- argumentaire de vente préparé par l'IA (version C) : rattaché au dossier du lead, visible dans le cockpit ---------- */
+if (($in['action'] ?? '') === 'argumentaire') {
+  $id = (int) ($in['id'] ?? 0); $jeton = (string) ($in['jeton'] ?? '');
+  if ($id < 1 || !preg_match('/^[0-9a-f]{32}$/', $jeton) || !is_array($in['argumentaire'] ?? null)) { echo json_encode(['ok' => false, 'error' => 'Requête invalide']); exit; }
+  $db = brh_leads_db(); if (!$db) { http_response_code(500); echo json_encode(['ok' => false]); exit; }
+  $c = $db->prepare('SELECT id FROM leads WHERE id = ? AND jeton = ?'); $c->bind_param('is', $id, $jeton); $c->execute();
+  if (!$c->get_result()->fetch_assoc()) { echo json_encode(['ok' => false, 'error' => 'Demande inconnue']); exit; }
+  $okA = false;
+  try { require_once __DIR__ . '/lm-base.php'; $lm = lm_db(); if ($lm) $okA = lm_argumentaire($lm, $id, $in['argumentaire'], (string) ($in['source'] ?? '')); } catch (\Throwable $x) {}
+  echo json_encode(['ok' => $okA]); exit;
 }
 
 /* ---------- lecture tolérante : les formulaires du portail n'utilisent pas tous les mêmes noms ---------- */

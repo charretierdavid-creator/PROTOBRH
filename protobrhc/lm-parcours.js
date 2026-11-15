@@ -1,4 +1,4 @@
-/* Version C 1.12 — 15/11/2026 · nom de l’entreprise reconnue par SIRET reporté dans tous les formulaires de contact (même page et écrans suivants), newsletter incluse ; e-mail à l’étape Estimation (1.11) · historique : VERSIONS.md */
+/* Version C 1.13 — 15/11/2026 · argumentaire de vente transmis au dossier (BRH_LM.argumentaire) ; nom de l’entreprise dans tous les formulaires (1.12) · historique : VERSIONS.md */
 /* ==============================================================
    LEAD MANAGEMENT — remontée des leads depuis le parcours (version C, protobrhc)
    Surcouche du socle, sans modifier les pages. Niveaux du deck du 14/11/2026 :
@@ -104,6 +104,21 @@
   if (page === 'audit-mutuelle.html' && typeof render === 'function') { var _render = render; render = function () { var r = _render.apply(this, arguments); preremplir(); return r; }; }
   window.BRH_CONTACT = { lire: contact, noter: noter, preremplir: preremplir, retenirEntreprise: retenirEntreprise };
 
+  /* ============================== ARGUMENTAIRE DE VENTE POUR L'EXPERT ==============================
+     La synthèse préparée par l'IA (profil, questions à poser, pièces à demander, angle d'approche) n'est plus
+     affichée au dirigeant : elle est rattachée à son dossier et apparaît dans le cockpit BRH, rubrique
+     « Argumentaire de vente ». Décision du 15/11/2026. */
+  window.BRH_LM = window.BRH_LM || {};
+  window.BRH_LM.argumentaire = function (s, source) {
+    if (!s || typeof s !== 'object' || !window.BRH_LM_DERNIER) return Promise.resolve(false);
+    return Promise.race([window.BRH_LM_DERNIER, new Promise(function (r) { setTimeout(function () { r(null); }, 3000); })]).then(function (j) {
+      if (!j || !j.ok || !j.id || !j.jeton) return false;
+      return poster({ action: 'argumentaire', id: j.id, jeton: j.jeton, source: source || page,
+        argumentaire: { titre: s.titre || '', synthese: s.synthese || [], questions: s.questions || [], pieces: s.pieces || [], angle: s.angle || '' } })
+        .then(function (r) { return !!(r && r.ok); });
+    });
+  };
+
   /* ============================== DEMANDES ENVOYÉES À lead.php ==============================
      Chaque demande est complétée avec ce que le dirigeant a déjà donné dans la session, sans jamais
      remplacer une valeur saisie : entreprise reconnue (raison sociale, SIRET, code postal, ville),
@@ -138,7 +153,11 @@
         if (String(u).indexOf('lead.php') === 0 && o && typeof o.body === 'string') {
           var b = completer(JSON.parse(o.body)); o = Object.assign({}, o, { body: JSON.stringify(b) });
           var p = _f0.call(this, u, o);
-          if (b && b.type === 'devis') window.BRH_LM_REPONSE = p.then(function (r) { return r.clone().json(); }).catch(function () { return null; });
+          if (b && !b.action) {
+            var rep = p.then(function (r) { return r.clone().json(); }).catch(function () { return null; });
+            window.BRH_LM_DERNIER = rep;                     // dernière demande : identifiant et jeton du lead
+            if (b.type === 'devis') window.BRH_LM_REPONSE = rep;
+          }
           return p;
         }
       } catch (e) {}

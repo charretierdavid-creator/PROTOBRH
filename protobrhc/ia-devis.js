@@ -1,4 +1,4 @@
-/* Version C 1.9 — 15/11/2026 · fin de devis : référence du dossier, Caisse régionale et e-mail identiques au lead management · historique : VERSIONS.md */
+/* Version C 1.13 — 15/11/2026 · synthèse pour l’expert retirée de l’écran du dirigeant et transmise au cockpit ; fin de devis alignée sur le dossier (1.9) · historique : VERSIONS.md */
 /* ==============================================================
    IA DU PARCOURS — page Devis en ligne (version C du test A/B, protobrhc)
    Surcouche de devis.html du socle (S, compute, RH, renderEstimation,
@@ -163,10 +163,10 @@
         + 'Bonjour' + (contact.prenom ? ' ' + esc(contact.prenom) : '') + ',<br>Votre demande de devis est bien reçue (référence ' + esc(refDossier) + ').<br>Votre expert Banque des Ressources Humaines du <b>' + esc(cr.nom) + '</b> vous rappelle pour finaliser votre devis, avec votre dossier sous les yeux : vous n’aurez rien à ressaisir.'
         + (lm.suivi ? '<br>Suivre votre dossier : <a href="' + esc(lm.suivi) + '">lien de suivi</a>' : '')
         + (worklife ? '<br>Vos avantages salariés Worklife peuvent être signés en ligne dès aujourd’hui (signature électronique).' : '') + '</div>'
-        + '<div class="ia-expert"><h4>Ce que reçoit l’expert · ' + esc(s.titre || '') + '</h4>'
-        + '<div class="k">Synthèse</div>' + IA.list(s.synthese) + '<div class="k">Questions à poser</div>' + IA.list(s.questions)
-        + '<div class="k">Pièces à demander</div>' + IA.list(s.pieces) + (s.angle ? '<div class="k">Angle d’approche</div><p style="margin:2px 0 0">' + esc(s.angle) + '</p>' : '') + '</div>'
-        + IA.source(r.source) + '<p class="ia-ai-note">' + (lm.dossier ? 'Dossier ' + esc(lm.dossier) + ' · devis ' + esc(l.reference || '') + ' · le nom de l’expert est communiqué dès sa prise en charge.' : 'Aperçu de démonstration : le nom de l’expert est attribué par la Caisse régionale ; table département → Caisse à valider.') + '</p></div>';
+        + '<p class="ia-ai-note">Votre expert reçoit votre devis et une synthèse préparée pour l’échange : vous n’aurez rien à ressaisir.</p>'
+        + '<p class="ia-ai-note">' + (lm.dossier ? 'Dossier ' + esc(lm.dossier) + ' · devis ' + esc(l.reference || '') + ' · le nom de l’expert est communiqué dès sa prise en charge.' : 'Aperçu de démonstration : le nom de l’expert est attribué par la Caisse régionale ; table département → Caisse à valider.') + '</p></div>';
+      /* synthèse détaillée (questions, pièces, angle) : transmise au cockpit de l'expert, plus affichée au dirigeant */
+      if (window.BRH_LM && BRH_LM.argumentaire) BRH_LM.argumentaire(s, 'devis');
       IA.track('ia_lead_synthese', { niveau: nv.lib, source: r.source, page: 'devis' });
     });
   }

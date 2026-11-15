@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Version C 1.11 — 15/11/2026 · tableau de bord : e-mails « estimation demandée » · historique : VERSIONS.md -->
+<!-- Version C 1.13 — 15/11/2026 · fiche : rubrique « Argumentaire de vente » (synthèse, questions à poser, pièces à demander, angle d’approche) · historique : VERSIONS.md -->
 <html lang="fr">
 <head>
 <meta charset="utf-8">
@@ -136,6 +136,8 @@ dl.kv{display:grid;grid-template-columns:180px 1fr;gap:5px 16px;margin:0;font-si
 dl.kv dt{color:var(--v-grey)} dl.kv dd{margin:0;color:var(--v-deep);font-weight:600}
 .box{border:1px solid var(--v-line);border-radius:8px;padding:12px 16px;margin-bottom:10px}
 .box h4{margin:0 0 8px;font:600 .9rem var(--fh);color:var(--green)}
+.box.arg{background:var(--v-mist2);border-color:var(--v-line)}.box.arg ul{margin:2px 0 8px;padding-left:18px;font-size:.86rem;color:var(--v-slate)}.box.arg li{margin:2px 0}
+.arg-t{margin:0 0 6px;font-weight:600;color:var(--v-deep)}.arg-k{font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--v-grey);margin-top:6px}.arg-a{margin:2px 0 0;font-size:.86rem;color:var(--v-slate)}
 /* historique */
 .hist ol{list-style:none;margin:0;padding:0;font-size:.84rem}
 .hist li{display:grid;grid-template-columns:96px 150px 1fr;gap:10px;padding:7px 0;border-bottom:1px dashed var(--v-mist)}
@@ -301,7 +303,7 @@ function render(){
   var bandes = '';
   if (ST.demo) bandes += '<div class="band demo"><div class="wrap">Mode démonstration : données fictives en mémoire, aucun e-mail envoyé. Les règles de gestion sont celles du serveur.</div></div>';
   else if (!ST.envoi) bandes += '<div class="band"><div class="wrap">E-mails générés et journalisés, envoi désactivé (LM_EMAIL_ENVOI dans config.php).' + (ST.redir ? ' Redirection de test active.' : '') + '</div></div>';
-  app.innerHTML = '<header class="pbar"><div class="wrap"><b>PORTAIL BRH <i>15C</i></b><span class="s">Cockpit BRH · lead management, version C 1.11</span>' +
+  app.innerHTML = '<header class="pbar"><div class="wrap"><b>PORTAIL BRH <i>15C</i></b><span class="s">Cockpit BRH · lead management, version C 1.13</span>' +
     '<div class="who"><span><b>' + esc(u.nom) + '</b> <span class="r">· ' + esc(roleLib) + '</span></span><button type="button" id="sortir">Se déconnecter</button></div></div></header>' +
     '<nav class="tabs" aria-label="Vues"><div class="wrap" role="tablist">' + vues.map(function(v){ return '<button type="button" role="tab" data-vue="' + v[0] + '" aria-selected="' + (ST.vue === v[0]) + '">' + v[1] + (v[2] ? '<span class="n" title="dossiers en retard">' + v[2] + '</span>' : '') + '</button>'; }).join('') + '</div></nav>' + bandes +
     '<main id="main"><div class="wrap">' + ({ file:vueFile, tableau:vueTableau, distribution:vueDistribution, emails:vueEmails, param:vueParam }[ST.vue] || vueFile)() + '</div></main>';
@@ -322,7 +324,7 @@ function renderLogin(){
     [['national', 'Console nationale (équipe projet)'], ['tp.expert', 'J. Marchand — experte BRH, Touraine Poitou'], ['av.expert', 'L. Garnier — expert BRH, Atlantique Vendée'],
      ['caa.prevoyance', 'CA Assurances — Prévis'], ['amundi.universels', 'Amundi / CA Titres — Universels'], ['worklife', 'Worklife']].map(function(x){
       return '<button type="button" class="btn" data-demo="' + x[0] + '">' + esc(x[1]) + '</button>'; }).join('') + '</div>' : '';
-  app.innerHTML = '<header class="pbar"><div class="wrap"><b>PORTAIL BRH <i>15C</i></b><span class="s">Cockpit BRH · lead management, version C 1.11</span></div></header><main><div class="card login"><h1>Cockpit BRH</h1><p class="lede">Lead management du portail Banque des RH : file des dossiers par niveau de lead, routage vers la Caisse régionale, suivi des volets filiales.</p>' +
+  app.innerHTML = '<header class="pbar"><div class="wrap"><b>PORTAIL BRH <i>15C</i></b><span class="s">Cockpit BRH · lead management, version C 1.13</span></div></header><main><div class="card login"><h1>Cockpit BRH</h1><p class="lede">Lead management du portail Banque des RH : file des dossiers par niveau de lead, routage vers la Caisse régionale, suivi des volets filiales.</p>' +
     (ST.configure === false && !ST.demo ? '<p class="err">Accès non configuré : ajoutez <code>LM_ADMIN_LOGIN</code> et <code>LM_ADMIN_PASSWORD</code> (10 caractères au moins) dans config.php, ou les identifiants de l’administration (ADMIN_LOGIN / ADMIN_PASSWORD).</p>' : '') +
     '<form class="fm" id="flog"><label>Identifiant<input name="login" autocomplete="username" required></label><label>Mot de passe<input name="mdp" type="password" autocomplete="current-password" required></label>' +
     '<p class="err" id="lerr"></p><button class="btn p" type="submit">Se connecter</button></form>' + demo +
@@ -432,7 +434,12 @@ function renderFiche(){
 function ongletDossier(F){
   var d = F.dossier, N = ST.ref.niveaux[d.niveau] || {};
   var kv = function(rows){ return '<dl class="kv">' + rows.filter(function(r){ return r[1] !== '' && r[1] != null; }).map(function(r){ return '<dt>' + r[0] + '</dt><dd>' + r[1] + '</dd>'; }).join('') + '</dl>'; };
-  return '<div class="box"><h4>Contact</h4>' + kv([['Dirigeant', esc([d.prenom, d.nom].filter(Boolean).join(' ')) + (d.fonction ? ' · ' + esc(d.fonction) : '')], ['Téléphone', d.telephone ? '<a href="tel:' + esc(d.telephone.replace(/\s/g, '')) + '">' + esc(d.telephone) + '</a>' : ''],
+  /* argumentaire de vente préparé par l'IA à partir du parcours du dirigeant (synthèse, questions, pièces, angle) */
+  var A = d.argumentaire, li = function (t, l) { return l && l.length ? '<div class="arg-k">' + t + '</div><ul>' + l.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' : ''; };
+  var arg = A ? '<div class="box arg"><h4>Argumentaire de vente <span class="note" style="font-weight:400;text-transform:none;letter-spacing:0">· préparé par l’IA' + (A.source ? ' depuis le ' + esc(A.source) : '') + (A.le ? ', ' + dt(A.le) : '') + '</span></h4>' +
+    (A.titre ? '<p class="arg-t">' + esc(A.titre) + '</p>' : '') + li('Synthèse', A.synthese) + li('Questions à poser', A.questions) + li('Pièces à demander', A.pieces) +
+    (A.angle ? '<div class="arg-k">Angle d’approche</div><p class="arg-a">' + esc(A.angle) + '</p>' : '') + '<p class="note" style="margin:6px 0 0">Aide à la préparation de l’échange, à vérifier : ne pas transmettre tel quel au dirigeant.</p></div>' : '';
+  return arg + '<div class="box"><h4>Contact</h4>' + kv([['Dirigeant', esc([d.prenom, d.nom].filter(Boolean).join(' ')) + (d.fonction ? ' · ' + esc(d.fonction) : '')], ['Téléphone', d.telephone ? '<a href="tel:' + esc(d.telephone.replace(/\s/g, '')) + '">' + esc(d.telephone) + '</a>' : ''],
       ['E-mail', d.email ? '<a href="mailto:' + esc(d.email) + '">' + esc(d.email) + '</a>' : ''], ['Déjà client (déclaré)', d.client_declare ? { oui:'Oui', non:'Non', nsp:'Ne sait pas' }[d.client_declare] : ''],
       ['Relances e-mail', d.consent_relance ? (d.prochaine_relance ? 'prochaine le ' + dt(d.prochaine_relance) : 'aucune programmée') : 'arrêtées à la demande du dirigeant'],
       ['Suivi du dirigeant', '<a href="' + esc(d.lien_suivi) + '" target="_blank" rel="noopener">ouvrir sa page de suivi</a>']]) + '</div>' +
