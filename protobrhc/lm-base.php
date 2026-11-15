@@ -1,5 +1,5 @@
 <?php
-/* Version C 1.3 — 14/11/2026 · lead management : règles, routage, e-mails · historique : VERSIONS.md */
+/* Version C 1.11 — 15/11/2026 · e-mail « Votre estimation » envoyé à la demande du dirigeant ; e-mail de reprise sans promesse de réponses conservées · historique : VERSIONS.md */
 /* ============================================================================
    lm-base.php — LEAD MANAGEMENT du Portail BRH, version C (protobrhc)
    ----------------------------------------------------------------------------
@@ -331,7 +331,8 @@ function lm_integrer(mysqli $db, int $leadId): ?int {
     $vol = json_encode(lm_volets($lu['solutions'], [], $niveau), JSON_UNESCAPED_UNICODE);
     $base = ['secteur' => (string) $l['secteur'], 'effectif' => (int) $l['effectif'] ?: null, 'ville' => (string) $l['ville'], 'idcc' => (string) $l['idcc']];
     $syn = lm_synthese($base, $lu); $ech = lm_echeance($niveau, $maintenant, $rappel);
-    $rel = $niveau === 'abandonniste' ? lm_plus_jours($maintenant, 1, 10) : ($niveau === 'chaud' && $l['type'] === 'devis_en_cours' ? date('Y-m-d H:i:s', time() + 2 * 3600) : null);
+    $estim = !empty($lu['brut']['envoyer_estimation']);
+    $rel = $niveau === 'abandonniste' ? lm_plus_jours($maintenant, 1, 10) : ($niveau === 'chaud' && $l['type'] === 'devis_en_cours' ? ($estim ? lm_plus_jours($maintenant, 1, 10) : date('Y-m-d H:i:s', time() + 2 * 3600)) : null);
     $eff = (int) $l['effectif'] ?: null; $sol = implode(',', $lu['solutions']); $mt = ($l['montant_estime'] !== null && $l['type'] === 'devis') ? (int) $l['montant_estime'] : null;
     $s = lm_q($db, 'INSERT INTO lm_dossiers (cree_le, maj_le, version, cle, email, prenom, nom, telephone, fonction, raison_sociale, siret, code_postal, ville, departement,
         effectif, ca, secteur, idcc, niveau, niveau_le, rappel_demande, statut, statut_le, client_declare, echeance, prochaine_relance, montant, solutions, volets, synthese, resultat,
@@ -350,6 +351,7 @@ function lm_integrer(mysqli $db, int $leadId): ?int {
       . ($niveau === 'abandonniste' && $eff !== null && $eff >= LM_SEUIL_APPEL_ABANDON ? ' — ' . $eff . ' salariés : appel conseillé en plus des relances' : ''));
     lm_router($db, $id);
     lm_emails_depot($db, $id);
+    if ($estim) lm_email_estimation($db, $id);
     return $id;
   }
 
@@ -375,7 +377,7 @@ function lm_integrer(mysqli $db, int $leadId): ?int {
     $maj['niveau'] = $niveau; $maj['niveau_le'] = $maintenant;
     $maj['echeance'] = lm_echeance($niveau, $maintenant, $rappel || (int) $d['rappel_demande'] === 1);
     $maj['alerte_sla_le'] = null;
-    $maj['prochaine_relance'] = $niveau === 'chaud' && $l['type'] === 'devis_en_cours' ? date('Y-m-d H:i:s', time() + 2 * 3600) : null;
+    $maj['prochaine_relance'] = $niveau === 'chaud' && $l['type'] === 'devis_en_cours' ? (!empty($lu['brut']['envoyer_estimation']) ? lm_plus_jours($maintenant, 1, 10) : date('Y-m-d H:i:s', time() + 2 * 3600)) : null;
   }
   $fusion = array_merge($d, $maj);
   $maj['synthese'] = lm_synthese(['secteur' => (string) $fusion['secteur'], 'effectif' => $fusion['effectif'] ? (int) $fusion['effectif'] : null, 'ville' => (string) $fusion['ville'], 'idcc' => (string) $fusion['idcc']],
@@ -392,6 +394,7 @@ function lm_integrer(mysqli $db, int $leadId): ?int {
         "Bonjour,\n\nLe dirigeant de " . ($d2['raison_sociale'] ?: 'l’entreprise') . " a terminé son devis : le dossier " . $d2['reference'] . " est ultra-chaud.\nÀ rappeler avant le " . lm_date_fr((string) $d2['echeance']) . ".\n\nOuvrir le dossier : " . lm_url('cockpit-brh.html#d=' . $id) . "\n");
     }
   }
+  if (!empty($lu['brut']['envoyer_estimation'])) lm_email_estimation($db, $id);
   return $id;
 }
 function lm_maj(mysqli $db, int $id, array $champs): void {
@@ -510,9 +513,21 @@ function lm_email_relance(mysqli $db, array $d, int $n): string {
 function lm_email_reprise(mysqli $db, array $d): string {
   return lm_email($db, (int) $d['id'], 'dirigeant_chaud', (string) $d['email'], 'Reprenez votre devis là où vous l’avez laissé',
     lm_bonjour($d) . "Vous avez commencé un devis sur le portail Banque des Ressources Humaines" . ($d['raison_sociale'] ? " pour " . $d['raison_sociale'] : '') . ".\n"
-    . "Vos réponses sont conservées : reprenez votre devis là où vous l’avez laissé : " . lm_url('devis.html') . "\n"
+    . "Reprenez votre devis en ligne : " . lm_url('devis.html') . "\n"
     . "Un expert peut aussi vous aider à le terminer : il vous contacte dans les 48 heures ouvrées.\n\nSuivre votre dossier : " . lm_lien_suivi($d)
     . "\n\nVous ne souhaitez plus recevoir ces messages ? " . lm_lien_suivi($d) . "&stop=1" . lm_signature());
+}
+/* « Recevoir mon estimation par e-mail » (étape « Votre estimation » du devis) : envoi immédiat */
+function lm_email_estimation(mysqli $db, int $id): void {
+  $d = lm_dossier($db, $id); if (!$d || !$d['email']) return;
+  $sol = array_values(array_map(static fn($x) => LM_SOLUTIONS[$x] ?? $x, array_filter(explode(',', (string) $d['solutions']))));
+  $st = lm_email($db, $id, 'dirigeant_estimation', (string) $d['email'], 'Votre estimation Banque des Ressources Humaines',
+    lm_bonjour($d) . "Voici l’estimation de votre devis" . ($d['raison_sociale'] ? " pour " . $d['raison_sociale'] : '') . ".\n"
+    . ($sol ? "Solutions : " . implode(', ', $sol) . "\n" : '') . ($d['resultat'] ? $d['resultat'] . "\n" : '')
+    . "\nObtenir votre devis en ligne : " . lm_url('devis.html') . "\nUn expert Banque des Ressources Humaines peut aussi vous aider à le finaliser : répondez à la question « Être rappelé » depuis votre suivi.\n"
+    . "\nSuivre votre demande : " . lm_lien_suivi($d) . "\n\nVous ne souhaitez plus recevoir de messages ? " . lm_lien_suivi($d) . "&stop=1"
+    . "\n\nEstimation indicative et non contractuelle." . lm_signature());
+  lm_journal($db, $id, 'email', 'Estimation envoyée au dirigeant à sa demande (' . lm_statut_email($st) . ')');
 }
 function lm_email_prise_en_charge(mysqli $db, array $d, array $u): string {
   $cr = lm_cr($db, $d['cr_code']);

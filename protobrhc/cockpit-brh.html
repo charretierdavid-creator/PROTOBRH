@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Version C 1.8 — 15/11/2026 · porte d’accès expirée : message clair et bouton « Se reconnecter » · historique : VERSIONS.md -->
+<!-- Version C 1.11 — 15/11/2026 · tableau de bord : e-mails « estimation demandée » · historique : VERSIONS.md -->
 <html lang="fr">
 <head>
 <meta charset="utf-8">
@@ -301,7 +301,7 @@ function render(){
   var bandes = '';
   if (ST.demo) bandes += '<div class="band demo"><div class="wrap">Mode démonstration : données fictives en mémoire, aucun e-mail envoyé. Les règles de gestion sont celles du serveur.</div></div>';
   else if (!ST.envoi) bandes += '<div class="band"><div class="wrap">E-mails générés et journalisés, envoi désactivé (LM_EMAIL_ENVOI dans config.php).' + (ST.redir ? ' Redirection de test active.' : '') + '</div></div>';
-  app.innerHTML = '<header class="pbar"><div class="wrap"><b>PORTAIL BRH <i>15C</i></b><span class="s">Cockpit BRH · lead management, version C 1.8</span>' +
+  app.innerHTML = '<header class="pbar"><div class="wrap"><b>PORTAIL BRH <i>15C</i></b><span class="s">Cockpit BRH · lead management, version C 1.11</span>' +
     '<div class="who"><span><b>' + esc(u.nom) + '</b> <span class="r">· ' + esc(roleLib) + '</span></span><button type="button" id="sortir">Se déconnecter</button></div></div></header>' +
     '<nav class="tabs" aria-label="Vues"><div class="wrap" role="tablist">' + vues.map(function(v){ return '<button type="button" role="tab" data-vue="' + v[0] + '" aria-selected="' + (ST.vue === v[0]) + '">' + v[1] + (v[2] ? '<span class="n" title="dossiers en retard">' + v[2] + '</span>' : '') + '</button>'; }).join('') + '</div></nav>' + bandes +
     '<main id="main"><div class="wrap">' + ({ file:vueFile, tableau:vueTableau, distribution:vueDistribution, emails:vueEmails, param:vueParam }[ST.vue] || vueFile)() + '</div></main>';
@@ -322,7 +322,7 @@ function renderLogin(){
     [['national', 'Console nationale (équipe projet)'], ['tp.expert', 'J. Marchand — experte BRH, Touraine Poitou'], ['av.expert', 'L. Garnier — expert BRH, Atlantique Vendée'],
      ['caa.prevoyance', 'CA Assurances — Prévis'], ['amundi.universels', 'Amundi / CA Titres — Universels'], ['worklife', 'Worklife']].map(function(x){
       return '<button type="button" class="btn" data-demo="' + x[0] + '">' + esc(x[1]) + '</button>'; }).join('') + '</div>' : '';
-  app.innerHTML = '<header class="pbar"><div class="wrap"><b>PORTAIL BRH <i>15C</i></b><span class="s">Cockpit BRH · lead management, version C 1.8</span></div></header><main><div class="card login"><h1>Cockpit BRH</h1><p class="lede">Lead management du portail Banque des RH : file des dossiers par niveau de lead, routage vers la Caisse régionale, suivi des volets filiales.</p>' +
+  app.innerHTML = '<header class="pbar"><div class="wrap"><b>PORTAIL BRH <i>15C</i></b><span class="s">Cockpit BRH · lead management, version C 1.11</span></div></header><main><div class="card login"><h1>Cockpit BRH</h1><p class="lede">Lead management du portail Banque des RH : file des dossiers par niveau de lead, routage vers la Caisse régionale, suivi des volets filiales.</p>' +
     (ST.configure === false && !ST.demo ? '<p class="err">Accès non configuré : ajoutez <code>LM_ADMIN_LOGIN</code> et <code>LM_ADMIN_PASSWORD</code> (10 caractères au moins) dans config.php, ou les identifiants de l’administration (ADMIN_LOGIN / ADMIN_PASSWORD).</p>' : '') +
     '<form class="fm" id="flog"><label>Identifiant<input name="login" autocomplete="username" required></label><label>Mot de passe<input name="mdp" type="password" autocomplete="current-password" required></label>' +
     '<p class="err" id="lerr"></p><button class="btn p" type="submit">Se connecter</button></form>' + demo +
@@ -564,7 +564,7 @@ function vueTableau(){
   var vol = '<table class="mx"><thead><tr><th>Filiale</th>' + Object.keys(ST.ref.volet_statuts).map(function(s){ return '<th>' + esc(ST.ref.volet_statuts[s]) + '</th>'; }).join('') + '</tr></thead><tbody>' +
     Object.keys(S.volets).map(function(f){ return '<tr><th style="color:' + COUL[f] + '">' + esc(ST.ref.filiales[f].lib) + '</th>' + Object.keys(ST.ref.volet_statuts).map(function(s){ return '<td class="n" style="text-align:center">' + (S.volets[f][s] || 0) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table>';
   var em = {}; (S.emails || []).forEach(function(r){ em[r.modele] = em[r.modele] || {}; em[r.modele][r.statut] = +r.n; });
-  var ML = { dirigeant_ultra:'Dirigeant · « votre expert vous rappelle »', dirigeant_chaud:'Dirigeant · reprise du devis', dirigeant_abandon_j1:'Dirigeant · relance J+1', dirigeant_abandon_j7:'Dirigeant · relance J+7', dirigeant_prise_en_charge:'Dirigeant · prise en charge', dirigeant_rdv:'Dirigeant · rendez-vous',
+  var ML = { dirigeant_ultra:'Dirigeant · « votre expert vous rappelle »', dirigeant_chaud:'Dirigeant · reprise du devis', dirigeant_abandon_j1:'Dirigeant · relance J+1', dirigeant_abandon_j7:'Dirigeant · relance J+7', dirigeant_prise_en_charge:'Dirigeant · prise en charge', dirigeant_estimation:'Dirigeant · estimation demandée', dirigeant_rdv:'Dirigeant · rendez-vous',
     interne_solead:'CR · SOLEAD', interne_nouveau:'Expert · nouveau lead', interne_crm:'CRM + alerte PUC (simulé)', interne_alerte:'Alerte délai dépassé', interne_ultra:'Expert · passage ultra-chaud', interne_attribution:'Expert · attribution', interne_conseiller_pro:'Conseiller pro', interne_rappel:'Expert · demande de rappel' };
   return '<h1>Tableau de bord national</h1><p class="lede">Pilotage des leads du portail : volumes par niveau, respect des délais cibles par Caisse régionale, avancement des volets filiales.</p>' + per + big +
     '<div class="grid2"><div class="card pad"><h3>Dossiers par semaine</h3>' + svg + '<div class="legend"><span><i style="background:#B42318"></i>Ultra-chaud</span><span><i style="background:#C98A1B"></i>Chaud</span><span><i style="background:#9CCFC4"></i>Abandonniste</span></div></div>' +

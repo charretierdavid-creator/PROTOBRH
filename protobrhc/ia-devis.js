@@ -1,4 +1,4 @@
-/* Version C 1.1 — 14/11/2026 · conventions déclarées transmises à la synthèse de l’expert · historique : VERSIONS.md */
+/* Version C 1.9 — 15/11/2026 · fin de devis : référence du dossier, Caisse régionale et e-mail identiques au lead management · historique : VERSIONS.md */
 /* ==============================================================
    IA DU PARCOURS — page Devis en ligne (version C du test A/B, protobrhc)
    Surcouche de devis.html du socle (S, compute, RH, renderEstimation,
@@ -131,8 +131,17 @@
     return { lib: 'Ultra-chaud', det: 'offre configurée et coordonnées laissées : Dossier BRH transmis', delai: '24 h ouvrées' };
   }
   function afterLead(l, done) {
+    /* réponse du lead management (lead.php) : même référence de dossier, même Caisse régionale et même e-mail
+       que ceux réellement produits ; attente 1,5 s au plus, sinon table de démonstration */
+    if (window.BRH_LM_REPONSE && !l.__lm) {
+      Promise.race([window.BRH_LM_REPONSE, new Promise(function (r) { setTimeout(function () { r(null); }, 1500); })])
+        .then(function (j) { l.__lm = j || {}; afterLead(l, done); }, function () { l.__lm = {}; afterLead(l, done); });
+      return;
+    }
+    var lm = l.__lm || {};
     var old = $('ia-dv-after'); if (old) old.remove();
-    var ent = l.entreprise || {}, dep = String(ent.code_postal || '').slice(0, 2), cr = IA.caisse(dep), eff = +((l.rh || {}).salaries_concernes) || 0;
+    var ent = l.entreprise || {}, dep = String(ent.code_postal || '').slice(0, 2), cr = lm.caisse ? { nom: lm.caisse, connue: true } : IA.caisse(dep), eff = +((l.rh || {}).salaries_concernes) || 0;
+    var refDossier = lm.dossier || l.reference || '';
     var pro = eff < 50, nv = niveau(), slot = document.createElement('div'); slot.id = 'ia-dv-after';
     var cta = done.querySelector('.r-cta'); done.insertBefore(slot, cta ? cta.nextSibling : null);
     IA.loading(slot, 'L’IA prépare le dossier pour votre expert…');
@@ -149,15 +158,15 @@
       slot.innerHTML = '<div class="ia-box" style="text-align:left"><div class="ia-head">' + IA.badge() + '<h4>Ce qui se passe maintenant</h4></div>'
         + '<div class="ia-route"><span>Lead ' + esc(nv.lib.toLowerCase()) + '</span><span>Département ' + esc(dep || '—') + '</span>→<span>' + esc(cr.nom) + '</span>→<span>Expert Banque des RH</span>'
         + (pro ? '→<span>conseiller pro (si l’expert le confie)</span>' : '') + '</div>'
-        + '<p class="ia-ai-note">' + esc(nv.det) + ' · prise en charge visée sous ' + esc(nv.delai) + ' · envoi SOLEAD (V0.0), tracé dans la console nationale.</p>'
-        + '<div class="ia-mail"><div class="h">E-mail envoyé automatiquement · Objet : votre demande ' + esc(l.reference || '') + ' est prise en charge</div>'
-        + 'Bonjour' + (contact.prenom ? ' ' + esc(contact.prenom) : '') + ',<br>Votre demande a été transmise à <b>' + esc(cr.nom) + '</b>. '
-        + 'Votre expert Banque des Ressources Humaines, <b>[nom attribué par la Caisse]</b>, vous contacte sous 24 h ouvrées' + (contact.rappel_expert ? '' : ' pour confirmer votre devis') + ', avec votre dossier sous les yeux : vous n’aurez rien à ressaisir.'
+        + '<p class="ia-ai-note">' + esc(nv.det) + ' · prise en charge visée sous ' + esc(nv.delai) + ' · ' + esc(lm.canal ? 'reçu par la Caisse ' + (lm.canal === 'SOLEAD' ? 'via SOLEAD' : (lm.canal === 'CRM + alerte PUC' ? 'dans son CRM, alerte PUC' : 'dans le cockpit BRH')) : 'envoi SOLEAD ou cockpit selon la Caisse (V0.0)') + ', tracé dans la console nationale.</p>'
+        + '<div class="ia-mail"><div class="h">E-mail envoyé au dirigeant · Objet : Votre demande ' + esc(refDossier) + ' : votre expert vous rappelle pour finaliser</div>'
+        + 'Bonjour' + (contact.prenom ? ' ' + esc(contact.prenom) : '') + ',<br>Votre demande de devis est bien reçue (référence ' + esc(refDossier) + ').<br>Votre expert Banque des Ressources Humaines du <b>' + esc(cr.nom) + '</b> vous rappelle pour finaliser votre devis, avec votre dossier sous les yeux : vous n’aurez rien à ressaisir.'
+        + (lm.suivi ? '<br>Suivre votre dossier : <a href="' + esc(lm.suivi) + '">lien de suivi</a>' : '')
         + (worklife ? '<br>Vos avantages salariés Worklife peuvent être signés en ligne dès aujourd’hui (signature électronique).' : '') + '</div>'
         + '<div class="ia-expert"><h4>Ce que reçoit l’expert · ' + esc(s.titre || '') + '</h4>'
         + '<div class="k">Synthèse</div>' + IA.list(s.synthese) + '<div class="k">Questions à poser</div>' + IA.list(s.questions)
         + '<div class="k">Pièces à demander</div>' + IA.list(s.pieces) + (s.angle ? '<div class="k">Angle d’approche</div><p style="margin:2px 0 0">' + esc(s.angle) + '</p>' : '') + '</div>'
-        + IA.source(r.source) + '<p class="ia-ai-note">Aperçu de démonstration : le nom de l’expert est attribué par la Caisse régionale ; table département → Caisse à valider.</p></div>';
+        + IA.source(r.source) + '<p class="ia-ai-note">' + (lm.dossier ? 'Dossier ' + esc(lm.dossier) + ' · devis ' + esc(l.reference || '') + ' · le nom de l’expert est communiqué dès sa prise en charge.' : 'Aperçu de démonstration : le nom de l’expert est attribué par la Caisse régionale ; table département → Caisse à valider.') + '</p></div>';
       IA.track('ia_lead_synthese', { niveau: nv.lib, source: r.source, page: 'devis' });
     });
   }

@@ -1,4 +1,4 @@
-/* Version C 1.8 — 15/11/2026 · numéro de version 1.8 (console, adresses des modules) · historique : VERSIONS.md */
+/* Version C 1.11 — 15/11/2026 · version 1.11 · historique : VERSIONS.md */
 /* Version C — protobrhc.monsitedetest.com : version Standard (socle protobrh/) + couche IA à chaque étape du parcours.
    Principe : l'IA explique, inspire et prépare ; le moteur du portail calcule ; l'expert BRH conseille et engage.
      Découvrir    (index.html)      : « Expliquez votre situation, l'IA vous oriente » + FAQ structurée et llms.txt (GEO)
@@ -10,8 +10,11 @@
    (clé dans config.php). Sans clé, chaque encadré fonctionne en « mode démonstration ».
    Identifie aussi la version (C) dans chaque événement de mesure et chaque demande transmise. */
 (function(){
-  var V = 'C', IAV = '1.8';
+  var V = 'C', IAV = '1.11';
   window.BRH_VARIANTE = V;
+  /* profil de la session AVANT le script de la page : le diagnostic réécrit brhProfil à son chargement
+     (valeurs par défaut) ; la version C reprend ainsi ce que le dirigeant avait déjà indiqué ailleurs */
+  try { window.BRH_PROFIL_AVANT = JSON.parse(sessionStorage.getItem('brhProfil') || 'null') || {}; } catch (e) { window.BRH_PROFIL_AVANT = {}; }
   /* options du socle activées pour la version C : questions santé-prévoyance (secteur, convention collective, cadres)
      posées seulement si le besoin est choisi ; convention collective jamais bloquante, avec « Je ne sais pas »
      (atelier CR & Distribution du 13/11/2026, point 9) */
@@ -28,6 +31,7 @@
   /* fiche publique (entreprise-public.js) : secteur, tranche d'effectif, département et conventions collectives
      préremplis depuis le SIREN / SIRET dans le diagnostic (diag-entreprise.js) et le devis (idcc-devis.js) */
   var MODULES = { 'index.html': ['ia-accueil.js'], 'diagnostic.html': ['entreprise-public.js', 'diag-entreprise.js', 'ia-diagnostic.js', 'lm-parcours.js'],
+                  'label-brh.html': ['lm-parcours.js'], 'audit-mutuelle.html': ['lm-parcours.js'],
                   'devis.html': ['entreprise-lookup.js', 'entreprise-public.js', 'idcc-devis.js', 'ia-devis.js', 'lm-parcours.js'] };
   var mods = MODULES[page]; if (!mods) return;
   function charger(src){ var s = document.createElement('script'); s.src = src + '?v=' + IAV; s.async = false; document.body.appendChild(s); }
