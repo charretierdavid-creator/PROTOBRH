@@ -1,5 +1,5 @@
 <?php
-/* Version C 1.3 — 14/11/2026 · intégration au lead management · historique : VERSIONS.md */
+/* Version C 1.9 — 15/11/2026 · réponse : Caisse régionale et canal du dossier · historique : VERSIONS.md */
 /* ============================================================================
    lead.php — enregistre les demandes des dirigeants (leads) dans MySQL.
    Appelé par : devis en ligne (devis, rappel expert), diagnostic RH (contact),
@@ -108,6 +108,9 @@ try {
   $dos = $lm ? lm_integrer($lm, $leadId) : null;
   if ($dos && ($d = lm_dossier($lm, $dos))) {
     $rep['dossier'] = $d['reference'];   // le niveau du lead n'est jamais renvoyé au navigateur du dirigeant
+    /* mêmes informations que celles du dossier et des e-mails : Caisse régionale et canal de réception */
+    $crD = lm_cr($lm, $d['cr_code']); if ($crD) $rep['caisse'] = 'Crédit Agricole ' . $crD['nom'];
+    if (!empty($d['canal'])) $rep['canal'] = LM_CANAUX[$d['canal']] ?? '';
     if (in_array($type, ['devis', 'rappel_expert', 'diagnostic_contact', 'label_contact', 'audit_mutuelle_prevoyance'], true)) $rep['suivi'] = lm_lien_suivi($d);
   }
 } catch (\Throwable $x) { /* la demande est enregistrée ; le dossier sera créé par lm-cron.php */ }

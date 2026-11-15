@@ -1,4 +1,4 @@
-/* Version C 1.7 — 15/11/2026 · mise en page : choix des conventions sur toute la largeur, champs en double masqués ; secteur des conventions prioritaire · historique : VERSIONS.md */
+/* Version C 1.10 — 15/11/2026 · une seule convention : ligne discrète, saisie libre masquée ; intitulés de 26 conventions ajoutés (176 Industrie pharmaceutique…) ; cohérence entre écrans (1.9) · historique : VERSIONS.md */
 /* ==============================================================
    CONVENTIONS COLLECTIVES DÉCLARÉES — page Devis en ligne (version C, protobrhc)
    Surcouche de devis.html du socle (S, fillEntreprise, fillDvCcn, onDvCcn,
@@ -41,7 +41,15 @@
     '2148': 'Télécommunications', '2156': 'Grands magasins et magasins populaires', '2205': 'Notariat',
     '2247': 'Courtage d’assurances et de réassurances', '2335': 'Agences générales d’assurances', '2378': 'Travail temporaire, intérimaires',
     '2511': 'Sport', '3016': 'Ateliers et chantiers d’insertion', '3218': 'Enseignement privé non lucratif',
-    '3239': 'Particuliers employeurs et emploi à domicile'
+    '3239': 'Particuliers employeurs et emploi à domicile',
+    /* complément 15/11/2026 : conventions fréquentes — À VALIDER */
+    '176': 'Industrie pharmaceutique', '275': 'Transport aérien, personnel au sol', '489': 'Cartonnage', '493': 'Vins, cidres, spiritueux et liqueurs',
+    '915': 'Expertises en évaluations industrielles et commerciales', '953': 'Charcuterie de détail', '959': 'Laboratoires de biologie médicale extra-hospitaliers',
+    '993': 'Prothésistes dentaires', '1267': 'Pâtisserie', '1405': 'Expédition et exportation de fruits et légumes', '1412': 'Installation et maintenance aéraulique, thermique et frigorifique',
+    '1499': 'Miroiterie, transformation et négoce du verre', '1512': 'Promotion immobilière', '1586': 'Industries charcutières', '1611': 'Communication écrite directe',
+    '1621': 'Répartition pharmaceutique', '1747': 'Boulangerie et pâtisserie industrielles', '1938': 'Transformation des volailles', '2121': 'Édition',
+    '2147': 'Services d’eau et d’assainissement', '2149': 'Activités du déchet', '2190': 'Missions locales et PAIO', '2272': 'Assainissement et maintenance industrielle',
+    '2691': 'Enseignement privé hors contrat', '3017': 'Ports et manutention', '3221': 'Agences de presse'
   };
   /* intitulés complets, prioritaires (mêmes libellés que l'Annuaire des entreprises et Pappers) */
   var LONG = {
@@ -112,12 +120,28 @@
   function memoLire(siret) {
     try { var m = JSON.parse(sessionStorage.getItem(MEMO) || 'null'); return m && siret && m.siret === siret ? m : null; } catch (e) { return null; }
   }
+  /* profil partagé (diagnostic, audit, label) : l'entreprise et la convention retenues dans le devis y sont reportées */
+  function profilMaj() {
+    try {
+      var p = JSON.parse(sessionStorage.getItem('brhProfil') || '{}'), e = S.ent; if (!e || !e.siret) return;
+      p.entreprise = Object.assign({}, p.entreprise || {}, { source: (S.entSrc && S.entSrc.source) || '', siren: String(e.siret).slice(0, 9), siret: e.siret, nom: e.nom, ville: e.ville, cp: e.cp, naf: e.naf,
+        idcc_liste: (e.conventions || []).map(function (c) { return { code: c.code }; }) });
+      var cc = codeDe(e.idcc);
+      if (cc) { p.idcc = texte({ code: cc, libelle: libelle(cc) }); p.ccn = (window.BRH_CCN && BRH_CCN.label(cc)) ? cc : 'autre'; }
+      else if (e.idcc === 'Aucune convention collective') p.ccn = 'aucune';
+      if (e.secteur) p.secteur = e.secteur;
+      if (e.cp) p.departement = BRH_ENT_dep(e.cp);
+      p.maj_devis = new Date().toISOString();
+      sessionStorage.setItem('brhProfil', JSON.stringify(p));
+    } catch (x) {}
+  }
+  function BRH_ENT_dep(cp) { return window.BRH_ENT && BRH_ENT.departement ? BRH_ENT.departement(cp) : String(cp || '').slice(0, 2); }
   function attacher(l, sans, verifier) {
     if (!S.ent) return;
     S.ent.conventions = l; S.ent.sansConvention = !!sans && !l.length; S.ent.verifier = liens(S.ent.siret, verifier);
     if (S.entSrc) S.entSrc.conventions = l.map(function (c) { return { idcc: c.code, libelle: c.libelle, population: c.population, niveau: c.niveau, source: c.source, prevoyance_branche: c.prevoyance }; });
     if (l.length && S.ent.idcc) S.ent.idccNsp = false;
-    memoSave();
+    memoSave(); profilMaj();
   }
 
   /* ---------- styles ---------- */
@@ -137,6 +161,7 @@
     '.dv-idcc .ft2{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;margin-top:6px;font-size:.76rem;color:var(--slate,#5b6b66)}' +
     '.dv-idcc .lnk{background:none;border:0;padding:0;color:var(--teal,#016265);font:600 .76rem inherit;text-decoration:underline;cursor:pointer}' +
     '.dv-ccn-resume{display:block;margin-top:6px;font-size:.86rem;color:var(--green,#065145);font-weight:600}.dv-ccn-resume small{display:block;font-weight:400;color:var(--slate,#5b6b66);font-size:.76rem}' +
+    '.dv-idcc.un{background:none;border:0;padding:0;margin-top:6px}.dv-idcc .n1{margin:0;font-size:.78rem;color:var(--slate,#5b6b66)}.dv-idcc .n1 b{color:var(--green,#065145)}' +
     '.dv-idcc .q{margin:0;font:700 .9rem var(--fh,sans-serif);color:var(--green,#065145)}.dv-idcc .sub{color:var(--slate,#5b6b66)}' +
     '.dv-idcc .opts{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}' +
     '.dv-idcc .opt{display:flex;align-items:flex-start;gap:10px;width:100%;text-align:left;font:400 .84rem/1.4 var(--fb,sans-serif);color:var(--ink,#1d2b28);background:#fff;border:1.5px solid var(--line-2,#dfe6e2);border-radius:10px;padding:8px 10px;cursor:pointer;line-height:1.3}' +
@@ -162,7 +187,10 @@
     var cible = multi && champ && champ.parentNode ? champ.parentNode : champ;
     if (box.parentNode !== cible) { if (multi && champ.nextSibling) cible.insertBefore(box, champ.nextSibling); else cible.appendChild(box); }
     if (champ) {
-      [$('e-ccn'), inp, champ.querySelector('.hint')].forEach(function (x) { if (x) x.style.display = multi ? 'none' : ''; });
+      /* conventions déclarées : la saisie libre et l'aide longue sont masquées (la liste suffit) ; plusieurs : la liste aussi */
+      var decl = conv().length > 0 && !manuel;
+      [inp, champ.querySelector('.hint')].forEach(function (x) { if (x) x.style.display = decl ? 'none' : ''; });
+      var sel0 = $('e-ccn'); if (sel0) sel0.style.display = multi ? 'none' : '';
       var res = champ.querySelector('.dv-ccn-resume');
       if (multi) { if (!res) { res = document.createElement('span'); res.className = 'dv-ccn-resume'; champ.appendChild(res); }
         var cc = codeDe(inp.value), x = conv().filter(function (c) { return c.code === cc; })[0];
@@ -193,7 +221,13 @@
         '<p class="ft2"><span>Source : déclarations sociales de votre entreprise.' + lien + '</span><button type="button" class="lnk" data-autre="1">Une autre convention ?</button></p>';
       return;
     }
-    box.className = 'dv-idcc';
+    box.className = 'dv-idcc un';
+    if (l.length === 1) {
+      var c1 = l[0];
+      box.innerHTML = '<p class="n1">✓ Déclarée par votre entreprise : <b>IDCC ' + esc(c1.code) + '</b>' + (c1.libelle ? ' · ' + esc(c1.libelle) : '') +
+        (c1.prevoyance ? ' <span class="tg pv">Prévoyance de branche</span>' : '') + '<br>À confirmer avec votre expert.' + (lien ? lien : '') + ' <button type="button" class="lnk" data-autre="1">Une autre convention ?</button></p>';
+      return;
+    }
     var plus = false;
     box.innerHTML = '<p class="t"><b>' + (plus ? l.length + ' conventions collectives déclarées par votre entreprise' : 'Convention collective déclarée par votre entreprise') + '</b> <small>(déclarations sociales)</small></p><ul>' +
       l.map(function (c) {
@@ -219,7 +253,7 @@
     if (S.ent) { S.ent.idcc = texte(c); S.ent.idccNsp = false; }
     if (typeof fillDvCcn === 'function') fillDvCcn();
     if (window.BRH_PREV) BRH_PREV.maj(texte(c));
-    paint(); if (typeof save === 'function') save();
+    paint(); profilMaj(); if (typeof save === 'function') save();
     if (typeof track === 'function') track('devis_ccn', { choix: 'declaree', idcc: code });
   }
 
@@ -246,6 +280,16 @@
   /* ============ remplissage de la fiche entreprise ============ */
   var _fill = fillEntreprise;
   var vu = { siret: '', t: 0 }, manuel = false;
+  try {
+    var pf0 = JSON.parse(sessionStorage.getItem('brhProfil') || '{}'), m0 = String(pf0.idcc || '').match(/\b(\d{1,4})\b/);
+    if (!S.prefIdcc && m0) S.prefIdcc = texte({ code: String(parseInt(m0[1], 10)), libelle: libelle(String(parseInt(m0[1], 10))) });
+    else if (!S.prefIdcc && pf0.ccn === 'aucune') S.prefIdcc = 'Aucune convention collective';
+    /* effectif par défaut du diagnostic (50, jamais saisi) : ne pas le reprendre comme effectif de l'entreprise */
+    if (pf0.effectifSaisi === false && S.prefEff && +S.prefEff === +pf0.effectif) {
+      S.prefEff = null;
+      var ee = document.getElementById('e-eff'); if (ee && +ee.value === +pf0.effectif && !(S.ent && S.ent.effectif)) ee.value = '';
+    }
+  } catch (x) {}
   fillEntreprise = function (d, noFocus) {
     d = Object.assign({}, d || {});
     if (Array.isArray(d.idcc_liste)) manuel = false;
@@ -296,7 +340,7 @@
       var r = _odc.apply(this, arguments), v = $('e-ccn').value;
       var c = conv().filter(function (x) { return x.code === v; })[0];
       if (c) { $('e-idcc').value = texte(c); if (S.ent) S.ent.idcc = texte(c); if (window.BRH_PREV) BRH_PREV.maj(texte(c)); if (typeof save === 'function') save(); }
-      paint(); return r;
+      paint(); profilMaj(); return r;
     };
   }
   if ($('e-idcc')) $('e-idcc').addEventListener('input', function () { var b = $('dvIdccDecl'); if (b && choixFait()) b.classList.remove('miss'); paint(); });

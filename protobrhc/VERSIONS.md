@@ -1,6 +1,6 @@
 # Versions de protobrhc (version C du portail)
 
-_Version en cours : **C 1.8** — 15/11/2026_
+_Version en cours : **C 1.11** — 15/11/2026_
 
 Règle : chaque fichier porte en première ligne la version du paquet dans laquelle il a changé pour la dernière fois. Le nom du zip reprend la version (`protobrhC_AAAAMMJJ_vX.Y_objet.zip`). Dans le navigateur, la console affiche « Version C X.Y — modules chargés : … » ; le cockpit affiche la version dans son en-tête.
 
@@ -17,6 +17,9 @@ Règle : chaque fichier porte en première ligne la version du paquet dans laque
 | C 1.6 | 15/11/2026 | lm-api.php derrière la porte d’accès ; numéros de version dans tous les fichiers | protobrhC_20261115_v1.6_publication.zip |
 | C 1.7 | 15/11/2026 | Devis : mise en page du choix des conventions (pleine largeur, compacte, sans champs en double) ; secteur BTP d’après les conventions | protobrhC_20261115_v1.7_publication.zip |
 | C 1.8 | 15/11/2026 | Correctif cockpit : « Session expirée » en boucle (la connexion au cockpit détruisait la session de la porte d’accès) | protobrhC_20261115_v1.8_publication.zip |
+| C 1.9 | 15/11/2026 | Cohérence des informations entre écrans : contact partagé, demandes complétées, convention et entreprise transmises entre diagnostic, devis et audit, fin de devis alignée sur le dossier | protobrhC_20261115_v1.9_publication.zip |
+| C 1.10 | 15/11/2026 | Mise en page cohérente avec le site : éléments ajoutés par la version C (e-mail, consentement, « déjà client ? », conventions, suivi du dossier) aux styles du socle | protobrhC_20261115_v1.10_publication.zip |
+| C 1.11 | 15/11/2026 | Devis : e-mail demandé à l’étape « Votre estimation » (« Recevoir mon estimation par e-mail », envoi immédiat) ; « Votre entreprise est-elle déjà cliente ? » en fin de devis ; étape « Votre entreprise » allégée | protobrhC_20261115_v1.11_publication.zip |
 
 ## Version de chaque fichier
 
@@ -29,22 +32,22 @@ Règle : chaque fichier porte en première ligne la version du paquet dans laque
 | `llms.txt` | C 1.0 | contenus GEO (pas d’en-tête : le format llms.txt commence par le titre) |
 | `variante.css` | C 1.0 | design de la version C |
 | `entreprise.php` | C 1.1 | toutes les conventions collectives déclarées (idcc_liste) |
-| `ia-devis.js` | C 1.1 | conventions déclarées transmises à la synthèse de l’expert |
-| `LISEZMOI_LEAD_MANAGEMENT.md` | C 1.3 | mode d’emploi du lead management |
+| `idcc-devis.js` | C 1.10 | une seule convention : ligne discrète, saisie libre masquée ; intitulés de 26 conventions ajoutés (176 Industrie pharmaceutique…) ; cohérence entre écrans (1.9) |
+| `suivi-dossier.html` | C 1.10 | page de suivi aux couleurs du site (en-tête, logo, navigation, boutons, pied de page) |
+| `LISEZMOI_LEAD_MANAGEMENT.md` | C 1.11 | parcours du devis mis à jour (estimation par e-mail, « déjà client ? » en fin de devis) |
+| `cockpit-brh.html` | C 1.11 | tableau de bord : e-mails « estimation demandée » |
+| `lm-base.php` | C 1.11 | e-mail « Votre estimation » envoyé à la demande du dirigeant ; e-mail de reprise sans promesse de réponses conservées |
+| `lm-parcours.js` | C 1.11 | devis : e-mail demandé à l’étape « Votre estimation » (Recevoir mon estimation) et non plus à l’étape « Votre entreprise » ; « déjà client ? » en fin de devis |
+| `variante.js` | C 1.11 | version 1.11 |
 | `cockpit-brh-demo.js` | C 1.3 | démonstration du cockpit |
 | `connaissances-version.txt` | C 1.3 | connaissances de l’Assistant BRH |
-| `lead.php` | C 1.3 | intégration au lead management |
-| `lm-base.php` | C 1.3 | lead management : règles, routage, e-mails |
 | `lm-cron.php` | C 1.3 | tâches planifiées |
-| `lm-parcours.js` | C 1.3 | remontée des leads depuis le parcours |
 | `lm-suivi.php` | C 1.3 | suivi du dossier par le dirigeant |
-| `suivi-dossier.html` | C 1.3 | page de suivi du dirigeant |
-| `diag-entreprise.js` | C 1.4 | diagnostic : secteur, tranche d’effectif, département |
 | `entreprise-public.js` | C 1.4 | fiche publique lue dans le navigateur |
 | `README.md` | C 1.6 | renvoi vers VERSIONS.md |
-| `idcc-devis.js` | C 1.7 | mise en page : choix des conventions sur toute la largeur, champs en double masqués ; secteur des conventions prioritaire |
-| `cockpit-brh.html` | C 1.8 | porte d’accès expirée : message clair et bouton « Se reconnecter » |
 | `lm-api.php` | C 1.8 | correctif : session du cockpit séparée de celle de la porte d’accès (le cockpit ne détruit plus la connexion au site) |
-| `variante.js` | C 1.8 | numéro de version 1.8 (console, adresses des modules) |
+| `diag-entreprise.js` | C 1.9 | reprise de l’effectif, du secteur, du département et de l’entreprise déjà indiqués ailleurs |
+| `ia-devis.js` | C 1.9 | fin de devis : référence du dossier, Caisse régionale et e-mail identiques au lead management |
+| `lead.php` | C 1.9 | réponse : Caisse régionale et canal du dossier |
 
 Fichiers du socle `protobrh/` : non modifiés par la version C ; ne pas redéployer le socle des zips (le socle en ligne est plus récent).

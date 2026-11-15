@@ -1,6 +1,9 @@
 # Lead management du Portail BRH — version C (protobrhc)
 
-_Version C 1.3 — 14/11/2026 · mode d’emploi du lead management · historique : VERSIONS.md_
+_Version C 1.11 — 15/11/2026 · parcours du devis mis à jour (estimation par e-mail, « déjà client ? » en fin de devis) · historique : VERSIONS.md_
+
+
+
 
 
 
@@ -32,7 +35,7 @@ Module de gestion des leads du prototype, construit sur les règles du deck « S
 | `lm-suivi.php` + `suivi-dossier.html` | Page de suivi du dirigeant (lien des e-mails et de la fin de devis) : 6 statuts, interlocuteur, rendez-vous, « être rappelé », arrêt des relances |
 | `cockpit-brh.html` | Le cockpit : console de l'expert BRH, des filiales et de la console nationale, à la charte de la maquette « Parcours dirigeant Prévis / Universels / Worklife » (look v1) |
 | `cockpit-brh-demo.js` | Démonstration sans serveur : `cockpit-brh.html?demo=1` (données fictives, mêmes règles) |
-| `lm-parcours.js` | Remontée des leads depuis le parcours C : case facultative au déverrouillage du diagnostic (abandonniste), e-mail facultatif et « déjà client ? » à l'étape « Votre entreprise » du devis (chaud), suivi de l'étape, encart « Suivre mon dossier » en fin de devis |
+| `lm-parcours.js` | Remontée des leads depuis le parcours C : case facultative au déverrouillage du diagnostic (abandonniste) ; « Recevoir mon estimation par e-mail » à l’étape « Votre estimation » du devis (chaud, estimation envoyée tout de suite) ; « Votre entreprise est-elle déjà cliente ? » avec les coordonnées de fin de devis ; suivi de l’étape ; encart « Suivre mon dossier » ; coordonnées partagées entre les écrans |
 | `variante.js` | Charge `lm-parcours.js` sur le diagnostic et le devis |
 
 ## Tables MySQL créées au premier appel
