@@ -118,3 +118,31 @@ jobs:
       - name: Version C non configurée
         if: env.FTP_USER == ''
         run: echo 'Secrets PROTOBRHC_FTP_USERNAME et PROTOBRHC_FTP_PASSWORD absents, mise en ligne de la version C ignorée.'
+
+  # Cockpit BRH (module lead management) : seul le contenu de cockpitbrh/module/ est envoyé à la racine
+  # du sous-domaine cockpitbrh.monsitedetest.com (tests/, outils/ et sites/ restent dans le dépôt).
+  # Le .htaccess du module n'est pas dans le dépôt : il est déposé à la main sur le serveur AVANT de créer
+  # les secrets COCKPITBRH_FTP_USERNAME et COCKPITBRH_FTP_PASSWORD. config.php reste sur le serveur.
+  # Aucun fichier n'est supprimé sur le serveur.
+  cockpitbrh:
+    runs-on: ubuntu-latest
+    env:
+      FTP_USER: ${{ secrets.COCKPITBRH_FTP_USERNAME }}
+    steps:
+      - uses: actions/checkout@v4
+        if: env.FTP_USER != ''
+      - name: Installation du client FTP (lftp)
+        if: env.FTP_USER != ''
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+      - name: Envoi du module vers cockpitbrh.monsitedetest.com
+        if: env.FTP_USER != ''
+        env:
+          LFTP_PASSWORD: ${{ secrets.COCKPITBRH_FTP_PASSWORD }}
+        run: >
+          lftp --env-password -u "$FTP_USER" ftp.monsitedetest.com -e "set ftp:ssl-allow no;
+          set ftp:passive-mode on; set ftp:prefer-epsv no; set net:max-retries 4;
+          set net:reconnect-interval-base 5; set net:timeout 30;
+          mirror --reverse --only-newer --no-perms --parallel=1 --verbose=1 --exclude-glob .gitignore ./cockpitbrh/module/ ./; bye"
+      - name: Cockpit non configuré
+        if: env.FTP_USER == ''
+        run: echo 'Secrets COCKPITBRH_FTP_USERNAME et COCKPITBRH_FTP_PASSWORD absents, mise en ligne du cockpit ignorée.'
