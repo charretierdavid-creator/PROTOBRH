@@ -8,6 +8,7 @@ _Version C 1.6 — 15/11/2026 · renvoi vers VERSIONS.md · historique : VERSION
 
 
 
+
 Même principe que `protobrha/` et `protobrhb/` : ce dossier ne contient **que ce qui diffère** du socle `protobrh/`.
 La version C reprend le parcours **Standard** et ajoute l'IA à chaque étape, sans modifier les pages du socle.
 
