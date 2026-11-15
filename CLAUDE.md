@@ -126,8 +126,21 @@ Si une demande ne touche qu'un des deux sites, le dire explicitement dans le ré
 - **Règles de calcul du diagnostic** : gain fiscal = N salariés × 600 € × dispositifs actifs ;
   pouvoir d'achat = 400 € × dispositifs actifs par salarié ; un dispositif est actif si sa priorité est > 1.
   Toujours afficher « estimation indicative et non contractuelle ».
-- **Principes non négociables** : la valeur avant les coordonnées (résultats affichés sans e-mail),
-  consentement explicite avant toute transmission, Web-to-CR, diagnostic en moins de 5 minutes, sans compte.
+- **Principes non négociables** :
+  - consentement explicite avant toute transmission ; Web-to-CR ; diagnostic en moins de 5 minutes, sans compte ;
+  - l'IA éclaire, l'expert BRH conseille et engage ;
+  - toute estimation porte la mention « estimation indicative et non contractuelle » ;
+  - **socle de modules communs** : mutualiser au maximum les modules communs aux versions S, A, B et C et les placer
+    clairement dans le socle (`protobrh/`), pour maximiser la modularité des sites et faciliter leur gestion ;
+  - **version C adossée au socle** : C s'appuie sur les modules communs chaque fois que nécessaire. À chaque évolution
+    de C, proposer à David de créer un module commun (dans le socle, désactivé par défaut, activé par `BRH_OPTIONS`)
+    plutôt qu'un fichier propre à `protobrhc/`, en particulier pour le **lead management**, qui sera hébergé sur un
+    sous-domaine à part (nom à définir).
+- **Liberté de l'IA (version C, cible)** : l'IA peut reformuler, comparer, chiffrer des ordres de grandeur et proposer
+  des scénarios à partir des règles du portail et du profil de l'entreprise, avec des réponses libres. Garde-fous
+  maintenus : montant de l'IA toujours signalé « estimation indicative et non contractuelle », chiffrage du devis
+  par le moteur, statut client jamais révélé, aucune donnée personnelle transmise à Mistral, mention « orientation
+  indicative ». Le code actuel (`ia-*.js` : JSON imposé, température 0,2, aucun calcul) reste à assouplir.
 
 ## 5. Mode opératoire
 
