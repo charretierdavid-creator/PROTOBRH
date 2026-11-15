@@ -1,4 +1,4 @@
-Version C 2.4 — 15/11/2026 · connaissances de Julia : 1 à 500 salariés, complémentaire santé et convention collective ; Julia (2.0) · historique : VERSIONS.md
+Version C 2.6 — 15/11/2026 · connaissances de Julia : prévoyance par convention collective (étude du 15/11/2026, 196 conventions), santé étendue à 196 conventions ; estimation du devis ; 1 à 500 salariés (2.4) · historique : VERSIONS.md
 
 VERSION C DU PORTAIL (protobrhc) — CE QUE LE VISITEUR VOIT SUR CE SITE
 
@@ -50,10 +50,44 @@ socle : garanties supérieures, part employeur supérieure à 50 %, cotisation
 plancher, ayants droit couverts d'office, organismes recommandés (jamais
 imposés), haut degré de solidarité (souvent 2 %). Un accord non étendu ne
 s'impose qu'aux adhérents d'une organisation patronale signataire.
-Le portail s'appuie sur une étude de 150 conventions (document de travail du
-14/11/2026, à valider par le juridique ou Crédit Agricole Assurances). Pour le
-dirigeant, seules les conventions « confirmées » sont détaillées ; pour les
-autres, l'expert vérifie la convention.
+Le portail s'appuie sur une étude de 196 conventions (document de travail des
+14 et 15/11/2026, à valider par le juridique ou Crédit Agricole Assurances) :
+103 imposent un régime santé de branche. Repères : part employeur supérieure à
+50 % en coiffure (59 %), aide à domicile (58 %), industrie pharmaceutique et
+négoce de l'ameublement (60 %), immobilier, promotion immobilière, ferroviaire
+et télécommunications (55 %) ; enfants ou famille couverts d'office notamment
+en Syntec, coiffure, immobilier, notariat, industrie pharmaceutique ; socle
+légal seul en bâtiment et travaux publics, banque, assurances, commerce
+alimentaire, commerces de gros. Pour le dirigeant, seules les conventions
+« confirmées » sont détaillées ; pour les autres, l'expert vérifie la convention.
+
+PRÉVOYANCE ET CONVENTION COLLECTIVE
+La loi n'impose un régime de prévoyance collectif que pour les cadres et
+assimilés : 1,50 % de la tranche A à la charge exclusive de l'employeur, affecté
+en priorité au décès (ANI du 17/11/2017) ; à défaut, l'employeur doit un capital
+de 3 PASS aux ayants droit d'un cadre décédé. Pour tous, après 1 an
+d'ancienneté, le maintien de salaire légal (90 % puis 66,66 % du brut à partir
+du 8e jour d'arrêt). Mise en place par accord collectif, référendum ou décision
+unilatérale ; portabilité jusqu'à 12 mois ; rentes en cours maintenues (loi Évin).
+Tout le reste vient de la branche : régime obligatoire pour les non-cadres, taux
+minimal de cotisation, part employeur supérieure à 50 %, capital décès minimal,
+rente éducation et rente de conjoint (souvent OCIRP), organismes recommandés
+(jamais imposés depuis 2013), haut degré de solidarité (souvent 2 %). Trois
+points changent le devis : l'ancienneté exigée, la franchise avant le relais des
+indemnités journalières (30 à 180 jours) et l'extension de l'accord.
+Étude du 15/11/2026 sur les 196 conventions (document de travail, à valider par
+le juridique ou Crédit Agricole Assurances) : environ 144 imposent un régime
+prévoyance de branche, 11 n'en imposent pas, 41 restent incertaines. Repères :
+part employeur élevée dans le bâtiment et les travaux publics (1,72 % sur
+2,59 % pour les ouvriers), les organismes de tourisme (100 %), les sociétés
+d'assurances (environ 92 %), la charcuterie de détail (au moins 69 %), le
+commerce alimentaire (au moins 66 %) ; capital décès élevé sur les marchés
+financiers (250 à 300 % du salaire), en coiffure (230 à 360 %), dans les
+missions locales (200 %). Mêmes règles d'affichage qu'en santé : détails pour le
+dirigeant seulement si la convention est « confirmée » ; sinon, socle légal et
+vérification par l'expert. Le devis en ligne affiche « Ce que prévoit votre
+convention collective en prévoyance » et l'audit mutuelle vérifie la prévoyance
+de branche.
 
 DEVIS EN LIGNE, ÉTAPE « VOTRE ENTREPRISE »
 À partir du SIRET, le portail affiche toutes les conventions collectives
@@ -61,6 +95,13 @@ déclarées par l'entreprise dans ses déclarations sociales (DSN). Une
 entreprise peut en avoir plusieurs, une par catégorie de salariés (par
 exemple cadres et ETAM du bâtiment). Le visiteur retient celle qui sert de
 base au devis ; les autres sont transmises à l'expert.
+
+DEVIS EN LIGNE, ÉTAPE « VOTRE ESTIMATION »
+Les montants viennent d'abord, puis « Prochaine étape : votre proposition
+personnalisée » (2 étapes, environ 2 minutes, sans engagement) avec le bouton
+« Construire ma proposition ». L'envoi de l'estimation par e-mail est replié
+sur une ligne (« Pas le temps maintenant ? ») ; le détail par solution et ses
+hypothèses s'ouvrent à la demande.
 
 APRÈS UNE DEMANDE
 Le visiteur voit un récapitulatif court : sa référence, la Caisse régionale

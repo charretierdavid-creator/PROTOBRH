@@ -1,4 +1,4 @@
-/* Version C 2.4 — 15/11/2026 · argumentaire de vente enrichi des obligations santé de la convention collective (toutes les lignes, avec leur statut) ; fin de parcours compacte (2.0) · historique : VERSIONS.md */
+/* Version C 2.6 — 15/11/2026 · argumentaire de vente enrichi de la prévoyance de la convention collective (étude du 15/11/2026, toutes les lignes, avec leur statut) ; santé (2.4) ; fin de parcours compacte (2.0) · historique : VERSIONS.md */
 /* ==============================================================
    FIN DE PARCOURS — version C (protobrhc). Remplace la fin de parcours d'ia-devis.js et d'ia-diagnostic.js (C 1.x).
    Ce que voit le dirigeant, en court (décision du 15/11/2026 : récapitulatif trop long, « lead ultra-chaud » visible) :
@@ -24,14 +24,21 @@
   function nomCaisse(lm, dep) { if (lm && lm.caisse) return lm.caisse; var c = IA.caisse(dep); return c.connue ? c.nom : ''; }
   /* convention collective santé pour l'expert : toute la ligne de l'étude, statut compris (sante-ccn.js) */
   function conventionExpert() { var M = window.BRH_SANTE_CCN; try { return M ? M.expert(M.courante()) : null; } catch (e) { return null; } }
+  function prevoyanceExpert() { var M = window.BRH_PREV_IDCC; try { return M ? M.expert(M.courante()) : null; } catch (e) { return null; } }
   function argumentaire(ctx, source) {
     var cs = conventionExpert(); if (cs) ctx.convention_sante = cs;
+    var cp = prevoyanceExpert(); if (cp) ctx.convention_prevoyance = cp;
     return IA.run('synthese', ctx, IA.repli.synthese).then(function (r) {
       var s = r.data || IA.repli.synthese(ctx);
       if (cs) {   /* la convention figure toujours dans l'argumentaire, même si l'IA l'a omise */
         s.synthese = (s.synthese || []).concat(['Santé, convention IDCC ' + cs.idcc + ' (' + cs.branche + ', ' + cs.statut + ') : ' + cs.regime_sante_branche + ' ; ' + cs.exigences + ' ; ayants droit : ' + cs.ayants_droit]);
         s.questions = (s.questions || []).concat(cs.vigilance && cs.vigilance.length ? ['Convention : ' + cs.vigilance.join(' ; ') + ' — l’entreprise est-elle concernée ?'] : []);
         if (!/^Confirmé/.test(cs.statut)) s.pieces = (s.pieces || []).concat(['Texte de la convention collective (ligne « ' + cs.statut + ' » de l’étude santé)']);
+      }
+      if (cp) {   /* C 2.6 : prévoyance de la convention, toute la ligne de l'étude, statut compris */
+        s.synthese = (s.synthese || []).concat(['Prévoyance, convention IDCC ' + cp.idcc + ' (' + cp.branche + ', ' + cp.statut + ') : ' + cp.regime_prevoyance_branche + ' ; population : ' + (cp.population || '—') + ' ; ' + cp.exigences]);
+        s.questions = (s.questions || []).concat(['Prévoyance : les non-cadres sont-ils couverts par le régime de branche, avec quelle part employeur ? Ancienneté exigée et franchise avant le relais des indemnités journalières ?']);
+        if (!/^Confirmé/.test(cp.statut)) s.pieces = (s.pieces || []).concat(['Accord de prévoyance de la branche (ligne « ' + cp.statut + ' » de l’étude prévoyance)']);
       }
       if (window.BRH_LM && BRH_LM.argumentaire) BRH_LM.argumentaire(s, source);
       IA.track('ia_lead_synthese', { source: r.source, page: source });
