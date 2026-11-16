@@ -15,6 +15,7 @@ echo "  module : $M"; echo "  sites : $S"; echo "  socle : $SOCLE"; echo
 KO=0
 python3 -I "$ICI/t_statique.py" "$M" "$S" || KO=1
 node "$ICI/t_regles.js" "$M" || KO=1
+node "$ICI/t_lm3.js" "$M" || KO=1
 node "$ICI/t_console.js" "$M" || KO=1
 node "$ICI/t_connecteurs.js" "$M" "$SOCLE" || KO=1
 if [ "${4:-}" = "--mutations" ]; then python3 -I "$ICI/outils/mutations.py" "$M" "$S" "$SOCLE" || KO=1; fi

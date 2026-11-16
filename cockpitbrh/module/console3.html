@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<!-- Module LM 3.0 — 16/11/2026 · console simplifiée de l'expert BRH, de l'expert BRH Pro et du conseiller Pro, en démonstration (données fictives) · historique : VERSIONS.md -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="same-origin">
+<title>Cockpit BRH — console LM 3.0 (démonstration)</title>
+<!-- ==========================================================================
+     CONSOLE LM 3.0 — cahier des charges cdcbrh V2.13, pages P1 et P4 (16/11/2026), piste graphique G3
+     Démonstration complète sans serveur : données fictives (lm3-demo.js) gardées dans ce navigateur,
+     règles de gestion dans lm3-regles.js, interface dans console3.js. Aucun e-mail n'est envoyé.
+     Le raccordement au serveur (lm2-api.php, tables MySQL) viendra après validation de cette démonstration.
+     ========================================================================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --green:#065145; --band:#006A4E; --lime:#8FB822; --mint:#E3EFEA; --ink:#233029; --muted:#5C6B64; --muted2:#44524C;
+  --line:#E7ECE9; --bord:#C9D8D3; --teal:#016265; --red:#B3261E; --late:#7A1F2B; --ok:#1E6B3A; --sel:#E3EFEA;
+  --font:Inter,'Segoe UI',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:var(--ink);font:15px/22px var(--font);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--teal)} a:hover{color:var(--green)}
+:focus-visible{outline:3px solid var(--lime);outline-offset:2px}
+.hidden{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+/* barre de démonstration */
+.demo{background:#233029;color:#fff;font-size:13px}
+.demo .in{max-width:1408px;margin:0 auto;padding:8px 32px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px}
+.demo b{color:#C7DD8A;font-weight:600}
+.demo label{display:flex;align-items:center;gap:8px}
+.demo select{min-height:36px;border-radius:8px;border:1px solid #5C6B64;background:#2f3d37;color:#fff;padding:0 8px}
+.demo .sp{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.demo button{min-height:36px;border-radius:8px;border:1px solid #8FB822;background:transparent;color:#fff;padding:0 12px;cursor:pointer;font-weight:600}
+.demo button.r{border-color:#8a9a93}
+/* onglets */
+nav.top{display:flex;flex-wrap:wrap;gap:8px 32px;padding:0 32px;border-bottom:1px solid var(--line);max-width:1408px;margin:0 auto}
+nav.top button{padding:16px 20px 12px;border:none;border-bottom:4px solid transparent;background:none;color:var(--muted);cursor:pointer;font-size:15px}
+nav.top button[aria-current="page"]{border-bottom-color:var(--lime);color:var(--green);font-weight:600}
+.page{max-width:1408px;margin:0 auto;padding:16px 32px 48px}
+.card{border:1px solid var(--bord);border-radius:12px;overflow:hidden;background:#fff}
+.band{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;padding:14px 24px;background:var(--band);color:#fff}
+.band h1{margin:0;font-size:22px;line-height:28px;font-weight:700}
+.band .who{margin-left:auto;font-size:14px;color:#E3EFEA}
+.kpis{display:flex;flex-wrap:wrap;gap:12px;padding:14px 24px;border-bottom:1px solid var(--bord)}
+.kpi{flex:1 1 180px;padding:10px 16px;border:1px solid var(--bord);border-radius:12px}
+.kpi b{display:block;font-size:24px;line-height:32px}
+.kpi span{font-size:13px;color:var(--muted)}
+.tools{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 16px;padding:14px 24px;background:var(--mint);border-bottom:1px solid var(--bord)}
+.seg{display:flex;flex-wrap:wrap;border:1px solid var(--bord);border-radius:8px;overflow:hidden;background:#fff}
+.seg button{min-height:44px;padding:0 18px;border:none;background:#fff;color:var(--ink);cursor:pointer;font-size:15px;font-weight:500}
+.seg button+button{border-left:1px solid var(--bord)}
+.seg button[aria-pressed="true"]{background:var(--green);color:#fff;font-weight:600}
+.btn{min-height:44px;padding:0 18px;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;border:1px solid var(--bord);background:#fff;color:var(--ink)}
+.btn.p{border:2px solid var(--green);background:var(--green);color:#fff}
+.btn.s{border:2px solid var(--green);background:#fff;color:var(--green)}
+.btn.ia{border-color:var(--teal);color:var(--teal)}
+.btn.d{border-color:var(--red);color:var(--red)}
+.btn[aria-pressed="true"]{background:var(--green);color:#fff;border-color:var(--green)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.big{min-height:52px;flex:1 1 240px}
+.search{flex:1 1 260px;display:flex;flex-direction:column;gap:2px;font-size:13px;color:var(--muted)}
+input[type=search],input[type=text],input[type=date],input[type=tel],select,textarea{min-height:44px;padding:0 12px;border:1px solid var(--bord);border-radius:8px;background:#fff;font-size:15px;color:var(--ink)}
+textarea{padding:10px 12px;resize:vertical;min-height:72px}
+.split{display:flex;flex-wrap:wrap;align-items:stretch}
+/* liste */
+.list{flex:1 1 600px;min-width:0;border-right:1px solid var(--line)}
+.grid{display:grid;grid-template-columns:112px minmax(0,1fr) 150px;column-gap:16px}
+.lh{align-items:end;padding:12px 20px;border-bottom:1px solid var(--bord);font-size:12px;line-height:16px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.row{row-gap:4px;align-items:center;width:100%;padding:14px 20px;border:none;border-bottom:1px solid var(--line);background:#fff;text-align:left;cursor:pointer;color:var(--ink)}
+.row:hover{background:#F6F9F8}
+.row[aria-current="true"]{background:var(--sel)}
+.row .n{font-size:15px;line-height:22px;font-weight:700;color:var(--green)}
+.row .c2{font-size:13px;line-height:20px;color:var(--muted)}
+.row[aria-current="true"] .c2{color:var(--muted2)}
+.row .tags{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.empty{padding:32px 20px;color:var(--muted)}
+/* vignettes et médaillons */
+.vg{display:inline-flex;align-items:center;padding:1px 8px;border-radius:6px;font-size:12px;line-height:18px;font-weight:600;white-space:nowrap;border:1px solid var(--bord);background:#fff;color:var(--ink)}
+.vg.big{padding:3px 10px;font-size:13px;line-height:20px}
+.vg.devis{background:#FBEDEB;border-color:#EFC6C0;color:var(--red)}
+.vg.simu{background:#E6F4F4;border-color:#B9D9D9;color:var(--teal)}
+.vg.rappel{background:#FBF1DE;border-color:#EED7AE;color:#7A5200}
+.vg.trans{background:var(--mint);color:var(--green)}
+.vg.seg{border-color:var(--green);color:var(--green)}
+.vg.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.vg.late{background:var(--late);border-color:var(--late);color:#fff}
+.vg.clos{background:#EEF1F0;color:var(--muted2)}
+/* fiche */
+.fiche{flex:999 1 560px;min-width:0;display:flex;flex-direction:column;gap:20px;padding:24px 32px 32px}
+.ref{font-size:13px;color:var(--muted)}
+.fiche h2.t{margin:4px 0 12px;font-size:28px;line-height:36px;font-weight:700}
+.tagrow{display:flex;flex-wrap:wrap;gap:8px}
+.box{display:flex;flex-direction:column;gap:14px;padding:20px 24px;background:var(--mint);border:1px solid var(--bord);border-radius:12px}
+.box.w{background:#fff}
+.box h3{margin:0;font-size:22px;line-height:28px;font-weight:700}
+.box .hint{margin:-8px 0 0;font-size:14px;color:var(--muted2)}
+.quote{margin:0;padding:12px 16px;background:#fff;border:1px solid var(--bord);border-radius:8px}
+.btns{display:flex;flex-wrap:wrap;gap:12px}
+.note{margin:0;padding:12px 16px;background:var(--mint);border:1px solid var(--bord);border-radius:12px;font-size:14px}
+.sec h4{margin:0 0 8px;font-size:12px;line-height:16px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.sec ul{margin:0;padding-left:20px}
+.sec p{margin:0}
+.fld{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:600}
+.frow{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px}
+.opt{display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 16px;background:#fff;border:1px solid var(--bord);border-radius:8px;cursor:pointer}
+.opt input{width:20px;height:20px;accent-color:var(--green)}
+.opt small{display:block;font-size:13px;color:var(--muted)}
+fieldset{margin:0;padding:0;border:none;display:flex;flex-direction:column;gap:8px}
+legend{padding:0 0 8px;font-weight:700}
+.acts{display:flex;flex-wrap:wrap;gap:8px;padding-top:16px;border-top:1px solid var(--line)}
+.acts .end{margin-left:auto}
+.menu{display:flex;flex-wrap:wrap;gap:8px;padding:12px;border:1px solid var(--bord);border-radius:12px;background:#F6F9F8}
+.txt{white-space:pre-wrap;margin:0;padding:16px;background:#fff;border:1px solid var(--bord);border-radius:8px;font-size:14px;line-height:21px}
+.err{color:var(--red);font-size:14px;font-weight:600}
+.small{font-size:13px;color:var(--muted)}
+.mails li{margin-bottom:4px}
+/* annuaire */
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+/* message de confirmation */
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--green);color:#fff;padding:12px 20px;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.18);max-width:90vw;z-index:50}
+#toast.e{background:var(--red)}
+dialog{border:1px solid var(--bord);border-radius:12px;padding:24px;max-width:560px;width:calc(100% - 32px)}
+dialog::backdrop{background:rgba(35,48,41,.4)}
+dialog h2{margin:0 0 12px;font-size:22px}
+dialog form{display:flex;flex-direction:column;gap:12px}
+@media (max-width:700px){.grid{grid-template-columns:88px minmax(0,1fr) 110px;column-gap:10px}.page,.demo .in{padding-left:12px;padding-right:12px}.fiche{padding:20px 16px}}
+</style>
+</head>
+<body>
+<div class="demo" role="region" aria-label="Démonstration">
+  <div class="in">
+    <span><b>Démonstration</b> · données fictives · rien n'est envoyé</span>
+    <label for="persona">Se connecter en tant que <select id="persona"></select></label>
+    <span class="sp">
+      <button type="button" id="b-simuler">Simuler une visite du portail</button>
+      <button type="button" class="r" id="b-reset">Réinitialiser la démonstration</button>
+    </span>
+  </div>
+</div>
+<nav class="top" aria-label="Rubriques">
+  <button type="button" data-a="onglet" data-v="leads" aria-current="page">Mes leads</button>
+  <button type="button" data-a="onglet" data-v="annuaire">Annuaire pro et filiales</button>
+</nav>
+<main class="page" id="app" aria-live="polite"></main>
+<div id="toast" class="hidden" role="status"></div>
+
+<dialog id="d-simuler" aria-labelledby="d-sim-t">
+  <h2 id="d-sim-t">Simuler une visite du portail</h2>
+  <form method="dialog" id="f-simuler">
+    <p class="small" style="margin:0">Une demande fictive arrive du portail, comme depuis les sites S, A, B ou C. Elle est attribuée à l'expert BRH du département, ou rattachée au lead ouvert de la même entreprise.</p>
+    <label class="fld">Site d'origine<select id="s-site"><option value="S">S — version Standard</option><option value="A">A</option><option value="B">B</option><option value="C">C — version avec Julia</option></select></label>
+    <label class="fld">Ce que fait le dirigeant<select id="s-type">
+      <option value="simulation|diagnostic">Simulation réalisée — diagnostic</option>
+      <option value="simulation|label">Simulation réalisée — Label BRH</option>
+      <option value="devis|devis">Devis en cours ou réalisé</option>
+      <option value="rappel|rappel">Être rappelé</option></select></label>
+    <label class="fld">Entreprise<select id="s-ent"></select></label>
+    <div class="btns"><button class="btn p" value="ok" id="s-ok">Envoyer la demande</button><button class="btn" value="annuler" formnovalidate>Annuler</button></div>
+  </form>
+</dialog>
+
+<script src="lm3-regles.js?v=20261116a"></script>
+<script src="lm3-demo.js?v=20261116a"></script>
+<script src="console3.js?v=20261116a"></script>
+</body>
+</html>
