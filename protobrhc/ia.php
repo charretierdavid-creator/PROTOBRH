@@ -1,5 +1,5 @@
 <?php
-/* Version C 2.6 — 15/11/2026 · Julia : prévoyance de la convention collective et conventions citées (étude du 15/11/2026) ; santé (2.4) ; 1 à 500 salariés ; action « julia » (2.0) · historique : VERSIONS.md */
+/* Version C 2.7 — 16/11/2026 · Julia : 1 à 200 salariés, formule Amundi et offres packagées CAA selon l'effectif ; prévoyance de la convention et conventions citées (2.6) ; santé (2.4) ; action « julia » (2.0) · historique : VERSIONS.md */
 /* ============================================================
    MOTEUR IA DU PARCOURS — version C du test A/B (protobrhc)
    ------------------------------------------------------------
@@ -110,13 +110,21 @@ $ctxJson = json_encode($ctx, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 $knowledge   = is_readable(__DIR__ . '/connaissances.txt') ? trim((string) file_get_contents(__DIR__ . '/connaissances.txt')) : '';
 $orientation = is_readable(__DIR__ . '/orientation.txt')   ? trim((string) file_get_contents(__DIR__ . '/orientation.txt'))   : '';
 $version     = is_readable(__DIR__ . '/connaissances-version.txt') ? trim((string) file_get_contents(__DIR__ . '/connaissances-version.txt')) : '';
-/* version C : le portail traite toutes les entreprises de 1 à 500 salariés ; les textes du socle (base documentaire,
-   grille d'orientation) parlent encore d'un devis en ligne de 5 à 50 salariés : ils sont ajustés ici, sans modifier le socle */
+/* version C : devis et souscription de 1 à 200 salariés pour l'ensemble des offres, au-delà l'expert BRH (le diagnostic
+   reste possible) ; formule Amundi et offres packagées CAA selon l'effectif (décisions du 16/11/2026). Les textes du socle
+   (base documentaire, grille d'orientation) parlent encore d'un devis en ligne de 5 à 50 salariés et d'une offre santé CAA
+   pour les moins de 50 salariés : ils sont ajustés ici, sans modifier le socle */
 function ia_portee_c(string $t): string {
-  $t = str_replace(['devis en ligne (5 à 50 salariés)', 'devis en ligne (5 à 50 salariés)'], 'devis en ligne (1 à 500 salariés)', $t);
+  $t = str_replace(['devis en ligne (5 à 50 salariés)', 'devis en ligne (5 à 50 salariés)'], 'devis en ligne (1 à 200 salariés)', $t);
   $t = preg_replace('/^- 5 à 50 salariés :/mu', '- 1 à 50 salariés :', $t);
   $t = preg_replace('/^- Plus de 50 salariés : (.*?)prochaine étape proposée = [^\n]*$/mu',
-    '- 51 à 500 salariés : $1prochaine étape proposée = devis en ligne sur le portail (forfait social inclus) puis échange avec un expert BRH de la Caisse régionale.' . "\n" . '- Au-delà de 500 salariés : échange avec un expert BRH de la Caisse régionale (offre sur mesure).', $t);
+    '- 51 à 200 salariés : $1prochaine étape proposée = devis en ligne sur le portail (forfait social inclus) puis échange avec un expert BRH de la Caisse régionale.' . "\n" . '- Au-delà de 200 salariés : prise de contact avec un expert BRH de la Caisse régionale (offre sur mesure) ; le diagnostic et la simulation restent possibles sur le portail.', $t);
+  /* offre santé et prévoyance packagée de Crédit Agricole Assurances : jusqu'à 200 salariés (au lieu de « moins de 50 ») */
+  $t = str_replace('OFFRE SANTÉ COLLECTIVE CRÉDIT AGRICOLE ASSURANCES (MOINS DE 50 SALARIÉS)', 'OFFRES SANTÉ ET PRÉVOYANCE PACKAGÉES CRÉDIT AGRICOLE ASSURANCES (JUSQU\'À 200 SALARIÉS)', $t);
+  $t = preg_replace('/Pour les entrepreneurs et les entreprises de moins de 50 salariés,/u', 'Pour les entrepreneurs et les entreprises jusqu\'à 200 salariés (offres packagées santé et prévoyance),', $t);
+  $t = preg_replace('/À partir de 50 salariés, l\'expert BRH de la Caisse régionale construit une\s+offre sur mesure\./u', 'Au-delà de 200 salariés, les experts de Crédit Agricole Assurances construisent avec l\'expert BRH de la Caisse régionale une offre sur mesure.', $t);
+  /* formule Amundi conseillée selon l'effectif */
+  $t = str_replace("6. FORMULES AMUNDI (épargne salariale et retraite)\n", "6. FORMULES AMUNDI (épargne salariale et retraite)\n- Formule conseillée selon l'effectif, prioritaire sur les règles suivantes : 1 à 10 salariés = formule Convergence (PEI + PER COL-I) ; 11 à 49 salariés = formules Découverte et Intégrale ; 50 à 200 salariés = formule Intégrale ; au-delà de 200 salariés = expert BRH.\n", $t);
   return (string) $t;
 }
 $knowledge = ia_portee_c($knowledge); $orientation = ia_portee_c($orientation);
@@ -148,8 +156,8 @@ switch ($action) {
     $max = 550; $useKb = true; break;
   case 'preconise':
     $task = "TÂCHE : à partir du PROFIL, propose 2 à 3 pistes prioritaires en appliquant la GRILLE D'ORIENTATION, puis séquence-les dans le temps. "
-          . "Ne repropose pas ce qui est déjà en place : propose de le compléter. De 1 à 500 salariés, la prochaine étape peut être le devis en ligne ; "
-          . "au-delà de 500 salariés, l'échange avec un expert BRH. "
+          . "Ne repropose pas ce qui est déjà en place : propose de le compléter. De 1 à 200 salariés, la prochaine étape peut être le devis en ligne ; "
+          . "au-delà de 200 salariés, la prise de contact avec un expert BRH. "
           . "Format : {\"constat\":\"1 phrase qui résume le profil et l'enjeu\","
           . "\"pistes\":[{\"titre\":\"dispositif\",\"solution\":\"epargne|sante|retraite|avantages\",\"pourquoi\":\"1 à 2 phrases reliées au profil\",\"quand\":\"Maintenant|Ensuite|À l'échéance\",\"canal\":\"Devis en ligne|Avec un expert\"}],"
           . "\"prochaine_etape\":\"1 phrase\"}";
@@ -162,7 +170,9 @@ switch ($action) {
           . "documentaire, en précisant qu'ils sont indicatifs ; si la réponse dépend de la situation de l'entreprise ou n'est pas dans la base, "
           . "dis-le simplement et propose l'expert BRH. Si la question sort du champ RH, avantages salariés, épargne salariale, santé, prévoyance, "
           . "retraite ou du portail, recentre poliment. Ne parle jamais de niveau de lead, de score ni de prospect. "
-          . "Le portail traite toutes les entreprises de 1 à 500 salariés ; au-delà, un expert construit la proposition. "
+          . "De 1 à 200 salariés, le portail va jusqu'au devis et à la souscription pour toutes les offres ; au-delà de 200 salariés, recommande de prendre contact avec un expert BRH (le diagnostic et la simulation restent possibles). "
+          . "FORMULE AMUNDI selon l'effectif : 1 à 10 salariés = Convergence (PEI + PER COL-I) ; 11 à 49 = Découverte et Intégrale ; 50 à 200 = Intégrale. "
+          . "CRÉDIT AGRICOLE ASSURANCES : offres packagées santé et prévoyance jusqu'à 200 salariés ; au-delà, les experts CAA construisent l'offre sur mesure. "
           . "CONVENTION SANTÉ : si CONTEXTE.convention_sante est au statut « confirmé », tu peux citer ses exigences (régime de branche, part employeur, "
           . "ayants droit, points à vérifier) en précisant qu'il s'agit d'un document de travail que l'expert confirme ; si elle est « à vérifier », "
           . "n'en décris pas le contenu : rappelle le socle légal et dis que l'expert vérifie la convention. "

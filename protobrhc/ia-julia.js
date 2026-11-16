@@ -1,4 +1,4 @@
-/* Version C 2.6 — 15/11/2026 · prévoyance de la convention collective (prevoyance-idcc.js) et conventions citées dans la question, transmises à l’IA ; santé (2.4) ; pleine largeur (2.2) · historique : VERSIONS.md */
+/* Version C 2.7 — 16/11/2026 · devis de 1 à 200 salariés, formules Amundi et offres packagées CAA selon l'effectif (réponses de démonstration) ; prévoyance de la convention et conventions citées (2.6) ; santé (2.4) ; pleine largeur (2.2) · historique : VERSIONS.md */
 /* ==============================================================
    JULIA — l'IA de la version C, une seule et même rubrique en haut de chaque page
    « Julia, votre assistante RH vous accompagne tout au long du parcours »
@@ -28,7 +28,7 @@
   /* ---------- pages vers lesquelles Julia peut renvoyer (liste fermée, aussi envoyée à ia.php) ---------- */
   var LIENS = {
     diagnostic: { url: 'diagnostic.html', lib: 'Faire mon diagnostic RH', desc: 'diagnostic en 3 minutes : priorités RH, gains estimés, pistes prioritaires', page: 'diagnostic.html' },
-    devis:      { url: 'devis.html', lib: 'Obtenir mon devis en ligne', desc: 'devis indicatif de 1 à 500 salariés : épargne salariale, santé-prévoyance, retraite, avantages salariés', page: 'devis.html' },
+    devis:      { url: 'devis.html', lib: 'Obtenir mon devis en ligne', desc: 'devis indicatif de 1 à 200 salariés : épargne salariale, santé-prévoyance, retraite, avantages salariés', page: 'devis.html' },
     label:      { url: 'label-brh.html', lib: 'Découvrir le Label BRH', desc: 'une dizaine de questions pour évaluer sa politique avantages salariés et se comparer', page: 'label-brh.html' },
     audit:      { url: 'audit-mutuelle.html', lib: 'Auditer ma mutuelle', desc: 'audit gratuit de la santé et de la prévoyance au regard de la convention collective', page: 'audit-mutuelle.html' },
     fiscal:     { url: 'avantages-fiscaux.html', lib: 'Voir les avantages fiscaux', desc: 'exonérations sociales et fiscales, dispositif par dispositif', page: 'avantages-fiscaux.html' },
@@ -159,8 +159,11 @@
   /* =================== RÉPONSES DE DÉMONSTRATION (sans IA) =================== */
   var REGLES = [
     [/mutuelle|sant[ée]|pr[ée]voyance|compl[ée]mentaire|convention|ccn/i,
-      'La complémentaire santé collective est obligatoire pour les salariés du privé, et l’employeur en finance au moins la moitié. La prévoyance dépend surtout de votre convention collective, qui peut imposer des garanties minimales.\nL’audit mutuelle compare votre contrat à ces obligations en quelques minutes ; un expert Banque des RH vous aide ensuite à l’ajuster.',
+      'La complémentaire santé collective est obligatoire pour les salariés du privé, et l’employeur en finance au moins la moitié. La prévoyance dépend surtout de votre convention collective, qui peut imposer des garanties minimales.\nJusqu’à 200 salariés, Crédit Agricole Assurances propose des offres packagées en santé et en prévoyance, chiffrées dans le devis en ligne ; au-delà, ses experts construisent votre couverture sur mesure.\nL’audit mutuelle compare votre contrat à ces obligations en quelques minutes ; un expert Banque des RH vous aide ensuite à l’ajuster.',
       ['Santé : obligatoire, financée au moins à 50 % par l’employeur', 'Prévoyance : selon votre convention collective', 'Audit gratuit, sans engagement'], ['audit', 'devis']],
+    [/formule|amundi|convergence|d[ée]couverte|int[ée]grale|\bpei\b|per ?col/i,   // C 2.7 : formule Amundi conseillée selon l'effectif (après la règle santé, qui doit rester la 1re : i === 0)
+      'La formule Amundi conseillée dépend de votre effectif. Jusqu’à 10 salariés : la formule Convergence, qui réunit le PEI et le PER COL-I dans un seul contrat. De 11 à 49 salariés : les formules Découverte et Intégrale. De 50 à 200 salariés : la formule Intégrale, qui gère aussi la participation, obligatoire dès 50 salariés.\nLe devis en ligne présélectionne la formule conseillée pour votre effectif, jusqu’à 200 salariés ; au-delà, un expert Banque des RH construit la proposition avec vous.',
+      ['Jusqu’à 10 salariés : Convergence', '11 à 49 : Découverte ou Intégrale', '50 à 200 : Intégrale'], ['devis', 'expert']],
     [/pouvoir d.achat|titre|restaurant|ch[èe]que|cadeau|mobilit|avantages? salari/i,
       'Titres-restaurant, chèques cadeaux, forfait mobilités durables : ces avantages améliorent le quotidien de vos salariés et bénéficient de régimes sociaux et fiscaux favorables, dans des plafonds fixés chaque année.\nLe choix dépend de vos équipes : les titres-restaurant servent tous les jours, les chèques cadeaux marquent les temps forts. Le devis en ligne chiffre ce que chaque option coûterait à votre entreprise.',
       ['Régimes favorables, dans des plafonds annuels', 'Visibles dès le premier mois pour vos salariés'], ['fiscal', 'devis']],
@@ -183,8 +186,8 @@
       'Les ressources du portail rassemblent des cas clients, des livres blancs, des articles et des webinaires. Pour démarrer, le guide des avantages fiscaux et sociaux donne une vue d’ensemble, dispositif par dispositif.\nPour un exemple proche de votre activité, filtrez les cas clients par thème ; votre expert peut aussi vous en présenter d’autres.',
       [], ['ressources', 'fiscal']],
     [/devis|prix|co[uû]t|tarif|combien|solutions? choisir/i,
-      'Le devis en ligne chiffre en quelques minutes le coût de vos solutions pour l’entreprise et le gain net pour vos salariés, de 1 à 500 salariés. Au-delà, ou pour la santé et la prévoyance sur mesure, un expert Banque des RH construit la proposition avec vous.\nLe devis est indicatif : votre expert le confirme avant toute souscription.',
-      ['De 1 à 500 salariés', 'Devis indicatif, confirmé par un expert'], ['devis', 'expert']],
+      'Le devis en ligne chiffre en quelques minutes le coût de vos solutions pour l’entreprise et le gain net pour vos salariés, de 1 à 200 salariés. Au-delà de 200 salariés, prenez contact avec un expert Banque des RH : il construit la proposition avec vous (le diagnostic reste disponible).\nLe devis est indicatif : votre expert le confirme avant toute souscription.',
+      ['De 1 à 200 salariés', 'Devis indicatif, confirmé par un expert'], ['devis', 'expert']],
     [/fid[ée]li|attirer|recrut|garder|motiv|commencer|d[ée]marrer|par o[uù]/i,
       'Pour fidéliser, commencez par ce que vos salariés ressentent vite : avantages du quotidien et bonne couverture santé. Ajoutez ensuite le partage de la valeur pour les associer aux résultats.\nLe diagnostic RH classe vos priorités en 3 minutes et estime les gains ; vous pouvez ensuite obtenir votre devis en ligne.',
       ['Le quotidien d’abord, puis le partage de la valeur', 'Diagnostic en 3 minutes'], ['diagnostic', 'devis']],
@@ -466,7 +469,7 @@
       var d = r.data || IA.repli.preconise(ctx);
       var pistes = (d.pistes || []).slice(0, 3).map(function (x) {
         return '<li><div><b>' + esc(x.titre) + '</b><br>' + esc(x.pourquoi) + '<br>' + (x.quand ? '<span class="julia-tag q">' + esc(x.quand) + '</span>' : '') + (x.canal ? '<span class="julia-tag">' + esc(x.canal) + '</span>' : '') + '</div></li>'; }).join('');
-      var suite = DIAG ? (eff >= 1 && eff <= 500 ? ['devis', 'expert'] : ['expert']) : ['expert'];
+      var suite = DIAG ? (eff >= 1 && eff <= 200 ? ['devis', 'expert'] : ['expert']) : ['expert'];
       var M = window.BRH_SANTE_CCN, cc = null; try { cc = M ? M.courante() : null; } catch (e) {}
       var sante = (d.pistes || []).some(function (x) { return x.solution === 'sante' || /mutuelle|santé|prévoyance/i.test(x.titre || ''); });
       var rappel = sante && cc && cc.c && M.phrase(cc) ? '<p class="julia-sc">' + esc(M.phrase(cc)) + '</p>' : '';

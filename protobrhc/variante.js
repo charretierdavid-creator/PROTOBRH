@@ -1,4 +1,4 @@
-/* Version C 2.6 — 15/11/2026 · version 2.6 : estimation du devis (estimation-c.js), études santé et prévoyance par convention sur toutes les pages (prevoyance-idcc.js), page de test BRH_PAGE ; couche parcours partout (2.5) · historique : VERSIONS.md */
+/* Version C 2.7 — 16/11/2026 · version 2.7 : diagnostic avec nombre de salariés à 0 par défaut et message si le gain serait de 0 €, case d'accord obligatoire (diag-effectif.js) ; devis de 1 à 200 salariés, formules Amundi et offres CAA selon l'effectif (offres-effectif.js) ; estimation du devis et études santé / prévoyance (2.6) · historique : VERSIONS.md */
 /* Version C — protobrhc.monsitedetest.com : version Standard (socle protobrh/) + IA à chaque étape du parcours.
    Depuis la C 2.0, l'IA prend un seul visage : « Julia, votre assistante RH », en haut de chaque page
    (ia-julia.js). Elle explique, inspire et oriente ; le moteur du portail calcule ; l'expert BRH conseille et engage.
@@ -12,7 +12,7 @@
    ia.php relaie les appels à Mistral (clé dans config.php). Sans clé, Julia répond en « mode démonstration ».
    Identifie aussi la version (C) dans chaque événement de mesure et chaque demande transmise. */
 (function(){
-  var V = 'C', IAV = '2.6';
+  var V = 'C', IAV = '2.7';
   window.BRH_VARIANTE = V;
   /* profil de la session AVANT le script de la page : le diagnostic réécrit brhProfil à son chargement
      (valeurs par défaut) ; la version C reprend ainsi ce que le dirigeant avait déjà indiqué ailleurs */
@@ -56,10 +56,13 @@
      - parcours (lm-parcours.js) : coordonnées partagées entre écrans, estimation par e-mail, « déjà client ? » ;
      - fin-parcours.js : récapitulatif court après l'envoi, argumentaire de vente transmis au dossier ;
      - sante-ccn.js : obligations santé de la convention collective (étude du 14/11/2026, lignes confirmées pour le dirigeant) ;
-     - acces-devis.js : toutes les entreprises de 1 à 500 salariés (diagnostic, devis, audit), bouton « Faire réaliser un devis ». */
-  var MODULES = { 'diagnostic.html': ['entreprise-public.js', 'diag-entreprise.js', 'sante-ccn.js', 'fin-parcours.js', 'lm-parcours.js', 'acces-devis.js'],
-                  'label-brh.html': ['lm-parcours.js'], 'audit-mutuelle.html': ['sante-ccn.js', 'lm-parcours.js', 'acces-devis.js'], 'newsletter.html': ['lm-parcours.js'],
-                  'devis.html': ['entreprise-lookup.js', 'entreprise-public.js', 'idcc-devis.js', 'sante-ccn.js', 'fin-parcours.js', 'lm-parcours.js', 'estimation-c.js', 'acces-devis.js'] };
+     - acces-devis.js : entreprises de 1 à 200 salariés jusqu'au devis (500 avant la C 2.7), au-delà l'expert BRH, bouton « Faire réaliser un devis » ;
+     - offres-effectif.js (C 2.7) : formule Amundi conseillée selon l'effectif, offres packagées CAA jusqu'à 200 salariés ;
+     - diag-effectif.js (C 2.7) : nombre de salariés à 0 par défaut, message d'erreur si le gain serait de 0 €,
+       case d'accord sans « Facultatif » et obligatoire pour afficher les résultats. */
+  var MODULES = { 'diagnostic.html': ['entreprise-public.js', 'diag-entreprise.js', 'sante-ccn.js', 'fin-parcours.js', 'lm-parcours.js', 'acces-devis.js', 'offres-effectif.js', 'diag-effectif.js'],
+                  'label-brh.html': ['lm-parcours.js'], 'audit-mutuelle.html': ['sante-ccn.js', 'lm-parcours.js', 'acces-devis.js', 'offres-effectif.js'], 'index.html': ['offres-effectif.js'], 'newsletter.html': ['lm-parcours.js'],
+                  'devis.html': ['entreprise-lookup.js', 'entreprise-public.js', 'idcc-devis.js', 'sante-ccn.js', 'fin-parcours.js', 'lm-parcours.js', 'estimation-c.js', 'acces-devis.js', 'offres-effectif.js'] };
   var mods = (MODULES[page] || []).slice();
   /* C 2.6 : études santé et prévoyance par convention collective sur toutes les pages (Julia s'en sert partout) */
   if (mods.indexOf('sante-ccn.js') < 0) mods.unshift('sante-ccn.js');

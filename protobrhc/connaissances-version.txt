@@ -1,4 +1,4 @@
-Version C 2.6 — 15/11/2026 · connaissances de Julia : prévoyance par convention collective (étude du 15/11/2026, 196 conventions), santé étendue à 196 conventions ; estimation du devis ; 1 à 500 salariés (2.4) · historique : VERSIONS.md
+Version C 2.7 — 16/11/2026 · connaissances de Julia : 1 à 200 salariés (devis et souscription), formule Amundi et offres packagées CAA selon l'effectif ; diagnostic avec nombre de salariés à 0 par défaut, gain à 0 € expliqué, case d'accord obligatoire ; prévoyance par convention collective, santé 196 conventions, estimation du devis (2.6) · historique : VERSIONS.md
 
 VERSION C DU PORTAIL (protobrhc) — CE QUE LE VISITEUR VOIT SUR CE SITE
 
@@ -33,13 +33,44 @@ JULIA SUR CHAQUE PAGE
   questions sur le contenu de la page et orientation vers l'étape suivante.
 
 TAILLE DES ENTREPRISES
-Le portail traite toutes les entreprises de 1 à 500 salariés : diagnostic,
-devis en ligne et audit mutuelle. Au-delà de 500 salariés, un expert Banque des
-RH de la Caisse régionale construit la proposition. Ne jamais citer une autre
-fourchette de taille pour le portail ou le devis en ligne. Les seuils
-légaux restent valables (forfait social, participation obligatoire à partir de
-50 salariés…), de même que l'offre santé simplifiée de Crédit Agricole
-Assurances conçue pour les moins de 50 salariés.
+De 1 à 200 salariés, le portail va jusqu'au devis et à la souscription pour
+l'ensemble des offres. Au-delà de 200 salariés, recommander de prendre contact
+avec un expert Banque des RH de la Caisse régionale, qui construit la
+proposition ; le diagnostic et sa simulation restent possibles sur le portail.
+Ne jamais citer une autre fourchette de taille pour le portail ou le devis en
+ligne. Les seuils légaux restent valables (forfait social, participation
+obligatoire à partir de 50 salariés…).
+
+FORMULE AMUNDI SELON L'EFFECTIF
+- 1 à 10 salariés : formule Convergence (PEI + PER COL-I, un seul contrat,
+  199 € HT/an, salariés inclus jusqu'au 10e).
+- 11 à 49 salariés : formules Découverte et Intégrale.
+- 50 à 200 salariés : formule Intégrale (participation obligatoire dès 50
+  salariés).
+- Au-delà de 200 salariés : expert BRH.
+Le devis en ligne présélectionne la formule conseillée et l'indique par
+« Conseillée pour votre effectif » ; les autres formules restent possibles.
+Jusqu'à 10 salariés, si le dirigeant n'a choisi que l'épargne salariale ou que
+la retraite, le devis lui suggère d'ajouter l'autre besoin pour profiter de la
+formule Convergence.
+
+CRÉDIT AGRICOLE ASSURANCES SELON L'EFFECTIF
+Jusqu'à 200 salariés : offres packagées en santé (3 niveaux et 2 options) et
+en prévoyance, chiffrées dans le devis en ligne. Au-delà de 200 salariés : les
+experts de Crédit Agricole Assurances construisent l'offre sur mesure, avec
+l'expert BRH.
+
+GAIN DU DIAGNOSTIC À 0 €
+Dans le diagnostic, le nombre de salariés part de 0 : le visiteur indique son
+effectif réel. Le gain fiscal n'est calculé que si le nombre de salariés est
+supérieur à 0 et si au moins une priorité est au-dessus de 1 (un dispositif
+n'est retenu qu'à partir du niveau 2). Sinon, « Afficher mes résultats »
+affiche un message qui indique quoi corriger (« 1. Votre entreprise » ou
+« 2. Vos priorités ») et aucun résultat n'est affiché. Si le visiteur demande
+pourquoi son gain est de 0 €, lui expliquer ces deux conditions.
+Pour afficher les résultats, le visiteur indique aussi son e-mail et coche la
+case d'accord (envoi de son résultat et recontact par le Crédit Agricole et sa
+Caisse régionale). Sans cette case, les résultats ne s'affichent pas.
 
 COMPLÉMENTAIRE SANTÉ ET CONVENTION COLLECTIVE
 Socle légal commun à tous les employeurs : tous les salariés couverts par une

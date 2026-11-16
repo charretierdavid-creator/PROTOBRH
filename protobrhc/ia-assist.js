@@ -1,4 +1,4 @@
-/* Version C 2.4 — 15/11/2026 · devis en ligne proposé de 1 à 500 salariés dans les pistes de démonstration ; module IA commun (2.0) · historique : VERSIONS.md */
+/* Version C 2.7 — 16/11/2026 · devis en ligne proposé de 1 à 200 salariés dans les pistes de démonstration, au-delà l'expert BRH (500 en 2.4) ; module IA commun (2.0) · historique : VERSIONS.md */
 /* ==============================================================
    IA DU PARCOURS — module partagé (version C du test A/B, protobrhc)
    Chargé par variante.js sur toutes les pages, avant ia-julia.js (Julia, l'assistante RH)
@@ -122,7 +122,7 @@
       var ks = Object.keys(AX).filter(function (k) { return (pr[k] || 1) > 1; }).sort(function (a, b) { return (pr[b] || 0) - (pr[a] || 0); });
       if (panier && panier.length) ks = panier.map(function (s) { for (var k in AX) if (AX[k].sol === s) return k; }).filter(Boolean);
       if (!ks.length) ks = ['pouvoirAchat', 'protection'];
-      var simple = n >= 1 && n <= 500;   // devis en ligne de 1 à 500 salariés (version C 2.4)
+      var simple = n >= 1 && n <= 200;   // devis en ligne de 1 à 200 salariés (version C 2.7)
       var pistes = ks.slice(0, 3).map(function (k, i) {
         var sol = AX[k].sol, mut = sol === 'sante' && deja.indexOf('mutuelle') >= 0;
         return { titre: mut ? 'Compléter votre mutuelle par la prévoyance' : IDEES[k][0], solution: sol,
@@ -131,7 +131,7 @@
                  canal: (simple && (sol === 'avantages' || sol === 'epargne')) ? 'Devis en ligne' : 'Avec un expert' };
       });
       return { constat: 'Entreprise de ' + (n || '?') + ' salariés' + (c.secteur ? ' (' + String(c.secteur).toLowerCase() + ')' : '') + ' : on commence par ce que vous avez noté comme le plus prioritaire.',
-               pistes: pistes, prochaine_etape: simple ? 'Obtenez votre devis en ligne pour la première piste ; un expert BRH vous accompagne pour les suivantes.' : 'Au-delà de 500 salariés, un expert BRH de votre Caisse régionale construit la proposition avec vous.' };
+               pistes: pistes, prochaine_etape: simple ? 'Obtenez votre devis en ligne pour la première piste ; un expert BRH vous accompagne pour les suivantes.' : 'Au-delà de 200 salariés, prenez contact avec un expert BRH de votre Caisse régionale : il construit la proposition avec vous.' };
     },
     synthese: function (c) {
       var e = c.entreprise || {}, l = [];
