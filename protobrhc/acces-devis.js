@@ -1,27 +1,29 @@
-/* Version C 2.4 — 15/11/2026 · toutes les entreprises de 1 à 500 salariés (diagnostic, devis, audit) ; bouton « Faire réaliser un devis » à droite de « 3. Nos solutions » ; forfait social (1.13) · historique : VERSIONS.md */
+/* Version C 2.7 — 16/11/2026 · toutes les entreprises de 1 à 200 salariés (devis et souscription pour l'ensemble des offres) ; au-delà, prise de contact avec l'expert BRH, diagnostic toujours possible ; bouton « Faire réaliser un devis » (2.4) ; forfait social (1.13) · historique : VERSIONS.md */
 /* ==============================================================
-   ACCÈS AU DEVIS EN LIGNE DE 1 À 500 SALARIÉS (version C, protobrhc) — décisions du 15/11/2026
-   « Nous traitons tous les cas de 1 à 500 salariés » : aucune mention « 5 à 1 000 salariés », ni de seuil à 5, 50 ou 300.
+   ACCÈS AU DEVIS EN LIGNE DE 1 À 200 SALARIÉS (version C, protobrhc) — décisions du 15/11/2026, seuil ramené à 200 le 16/11/2026
+   « De 1 à 200 salariés, nous pouvons aller jusqu'au devis / souscription pour l'ensemble des offres ; pour plus de 200 salariés,
+   il faut préconiser une prise de contact avec l'expert BRH, mais le diagnostic - simulation peut être réalisé » (David CHARRETIER).
+   Aucune mention « 5 à 1 000 salariés », ni de seuil à 5, 50 ou 300.
    Surcouche du socle, sans modifier les pages.
      Diagnostic (diagnostic.html)
-       - effectif : plus d'avertissement « Outil ciblé 5 à 1 000 salariés » ; au-delà de 500, un échange avec un
+       - effectif : plus d'avertissement « Outil ciblé 5 à 1 000 salariés » ; au-delà de 200, un échange avec un
          expert est proposé ;
        - le bloc « Bon à savoir » est retiré ; à sa place, la proposition d'accès au devis (bloc #devisCta du socle),
-         de 1 à 500 salariés ; au-delà, la même place propose d'être rappelé par un expert ;
+         de 1 à 200 salariés ; au-delà, la même place propose d'être rappelé par un expert ;
        - bouton « Faire réaliser un devis » à droite du titre « 3. Nos solutions », qui reprend l'effectif et les
-         solutions prioritaires (au-delà de 500 salariés : « Être rappelé par un expert »).
+         solutions prioritaires (au-delà de 200 salariés : « Être rappelé par un expert »).
      Devis (devis.html)
-       - effectif accepté de 1 à 500 salariés ;
+       - effectif accepté de 1 à 200 salariés ;
        - à partir de 50 salariés, le forfait social est ajouté au coût employeur :
            abondement PEE / PEI 20 %, participation 20 %, abondement PER COL 16 %,
            intéressement et prime de partage de la valeur 20 % à partir de 250 salariés.
          Taux à faire valider par Amundi / CA Titres (le socle ne gérait que les moins de 50 salariés).
      Audit mutuelle (audit-mutuelle.html)
-       - « Obtenir un devis en ligne » proposé de 1 à 500 salariés (le socle le limitait à 5 à 50).
+       - « Obtenir un devis en ligne » proposé de 1 à 200 salariés (le socle le limitait à 5 à 50).
    ============================================================== */
 (function () {
   'use strict';
-  var MIN = 1, MAX = 500;
+  var MIN = 1, MAX = 200;   // C 2.7 : 200 (500 en C 2.4)
   var $ = function (id) { return document.getElementById(id); };
   var page = (window.BRH_PAGE || location.pathname.split('/').pop() || 'index.html').toLowerCase();
 
@@ -31,13 +33,13 @@
     if (bas) bas.style.display = 'none';
     if (cta && bas && bas.parentNode) bas.parentNode.insertBefore(cta, bas);   // la proposition de devis prend la place du « Bon à savoir »
     if (typeof DEVIS_LINK === 'object' && DEVIS_LINK) { DEVIS_LINK.min = MIN; DEVIS_LINK.max = MAX; }
-    /* effectif : plus de message « Outil ciblé 5 à 1 000 salariés » ; au-delà de 500, un expert */
+    /* effectif : plus de message « Outil ciblé 5 à 1 000 salariés » ; au-delà de 200, un expert */
     if (typeof CONFIG === 'object' && CONFIG) { CONFIG.minEmployeesWarning = MIN; CONFIG.maxEmployeesWarning = MAX; }
     if (typeof onEffectif === 'function') {
       var _oe = onEffectif;
       onEffectif = function () {
         var r = _oe.apply(this, arguments), w = $('eff-warn'), n = typeof state === 'object' ? +state.effectif || 0 : 0;
-        if (w && n > MAX) { w.textContent = 'Au-delà de ' + MAX + ' salariés, un expert Banque des Ressources Humaines construit votre proposition avec vous.'; if (w.classList) w.classList.add('show'); }
+        if (w && n > MAX) { w.textContent = 'Au-delà de ' + MAX + ' salariés, prenez contact avec un expert Banque des Ressources Humaines : il construit votre proposition avec vous. Votre diagnostic et sa simulation restent disponibles ici.'; if (w.classList) w.classList.add('show'); }
         else if (w && /1 000|5 à/.test(w.textContent || '')) { w.textContent = ''; if (w.classList) w.classList.remove('show'); }
         return r;
       };
@@ -47,10 +49,10 @@
     function maj() {
       if (!cta || typeof state !== 'object') return;
       var n = +state.effectif || 0;
-      if (n > MAX) {   /* au-delà de 500 salariés : un expert construit la proposition */
+      if (n > MAX) {   /* au-delà de 200 salariés : un expert construit la proposition */
         cta.classList.remove('hidden');
         if (titre) titre.textContent = 'Votre entreprise mérite une proposition sur mesure';
-        if (texte) texte.textContent = 'Au-delà de ' + MAX + ' salariés, un expert Banque des Ressources Humaines construit votre proposition avec vous, à partir de ce diagnostic.';
+        if (texte) texte.textContent = 'Au-delà de ' + MAX + ' salariés, le devis et la souscription se font avec un expert Banque des Ressources Humaines : il construit votre proposition avec vous, à partir de ce diagnostic.';
         if (btn) { btn.setAttribute('href', '#contact'); btn.innerHTML = 'Être rappelé par un expert'; }
         if (alt) alt.style.display = 'none';
       } else {
@@ -126,7 +128,7 @@
     var _res = resultat;
     resultat = function () {
       var h = _res.apply(this, arguments), eff = parseInt(A.effectif, 10) || 0;
-      /* le socle ne propose le devis en ligne qu'à 5 à 50 salariés : la version C l'ouvre de 1 à 500 */
+      /* le socle ne propose le devis en ligne qu'à 5 à 50 salariés : la version C l'ouvre de 1 à 200 */
       if (eff >= MIN && eff <= MAX && h.indexOf('Obtenir un devis en ligne') < 0 && h.indexOf('<div class="opt" style="grid-column:1/-1">') >= 0) {
         var code = typeof ccnCode === 'function' ? ccnCode() : '', q = 'eff=' + eff + '&sol=sante&from=audit' + (code ? '&idcc=' + encodeURIComponent(code) : '') + (A.secteur ? '&secteur=' + encodeURIComponent(A.secteur) : '');
         h = h.replace('<div class="opt" style="grid-column:1/-1">', '<div class="opt"><h4>Obtenir un devis en ligne</h4><p>Votre effectif et votre convention sont repris. Estimation immédiate, à votre rythme.</p><a class="btn btn-primary" href="devis.html?' + q + '" onclick="window.__auT&&__auT(\'audit_to_devis\')">Mon devis santé et prévoyance</a></div><div class="opt">');
