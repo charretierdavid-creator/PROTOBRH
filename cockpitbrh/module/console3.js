@@ -1,4 +1,4 @@
-/* Module LM 3.0.2 — 17/11/2026 · interface de la console simplifiée (démonstration, données fictives), graphisme de la console d'origine · historique : VERSIONS.md */
+/* Module LM 3.0.3 — 17/11/2026 · interface de la console simplifiée (démonstration, données fictives), graphisme de la console d'origine · historique : VERSIONS.md */
 /* ==============================================================
    console3.js — CONSOLE DE L'EXPERT BRH, DE L'EXPERT BRH PRO ET DU CONSEILLER PRO
    Cahier des charges cdcbrh, pages P1 et P4. Toutes les règles passent par lm3-regles.js (LM3).
@@ -151,7 +151,7 @@
       + vg(l.effectif + ' salariés', '', true) + vg(l.ville + ' (' + l.dep + ')', '', true)
       + (libSegment(l) ? vg(libSegment(l), 'seg', true) : '') + (l.rappel ? vg('Rappel demandé', '', true) : '') + '</div></div>';
     if (ui.erreur) h += '<p class="alert e" role="alert">' + esc(ui.erreur) + '</p>';
-    h += carteContact(l, proprio && !admin && l.statut === 'en_cours');
+    h += carteContact(l);
     if (admin) h += '<p class="alert">Vue administrateur, en lecture seule. Propriétaire : <b>' + esc(L.nomComplet(L.trouver(etat, l.proprietaire))) + '</b> (' + esc(roleMin(L.trouver(etat, l.proprietaire))) + ').</p>';
     else if (!proprio) h += suiviTransmis(l, u);
     else h += blocDecision(l, u, sit) + actions(l);
@@ -160,13 +160,14 @@
   }
   /* Contact dans l'entreprise : coordonnées toujours visibles ; statut client tel que déclaré par le dirigeant sur le portail */
   function libClient(c) { return { declare: 'Se déclare client', non_declare: 'Se déclare prospect', verifie: 'Client vérifié' }[c] || 'Statut client à vérifier'; }
-  function carteContact(l, actif) {
-    return '<div class="sec"><h3>Contact dans l\'entreprise</h3><div class="contact">'
-      + '<div class="who">' + esc(l.contact.nom) + '<small>' + esc(l.contact.fonction) + '</small></div>'
-      + '<div class="meta">' + vg(libClient(l.client), l.client === 'non_declare' ? '' : 'trans') + '<a href="#" data-a="info" data-v="Vérification dans la base clients de la Caisse régionale (hors démonstration).">Vérifier le statut client</a></div>'
-      + '<div class="go"><a class="btn' + (actif ? ' p' : '') + '" href="tel:' + esc(l.contact.tel.replace(/\s/g, '')) + '" data-a="info" data-v="Démonstration : l\'appel n\'est pas passé (' + esc(l.contact.tel) + ').">' + ICO.tel + esc(l.contact.tel) + '</a>'
-      + '<a class="btn" href="mailto:' + esc(l.contact.email) + '" data-a="info" data-v="Démonstration : aucun e-mail n\'est envoyé (' + esc(l.contact.email) + ').">' + ICO.mail + esc(l.contact.email) + '</a></div>'
-      + '</div></div>';
+  function carteContact(l) {
+    var lien = function (href, ico, txt, msg) { return '<a class="lk" href="' + href + '" data-a="info" data-v="' + msg + '">' + ico + '<span>' + txt + '</span></a>'; };
+    return '<div class="sec"><h3>Contact dans l\'entreprise</h3><dl class="kv contact">'
+      + '<dt>Dirigeant</dt><dd><b>' + esc(l.contact.nom) + '</b> · ' + esc(l.contact.fonction) + '</dd>'
+      + '<dt>Statut client</dt><dd class="st">' + vg(libClient(l.client), l.client === 'non_declare' ? '' : 'trans') + '<a href="#" data-a="info" data-v="Vérification dans la base clients de la Caisse régionale (hors démonstration).">Vérifier le statut client</a></dd>'
+      + '<dt>Téléphone</dt><dd>' + lien('tel:' + esc(l.contact.tel.replace(/\s/g, '')), ICO.tel, esc(l.contact.tel), 'Démonstration : l\'appel n\'est pas passé (' + esc(l.contact.tel) + ').') + '</dd>'
+      + '<dt>E-mail</dt><dd>' + lien('mailto:' + esc(l.contact.email), ICO.mail, esc(l.contact.email), 'Démonstration : aucun e-mail n\'est envoyé (' + esc(l.contact.email) + ').') + '</dd>'
+      + '</dl></div>';
   }
   function suiviTransmis(l, u) {
     var t = dernierePar(l, u.email), p = L.trouver(etat, l.proprietaire);
