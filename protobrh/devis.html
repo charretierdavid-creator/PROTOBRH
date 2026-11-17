@@ -548,6 +548,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 .dv-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
 .dv-grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
 .dv-grid .full{grid-column:1/-1}
+.dv-grid .dv-ccn-f{grid-row:span 2}   /* convention collective sur 2 lignes : le nombre de salariés remonte sous l'activité */
 .field input[readonly]{background:var(--gray-bg)}
 .field input.ok{border-color:var(--lime)}
 .field input.bad{border-color:#d9534f}
@@ -730,6 +731,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
 }
 @media(max-width:700px){
   .dv-choices,.dv-grid,.dv-grid.two,.dv-est,.dv-modal-grid{grid-template-columns:1fr}
+  .dv-grid .dv-ccn-f{grid-row:auto}
   .dv-synth{grid-template-columns:1fr}
   .dv-ecard .e-kpis{grid-template-columns:1fr}
   .simcard{padding:24px 20px}
@@ -860,7 +862,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,[t
           <div class="field"><label for="e-cp">Code postal <span class="req">*</span><span class="dv-status found" data-st="cp">Trouvé</span></label><input id="e-cp" inputmode="numeric" maxlength="5"></div>
           <div class="field"><label for="e-naf">Activité (code NAF)<span class="dv-status found" data-st="naf">Trouvé</span></label><input id="e-naf"></div>
           <div class="field"><label for="e-sec">Secteur d'activité</label><select id="e-sec" onchange="onDvSecteur()"></select><span class="hint">Il affine le devis santé et prévoyance.</span></div>
-          <div class="field"><label for="e-ccn">Convention collective<span class="dv-status check" data-st="idcc">À confirmer</span></label><select id="e-ccn" onchange="onDvCcn()"></select>
+          <div class="field dv-ccn-f"><label for="e-ccn">Convention collective<span class="dv-status check" data-st="idcc">À confirmer</span></label><select id="e-ccn" onchange="onDvCcn()"></select>
             <input id="e-idcc" placeholder="Code IDCC et intitulé, ex. 1486 — Syntec" style="margin-top:8px"><span class="hint">Clé de votre devis santé et prévoyance : elle fixe les garanties minimales et la tarification.</span></div>
           <div class="field"><label for="e-eff">Nombre de salariés <span class="req">*</span><span class="dv-status check" data-st="eff">À confirmer</span></label><input id="e-eff" type="number" min="0" step="1" inputmode="numeric" placeholder="Effectif actuel">
             <span class="hint" id="effHint">Indiquez votre effectif salarié actuel.</span></div>
