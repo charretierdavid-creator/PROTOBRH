@@ -1,4 +1,4 @@
-/* Module LM 3.0 — 16/11/2026 · règles de gestion de la console simplifiée (cahier des charges V2.13, page P4) · historique : VERSIONS.md */
+/* Module LM 3.0.1 — 17/11/2026 · règles de gestion de la console simplifiée (cahier des charges V2.13, page P4) · historique : VERSIONS.md */
 /* ==============================================================
    lm3-regles.js — RÈGLES DE GESTION DE LA CONSOLE LM 3.0 (démonstration et tests)
    Cahier des charges cdcbrh, pages P1 et P4 (V2.13 du 16/11/2026) :
@@ -139,7 +139,8 @@
 
   /* ---------------- actions : chacune vérifie les droits, modifie l'état, trace l'historique et les e-mails ---------------- */
   function trace(l, now, par, texte) { l.historique.push({ date: isoComplet(now), par: par, texte: texte }); }
-  function mail(l, now, a, objet) { l.emails.push({ date: isoComplet(now), a: a, objet: objet }); }
+  /* modele : accuse, prise, interlocuteur (e-mails au dirigeant) ou interne (collègues) ; par : compte à l'origine du message */
+  function mail(l, now, a, objet, modele, par) { l.emails.push({ date: isoComplet(now), a: a, objet: objet, modele: modele || 'interne', par: par || '' }); }
   function refus(m) { return { ok: false, erreur: m }; }
   function proprio(l, moi) { return l.proprietaire === moi; }
 
@@ -152,7 +153,7 @@
     if (segment !== 'entreprise' && segment !== 'pro') return refus('Indiquez si le lead relève de l’Entreprise ou des Pros.');
     l.segment = segment; l.statut = 'en_cours'; l.pris_le = isoComplet(now);
     trace(l, now, moi, 'Lead pris en charge par ' + nomComplet(u) + ', segment ' + (segment === 'entreprise' ? 'Entreprise' : 'Pro') + '.');
-    mail(l, now, 'dirigeant', 'Votre demande est prise en charge par ' + nomComplet(u) + ' (' + libRole(u) + ')');
+    mail(l, now, 'dirigeant', 'Votre demande est prise en charge par ' + nomComplet(u) + ' (' + libRole(u) + ')', 'prise', moi);
     return { ok: true, message: 'Lead pris en charge. Le dirigeant a reçu votre nom par e-mail.' };
   }
   function transmettre(etat, id, moi, vers, mot, segment, now) {
@@ -166,8 +167,8 @@
     l.transmissions.push({ de: moi, a: vers, date: isoComplet(now), mot: String(mot || '').trim(), renvoi: false });
     l.proprietaire = vers; l.statut = 'nouveau'; l.prochaine = null;
     trace(l, now, moi, 'Transmis par ' + nomComplet(u) + ' à ' + nomComplet(c) + ' (' + libRole(c) + ')' + (l.segment ? ', segment ' + (l.segment === 'entreprise' ? 'Entreprise' : 'Pro') : '') + (avant === 'En cours' ? ', alors qu’il était en cours' : '') + '.');
-    mail(l, now, nomComplet(c), 'Lead transmis par ' + nomComplet(u) + ' : ' + l.entreprise);
-    mail(l, now, 'dirigeant', 'Votre interlocuteur sera ' + nomComplet(c) + ' (' + libRole(c) + ')');
+    mail(l, now, nomComplet(c), 'Lead transmis par ' + nomComplet(u) + ' : ' + l.entreprise, 'interne', moi);
+    mail(l, now, 'dirigeant', 'Votre interlocuteur sera ' + nomComplet(c) + ' (' + libRole(c) + ')', 'interlocuteur', vers);
     return { ok: true, message: 'Lead transmis à ' + nomComplet(c) + '. Vous le suivez dans « Transmis par moi ».' };
   }
   function renvoyer(etat, id, moi, mot, now) {
@@ -179,7 +180,7 @@
     l.transmissions.push({ de: moi, a: t.de, date: isoComplet(now), mot: String(mot).trim(), renvoi: true });
     l.proprietaire = t.de; l.segment = null;
     trace(l, now, moi, 'Renvoyé par ' + nomComplet(u) + ' à ' + nomComplet(exp) + ' : classement contesté.');
-    mail(l, now, nomComplet(exp), 'Lead renvoyé par ' + nomComplet(u) + ' : ' + l.entreprise);
+    mail(l, now, nomComplet(exp), 'Lead renvoyé par ' + nomComplet(u) + ' : ' + l.entreprise, 'interne', moi);
     return { ok: true, message: 'Lead renvoyé à ' + nomComplet(exp) + '.' };
   }
   function planifier(etat, id, moi, action, date, note, now) {
@@ -245,8 +246,8 @@
       statut: 'nouveau', segment: null, proprietaire: expert.email, transmissions: [], prochaine: null, cloture: null, historique: [], emails: []
     };
     trace(l, now, 'portail', 'Visite du portail (site ' + d.site + ') : ' + TYPES[d.type].lib.toLowerCase() + ' ; lead attribué à ' + nomComplet(expert) + '.');
-    mail(l, now, 'dirigeant', 'Accusé de réception de votre demande');
-    mail(l, now, nomComplet(expert), 'Nouveau lead : ' + l.entreprise + ' (' + TYPES[d.type].lib + ')');
+    mail(l, now, 'dirigeant', 'Accusé de réception de votre demande ' + l.id, 'accuse', '');
+    mail(l, now, nomComplet(expert), 'Nouveau lead : ' + l.entreprise + ' (' + TYPES[d.type].lib + ')', 'interne', '');
     etat.leads.push(l);
     return { ok: true, lead: l, fusion: false, message: 'Nouveau lead ' + l.entreprise + ' attribué à ' + nomComplet(expert) + '.' };
   }
