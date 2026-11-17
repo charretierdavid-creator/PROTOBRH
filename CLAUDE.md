@@ -117,6 +117,10 @@ Si une demande ne touche qu'un des deux sites, le dire explicitement dans le ré
 - **Version hors ligne** : `python3 outils/generer_hors_ligne.py protobrh <sortie.html> https://protobrh.monsitedetest.com/assistant-demo.php <jeton>`
   produit un fichier unique (pages embarquées). Le jeton est celui de `ASSISTANT_DEMO_TOKEN` dans `config.php` (serveur) :
   ne jamais le committer ni committer le fichier généré. L'assistant passe par `assistant-demo.php` (relais à jeton).
+- **Kit de démonstration (version C + cockpit)** : `python3 outils/generer_kit_demo_c.py <sortie.html>` assemble la version C et
+  produit un fichier unique : portail C et console LM 3.0 (`cockpitbrh/module/console3.*`), leads du portail transmis à la console
+  le temps de la démo, Julia sur 2 questions préparées (`JULIA` dans le script). Sans clé ni jeton ; ne pas committer le fichier généré.
+  Il s'appuie sur `charger()` de `protobrhc/variante.js` et sur la fin de `console3.js` : les garder compatibles (le script s'arrête sinon).
 - **Listes partagées** : secteurs d'activité et conventions collectives dans `conventions.js` (diagnostic, audit mutuelle,
   devis) ; textes et tarifs des formules Amundi dans `formules-amundi.js`.
   Prévoyance imposée par les conventions collectives (inventaire IDCC, fenêtre « i » du devis) dans `prevoyance-ccn.js`.
