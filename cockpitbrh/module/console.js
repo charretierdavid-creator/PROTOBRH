@@ -1,4 +1,4 @@
-/* Module LM 2.0.1 — 15/11/2026 · application de la console (expert BRH, accès ponctuel, administration) · historique : VERSIONS.md */
+/* Module LM 2.0.2 — 17/11/2026 · application de la console (expert BRH, accès ponctuel, administration) · historique : VERSIONS.md */
 /* ==============================================================
    console.js — console du lead management simplifié (cahier des charges v0.3, réponses par défaut Q1 à Q22)
    Écrans : E1 file et fiche, E2 transfert, E3 e-mail IA, E4 accès ponctuel, E6 annuaire, E7 script d'appel,
@@ -86,7 +86,7 @@
       '<div class="fld"><label for="lgId">E-mail professionnel ou identifiant administrateur</label><input id="lgId" autocomplete="username"></div>' +
       '<div class="fld"><label for="lgMdp">Mot de passe</label><input id="lgMdp" type="password" autocomplete="current-password"></div>' +
       '<p class="alert e hidden" id="lgErr" role="alert"></p><button class="btn p" data-a="connexion">Se connecter</button>' +
-      '<p class="note">Destinataire d’un transfert : ouvrez le lien personnel reçu par e-mail. Démonstration sans compte : <a href="console.html?demo=1">console de démonstration</a>.</p></div></div>';
+      '<p class="note">Destinataire d’un transfert : ouvrez le lien personnel reçu par e-mail.</p></div></div>';
   }
   function connexion() {
     var e = $('lgErr');
