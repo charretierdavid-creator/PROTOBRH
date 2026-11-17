@@ -1,4 +1,4 @@
-/* Module LM 3.0 — 16/11/2026 · données FICTIVES de la démonstration de la console simplifiée (aucune personne ni entreprise réelle) · historique : VERSIONS.md */
+/* Module LM 3.0.1 — 17/11/2026 · données FICTIVES de la démonstration de la console simplifiée (aucune personne ni entreprise réelle) · historique : VERSIONS.md */
 /* ==============================================================
    lm3-demo.js — jeu de données de démonstration, construit avec les règles de lm3-regles.js
    Les dates sont calculées à partir du moment de la première ouverture : les échéances dépassées ou à venir
@@ -9,7 +9,7 @@
   function genererDemo(L, maintenant) {
     var now = L.dt(maintenant || new Date());
     var D = '@exemple-ca-anjoumaine.fr';
-    var etat = { version: 'LM3-demo-1', cree: L.isoComplet(now), seq: 200, leads: [], users: [
+    var etat = { version: 'LM3-demo-2', cree: L.isoComplet(now), seq: 200, leads: [], users: [
       { email: 'claire.dubois' + D, prenom: 'Claire', nom: 'Dubois', genre: 'f', role: 'expert_brh', agence: 'Angers, siège', deps: ['49'] },
       { email: 'thomas.bernard' + D, prenom: 'Thomas', nom: 'Bernard', genre: 'm', role: 'expert_brh', agence: 'Le Mans', deps: ['53', '72'] },
       { email: 'manon.morel' + D, prenom: 'Manon', nom: 'Morel', genre: 'f', role: 'expert_brh_pro', agence: 'Angers', deps: ['49'] },
