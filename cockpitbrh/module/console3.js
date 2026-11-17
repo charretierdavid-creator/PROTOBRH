@@ -1,4 +1,4 @@
-/* Module LM 3.0.1 — 17/11/2026 · interface de la console simplifiée (démonstration, données fictives), graphisme de la console d'origine · historique : VERSIONS.md */
+/* Module LM 3.0.2 — 17/11/2026 · interface de la console simplifiée (démonstration, données fictives), graphisme de la console d'origine · historique : VERSIONS.md */
 /* ==============================================================
    console3.js — CONSOLE DE L'EXPERT BRH, DE L'EXPERT BRH PRO ET DU CONSEILLER PRO
    Cahier des charges cdcbrh, pages P1 et P4. Toutes les règles passent par lm3-regles.js (LM3).
@@ -19,8 +19,7 @@
   function roleMin(u) { var r = L.libRole(u); return r.charAt(0).toLowerCase() + r.slice(1); }
   var ICO = {
     tel: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>',
-    mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>',
-    lock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>'
+    mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>'
   };
 
   /* ---------------- état de démonstration ---------------- */
@@ -152,24 +151,22 @@
       + vg(l.effectif + ' salariés', '', true) + vg(l.ville + ' (' + l.dep + ')', '', true)
       + (libSegment(l) ? vg(libSegment(l), 'seg', true) : '') + (l.rappel ? vg('Rappel demandé', '', true) : '') + '</div></div>';
     if (ui.erreur) h += '<p class="alert e" role="alert">' + esc(ui.erreur) + '</p>';
-    h += carteContact(l, (proprio || admin) && l.statut !== 'nouveau', proprio && !admin);
+    h += carteContact(l, proprio && !admin && l.statut === 'en_cours');
     if (admin) h += '<p class="alert">Vue administrateur, en lecture seule. Propriétaire : <b>' + esc(L.nomComplet(L.trouver(etat, l.proprietaire))) + '</b> (' + esc(roleMin(L.trouver(etat, l.proprietaire))) + ').</p>';
     else if (!proprio) h += suiviTransmis(l, u);
     else h += blocDecision(l, u, sit) + actions(l);
     h += preparer(l) + historique(l) + emails(l);
     return h + '</section>';
   }
-  function carteContact(l, visible, actif) {
-    var cli = { declare: 'Client déclaré', non_declare: 'Non client déclaré', verifie: 'Client vérifié' }[l.client] || 'Statut client à vérifier';
-    var ini = l.contact.nom.split(/[\s-]+/).filter(Boolean).map(function (x) { return x.charAt(0); }).slice(0, 2).join('').toUpperCase();
-    var go = visible
-      ? '<a class="btn' + (actif ? ' p' : '') + '" href="tel:' + esc(l.contact.tel.replace(/\s/g, '')) + '" data-a="info" data-v="Démonstration : l\'appel n\'est pas passé (' + esc(l.contact.tel) + ').">' + ICO.tel + esc(l.contact.tel) + '</a>'
-        + '<a class="btn" href="mailto:' + esc(l.contact.email) + '" data-a="info" data-v="Démonstration : aucun e-mail n\'est envoyé (' + esc(l.contact.email) + ').">' + ICO.mail + 'Écrire</a>'
-      : '<span class="lock">' + ICO.lock + 'Téléphone et e-mail visibles après la prise en charge</span>';
-    return '<div class="contact" aria-label="Contact du dirigeant"><div class="av" aria-hidden="true">' + esc(ini) + '</div>'
+  /* Contact dans l'entreprise : coordonnées toujours visibles ; statut client tel que déclaré par le dirigeant sur le portail */
+  function libClient(c) { return { declare: 'Se déclare client', non_declare: 'Se déclare prospect', verifie: 'Client vérifié' }[c] || 'Statut client à vérifier'; }
+  function carteContact(l, actif) {
+    return '<div class="sec"><h3>Contact dans l\'entreprise</h3><div class="contact">'
       + '<div class="who">' + esc(l.contact.nom) + '<small>' + esc(l.contact.fonction) + '</small></div>'
-      + '<div class="meta">' + vg(cli, l.client === 'non_declare' ? '' : 'trans') + '<a href="#" data-a="info" data-v="Vérification dans la base clients de la Caisse régionale (hors démonstration).">Vérifier le statut client</a></div>'
-      + '<div class="go">' + go + '</div></div>';
+      + '<div class="meta">' + vg(libClient(l.client), l.client === 'non_declare' ? '' : 'trans') + '<a href="#" data-a="info" data-v="Vérification dans la base clients de la Caisse régionale (hors démonstration).">Vérifier le statut client</a></div>'
+      + '<div class="go"><a class="btn' + (actif ? ' p' : '') + '" href="tel:' + esc(l.contact.tel.replace(/\s/g, '')) + '" data-a="info" data-v="Démonstration : l\'appel n\'est pas passé (' + esc(l.contact.tel) + ').">' + ICO.tel + esc(l.contact.tel) + '</a>'
+      + '<a class="btn" href="mailto:' + esc(l.contact.email) + '" data-a="info" data-v="Démonstration : aucun e-mail n\'est envoyé (' + esc(l.contact.email) + ').">' + ICO.mail + esc(l.contact.email) + '</a></div>'
+      + '</div></div>';
   }
   function suiviTransmis(l, u) {
     var t = dernierePar(l, u.email), p = L.trouver(etat, l.proprietaire);
@@ -295,9 +292,8 @@
   }
   function ouvrirMail(l, i) {
     var m = l.emails[i]; if (!m) return;
-    var u = moi(), visible = (l.proprietaire === u.email || u.role === 'admin') && l.statut !== 'nouveau';
     fenetre('E-mail envoyé au dirigeant',
-      '<dl class="kv"><dt>Date</dt><dd>' + L.dateLongue(m.date) + '</dd><dt>De</dt><dd>' + esc(EXP) + '</dd><dt>À</dt><dd>' + esc(l.contact.nom) + (visible ? ' &lt;' + esc(l.contact.email) + '&gt;' : '') + '</dd><dt>Objet</dt><dd><b>' + esc(m.objet) + '</b></dd></dl>'
+      '<dl class="kv"><dt>Date</dt><dd>' + L.dateLongue(m.date) + '</dd><dt>De</dt><dd>' + esc(EXP) + '</dd><dt>À</dt><dd>' + esc(l.contact.nom) + ' &lt;' + esc(l.contact.email) + '&gt;' + '</dd><dt>Objet</dt><dd><b>' + esc(m.objet) + '</b></dd></dl>'
       + '<pre class="mailbody">' + esc(corpsMail(l, m)) + '</pre>',
       '<span class="small">Démonstration : e-mail journalisé, envoi réel désactivé.</span>');
   }
