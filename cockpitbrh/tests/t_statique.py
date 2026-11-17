@@ -50,7 +50,7 @@ for f in TEXTE:
     if f.startswith('.git'): continue
     t = lire(M, f).split('\n')
     tete = '\n'.join(t[:2])
-    verifier('en-tête de version : ' + f, re.search(r'Module LM 2\.0(\.\d+)? — \d\d/\d\d/\d{4}', tete) or f == 'robots.txt' or f == '.gitignore', t[0][:120])
+    verifier('en-tête de version : ' + f, re.search(r'Module LM [23]\.0(\.\d+)? — \d\d/\d\d/\d{4}', tete) or f == 'robots.txt' or f == '.gitignore', t[0][:120])
 VERS = lire(os.path.join(M, '..'), 'VERSIONS.md') if os.path.isfile(os.path.join(M, '..', 'VERSIONS.md')) else ''
 verifier('VERSIONS.md : version en cours LM 2.0', re.search(r'_Version en cours : \*\*LM 2\.0(\.\d+)?\*\*', VERS))
 for f in TEXTE:
