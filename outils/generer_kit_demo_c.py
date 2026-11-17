@@ -86,7 +86,35 @@ CROCHET = r"""remplirPersonas(); sauver(); rendre();
     persona: function (email) { if (!L.trouver(etat, email)) return; ui.moi = email; ui.vue = 'nouveau'; ui.sel = null; ui.panneau = null; remplirPersonas(); sauver(); rendre(); },
     reset: function () { etat = DEMO.genererDemo(L, now()); ui.moi = 'claire.dubois@exemple-ca-anjoumaine.fr'; if (!L.trouver(etat, ui.moi)) ui.moi = etat.users[0].email;
       ui.onglet = 'leads'; ui.vue = 'nouveau'; ui.sel = null; ui.panneau = null; ui.plus = false; ui.erreur = ''; fermerFen(); sauver(); remplirPersonas(); rendre(); },
-    users: function () { return etat.users.map(function (u) { return { email: u.email, nom: L.nomComplet(u), role: L.libRole(u) }; }); }
+    users: function () { return etat.users.map(function (u) { return { email: u.email, nom: L.nomComplet(u), role: L.libRole(u) }; }); },
+    /* ---- « Mon dossier » du dirigeant : vue tirée du lead, mise à jour par les actions de l'expert ---- */
+    dossiers: function () { return etat.leads.slice().sort(function (a, b) { return a.visite < b.visite ? 1 : (a.visite > b.visite ? -1 : (a.id < b.id ? 1 : -1)); }).map(function (l) { return { id: l.id, entreprise: l.entreprise, statut: L.STATUTS[l.statut] }; }); },
+    dossier: function (id) {
+      var l = L.lead(etat, id); if (!l) return null;
+      var u = L.trouver(etat, l.proprietaire), pris = l.statut !== 'nouveau' || (l.transmissions || []).length > 0, p = l.prochaine, etape = 1;
+      if (pris) etape = 2;
+      if (l.statut === 'en_cours' && p) etape = p.action === 'rdv' || p.action === 'rappeler' ? 3 : 4;
+      if (l.statut === 'cloture') etape = 5;
+      var sols = (l.solutions || []).map(function (k) { return { sante: 'Santé et prévoyance', epargne: 'Épargne salariale', retraite: 'Retraite collective', avantages: 'Avantages salariés' }[k] || k; });
+      var tel = (l.contact && l.contact.tel) || '';
+      return { reference: l.id, cree_le: l.visite, entreprise: l.entreprise, prenom: String((l.contact && l.contact.nom) || '').split(' ')[0], etape: etape,
+        etapes: ['Demande reçue', 'Prise en charge', 'Échange avec votre interlocuteur', 'Proposition', l.cloture && l.cloture.motif !== 'signe' ? 'Dossier clôturé' : 'Finalisé'],
+        caisse: 'Crédit Agricole Anjou Maine',
+        interlocuteur: pris && u ? { nom: L.nomComplet(u), role: L.libRole(u), agence: u.agence || '', telephone: null, email: null } : null,
+        rdv: p && (p.action === 'rdv' || p.action === 'rappeler') ? { le: p.date + ' 00:00:00', note: (p.action === 'rappeler' ? 'Appel de votre interlocuteur' : 'Rendez-vous') + (p.note ? ' · ' + p.note : '') } : null,
+        solutions: sols, relances: !l.kitStop, rappel: !!l.rappel, telephone_connu: !!tel, clos: l.statut === 'cloture',
+        emails: (l.emails || []).filter(function (e) { return e.a === 'dirigeant'; }).map(function (e) { return { le: e.date, objet: e.objet }; }).reverse(),
+        universels: { propose: (l.solutions || []).some(function (k) { return k === 'epargne' || k === 'retraite'; }), ouvert: l.statut === 'en_cours', mobile: tel ? tel.replace(/\d(?=(?:\D*\d){2})/g, '•') : '', simule: true } };
+    },
+    agir: function (id, a, corps) {
+      var l = L.lead(etat, id); if (!l) return { ok: false, error: 'Dossier introuvable.' };
+      if (a === 'rappel') { l.rappel = true; if (corps.telephone && !l.contact.tel) l.contact.tel = corps.telephone;
+        l.historique.push({ date: L.isoComplet(now()), par: 'dirigeant', texte: 'Le dirigeant demande à être rappelé depuis « Mon dossier »' + (corps.creneau ? ' (' + corps.creneau.toLowerCase() + ')' : '') + '.' });
+        sauver(); rendre(); return { ok: true, message: 'C’est noté : votre demande de rappel est transmise à votre interlocuteur.' }; }
+      if (a === 'stop') { l.kitStop = true; l.historique.push({ date: L.isoComplet(now()), par: 'dirigeant', texte: 'Le dirigeant ne souhaite plus recevoir de relances.' }); sauver(); rendre();
+        return { ok: true, message: 'C’est noté : vous ne recevrez plus de relances. Votre dossier reste consultable ici.' }; }
+      return { ok: false, error: 'Action indisponible dans la démonstration.' };
+    }
   };
   try { parent.postMessage({ lm3Kit: 'pret' }, '*'); } catch (x) { /* rien */ }
 })();"""
@@ -100,6 +128,25 @@ for js, code in [('lm3-regles.js', lire(LM, 'lm3-regles.js')), ('lm3-demo.js', l
     assert n == 1, js
 ch = ch.replace('<head>', '<head><script>try{localStorage.getItem("x")}catch(e){}</script>', 1)
 COCKPIT = b64(ch)
+
+# ---------------------------------------------------------------- MON DOSSIER (vue du dirigeant)
+sd = lire(LM, 'suivi-dossier.html')
+for a, b in [
+    ("  function appel(corps) {\n", "  function appel(corps) {\n    if (window.__KIT) return Promise.resolve(window.__KIT(corps));\n"),
+    ("var q = new URLSearchParams(location.search), DEMO = q.get('demo') === '1';", "var q = new URLSearchParams(location.search), DEMO = q.get('demo') === '1' || !!window.__KIT;"),
+    ("return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) + ' à ' +", "return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) + (d.getHours() + d.getMinutes() === 0 ? '' : ' à ' +"),
+    ("d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); }\n  function jour", "d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })); }\n  function jour"),
+    ("if (v.ok) { location.href = v.url; return; }", "if (v.ok) { if (!v.url) { $('uniZone').innerHTML = '<p class=\"msg\">Code vérifié. Dans le service réel, votre espace Universels (Amundi / CA Titres) s’ouvre ici.</p>'; return; } location.href = v.url; return; }"),
+    ("  else charger();\n})();", "  else charger();\n  window.__kitRecharger = charger;\n})();"),
+    ('src="logo-brh.png"', 'src="' + IMGS['logo-brh.png'] + '"'),
+    ("Démonstration : dossier fictif, aucun SMS ni e-mail envoyé.", "Démonstration : ce que voit le dirigeant avec le lien personnel reçu par e-mail. Données fictives, aucun SMS ni e-mail envoyé."),
+]:
+    assert a in sd, 'suivi-dossier.html : ' + a[:50]
+    sd = sd.replace(a, b, 1)
+sd = re.sub(r'<link rel="preconnect"[^>]*>\n?', '', sd)
+sd = re.sub(r'<link (rel="stylesheet" )?href="https://fonts\.googleapis\.com[^>]*>\n?', '', sd)
+sd = sd.replace('</head>', '<style>\n' + POLICES + '\n</style>\n</head>', 1)
+SUIVI = b64(sd)
 assert 'fonts.googleapis' not in ch
 
 # ---------------------------------------------------------------- JULIA : 2 questions préparées
@@ -185,117 +232,80 @@ SHELL = r"""<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Portail Banque des RH · kit de démonstration (version C + cockpit BRH)</title>
+<title>Portail Banque des RH · kit de démonstration</title>
 <style>
 %POLICES%
-:root{--pin:#065145;--teal:#016265;--lime:#8FB822;--menthe:#E3EFEA;--band:#006A4E;--ink:#1d2b28;--slate:#5b6b66;--line:#dfe8e4;--r:10px;--fh:'Poppins',system-ui,-apple-system,'Segoe UI',sans-serif;--fb:system-ui,-apple-system,'Segoe UI',sans-serif}
+:root{--pin:#065145;--teal:#016265;--lime:#8FB822;--menthe:#E3EFEA;--band:#006A4E;--ink:#1d2b28;--slate:#5b6b66;--line:#dfe8e4;--fh:'Poppins',system-ui,-apple-system,'Segoe UI',sans-serif;--fb:system-ui,-apple-system,'Segoe UI',sans-serif}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:#f3f7f5;color:var(--ink);font:14px/1.45 var(--fb);overflow:hidden}
-button{font:inherit}
-.top{position:fixed;inset:0 0 auto 0;height:60px;background:var(--pin);color:#fff;display:flex;align-items:center;gap:18px;padding:0 16px;z-index:20;box-shadow:0 2px 10px rgba(6,81,69,.25)}
-.brand{display:flex;align-items:center;gap:10px;min-width:0}
-.brand img{height:30px;width:auto;background:#fff;border-radius:6px;padding:3px 6px}
+button,select{font:inherit}
+.top{position:fixed;inset:0 0 auto 0;height:72px;background:var(--pin);color:#fff;display:flex;align-items:center;gap:20px;padding:0 18px;z-index:20;box-shadow:0 2px 10px rgba(6,81,69,.25)}
+.brand{display:flex;align-items:center;gap:10px;min-width:0;flex:0 0 auto}
+.brand img{height:34px;width:auto;background:#fff;border-radius:6px;padding:3px 6px}
 .brand b{font:600 15px/1.15 var(--fh);white-space:nowrap}
 .brand small{display:block;font:500 11.5px/1.2 var(--fb);color:#cfe3dc;white-space:nowrap}
-.tabs{display:flex;gap:4px;margin-left:8px;background:rgba(255,255,255,.08);padding:4px;border-radius:12px}
-.tabs button{all:unset;cursor:pointer;padding:8px 14px;border-radius:9px;font:600 13.5px var(--fh);color:#e6f1ed;display:flex;align-items:center;gap:8px;white-space:nowrap}
-.tabs button:hover{background:rgba(255,255,255,.1)}
-.tabs button[aria-selected="true"]{background:#fff;color:var(--pin)}
-.tabs button:focus-visible,.act:focus-visible,.step button:focus-visible{outline:3px solid var(--lime);outline-offset:2px}
-.badge{min-width:20px;height:20px;border-radius:10px;background:var(--lime);color:var(--pin);font:700 11.5px/20px var(--fb);text-align:center;padding:0 6px;display:none}
-.badge.on{display:inline-block}
-.sp{flex:1}
-.act{all:unset;cursor:pointer;display:flex;align-items:center;gap:7px;padding:8px 14px;border-radius:9px;font:600 13px var(--fh);border:1px solid rgba(255,255,255,.35);color:#fff;white-space:nowrap}
-.act:hover{background:rgba(255,255,255,.12)}
-.act.prim{background:var(--lime);border-color:var(--lime);color:var(--pin)}
-.act svg{width:16px;height:16px}
-.stage{position:fixed;top:60px;left:0;right:0;bottom:30px;display:grid;grid-template-columns:1fr;gap:0}
-.pane{position:relative;min-width:0;background:#fff;display:none;flex-direction:column}
+.vues{display:flex;gap:8px;margin:0 auto}
+.vues button{all:unset;cursor:pointer;position:relative;display:flex;align-items:center;gap:10px;padding:8px 16px 8px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.25);color:#fff;min-width:0}
+.vues button:hover{background:rgba(255,255,255,.1)}
+.vues button[aria-selected="true"]{background:#fff;border-color:#fff;color:var(--pin)}
+.vues button:focus-visible{outline:3px solid var(--lime);outline-offset:2px}
+.vues svg{width:22px;height:22px;flex:0 0 auto}
+.vues b{display:block;font:600 14px/1.15 var(--fh);letter-spacing:.02em;white-space:nowrap}
+.vues small{display:block;font:500 11.5px/1.25 var(--fb);opacity:.8;white-space:nowrap}
+.badge{position:absolute;top:-7px;right:-7px;min-width:22px;height:22px;border-radius:11px;background:var(--lime);color:var(--pin);font:700 12px/22px var(--fb);text-align:center;padding:0 6px;display:none;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.badge.on{display:block}
+.stage{position:fixed;top:72px;left:0;right:0;bottom:30px}
+.pane{position:absolute;inset:0;display:none;flex-direction:column;background:#fff}
 .pane.on{display:flex}
-.pane .cap{display:none;align-items:center;gap:8px;height:34px;padding:0 14px;background:var(--menthe);border-bottom:1px solid var(--line);font:600 12.5px var(--fh);color:var(--pin)}
-.pane .cap i{font-style:normal;font-weight:500;color:var(--slate);font-family:var(--fb)}
 .pane iframe{flex:1;width:100%;border:0;display:block;background:#fff}
-@media(min-width:1200px){.stage.scen{right:400px}.notif.scen{right:418px}}
-.stage.duo{grid-template-columns:minmax(0,1.12fr) minmax(0,1fr);gap:10px;padding:10px;background:#dfe9e5}
-.stage.duo .pane{display:flex;border-radius:12px;overflow:hidden;box-shadow:0 4px 18px rgba(6,81,69,.12)}
-.stage.duo .pane .cap{display:flex}
+.cap{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:8px 18px;background:var(--menthe);border-bottom:1px solid var(--line);font-size:13px;color:var(--slate)}
+.cap b{font:600 13px var(--fh);color:var(--pin)}
+.cap select{padding:6px 10px;border:1px solid #cfe0d8;border-radius:8px;background:#fff;color:var(--ink);max-width:100%}
 .foot{position:fixed;left:0;right:0;bottom:0;height:30px;display:flex;align-items:center;gap:14px;padding:0 16px;background:#fff;border-top:1px solid var(--line);font-size:12px;color:var(--slate);z-index:15}
-.foot b{color:var(--pin)}
+.foot span{white-space:nowrap}.foot b{color:var(--pin)}.foot .sp{flex:1}
 .foot .dot{width:7px;height:7px;border-radius:50%;background:var(--lime);display:inline-block;margin-right:6px}
-/* scénario */
-.drawer{position:fixed;top:60px;right:0;bottom:30px;width:400px;max-width:100vw;background:#fff;border-left:1px solid var(--line);box-shadow:-10px 0 30px rgba(6,81,69,.14);z-index:18;transform:translateX(105%);transition:transform .25s ease;display:flex;flex-direction:column}
-.drawer.on{transform:none}
-.drawer header{padding:16px 18px 12px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:10px}
-.drawer h2{margin:0;font:600 17px/1.25 var(--fh);color:var(--pin)}
-.drawer header p{margin:4px 0 0;color:var(--slate);font-size:12.5px}
-.drawer header button{all:unset;cursor:pointer;margin-left:auto;font-size:22px;line-height:1;color:var(--slate);width:30px;height:30px;text-align:center;border-radius:8px}
-.drawer header button:hover{background:var(--menthe)}
-.steps{list-style:none;margin:0;padding:12px 18px 18px;overflow:auto;counter-reset:s}
-.step{position:relative;padding:12px 0 14px 40px;border-bottom:1px solid #edf2f0;counter-increment:s}
-.step:last-child{border-bottom:0}
-.step::before{content:counter(s);position:absolute;left:0;top:12px;width:26px;height:26px;border-radius:50%;background:var(--menthe);color:var(--pin);font:700 13px/26px var(--fh);text-align:center}
-.step.fait::before{content:'✓';background:var(--pin);color:#fff}
-.step h3{margin:2px 0 4px;font:600 14px/1.3 var(--fh);color:var(--ink)}
-.step .who{display:inline-block;font:600 10.5px var(--fb);letter-spacing:.04em;text-transform:uppercase;color:var(--teal);margin-bottom:2px}
-.step p{margin:0 0 8px;color:var(--slate);font-size:13px}
-.step .btns{display:flex;flex-wrap:wrap;gap:6px}
-.step button{all:unset;cursor:pointer;padding:7px 12px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--pin);font:600 12.5px var(--fh)}
-.step button:hover{background:var(--menthe);border-color:#cfe0d8}
-.step button.p{background:var(--pin);border-color:var(--pin);color:#fff}
-.step button.p:hover{background:var(--teal)}
-.step .q{display:block;width:100%;text-align:left;font-weight:500;font-family:var(--fb);line-height:1.35}
-.note{margin:0 18px 16px;padding:10px 12px;border-radius:10px;background:#f6f9f7;border:1px solid var(--line);font-size:12px;color:var(--slate)}
-/* notification de lead */
 .notif{position:fixed;right:18px;bottom:44px;z-index:30;width:360px;max-width:calc(100vw - 36px);background:#fff;border-radius:12px;border:1px solid var(--line);border-left:5px solid var(--lime);box-shadow:0 16px 40px rgba(6,81,69,.22);padding:14px 16px;transform:translateY(16px);opacity:0;pointer-events:none;transition:.25s}
 .notif.on{transform:none;opacity:1;pointer-events:auto}
 .notif .k{font:700 10.5px var(--fb);letter-spacing:.05em;text-transform:uppercase;color:var(--teal)}
 .notif b{display:block;font:600 15px/1.3 var(--fh);color:var(--pin);margin:3px 0 2px}
 .notif p{margin:0 0 10px;color:var(--slate);font-size:13px}
-.notif .r{display:flex;gap:8px;justify-content:flex-end}
+.notif .r{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 .notif button{all:unset;cursor:pointer;padding:7px 12px;border-radius:8px;font:600 12.5px var(--fh);color:var(--pin)}
 .notif button.p{background:var(--pin);color:#fff}
 .boot{position:fixed;inset:0;z-index:50;background:#fff;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;color:var(--pin)}
 .boot small{display:block;margin-top:8px;color:var(--slate);max-width:520px}
-@media(max-width:1320px){.foot .x{display:none}.brand small{display:none}}
-.foot span{white-space:nowrap}
-@media(max-width:1100px){.brand small{display:none}.act span{display:none}.tabs button{padding:8px 10px}}
-@media(max-width:900px){.stage.duo{grid-template-columns:1fr;grid-template-rows:1fr 1fr}.foot .x{display:none}}
-@media(max-width:700px){.brand b{display:none}.tabs .l{display:none}}
+@media(max-width:1240px){.brand div{display:none}.foot .x{display:none}}
+@media(max-width:900px){.vues small{display:none}.vues button{padding:8px 12px}}
+@media(max-width:640px){.vues b{font-size:12px;white-space:normal}.vues svg{display:none}.brand{display:none}}
 </style>
 </head>
 <body>
 <div class="boot" id="boot"><div><b style="font:600 18px var(--fh)">Portail Banque des RH · kit de démonstration</b><br>Chargement…
 <small>Si cette page reste vide, le fichier est ouvert dans un aperçu qui n’exécute pas les scripts (app Fichiers de l’iPad, aperçu de messagerie). Ouvrez-le dans Safari, Chrome ou Edge.</small></div></div>
 <header class="top">
-  <div class="brand"><img src="%LOGO%" alt="Banque des RH"><div><b>Portail Banque des RH</b><small>Kit de démonstration · version C et cockpit BRH</small></div></div>
-  <nav class="tabs" role="tablist" aria-label="Vues de la démonstration">
-    <button type="button" role="tab" data-vue="portail" aria-selected="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg><span class="l">Portail dirigeant</span></button>
-    <button type="button" role="tab" data-vue="cockpit" aria-selected="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z"/></svg><span class="l">Cockpit BRH</span><span class="badge" id="badge" aria-label="leads reçus pendant la démonstration"></span></button>
-    <button type="button" role="tab" data-vue="duo" aria-selected="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16"/></svg><span class="l">Côte à côte</span></button>
+  <div class="brand"><img src="%LOGO%" alt="Banque des RH"><div><b>Portail Banque des RH</b><small>Kit de démonstration</small></div></div>
+  <nav class="vues" role="tablist" aria-label="Vues de la démonstration">
+    <button type="button" role="tab" data-vue="portail" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg><span><b>PORTAIL BRH</b><small>Prospects et clients CA</small></span></button>
+    <button type="button" role="tab" data-vue="cockpit" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z"/></svg><span><b>CONSOLE EXPERT BRH</b><small>Gestion des leads</small></span><span class="badge" id="badge" aria-label="leads reçus pendant la démonstration"></span></button>
+    <button type="button" role="tab" data-vue="suivi" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15l2 2 4-4"/></svg><span><b>SUIVI DOSSIER</b><small>Ce que voit le prospect ou client</small></span></button>
   </nav>
-  <span class="sp"></span>
-  <button type="button" class="act prim" id="b-scen" aria-expanded="false" aria-controls="drawer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg><span>Scénario de démonstration</span></button>
-  <button type="button" class="act" id="b-reset"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><span>Réinitialiser</span></button>
 </header>
-<main class="stage" id="stage">
-  <section class="pane on" id="p-portail" aria-label="Portail dirigeant"><div class="cap">Portail dirigeant <i>· ce que voit le chef d’entreprise</i></div><iframe id="f-portail" title="Portail Banque des RH, version C"></iframe></section>
-  <section class="pane" id="p-cockpit" aria-label="Cockpit BRH"><div class="cap">Cockpit BRH <i>· ce que voit l’expert de la Caisse régionale</i></div><iframe id="f-cockpit" title="Cockpit BRH, console LM 3.0"></iframe></section>
+<main class="stage">
+  <section class="pane on" id="p-portail" aria-label="Portail BRH"><iframe id="f-portail" title="Portail Banque des RH, version C"></iframe></section>
+  <section class="pane" id="p-cockpit" aria-label="Console expert BRH"><iframe id="f-cockpit" title="Console de l’expert BRH"></iframe></section>
+  <section class="pane" id="p-suivi" aria-label="Suivi dossier"><div class="cap"><label for="dossier"><b>Dossier affiché</b></label><select id="dossier"></select><span>Le dirigeant ouvre cette page avec le lien personnel reçu par e-mail. Elle suit en direct les actions de l’expert dans la console.</span></div><iframe id="f-suivi" title="Mon dossier, vue du dirigeant"></iframe></section>
 </main>
-<aside class="drawer" id="drawer" aria-label="Scénario de démonstration">
-  <header><div><h2>Scénario de démonstration</h2><p>Du dirigeant sur le portail à l’expert BRH, en 10 minutes.</p></div><button type="button" id="b-fermer" aria-label="Fermer le scénario">×</button></header>
-  <ol class="steps" id="steps"></ol>
-  <p class="note">Tout se passe dans ce fichier : données fictives, aucun envoi, aucune connexion requise. Julia répond à 2 questions préparées ; les autres questions reçoivent les réponses de démonstration du portail. Version du %STAMP%.</p>
-</aside>
-<div class="notif" id="notif" role="status" aria-live="polite"><div class="k" id="n-k">Lead transmis au cockpit BRH</div><b id="n-t"></b><p id="n-p"></p><div class="r"><button type="button" id="n-x">Fermer</button><button type="button" class="p" id="n-voir">Voir dans le cockpit</button></div></div>
-<footer class="foot"><span><span class="dot"></span><b>Démonstration hors ligne</b> · données fictives, rien n’est envoyé</span><span class="x">Julia : réponses préparées pour la démonstration · l’IA éclaire, l’expert BRH conseille et engage</span><span class="sp"></span><span id="f-etat"></span></footer>
+<div class="notif" id="notif" role="status" aria-live="polite"><div class="k" id="n-k"></div><b id="n-t"></b><p id="n-p"></p><div class="r"><button type="button" id="n-x">Fermer</button><button type="button" id="n-suivi">Suivi dossier</button><button type="button" class="p" id="n-voir">Voir dans la console</button></div></div>
+<footer class="foot"><span><span class="dot"></span><b>Démonstration hors ligne</b> · données fictives, rien n’est envoyé</span><span class="x">Julia : réponses préparées · l’IA éclaire, l’expert BRH conseille et engage</span><span class="sp"></span><span>Version du %STAMP%</span></footer>
 <script>
 (function(){
 'use strict';
-var PAGES=%PAGES%, COCKPIT=%COCKPIT%, SHIM=%SHIM%, JULIA=%JULIA%;
+var PAGES=%PAGES%, COCKPIT=%COCKPIT%, SUIVI=%SUIVI%, SHIM=%SHIM%, JULIA=%JULIA%;
 window.__BRH_MODS=%MODS%;
 var $=function(id){ return document.getElementById(id); };
 function dec(b){ return new TextDecoder('utf-8').decode(Uint8Array.from(atob(b),function(c){ return c.charCodeAt(0); })); }
-var fp=$('f-portail'), fc=$('f-cockpit'), stage=$('stage'), cache={}, pageCourante='index.html', attente=null, recus=0, dernier=null;
+var fp=$('f-portail'), fc=$('f-cockpit'), fs=$('f-suivi'), cache={}, pageCourante='index.html', attente=null, recus=0, dernier=null, vueCourante='portail';
+function K(){ try{ return fc.contentWindow && fc.contentWindow.LM3_KIT; }catch(e){ return null; } }
 
 /* ---------------- portail ---------------- */
 function parse(h){ h=String(h||'').replace(/^#\/?/,''); var an='',qs='',i=h.indexOf('#'); if(i>=0){ an=h.slice(i); h=h.slice(0,i); }
@@ -305,9 +315,10 @@ function ouvrirPage(h, ensuite){
   var shim=SHIM.replace('%QS%',JSON.stringify(r.qs)).replace('%HASH%',JSON.stringify(r.anchor)).split('%PAGE%').join(JSON.stringify(r.page));
   pageCourante=r.page; attente=ensuite||null;
   fp.srcdoc=src.replace('<head>','<head>'+shim);
-  etat();
 }
-window.__kitGo=function(h){ ouvrirPage(h); };
+window.__kitGo=function(h){ h=String(h||'');
+  if(/suivi-dossier\.html/.test(h)){ var m=/[?&]d=([^&#]+)/.exec(h); remplirDossiers(m?decodeURIComponent(m[1]):dernier); vue('suivi'); return; }
+  ouvrirPage(h); };
 window.__kitExterne=function(u){ notifier('Lien externe', 'Hors démonstration', 'Ce lien ouvre un site extérieur au portail : '+u.replace(/^https?:\/\//,'').split('/')[0]+'.', null); };
 window.__kitPageChargee=function(page, w){
   var b=$('boot'); if(b) b.remove();
@@ -328,15 +339,8 @@ window.__kitIA=function(req){
   for(var i=0;i<JULIA.length;i++){ var j=JULIA[i]; if(norm(j.q)===q || j.cles.every(function(c){ return q.indexOf(norm(c))>=0; })) return {reponse:j.reponse, points:j.points, liens:j.liens, chiffres:true}; }
   return null;
 };
-function demanderJulia(i){
-  vue('portail');
-  var poser=function(w){ var go=function(){ if(w.BRH_JULIA){ var el=w.document.getElementById('julia'); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); w.BRH_JULIA.demander(JULIA[i].q,'','exemple'); return true; } return false; };
-    if(!go()){ var n=0, t=setInterval(function(){ if(go()||++n>50) clearInterval(t); },100); } };
-  var w=fp.contentWindow; if(pageCourante==='index.html' && w && w.BRH_JULIA) poser(w); else ouvrirPage('index.html', poser);
-  fait(0);
-}
 
-/* ---------------- lien portail → cockpit ---------------- */
+/* ---------------- lien portail → console ---------------- */
 var SOL_AX={protection:'sante',partageValeur:'epargne',pouvoirAchat:'avantages',retraite:'retraite'};
 function prem(){ for(var i=0;i<arguments.length;i++){ var v=arguments[i]; if(v!==undefined && v!==null && String(v).trim()!=='') return v; } return ''; }
 function versLM3(b){
@@ -364,80 +368,62 @@ function versLM3(b){
            rappel: !!(c.rappel_expert || t==='diagnostic_contact') };
 }
 window.__kitLead=function(b, page){
-  var K=fc.contentWindow && fc.contentWindow.LM3_KIT;
-  if(!b || !K) return {ok:true};
+  var k=K(); if(!b || !k) return {ok:true};
   if(b.action==='argumentaire'){ var a=b.argumentaire||{}, x=[].concat(a.synthese||[]).slice(0,3).join(' ; ');
-    K.noter(b.id,'Julia (IA)','Argumentaire de vente préparé pour l’expert'+(a.angle?' : '+a.angle:'')+(x?' — '+x:'')+'.'); return {ok:true}; }
+    k.noter(b.id,'Julia (IA)','Argumentaire de vente préparé pour l’expert'+(a.angle?' : '+a.angle:'')+(x?' — '+x:'')+'.'); return {ok:true}; }
   if(b.action) return {ok:true};
-  if(b.type==='newsletter'){ notifier('Newsletter', 'Inscription enregistrée', 'Une inscription à la newsletter ne crée pas de lead dans le cockpit.', null); return {ok:true}; }
+  if(b.type==='newsletter'){ notifier('Newsletter', 'Inscription enregistrée', 'Une inscription à la newsletter ne crée pas de lead dans la console.', null); return {ok:true}; }
   var m=versLM3(b); if(!m) return {ok:true};
-  var r=K.recevoir(m.d, m.rappel);
-  recus++; dernier=r.id; var bd=$('badge'); bd.textContent=recus; bd.classList.add('on');
-  notifier(r.fusion?'Lead mis à jour dans le cockpit':'Nouveau lead transmis au cockpit', r.entreprise, (r.fusion?'Rattaché au lead existant · ':'')+r.type+' · attribué à '+r.expert+' (Caisse régionale Anjou Maine, démonstration).', r.id);
-  if(/^devis/.test(b.type||'')) fait(2); else fait(1);
-  etat();
-  return {ok:true, id:r.id, dossier:r.id, reference:r.id, jeton:'kit-demo'};
+  var r=k.recevoir(m.d, m.rappel);
+  dernier=r.id; if(vueCourante!=='cockpit'){ recus++; var bd=$('badge'); bd.textContent=recus; bd.classList.add('on'); }
+  notifier(r.fusion?'Lead mis à jour dans la console':'Nouveau lead transmis à la console', r.entreprise, (r.fusion?'Rattaché au lead existant · ':'')+r.type+' · attribué à '+r.expert+' (Caisse régionale Anjou Maine, démonstration).', r.id);
+  remplirDossiers(r.id);
+  var lien='suivi-dossier.html?d='+encodeURIComponent(r.id);
+  return {ok:true, id:r.id, dossier:r.id, reference:r.id, jeton:'kit-demo', suivi:lien, suivi_email:lien};
 };
 var tn=null;
-function notifier(k,t,p,id){ $('n-k').textContent=k; $('n-t').textContent=t; $('n-p').textContent=p; $('n-voir').style.display=id?'':'none';
+function notifier(k,t,p,id){ $('n-k').textContent=k; $('n-t').textContent=t; $('n-p').textContent=p; $('n-voir').style.display=id?'':'none'; $('n-suivi').style.display=id?'':'none';
   $('notif').dataset.id=id||''; $('notif').classList.add('on'); clearTimeout(tn); tn=setTimeout(function(){ $('notif').classList.remove('on'); },9000); }
 $('n-x').addEventListener('click',function(){ $('notif').classList.remove('on'); });
-$('n-voir').addEventListener('click',function(){ var id=$('notif').dataset.id; $('notif').classList.remove('on'); voirLead(id); });
-function voirLead(id){ if(stage.className.indexOf('duo')<0) vue('cockpit'); var K=fc.contentWindow&&fc.contentWindow.LM3_KIT; if(K && id) K.montrer(id); fait(3); }
-/* raccourci : demande de devis d'une entreprise fictive, comme si elle venait du portail */
-function leadExpress(){
-  window.__kitLead({type:'devis',variante:'C',entreprise:{raison_sociale:'Atelier Bois & Design',ville:'Angers',code_postal:'49100',effectif:22,secteur:'Artisanat',client_declare:'oui'},
-    contact:{prenom:'Camille',nom:'Roussel',fonction:'Gérante',telephone:'06 12 48 75 30',email:'camille.roussel@atelier-bois-design.invalid',rappel_expert:true,consentement:true},
-    panier:[{solution:'epargne'},{solution:'avantages'}],estimation_totale:18400},'kit');
+$('n-voir').addEventListener('click',function(){ var id=$('notif').dataset.id; $('notif').classList.remove('on'); vue('cockpit'); var k=K(); if(k && id) k.montrer(id); });
+$('n-suivi').addEventListener('click',function(){ var id=$('notif').dataset.id; $('notif').classList.remove('on'); remplirDossiers(id); vue('suivi'); });
+
+/* ---------------- suivi dossier (vue du dirigeant) ---------------- */
+function remplirDossiers(choix){
+  var k=K(); if(!k) return; var sel=$('dossier'), avant=choix||sel.value||dernier, ds=k.dossiers();
+  if(!ds.some(function(d){ return d.id===avant; })) avant=ds.length?ds[0].id:'';
+  sel.innerHTML=ds.map(function(d){ return '<option value="'+d.id+'"'+(d.id===avant?' selected':'')+'>'+d.entreprise.replace(/[&<>]/g,'')+' · '+d.id+' · '+d.statut+'</option>'; }).join('');
 }
+function chargerSuivi(){ try{ var w=fs.contentWindow; if(w && w.__kitRecharger) w.__kitRecharger(); }catch(e){} }
+function preparerSuivi(){
+  var src=dec(SUIVI);
+  fs.srcdoc=src.replace('<head>','<head><script>window.__KIT=function(c){ try{ var P=parent, id=P.document.getElementById("dossier").value, k=P.document.getElementById("f-cockpit").contentWindow.LM3_KIT; if(!c){ var d=k.dossier(id); return d?{ok:true,dossier:d}:{ok:false,error:"Choisissez un dossier."}; } return P.__kitSuiviAction(id,c); }catch(e){ return {ok:false,error:"Dossier indisponible."}; } };<\/script>');
+}
+var otp=null;
+window.__kitSuiviAction=function(id,c){
+  var a=c.action;
+  if(a==='universels_code'){ otp={code:String(Math.floor(100000+Math.random()*900000)),essais:0,exp:Date.now()+600000}; var d=K().dossier(id); return {ok:true,masque:(d&&d.universels.mobile)||'06 •• •• •• ••',code_demo:otp.code}; }
+  if(a==='universels_verifier'){ if(!otp||Date.now()>otp.exp) return {ok:false,error:'Code expiré : demandez un nouveau code.'};
+    if(otp.essais>=3) return {ok:false,error:'Trois essais au plus : demandez un nouveau code.'};
+    if(String(c.code||'').replace(/\D/g,'')!==otp.code){ otp.essais++; return {ok:false,error:'Code incorrect ('+(3-otp.essais)+' essai(s) restant(s)).'}; }
+    return {ok:true,url:''}; }
+  return K().agir(id,a,c);
+};
+$('dossier').addEventListener('change',chargerSuivi);
 
 /* ---------------- vues ---------------- */
 function vue(v){
-  document.querySelectorAll('.tabs button').forEach(function(b){ b.setAttribute('aria-selected', String(b.dataset.vue===v)); });
-  stage.className='stage'+(v==='duo'?' duo':'')+($('drawer').classList.contains('on')?' scen':'');
-  $('p-portail').classList.toggle('on', v!=='cockpit'); $('p-cockpit').classList.toggle('on', v!=='portail');
-  if(v!=='portail'){ recus=0; $('badge').classList.remove('on'); }
+  vueCourante=v;
+  document.querySelectorAll('.vues button').forEach(function(b){ b.setAttribute('aria-selected', String(b.dataset.vue===v)); });
+  ['portail','cockpit','suivi'].forEach(function(x){ $('p-'+x).classList.toggle('on', x===v); });
+  if(v==='cockpit'){ recus=0; $('badge').classList.remove('on'); }
+  if(v==='suivi'){ remplirDossiers(); chargerSuivi(); }
 }
-document.querySelector('.tabs').addEventListener('click',function(e){ var b=e.target.closest('button'); if(b) vue(b.dataset.vue); });
-function etat(){ $('f-etat').textContent='Portail : '+((PAGES[pageCourante]||{}).t||'')+' · Cockpit : console LM 3.0'; }
-
-/* ---------------- scénario ---------------- */
-var ETAPES=[
-  {who:'Dirigeant · portail', t:'Julia accueille le dirigeant', p:'Sur l’accueil, Julia, l’assistante RH, répond aux deux questions les plus fréquentes et oriente vers la bonne étape.',
-   b:[['q','Par où commencer pour fidéliser mes 15 salariés ?',function(){ demanderJulia(0); }],['q','Comment donner du pouvoir d’achat sans alourdir mes charges ?',function(){ demanderJulia(1); }]]},
-  {who:'Dirigeant · portail', t:'Il fait son diagnostic RH', p:'Indiquez un nombre de salariés, le département 49, vos priorités, puis cochez l’accord avec un e-mail pour voir les résultats. Le lead « Simulation réalisée » part aussitôt dans le cockpit.',
-   b:[['p','Ouvrir le diagnostic',function(){ vue(stage.className.indexOf('duo')>=0?'duo':'portail'); ouvrirPage('diagnostic.html'); }]]},
-  {who:'Dirigeant · portail', t:'Il demande son devis en ligne', p:'Choisissez des solutions, puis « Recevoir mon estimation par e-mail » ou envoyez la demande de devis. Avec le même e-mail, le lead est mis à jour en « Devis en cours ou réalisé ».',
-   b:[['p','Ouvrir le devis en ligne',function(){ vue(stage.className.indexOf('duo')>=0?'duo':'portail'); ouvrirPage('devis.html'); }],['','Envoyer un devis de démonstration',leadExpress]]},
-  {who:'Expert BRH · cockpit', t:'L’experte BRH traite le lead', p:'Claire Dubois, experte BRH du 49, voit le lead en tête de sa liste avec son échéance. Elle le prend en charge (Entreprise) ou le transmet à un collègue Pro.',
-   b:[['p','Voir le lead dans le cockpit',function(){ voirLead(dernier); }],['','Côte à côte',function(){ vue('duo'); }]]},
-  {who:'Collègue Pro · cockpit', t:'Le collègue Pro reçoit le lead transmis', p:'Après une transmission, connectez-vous en tant que destinataire : le lead l’attend dans « Nouveaux », avec l’historique et les e-mails envoyés au dirigeant.',
-   b:[['','Hugo Petit, conseiller Pro (49)',function(){ persona('hugo.petit@exemple-ca-anjoumaine.fr'); }],['','Manon Morel, experte BRH Pro (49)',function(){ persona('manon.morel@exemple-ca-anjoumaine.fr'); }],['','Revenir à Claire Dubois',function(){ persona('claire.dubois@exemple-ca-anjoumaine.fr'); }]]}
-];
-function persona(e){ if(stage.className.indexOf('duo')<0) vue('cockpit'); var K=fc.contentWindow&&fc.contentWindow.LM3_KIT; if(K) K.persona(e); fait(4); }
-function peindre(){
-  $('steps').innerHTML=ETAPES.map(function(s,i){ return '<li class="step" id="st'+i+'"><span class="who">'+s.who+'</span><h3>'+s.t+'</h3><p>'+s.p+'</p><div class="btns">'
-    +s.b.map(function(b,j){ return '<button type="button" class="'+(b[0]==='q'?'q':b[0])+'" data-s="'+i+'" data-b="'+j+'">'+(b[0]==='q'?'« '+b[1]+' »':b[1])+'</button>'; }).join('')+'</div></li>'; }).join('');
-}
-function fait(i){ var el=$('st'+i); if(el) el.classList.add('fait'); }
-$('steps').addEventListener('click',function(e){ var b=e.target.closest('button[data-s]'); if(!b) return; ETAPES[+b.dataset.s].b[+b.dataset.b][2](); if(window.innerWidth<1200) scen(false); });
-function scen(o){ $('drawer').classList.toggle('on',o); $('b-scen').setAttribute('aria-expanded',String(o)); stage.classList.toggle('scen',o); $('notif').classList.toggle('scen',o); }
-$('b-scen').addEventListener('click',function(){ scen(!$('drawer').classList.contains('on')); });
-$('b-fermer').addEventListener('click',function(){ scen(false); });
-document.addEventListener('keydown',function(e){ if(e.key==='Escape') scen(false); });
-$('b-reset').addEventListener('click',function(){
-  try{ var K=fc.contentWindow.LM3_KIT; if(K) K.reset(); }catch(x){}
-  try{ sessionStorage.clear(); }catch(x){} try{ if(window.__brhStore) window.__brhStore.sessionStorage={}; }catch(x){}
-  try{ var w=fp.contentWindow; if(w) w.sessionStorage.clear(); }catch(x){}
-  cache={}; recus=0; dernier=null; $('badge').classList.remove('on'); document.querySelectorAll('.step.fait').forEach(function(s){ s.classList.remove('fait'); });
-  vue('portail'); ouvrirPage('index.html');
-  notifier('Démonstration réinitialisée','Point de départ rétabli','Portail revenu à l’accueil, cockpit revenu à ses 17 leads fictifs, connecté en tant que Claire Dubois.',null);
-});
+document.querySelector('.vues').addEventListener('click',function(e){ var b=e.target.closest('button'); if(b) vue(b.dataset.vue); });
 
 /* ---------------- démarrage ---------------- */
-peindre();
 fc.srcdoc=dec(COCKPIT);
-fc.addEventListener('load',function(){ try{ var K=fc.contentWindow.LM3_KIT; if(K && !sessionStorage.getItem('kitInit')){ K.reset(); sessionStorage.setItem('kitInit','1'); } }catch(x){} },{once:true});
+fc.addEventListener('load',function(){ try{ var k=K(); if(k && !sessionStorage.getItem('kitInit')){ k.reset(); sessionStorage.setItem('kitInit','1'); } }catch(x){} remplirDossiers(); preparerSuivi(); },{once:true});
 ouvrirPage('index.html');
 setTimeout(function(){ var b=$('boot'); if(b) b.remove(); },6000);
 })();
@@ -449,7 +435,7 @@ setTimeout(function(){ var b=$('boot'); if(b) b.remove(); },6000);
 def js(o): return json.dumps(o, ensure_ascii=False).replace('</', '<\\/')
 out = (SHELL.replace('%POLICES%', POLICES.replace('</', '<\\/'))
             .replace('%LOGO%', LOGO).replace('%STAMP%', STAMP)
-            .replace('%PAGES%', js(PORTAIL)).replace('%COCKPIT%', js(COCKPIT)).replace('%SHIM%', js(SHIM))
+            .replace('%PAGES%', js(PORTAIL)).replace('%COCKPIT%', js(COCKPIT)).replace('%SUIVI%', js(SUIVI)).replace('%SHIM%', js(SHIM))
             .replace('%JULIA%', js(JULIA)).replace('%MODS%', js(MODCODE)))
 os.makedirs(os.path.dirname(os.path.abspath(OUT)), exist_ok=True)
 open(OUT, 'w', encoding='utf-8').write(out)
