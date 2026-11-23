@@ -1,6 +1,6 @@
 # Module lead management BRH — historique des versions
 
-_Version en cours : **LM 2.0.3** — 23/11/2026 (module en pause à la demande du DPO)_
+_Version en cours : **LM 2.0.4** — 23/11/2026 (interrupteur de pause « pause.flag », demande du DPO)_
 
 _En démonstration : **LM 3.0.3** — 17/11/2026, adresse directe `console3.html`, non affichée sur l’accueil (`console3.html`, données fictives ; la LM 2.0.1 reste en service)_
 
@@ -16,6 +16,7 @@ Module autonome, déployé sur le sous-domaine `cockpitbrh.monsitedetest.com` (d
 | LM 2.0.1 | 15/11/2026 | Correctif de la console : l’onglet « Annuaire pro et filiales » ne reste plus sur « Chargement… ». Vu par l’administrateur (rattaché à aucune CR), il renvoie vers Administration → Caisses régionales et annuaire ; en cas d’erreur du serveur, le message s’affiche avec « Réessayer ». `console.js` et ses tests uniquement ; aucune règle de gestion modifiée. |
 | LM 2.0.2 | 17/11/2026 | **Accueil sécurisé** : `cockpitbrh.monsitedetest.com` mène directement à la connexion de la console (identifiant et mot de passe). L’accueil ne propose plus la démonstration LM 2.0, la console LM 3.0 ni « Mon dossier » ; l’écran de connexion ne propose plus le lien vers la démonstration. Les adresses directes restent valables (`console3.html` à transmettre par e-mail aux testeurs ; « Mon dossier » par le lien personnel du dirigeant). `index.html`, `console.js` (texte de l’écran de connexion) et `console.html` (numéro de version du script) uniquement. |
 | LM 2.0.3 | 23/11/2026 | **Pause à la demande du DPO** : bloc « PAUSE-DPO: on » en tête du `.htaccess` ; toutes les adresses du module (accueil, console, `collecte.php`, API, « Mon dossier », `lm-cron.php` par adresse) affichent `pause.html` (page autonome, sans script) ; `lm-cron.php` lancé par la tâche cron de Hostinger ne fait plus rien tant que le bloc est présent (ni intégration, ni relance, ni alerte, ni e-mail). Données conservées en base, sans modification. Pour rouvrir : retirer le bloc et mettre en ligne. `.htaccess`, `pause.html`, `lm-cron.php` uniquement. |
+| LM 2.0.4 | 23/11/2026 | **Interrupteur de pause « pause.flag »**, comme sur les sites S, A, B et C : un fichier `pause.flag` posé dans le dossier du module (Gestionnaire de fichiers de Hostinger) met tout le module en pause, sa suppression le rouvre aussitôt, sans mise en ligne. Les pages et fichiers affichent `pause.html` (`.htaccess`, deux règles : racine du site, ou dossier du `.htaccess` quel que soit le serveur) ; tous les scripts PHP (collecte, API de la console, « Mon dossier », tâches) répondent 503 `pause: true` dès `lm-db.php`, même si la règle du `.htaccess` n'est pas appliquée ; `lm-cron.php` (tâche cron) ne lance aucune tâche. Remplace la pause figée de la LM 2.0.3. `pause.flag` n'est jamais dans le dépôt. `.htaccess`, `lm-db.php`, `lm-cron.php`, `pause.html`. |
 | LM 3.0.3 (démonstration) | 17/11/2026 | Contact dans l'entreprise en **grille libellé / valeur** (Dirigeant, Statut client, Téléphone, E-mail), encadrée et alignée sur « Pour préparer l'appel », texte de 14 px comme le reste de la fiche ; téléphone et e-mail en liens à icône, sans superposition quelle que soit la largeur (contrôlé à 1 440, 1 180 et 820 px). `console3.html` et `console3.js` uniquement. |
 | LM 3.0.2 (démonstration) | 17/11/2026 | Bloc **« Contact dans l'entreprise »** sous un intertitre (fin de l'effet carte de visite, initiales retirées) ; téléphone et e-mail **toujours visibles** (boutons Appeler et Écrire, y compris avant la prise en charge) et adresse complète dans les e-mails ouverts ; statut client affiché tel que déclaré : « Se déclare client » ou « Se déclare prospect ». `console3.html` et `console3.js` uniquement ; règles inchangées. Parcours navigateur : 42 contrôles. |
 | LM 3.0.1 (démonstration) | 17/11/2026 | **Graphisme de la console d'origine** (LM 2.0) : bandeau vert « PORTAIL BRH 15C », onglets Poppins soulignés de lime, cadre ardoise à titre condensé, sections à intertitres, liste clé-valeur « Pour préparer l'appel », historique daté en deux colonnes. **Échelle unique** : texte 14 px, secondaire 13 px, intertitres 12 px capitales, nom du lead 28 px ; boutons, champs et listes de 40 px ; rayons 6 px (commandes, vignettes) et 10 px (cadres). **Carte contact** du dirigeant (initiales, nom, fonction, statut client, boutons Appeler et Écrire après la prise en charge, cadenas avant). **E-mails envoyés au dirigeant** seuls dans la fiche (les messages aux collègues restent dans l'historique), chaque ligne s'ouvre dans une fenêtre flottante (date, expéditeur, destinataire, objet, texte). Script d'appel, e-mail type, rendez-vous, note, téléphone, clôture et simulation d'une visite dans des fenêtres flottantes (Échap pour fermer). Règles : chaque e-mail garde son modèle et son auteur. Données de démonstration régénérées (clé `lm3-demo-2`). Tests : `t_lm3.js` (69) et parcours navigateur (40). |
@@ -32,8 +33,8 @@ Module autonome, déployé sur le sous-domaine `cockpitbrh.monsitedetest.com` (d
 | `module/lm2-api.php` | LM 2.0 | API de la console : expert BRH, accès ponctuel, administration |
 | `module/lm2-suivi.php` | LM 2.0 | « Mon dossier » du dirigeant, code SMS Universels |
 | `module/collecte.php` | LM 2.0 | Point d’entrée des sites (modes relais et navigateur), demandes intégrées aux dossiers `lm2_*` |
-| `module/lm-cron.php` | LM 2.0.3 | Tâches planifiées : intégration, relances, alertes, récapitulatif de 8 h, nouvel essai des e-mails ; aucune tâche pendant une pause (bloc « PAUSE-DPO: on » du `.htaccess`) |
-| `module/lm-db.php` | LM 2.0 | Connexion MySQL et table des demandes `leads` (inchangée depuis 1.0) |
+| `module/lm-cron.php` | LM 2.0.4 | Tâches planifiées : intégration, relances, alertes, récapitulatif de 8 h, nouvel essai des e-mails ; aucune tâche pendant une pause (fichier `pause.flag`) |
+| `module/lm-db.php` | LM 2.0.4 | Connexion MySQL et table des demandes `leads` (inchangée depuis 1.0) ; garde de pause (`pause.flag`) commune à tous les scripts |
 | `module/console.html` | LM 2.0 | Console : écrans E1 à E9 (look console v1) |
 | `module/console.js` | LM 2.0.2 | Application de la console |
 | `module/console-demo.js` | LM 2.0 | Démonstration sans serveur (`console.html?demo=1`), mêmes réponses que l’API |
@@ -42,8 +43,8 @@ Module autonome, déployé sur le sous-domaine `cockpitbrh.monsitedetest.com` (d
 | `module/index.html` | LM 2.0.2 | Accueil du sous-domaine : renvoi vers la connexion sécurisée, sans lien de démonstration |
 | `module/cockpit-brh.html` | LM 2.0 | Ancienne adresse du cockpit 1.x : redirection vers la console |
 | `module/config.example.php` | LM 2.0 | Modèle de `config.php` (à ne jamais committer) |
-| `module/.htaccess` | LM 2.0.3 | Protection : configuration, bibliothèques, dossiers techniques ; interrupteur de pause (bloc « PAUSE-DPO: on ») |
-| `module/pause.html` | LM 2.0.3 | Page « temporairement suspendu » servie pendant une pause |
+| `module/.htaccess` | LM 2.0.4 | Protection : configuration, bibliothèques, dossiers techniques ; pages en pause quand `pause.flag` est présent |
+| `module/pause.html` | LM 2.0.4 | Page « temporairement suspendu » servie pendant une pause |
 | `module/connecteurs/lm-hub.js` | LM 2.0 | Chargeur côté site ; couche parcours chargée après les scripts de la page |
 | `module/connecteurs/lm-parcours.js` | LM 2.0 | Couche parcours commune : coordonnées, estimation, « déjà client ? », offres consultées, suivi |
 | `module/logo-brh.png` | LM 1.0 | Logo de la page « Mon dossier » |
