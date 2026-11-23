@@ -89,6 +89,15 @@ Si l'évolution vient d'un commentaire, citer son identifiant dans `origine`.
 
 Si une demande ne touche qu'un des deux sites, le dire explicitement dans le résumé.
 
+### Pause des sites (demande du DPO, V2.19 du 23/11/2026)
+
+- Un bloc « `# PAUSE-DPO: on` … `# FIN PAUSE-DPO` » en tête de `protobrh/.htaccess` (donc S, A, B et C, assemblés à
+  partir du socle) et de `cockpitbrh/module/.htaccess` renvoie **toutes** les adresses vers `pause.html`, scripts PHP
+  compris : aucune donnée recueillie, affichée ni envoyée. `lm-cron.php` lit ce même bloc et ne lance aucune tâche.
+- **Rouvrir** un site = retirer son bloc dans une branche, PR, puis mise en ligne **avec l'accord explicite de David**
+  (levée de la pause validée par le DPO). Ne jamais retirer ce bloc à l'occasion d'une autre évolution.
+- Le cahier des charges (`cdcbrh/`) reste ouvert : il ne contient aucune donnée de dirigeant.
+
 ## 3. Ce qu'il ne faut jamais faire
 
 - Ne jamais modifier, lire pour les publier ou committer : `cdcbrh/data/` (commentaires), `cdcbrh/config.php` (clé
