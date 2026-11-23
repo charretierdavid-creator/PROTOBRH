@@ -9,6 +9,7 @@
    Fonctions : liste filtrable, fiche détaillée, suivi (nouveau / contacté / traité), export CSV, suppression (RGPD).
    ============================================================================ */
 declare(strict_types=1);
+require_once __DIR__ . '/acces.php';   // interrupteur de pause (pause.flag) ; la porte d'accès n'est pas appliquée ici
 header('X-Robots-Tag: noindex, nofollow');
 header('Cache-Control: no-store');
 header('X-Frame-Options: DENY');

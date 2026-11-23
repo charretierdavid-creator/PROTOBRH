@@ -1,4 +1,22 @@
 # Module LM 2.0 — 15/11/2026 · protection du module lead management (Apache / LiteSpeed Hostinger) · historique : VERSIONS.md
+# ============================================================================
+# PAUSE-DPO: on
+# Site suspendu à la demande du DPO (23/11/2026) : toutes les adresses, y compris les scripts PHP
+# (demandes, avis, assistant, console), affichent pause.html ; aucune donnée n'est recueillie ni affichée.
+# POUR ROUVRIR : supprimer ce bloc (de « PAUSE-DPO: on » à « FIN PAUSE-DPO ») puis mettre en ligne.
+# ============================================================================
+<IfModule mod_headers.c>
+Header always set Cache-Control "no-store"
+</IfModule>
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^pause\.html$ - [L]
+RewriteRule ^ pause.html [L]
+</IfModule>
+<IfModule !mod_rewrite.c>
+Require all denied
+</IfModule>
+# FIN PAUSE-DPO
 Options -Indexes
 DirectoryIndex index.html
 <IfModule mod_headers.c>

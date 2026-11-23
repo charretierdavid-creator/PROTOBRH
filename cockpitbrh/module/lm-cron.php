@@ -1,4 +1,5 @@
 <?php
+/* Module LM 2.0.3 — 23/11/2026 · aucune tâche tant que le .htaccess porte « PAUSE-DPO: on » (demande du DPO) · historique : VERSIONS.md */
 /* Module LM 2.0 — 15/11/2026 · tâches planifiées : intégration des demandes, relances J+1 et J+7, alertes de délai, récapitulatif quotidien de 8 h, nouvel essai des e-mails en échec · historique : VERSIONS.md */
 /* ============================================================================
    lm-cron.php — tâches planifiées du lead management simplifié (LM 2.0)
@@ -14,6 +15,13 @@
    ============================================================================ */
 declare(strict_types=1);
 $cli = PHP_SAPI === 'cli';
+/* PAUSE (demande du DPO) : tant que le .htaccess du module porte « PAUSE-DPO: on », aucune tâche ne tourne,
+   même lancée par la tâche cron de Hostinger (ni intégration, ni relance, ni alerte, ni e-mail). */
+if (preg_match('/^#\s*PAUSE-DPO:\s*on\b/mi', (string) @file_get_contents(__DIR__ . '/.htaccess'))) {
+  if (!$cli) { header('Content-Type: application/json; charset=utf-8'); header('Cache-Control: no-store'); }
+  echo json_encode(['ok' => true, 'pause' => true, 'message' => 'Module en pause (demande du DPO) : aucune tâche exécutée.'], JSON_UNESCAPED_UNICODE), "\n";
+  exit(0);
+}
 if (!$cli) { header('Content-Type: application/json; charset=utf-8'); header('Cache-Control: no-store'); header('X-Robots-Tag: noindex, nofollow'); }
 if (is_file(__DIR__ . '/config.php')) { ob_start(); try { require_once __DIR__ . '/config.php'; } catch (\Throwable $e) {} ob_end_clean(); }
 require_once __DIR__ . '/lm2-base.php';
