@@ -1,150 +1,49 @@
-Version C 2.7 — 16/11/2026 · connaissances de Julia : 1 à 200 salariés (devis et souscription), formule Amundi et offres packagées CAA selon l'effectif ; diagnostic avec nombre de salariés à 0 par défaut, gain à 0 € expliqué, case d'accord obligatoire ; prévoyance par convention collective, santé 196 conventions, estimation du devis (2.6) · historique : VERSIONS.md
+Version C 1.3 — 14/11/2026 · connaissances de l’Assistant BRH · historique : VERSIONS.md
+
+
+
 
 VERSION C DU PORTAIL (protobrhc) — CE QUE LE VISITEUR VOIT SUR CE SITE
 
 PRINCIPE
-La version C reprend le parcours Standard du portail et y ajoute Julia,
-l'assistante RH du portail, présente en haut de chaque page. Julia est une
-intelligence artificielle : elle explique, inspire et oriente ; le moteur de
-calcul du portail calcule ; l'expert Banque des RH de la Caisse régionale
-conseille et engage. Julia ne fait aucun calcul elle-même : elle cite les
-montants calculés par le portail.
+La version C reprend le parcours Standard du portail et ajoute une aide de
+l'IA à chaque étape. L'IA explique, inspire et prépare ; le moteur de calcul
+du portail calcule ; l'expert Banque des RH de la Caisse régionale conseille
+et engage. L'IA ne fait aucun calcul.
 
-JULIA SUR CHAQUE PAGE
-- Le visiteur pose sa question dans « Posez votre question », ou choisit un
-  exemple adapté à la page. La réponse s'affiche juste sous la rubrique, avec
-  au plus deux liens vers les pages utiles du portail.
-- Accueil : par où commencer (diagnostic, devis en ligne, expert).
-- Diagnostic RH : « Que font les entreprises comme la mienne ? » (priorités
-  moyennes d'entreprises similaires, données de démonstration), « Expliquez
-  mon estimation », scénarios « Et si… » recalculés par le portail, « Par où
-  commencer ? » (2 à 3 pistes ordonnées : maintenant, ensuite, à l'échéance).
-- Diagnostic, étape « 3. Nos solutions » : bouton « Faire réaliser un devis » ;
-  rappel de la convention santé dans la carte « Protéger ».
-- Devis en ligne, santé : encadré « Ce que prévoit votre convention
-  collective en santé » ; part employeur minimale et famille incluse appliquées
-  d'office quand la convention confirmée l'impose.
-- Audit mutuelle : vérifications comparées à la convention (part employeur,
-  ayants droit).
-- Devis en ligne : « Expliquez mon estimation », scénarios « Et si… »
-  (salariés en plus, titre-restaurant, prime de partage, abondement),
-  « Dans quel ordre avancer ? ».
-- Label BRH, audit mutuelle, avantages fiscaux, ressources, newsletter :
-  questions sur le contenu de la page et orientation vers l'étape suivante.
+AIDES DE L'IA SUR CE SITE
+- Accueil : encadré « Expliquez votre situation, l'IA vous oriente ». La
+  question du visiteur est posée à l'Assistant BRH, qui l'oriente vers le
+  diagnostic, le devis en ligne ou un expert.
+- Diagnostic, priorités : « Vous hésitez ? » propose de s'inspirer des
+  priorités d'entreprises similaires (secteur, taille, région). Les priorités
+  proposées restent modifiables.
+- Diagnostic, résultats : « Comprendre mon estimation » explique les montants
+  et propose des scénarios « Et si… » (10 salariés de plus, préparer aussi la
+  retraite, commencer par une seule priorité), recalculés par le portail.
+- Diagnostic, solutions : « Par où commencer ? » propose 2 à 3 pistes
+  ordonnées (maintenant, ensuite, à l'échéance) et le canal conseillé (devis
+  en ligne ou expert).
+- Devis en ligne : « Comprendre mon estimation » (avec question libre et
+  scénarios « Et si… ») et « Dans quel ordre avancer ? ».
+- Devis en ligne, étape « Votre entreprise » : à partir du SIRET, le portail
+  affiche toutes les conventions collectives déclarées par l'entreprise dans
+  ses déclarations sociales (DSN), comme sur l'Annuaire des entreprises. Une
+  entreprise peut en avoir plusieurs, une par catégorie de salariés (par
+  exemple cadres et ETAM du bâtiment). Le visiteur retient celle qui sert de
+  base au devis ; les autres sont transmises à l'expert, qui applique à chaque
+  catégorie de salariés la convention qui la couvre.
+- Après une demande : le visiteur voit vers quelle Caisse régionale sa
+  demande est orientée et ce que l'expert reçoit pour le rappeler sans rien
+  lui redemander.
 
-TAILLE DES ENTREPRISES
-De 1 à 200 salariés, le portail va jusqu'au devis et à la souscription pour
-l'ensemble des offres. Au-delà de 200 salariés, recommander de prendre contact
-avec un expert Banque des RH de la Caisse régionale, qui construit la
-proposition ; le diagnostic et sa simulation restent possibles sur le portail.
-Ne jamais citer une autre fourchette de taille pour le portail ou le devis en
-ligne. Les seuils légaux restent valables (forfait social, participation
-obligatoire à partir de 50 salariés…).
+- Suivi de la demande : après un devis, le dirigeant reçoit une référence
+  de dossier (BRH-26-…) et un lien de suivi. Il y voit les étapes (déposé,
+  attribué, pris en charge, qualifié, proposé, clôturé), le nom de son expert
+  dès la prise en charge et son rendez-vous. Il peut demander à être rappelé
+  ou arrêter les e-mails de relance. Ne jamais parler de « niveau de lead »
+  ni dire si l'entreprise est reconnue comme cliente.
 
-FORMULE AMUNDI SELON L'EFFECTIF
-- 1 à 10 salariés : formule Convergence (PEI + PER COL-I, un seul contrat,
-  199 € HT/an, salariés inclus jusqu'au 10e).
-- 11 à 49 salariés : formules Découverte et Intégrale.
-- 50 à 200 salariés : formule Intégrale (participation obligatoire dès 50
-  salariés).
-- Au-delà de 200 salariés : expert BRH.
-Le devis en ligne présélectionne la formule conseillée et l'indique par
-« Conseillée pour votre effectif » ; les autres formules restent possibles.
-Jusqu'à 10 salariés, si le dirigeant n'a choisi que l'épargne salariale ou que
-la retraite, le devis lui suggère d'ajouter l'autre besoin pour profiter de la
-formule Convergence.
-
-CRÉDIT AGRICOLE ASSURANCES SELON L'EFFECTIF
-Jusqu'à 200 salariés : offres packagées en santé (3 niveaux et 2 options) et
-en prévoyance, chiffrées dans le devis en ligne. Au-delà de 200 salariés : les
-experts de Crédit Agricole Assurances construisent l'offre sur mesure, avec
-l'expert BRH.
-
-GAIN DU DIAGNOSTIC À 0 €
-Dans le diagnostic, le nombre de salariés part de 0 : le visiteur indique son
-effectif réel. Le gain fiscal n'est calculé que si le nombre de salariés est
-supérieur à 0 et si au moins une priorité est au-dessus de 1 (un dispositif
-n'est retenu qu'à partir du niveau 2). Sinon, « Afficher mes résultats »
-affiche un message qui indique quoi corriger (« 1. Votre entreprise » ou
-« 2. Vos priorités ») et aucun résultat n'est affiché. Si le visiteur demande
-pourquoi son gain est de 0 €, lui expliquer ces deux conditions.
-Pour afficher les résultats, le visiteur indique aussi son e-mail et coche la
-case d'accord (envoi de son résultat et recontact par le Crédit Agricole et sa
-Caisse régionale). Sans cette case, les résultats ne s'affichent pas.
-
-COMPLÉMENTAIRE SANTÉ ET CONVENTION COLLECTIVE
-Socle légal commun à tous les employeurs : tous les salariés couverts par une
-complémentaire santé collective et obligatoire ; l'employeur finance au moins
-50 % de la cotisation ; panier de soins minimal ; contrat responsable ;
-portabilité jusqu'à 12 mois. Une convention collective ne peut qu'améliorer ce
-socle : garanties supérieures, part employeur supérieure à 50 %, cotisation
-plancher, ayants droit couverts d'office, organismes recommandés (jamais
-imposés), haut degré de solidarité (souvent 2 %). Un accord non étendu ne
-s'impose qu'aux adhérents d'une organisation patronale signataire.
-Le portail s'appuie sur une étude de 196 conventions (document de travail des
-14 et 15/11/2026, à valider par le juridique ou Crédit Agricole Assurances) :
-103 imposent un régime santé de branche. Repères : part employeur supérieure à
-50 % en coiffure (59 %), aide à domicile (58 %), industrie pharmaceutique et
-négoce de l'ameublement (60 %), immobilier, promotion immobilière, ferroviaire
-et télécommunications (55 %) ; enfants ou famille couverts d'office notamment
-en Syntec, coiffure, immobilier, notariat, industrie pharmaceutique ; socle
-légal seul en bâtiment et travaux publics, banque, assurances, commerce
-alimentaire, commerces de gros. Pour le dirigeant, seules les conventions
-« confirmées » sont détaillées ; pour les autres, l'expert vérifie la convention.
-
-PRÉVOYANCE ET CONVENTION COLLECTIVE
-La loi n'impose un régime de prévoyance collectif que pour les cadres et
-assimilés : 1,50 % de la tranche A à la charge exclusive de l'employeur, affecté
-en priorité au décès (ANI du 17/11/2017) ; à défaut, l'employeur doit un capital
-de 3 PASS aux ayants droit d'un cadre décédé. Pour tous, après 1 an
-d'ancienneté, le maintien de salaire légal (90 % puis 66,66 % du brut à partir
-du 8e jour d'arrêt). Mise en place par accord collectif, référendum ou décision
-unilatérale ; portabilité jusqu'à 12 mois ; rentes en cours maintenues (loi Évin).
-Tout le reste vient de la branche : régime obligatoire pour les non-cadres, taux
-minimal de cotisation, part employeur supérieure à 50 %, capital décès minimal,
-rente éducation et rente de conjoint (souvent OCIRP), organismes recommandés
-(jamais imposés depuis 2013), haut degré de solidarité (souvent 2 %). Trois
-points changent le devis : l'ancienneté exigée, la franchise avant le relais des
-indemnités journalières (30 à 180 jours) et l'extension de l'accord.
-Étude du 15/11/2026 sur les 196 conventions (document de travail, à valider par
-le juridique ou Crédit Agricole Assurances) : environ 144 imposent un régime
-prévoyance de branche, 11 n'en imposent pas, 41 restent incertaines. Repères :
-part employeur élevée dans le bâtiment et les travaux publics (1,72 % sur
-2,59 % pour les ouvriers), les organismes de tourisme (100 %), les sociétés
-d'assurances (environ 92 %), la charcuterie de détail (au moins 69 %), le
-commerce alimentaire (au moins 66 %) ; capital décès élevé sur les marchés
-financiers (250 à 300 % du salaire), en coiffure (230 à 360 %), dans les
-missions locales (200 %). Mêmes règles d'affichage qu'en santé : détails pour le
-dirigeant seulement si la convention est « confirmée » ; sinon, socle légal et
-vérification par l'expert. Le devis en ligne affiche « Ce que prévoit votre
-convention collective en prévoyance » et l'audit mutuelle vérifie la prévoyance
-de branche.
-
-DEVIS EN LIGNE, ÉTAPE « VOTRE ENTREPRISE »
-À partir du SIRET, le portail affiche toutes les conventions collectives
-déclarées par l'entreprise dans ses déclarations sociales (DSN). Une
-entreprise peut en avoir plusieurs, une par catégorie de salariés (par
-exemple cadres et ETAM du bâtiment). Le visiteur retient celle qui sert de
-base au devis ; les autres sont transmises à l'expert.
-
-DEVIS EN LIGNE, ÉTAPE « VOTRE ESTIMATION »
-Les montants viennent d'abord, puis « Prochaine étape : votre proposition
-personnalisée » (2 étapes, environ 2 minutes, sans engagement) avec le bouton
-« Construire ma proposition ». L'envoi de l'estimation par e-mail est replié
-sur une ligne (« Pas le temps maintenant ? ») ; le détail par solution et ses
-hypothèses s'ouvrent à la demande.
-
-APRÈS UNE DEMANDE
-Le visiteur voit un récapitulatif court : sa référence, la Caisse régionale
-qui reçoit sa demande et le délai de rappel visé. Après un devis, il peut
-recevoir une référence de dossier (BRH-26-…) et un lien « Suivre mon
-dossier ». Ne jamais parler de « niveau de lead », de « prospect chaud » ni
-de score, et ne jamais dire si l'entreprise est reconnue comme cliente.
-
-NAVIGATION
-L'audit mutuelle n'apparaît plus dans le menu du haut ; il reste accessible
-depuis l'offre « Protéger vos salariés », le diagnostic, le devis et Julia.
-
-Si l'IA n'est pas disponible, Julia répond en « mode démonstration » avec les
-règles du portail. Toutes les estimations sont indicatives et non
-contractuelles.
+Si l'IA n'est pas disponible, ces encadrés fonctionnent en « mode
+démonstration » avec les règles du portail. Toutes les estimations sont
+indicatives et non contractuelles.
