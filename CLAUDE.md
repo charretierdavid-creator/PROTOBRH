@@ -98,6 +98,10 @@ Si une demande ne touche qu'un des deux sites, le dire explicitement dans le ré
   (page « temporairement suspendu », ou JSON `pause: true` pour les appels des formulaires). Texte facultatif dans
   `pause.flag` affiché sous le message. Tout nouveau script PHP d'un site doit charger `acces.php` en première ligne.
   `pause.flag` n'est jamais dans le dépôt (`.gitignore`) : les mises en ligne ne le créent ni ne le suppriment.
+- **Pilotage depuis GitHub** (V2.19.2) : Actions → « Pause des sites (pause.flag) » → Run workflow (action
+  `pause` ou `rouvrir`, sites `tous`, `S`, `A`, `B`, `C` ou `cockpit`, message facultatif). L'action
+  `.github/workflows/pause.yml` pose ou retire `pause.flag` par FTP (comptes de la mise en ligne), vérifie le site en
+  ligne et note la date et le demandeur dans le résumé de l'exécution. Ne jamais la lancer sans demande de David.
 - **Cockpit BRH** (LM 2.0.4) : même interrupteur `pause.flag`, posé dans le dossier du module. Pages : `.htaccess`
   (renvoi vers `pause.html`) ; scripts PHP : garde en tête de `lm-db.php` (503 `pause: true`, aussi en ligne de
   commande) ; `lm-cron.php` ne lance aucune tâche. Tout nouveau script PHP du module doit charger `lm-db.php` (ou

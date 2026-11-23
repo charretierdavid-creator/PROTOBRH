@@ -1,0 +1,97 @@
+name: Pause des sites (pause.flag)
+
+# Interrupteur de pause piloté depuis GitHub (V2.19.2, demande du DPO) :
+# GitHub → Actions → « Pause des sites (pause.flag) » → Run workflow → choisir l'action et les sites.
+# - pause   : dépose pause.flag à la racine FTP du site (texte facultatif affiché sous le message) ;
+# - rouvrir : supprime pause.flag.
+# Effet immédiat, sans mise en ligne. Chaque exécution (qui, quand, quoi) reste dans l'historique des Actions.
+# Le fichier n'est jamais dans le dépôt : les mises en ligne ne le créent ni ne le suppriment.
+# Mêmes comptes FTP que la mise en ligne (secrets *_FTP_USERNAME / *_FTP_PASSWORD) ; cdcbrh n'est pas concerné.
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action'
+        type: choice
+        options: [pause, rouvrir]
+        required: true
+      sites:
+        description: 'Sites concernés'
+        type: choice
+        options: [tous, S, A, B, C, cockpit]
+        required: true
+        default: tous
+      message:
+        description: 'Texte affiché sous le message de pause (facultatif, une ligne)'
+        type: string
+        required: false
+
+concurrency:
+  group: pause-des-sites
+  cancel-in-progress: false
+
+jobs:
+  interrupteur:
+    name: ${{ inputs.action }} — ${{ matrix.code }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { code: S,       secret: PROTOBRH,   url: 'https://protobrh.monsitedetest.com/' }
+          - { code: A,       secret: PROTOBRHA,  url: 'https://protobrha.monsitedetest.com/' }
+          - { code: B,       secret: PROTOBRHB,  url: 'https://protobrhb.monsitedetest.com/' }
+          - { code: C,       secret: PROTOBRHC,  url: 'https://protobrhc.monsitedetest.com/' }
+          - { code: cockpit, secret: COCKPITBRH, url: 'https://cockpitbrh.monsitedetest.com/' }
+    env:
+      CONCERNE: ${{ inputs.sites == 'tous' || inputs.sites == matrix.code }}
+      FTP_USER: ${{ secrets[format('{0}_FTP_USERNAME', matrix.secret)] }}
+      LFTP_PASSWORD: ${{ secrets[format('{0}_FTP_PASSWORD', matrix.secret)] }}
+      ACTION: ${{ inputs.action }}
+      MESSAGE: ${{ inputs.message }}
+      SITE: ${{ matrix.code }}
+      URL: ${{ matrix.url }}
+      SECRET: ${{ matrix.secret }}
+      DEMANDEUR: ${{ github.actor }}
+    steps:
+      - name: Site non concerné
+        if: env.CONCERNE != 'true'
+        run: echo "Site $SITE non concerné par cette exécution."
+      - name: Compte FTP absent
+        if: env.CONCERNE == 'true' && env.FTP_USER == ''
+        run: |
+          echo "::error::Secrets ${SECRET}_FTP_USERNAME / ${SECRET}_FTP_PASSWORD absents : $ACTION impossible pour $SITE."
+          exit 1
+      - name: Installation du client FTP (lftp)
+        if: env.CONCERNE == 'true' && env.FTP_USER != ''
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+      - name: Pose ou retrait de pause.flag
+        if: env.CONCERNE == 'true' && env.FTP_USER != ''
+        run: |
+          set -euo pipefail
+          OPTS="set ftp:ssl-allow no; set ftp:passive-mode on; set ftp:prefer-epsv no; set net:max-retries 4; set net:reconnect-interval-base 5; set net:timeout 30"
+          if [ "$ACTION" = "pause" ]; then
+            printf '%s\n' "${MESSAGE:0:300}" > pause.flag
+            lftp --env-password -u "$FTP_USER" ftp.monsitedetest.com -e "$OPTS; put pause.flag -o pause.flag; bye"
+          else
+            lftp --env-password -u "$FTP_USER" ftp.monsitedetest.com -e "$OPTS; set cmd:fail-exit no; rm pause.flag; bye" || true
+          fi
+          PRESENT=$(lftp --env-password -u "$FTP_USER" ftp.monsitedetest.com -e "$OPTS; cls -1; bye" | grep -cx 'pause.flag' || true)
+          echo "pause.flag présent sur le serveur : $PRESENT"
+          if [ "$ACTION" = "pause" ] && [ "$PRESENT" != "1" ]; then echo "::error::pause.flag absent après dépôt ($SITE)"; exit 1; fi
+          if [ "$ACTION" = "rouvrir" ] && [ "$PRESENT" != "0" ]; then echo "::error::pause.flag toujours présent ($SITE)"; exit 1; fi
+      - name: Vérification en ligne
+        if: env.CONCERNE == 'true' && env.FTP_USER != ''
+        run: |
+          sleep 3
+          CODE=$(curl -s -o page.html -w '%{http_code}' -H 'Accept: text/html' -H 'Cache-Control: no-cache' "$URL?verif=$(date +%s)" || echo 000)
+          if grep -q 'temporairement suspendu' page.html 2>/dev/null; then ETAT='en pause'; else ETAT='ouvert'; fi
+          echo "$URL → HTTP $CODE, $ETAT"
+          if [ "$ACTION" = "pause" ]; then ATTENDU='en pause'; else ATTENDU='ouvert'; fi
+          [ "$ETAT" = "$ATTENDU" ] || echo "::warning::$SITE : état constaté « $ETAT », attendu « $ATTENDU » (cache ou adresse à vérifier dans le navigateur)."
+          {
+            echo "### $SITE — $ACTION"
+            echo "- Date : $(TZ=Europe/Paris date '+%d/%m/%Y %H:%M') (heure de Paris)"
+            echo "- Demandé par : $DEMANDEUR"
+            echo "- Constaté en ligne : $ETAT (HTTP $CODE)"
+          } >> "$GITHUB_STEP_SUMMARY"
