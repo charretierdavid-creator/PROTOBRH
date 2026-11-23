@@ -14,6 +14,7 @@
      de la limite par adresse IP de chatbot.php.
    ============================================================ */
 declare(strict_types=1);
+require_once __DIR__ . '/acces.php';   // interrupteur de pause (pause.flag) avant tout traitement ; la porte d'accès n'est pas appliquée ici
 
 const DEMO_PAR_JOUR = 300;
 

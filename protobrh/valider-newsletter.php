@@ -11,6 +11,7 @@
    ============================================================================ */
 
 declare(strict_types=1);
+require_once __DIR__ . '/acces.php';   // interrupteur de pause (pause.flag) ; la porte d'accès n'est pas appliquée ici
 mb_internal_encoding('UTF-8');
 date_default_timezone_set('Europe/Paris');
 

@@ -91,12 +91,16 @@ Si une demande ne touche qu'un des deux sites, le dire explicitement dans le ré
 
 ### Pause des sites (demande du DPO, V2.19 du 23/11/2026)
 
-- Un bloc « `# PAUSE-DPO: on` … `# FIN PAUSE-DPO` » en tête de `protobrh/.htaccess` (donc S, A, B et C, assemblés à
-  partir du socle) et de `cockpitbrh/module/.htaccess` renvoie **toutes** les adresses vers `pause.html`, scripts PHP
-  compris : aucune donnée recueillie, affichée ni envoyée. `lm-cron.php` lit ce même bloc et ne lance aucune tâche.
-- **Rouvrir** un site = retirer son bloc dans une branche, PR, puis mise en ligne **avec l'accord explicite de David**
-  (levée de la pause validée par le DPO). Ne jamais retirer ce bloc à l'occasion d'une autre évolution.
-- Le cahier des charges (`cdcbrh/`) reste ouvert : il ne contient aucune donnée de dirigeant.
+- **Sites S, A, B et C (et cdcbrh)** : interrupteur `pause.flag`. Un fichier `pause.flag` posé à la main sur Hostinger
+  dans le dossier d'un site met ce site en pause ; le supprimer le rouvre. Vérifié par `brh_pause_verifier()` en tête de
+  `acces.php` (identique dans `protobrh/` et `cdcbrh/`) : pages, scripts qui chargent `acces.php` (lead, feedback,
+  chatbot et assistant hors ligne, entreprise, ia de C) et `admin-leads.php`, `valider-newsletter.php` répondent 503
+  (page « temporairement suspendu », ou JSON `pause: true` pour les appels des formulaires). Texte facultatif dans
+  `pause.flag` affiché sous le message. Tout nouveau script PHP d'un site doit charger `acces.php` en première ligne.
+  `pause.flag` n'est jamais dans le dépôt (`.gitignore`) : les mises en ligne ne le créent ni ne le suppriment.
+- **Cockpit BRH** : bloc « `# PAUSE-DPO: on` … `# FIN PAUSE-DPO` » en tête de `cockpitbrh/module/.htaccess` ; toutes les
+  adresses renvoient vers `pause.html` et `lm-cron.php` ne lance aucune tâche. Rouvrir = retirer le bloc (PR) **avec
+  l'accord explicite de David** ; ne jamais le retirer à l'occasion d'une autre évolution.
 
 ## 3. Ce qu'il ne faut jamais faire
 

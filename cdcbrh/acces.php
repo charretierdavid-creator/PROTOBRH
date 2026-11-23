@@ -8,12 +8,53 @@
    - 8 essais erronés : blocage 5 minutes.
    Le fichier .htaccess fait passer les pages (.html, .json, .txt…) par ce fichier ;
    les scripts PHP sensibles appellent brh_acces_api() en première ligne.
+   - Interrupteur de pause : fichier « pause.flag » dans le dossier du site (voir brh_pause_verifier()).
    Ce fichier est identique dans protobrh/ et cdcbrh/.
    ============================================================================ */
 
 const BRH_ACCES_DUREE   = 36000;  // 10 heures
 const BRH_ACCES_ESSAIS  = 8;
 const BRH_ACCES_BLOCAGE = 300;    // 5 minutes
+
+/* ----------------------------------------------------------------------------
+   INTERRUPTEUR DE PAUSE (V2.19, demande du DPO du 23/11/2026)
+   Un fichier « pause.flag » posé dans le dossier du site (hPanel → Gestionnaire de fichiers → Nouveau fichier)
+   met le site en pause : toutes les pages et tous les scripts qui chargent ce fichier (demandes, avis, assistant,
+   entreprise, administration…) répondent « Ce prototype est temporairement suspendu » (code 503) ; aucune donnée
+   n'est recueillie ni affichée. Supprimer le fichier rouvre le site aussitôt. Le texte éventuellement écrit dans
+   pause.flag (une ligne, ex. « Réouverture prévue le 15/12/2026 ») s'affiche sous le message.
+   Le fichier n'est pas dans le dépôt (.gitignore) : les mises en ligne ne le créent ni ne le suppriment.
+   ---------------------------------------------------------------------------- */
+function brh_pause_verifier(): void {
+  if (PHP_SAPI === 'cli' || !is_file(__DIR__ . '/pause.flag')) return;
+  $note = trim(mb_substr(strip_tags((string) @file_get_contents(__DIR__ . '/pause.flag', false, null, 0, 2000)), 0, 300));
+  while (ob_get_level() > 0) ob_end_clean();
+  http_response_code(503);
+  header('Retry-After: 86400');
+  header('Cache-Control: no-store');
+  header('X-Robots-Tag: noindex, nofollow');
+  $page = realpath($_SERVER['SCRIPT_FILENAME'] ?? '') === __FILE__ || stripos((string) ($_SERVER['HTTP_ACCEPT'] ?? ''), 'text/html') !== false;
+  if (!$page) {   // appel d'un script par une page (fetch) : réponse JSON lisible par les formulaires
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode(['ok' => false, 'pause' => true, 'error' => 'Ce prototype est temporairement suspendu : aucune information n\'a été enregistrée.'], JSON_UNESCAPED_UNICODE);
+    exit;
+  }
+  header('Content-Type: text/html; charset=utf-8');
+  header("Content-Security-Policy: default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; base-uri 'none'");
+  $n = $note !== '' ? '<p class="n">' . htmlspecialchars($note, ENT_QUOTES, 'UTF-8') . '</p>' : '';
+  echo '<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">',
+    '<meta name="robots" content="noindex,nofollow"><title>Prototype temporairement suspendu — Banque des RH</title><style>',
+    '*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f4f7f5;color:#1d2b28;',
+    'font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:24px 16px}',
+    'main{max-width:560px;background:#fff;border:1px solid #dfe6e2;border-radius:20px;padding:36px 32px;text-align:center}',
+    '.logo{display:inline-grid;place-items:center;width:52px;height:52px;border-radius:14px;background:#8FB822;color:#065145;font-weight:800;font-size:14px;margin-bottom:18px}',
+    'h1{font-size:1.45rem;line-height:1.25;color:#065145;margin:0 0 12px}p{margin:0 0 12px;color:#5c6b64}.n{color:#1d2b28;font-weight:600}',
+    '</style></head><body><main><div class="logo" aria-hidden="true">BRH</div><h1>Ce prototype est temporairement suspendu</h1>',
+    '<p>Le prototype exploratoire Banque des RH est fermé pour le moment. Aucune information n\'est recueillie pendant cette pause.</p>',
+    $n, '<p>Pour toute question, contactez l\'équipe projet Banque des RH.</p></main></body></html>';
+  exit;
+}
+brh_pause_verifier();
 
 function brh_acces_session(): void {
   if (session_status() === PHP_SESSION_ACTIVE) return;
