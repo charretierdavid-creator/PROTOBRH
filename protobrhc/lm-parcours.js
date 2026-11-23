@@ -1,217 +1,39 @@
-/* Version C 2.5 — 15/11/2026 · couche parcours identique au module LM 2.0 (connecteurs/lm-parcours.js) : 3 types de leads, offres consultées et pages vues, « déjà client ? », preuve de suite ; encart de suivi laissé à fin-parcours.js · historique : VERSIONS.md */
+/* Version C 1.3 — 14/11/2026 · remontée des leads depuis le parcours · historique : VERSIONS.md */
 /* ==============================================================
-   LEAD MANAGEMENT — remontée des leads depuis le parcours (module LM 2.0, sites S, A, B, C)
-   Surcouche des pages du socle, sans les modifier ; chargée par connecteurs/lm-hub.js (data-parcours="oui")
-   ou directement par le site (version C). Chaque bloc ne s'ajoute que si la page a les éléments attendus.
-   Trois types de leads (cahier des charges LM 2.0 v0.3, § 3) :
-     QUALIFIÉ — Diagnostic RH (diagnostic.html) : case FACULTATIVE « recevoir mon résultat et être recontacté »
-       à l'affichage des résultats (relances J+1 et J+7), ou formulaire « 4. Nous contacter » (rappel demandé) ;
-     ULTRA-QUALIFIÉ — Devis en ligne (devis.html), étape « Votre estimation » : « Recevoir mon estimation par e-mail » ;
-     DEMANDE DE DEVIS — envoi du devis, rattaché au même dossier ; lien « Suivre mon dossier ».
-   Q16 : « Votre entreprise est-elle déjà cliente du Crédit Agricole ? » (facultatif) au « Nous contacter »,
-   à l'estimation et au devis ; le statut reste « à vérifier » par l'expert.
-   Q13 : offres consultées (fiches solution, formules, audit) et pages vues, gardées pour cet onglet seulement
-   (sessionStorage, sans cookie ni suivi d'une visite à l'autre) et transmises seulement avec une demande consentie.
-   Le type est calculé côté serveur (lm2-base.php) ; rien n'est affiché au visiteur sur son type.
+   LEAD MANAGEMENT — remontée des leads depuis le parcours (version C, protobrhc)
+   Surcouche du socle, sans modifier les pages. Niveaux du deck du 14/11/2026 :
+     Diagnostic RH (diagnostic.html)
+       - à l'affichage des résultats, case FACULTATIVE « recevoir mon résultat et être recontacté » :
+         si elle est cochée, l'e-mail et le résultat partent (lead ABANDONNISTE, relances J+1 et J+7).
+     Devis en ligne (devis.html)
+       - étape « Votre entreprise » : e-mail facultatif « pour retrouver votre devis » + « Votre entreprise
+         est-elle déjà cliente du Crédit Agricole ? » (déclaratif du dirigeant, scénario A) ;
+         e-mail et accord donnés → lead CHAUD (offre choisie, devis non terminé), étape suivie ensuite ;
+       - envoi du devis → lead ULTRA-CHAUD rattaché au même dossier ; lien « Suivre mon dossier ».
+   Le niveau est calculé côté serveur (lm-base.php) ; rien n'est affiché au visiteur sur son niveau.
    ============================================================== */
 (function () {
   'use strict';
-  if (window.__BRH_LM_PARCOURS) return;   // déjà chargé (par le site et par lm-hub.js)
-  window.__BRH_LM_PARCOURS = true;
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
   var MAILRE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-  var V = window.BRH_VARIANTE || '';
-  var CL_OPTS = [['oui', 'Oui'], ['non', 'Non'], ['nsp', 'Je ne sais pas']];
-  function questionClient(id, nom) {   /* Q16 : même question, même mémoire de session sur tous les écrans */
-    var f = document.createElement('div'); f.className = 'lm-q'; f.id = id; var dj = memo('brhLmClient') || '';
-    f.innerHTML = '<span class="q-t" id="' + id + 'T">Votre entreprise est-elle déjà cliente du Crédit Agricole ? <span class="lm-opt">facultatif</span></span>' +
-      '<div class="dv-opts" role="radiogroup" aria-labelledby="' + id + 'T">' + CL_OPTS.map(function (x) { return '<label class="dv-opt"><input type="radio" name="' + nom + '" value="' + x[0] + '"' + (dj === x[0] ? ' checked' : '') + '><span>' + x[1] + '</span></label>'; }).join('') + '</div>' +
-      '<span class="hint">Votre demande arrive ainsi directement à la bonne Caisse régionale.</span>';
-    return f;
-  }
-  document.addEventListener('change', function (e) { var t = e.target; if (t && /^lmCl/.test(t.name || '') && t.checked) memo('brhLmClient', t.value); }, true);
+  var V = window.BRH_VARIANTE || 'C';
   function poster(corps) {
     return fetch('lead.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(corps) })
       .then(function (r) { return r.json(); }).catch(function () { return null; });
   }
   function memo(k, v) { try { if (v === undefined) return JSON.parse(sessionStorage.getItem(k) || 'null'); sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) { return null; } }
   var st = document.createElement('style');
-  /* styles alignés sur la charte du socle (champs .field, consentement .consent, options .dv-opt) */
-  st.textContent = '.lm-opt{font-weight:400;color:var(--slate,#5b6b66);font-size:.78rem;margin-left:6px}' +
-    '.lm-est{margin-top:18px;border:1px solid var(--line,#e7ece9);border-radius:16px;padding:18px 20px;background:#fff;display:grid;gap:12px}' +
-    '.lm-est-t b{display:block;font-family:var(--fh,inherit);font-size:1rem;color:var(--green,#065145)}.lm-est-t span{font-size:.86rem;color:var(--slate,#5b6b66)}' +
-    '.lm-est-f{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}.lm-est-f .field{flex:1 1 280px;margin:0}' +
-    '.lm-est .consent{grid-column:auto}.lm-est-m{margin:0;font-size:.86rem}.lm-est-m.ok{color:var(--green,#065145);font-weight:600}.lm-est-m.err{color:#b3261e}' +
-    '.lm-q{grid-column:1/-1;margin:2px 0}' +
-    '.lm-q .q-t{display:block;font-family:var(--fb,inherit);font-weight:600;font-size:.86rem;color:var(--ink,#1d2b28);margin-bottom:8px}' +
-    '.lm-q .dv-opt span{padding:.5rem 1rem}' +
-    '.lm-q .hint{display:block;font-size:.76rem;color:var(--slate,#5b6b66);margin-top:6px}' +
-    /* case du déverrouillage des résultats du diagnostic (bandeau vert) */
-    '.results-gate .lm-ck{display:flex;gap:8px;align-items:flex-start;font-size:.76rem;line-height:1.4;color:#fff;opacity:.92;cursor:pointer;margin:0}' +
-    '.results-gate .lm-ck input{flex:0 0 auto;width:16px;height:16px;min-width:0;margin:2px 0 0;padding:0;border:0;accent-color:var(--lime,#8fb822)}' +
-    '.lm-suivi{margin:20px auto 0;max-width:560px;text-align:left;background:var(--mint-2,#f3f8f5);border:1px solid var(--line,#e7ece9);border-radius:16px;padding:16px 18px;font-size:.9rem;line-height:1.5}' +
-    '.lm-suivi b{font-family:var(--fh,inherit);color:var(--green,#065145)}.lm-suivi .btn{margin-top:10px}';
+  st.textContent = '.lm-opt{font-weight:400;color:var(--slate,#5b6b66);font-size:.8em;margin-left:6px}' +
+    '.lm-ck{display:flex;gap:8px;align-items:flex-start;font-size:.8rem;line-height:1.4;color:inherit;margin-top:8px;cursor:pointer}.lm-ck input{margin-top:2px;flex:none}' +
+    '.lm-radios{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}.lm-radios label{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line-2,#dfe6e2);border-radius:999px;padding:6px 12px;font-size:.85rem;cursor:pointer;background:#fff}' +
+    '.lm-radios input:checked+span{font-weight:700;color:var(--green,#065145)}' +
+    '.lm-suivi{margin:18px auto 0;max-width:560px;text-align:left;background:var(--mint-2,#f3f8f5);border:1px solid var(--line,#e7ece9);border-radius:14px;padding:14px 16px}' +
+    '.lm-suivi b{color:var(--green,#065145)}.lm-suivi a{display:inline-block;margin-top:8px}';
   document.head.appendChild(st);
-  var page = (window.BRH_PAGE || location.pathname.split('/').pop() || 'index.html').toLowerCase();   // BRH_PAGE : pages de test
-
-  /* ============================== OFFRES CONSULTÉES ET PAGES VUES (Q13) ============================== */
-  var PAGES = { 'index.html': 'Accueil', 'diagnostic.html': 'Diagnostic RH', 'devis.html': 'Devis en ligne', 'audit-mutuelle.html': 'Audit mutuelle', 'label-brh.html': 'Label BRH',
-    'avantages-fiscaux.html': 'Avantages fiscaux', 'ressources.html': 'Ressources', 'simulation.html': 'Simulation', 'newsletter.html': 'Newsletter' };
-  var FICHES = { partage: 'Prime de partage de la valeur', proteger: 'Santé et prévoyance', retraite: 'Retraite collective', pouvoir: 'Pouvoir d’achat (avantages salariés)',
-    decouverte: 'Formule Découverte (épargne salariale)', integrale_epargne: 'Formule Intégrale (épargne salariale)', integrale_retraite: 'Formule Intégrale (retraite)', convergence: 'Formule Convergence (épargne et retraite)' };
-  function parcours() { var p = memo('brhLmParcours'); return p && typeof p === 'object' ? p : { offres_consultees: [], pages: [] }; }
-  function vu(cle, lib) { if (!lib) return; var p = parcours(); p[cle] = (p[cle] || []).filter(function (x) { return x !== lib; }).concat([lib]).slice(-20); memo('brhLmParcours', p); }
-  vu('pages', PAGES[page] || page.replace(/\.html$/, ''));
-  if (page === 'audit-mutuelle.html') vu('offres_consultees', 'Audit mutuelle');
-  if (page === 'label-brh.html') vu('offres_consultees', 'Label BRH');
-  function brancherFiches() {   /* fiches « En savoir plus » des solutions et des formules : enveloppées une seule fois */
-    [['openSol', function (id) { var l = typeof SOLUTIONS !== 'undefined' && SOLUTIONS.filter ? (SOLUTIONS.filter(function (x) { return x.id === id; })[0] || {}) : {}; return FICHES[id] || l.title || l.titre || l.name || String(id); }],
-     ['openFormule', function (k) { return FICHES[k] || 'Formule ' + String(k); }]].forEach(function (x) {
-      var f = window[x[0]]; if (typeof f !== 'function' || f.__lm) return;
-      var g = function (k) { try { vu('offres_consultees', x[1](k)); } catch (e) {} return f.apply(this, arguments); }; g.__lm = true;
-      try { window[x[0]] = g; } catch (e) {}
-    });
-  }
-  brancherFiches();
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', brancherFiches);
-  if (window.addEventListener) window.addEventListener('load', brancherFiches);
-  window.BRH_LM_PARCOURS = { lire: parcours, noter: vu };
-
-  /* ============================== CONTACT PARTAGÉ ENTRE LES ÉCRANS ==============================
-     « Une information, une fois » : les coordonnées tapées sur un écran (diagnostic, label RH, audit
-     mutuelle, devis, demande de rappel) préremplissent les champs VIDES des autres écrans.
-     Stockage : sessionStorage « brhContact » (cet onglet du navigateur seulement, effacé à sa fermeture ;
-     rien n'est transmis sans une demande du dirigeant). */
-  var CHAMPS = {   // id du champ → rôle : prenom, nom, complet (« Prénom Nom »), email, telephone, fonction, entreprise
-    'diagnostic.html': { 'gate-email':'email', 'c-nom':'complet', 'c-ent':'entreprise', 'c-tel':'telephone', 'c-email':'email' },
-    'label-brh.html': { 'gate-prenom':'prenom', 'gate-nom':'nom', 'gate-email':'email', 'gate-poste':'fonction', 'c-nom':'complet', 'c-ent':'entreprise', 'c-tel':'telephone', 'c-email':'email' },
-    'audit-mutuelle.html': { 'au-nom':'complet', 'au-ent':'entreprise', 'au-tel':'telephone', 'au-mail':'email' },
-    'devis.html': { 'c-prenom':'prenom', 'c-nom':'nom', 'c-fct':'fonction', 'c-tel':'telephone', 'c-email':'email', 'x-nom':'complet', 'x-tel':'telephone', 'lmEm':'email' },
-    'newsletter.html': { 'nf-prenom':'prenom', 'nf-nom':'nom', 'nf-email':'email', 'nf-entreprise':'entreprise' }
-  }[page] || {};
-  function contact() { return memo('brhContact') || {}; }
-  function noter(role, v) {
-    v = String(v || '').trim(); if (!v) return;
-    var c = contact();
-    if (role === 'email' && !MAILRE.test(v)) return;
-    if (role === 'complet') { var i = v.indexOf(' '); if (i > 0) { c.prenom = v.slice(0, i); c.nom = v.slice(i + 1); } else c.nom = v; }
-    else c[role] = v;
-    c.maj = new Date().toISOString(); memo('brhContact', c);
-  }
-  function valeur(role, c) { return role === 'complet' ? [c.prenom, c.nom].filter(Boolean).join(' ') : (c[role] || ''); }
-  /* nom de l'entreprise : celui de la fiche publique (SIRET) l'emporte sur un nom tapé ailleurs */
-  function nomEntreprise(c) { var pe = (memo('brhProfil') || {}).entreprise || {}; return pe.nom || c.entreprise || ''; }
-  function preremplir() {
-    var c = contact(), n = 0;
-    Object.keys(CHAMPS).forEach(function (id) {
-      var el = $(id), role = CHAMPS[id], v = role === 'entreprise' ? nomEntreprise(c) : valeur(role, c); if (!el || !v) return;
-      var cur = String(el.value || '').trim();
-      /* champ vide, ou déjà prérempli par ce module avec une valeur devenue ancienne (nouveau SIRET) */
-      if (cur && !(el.getAttribute && el.getAttribute('data-lm-auto') === cur && cur !== v)) return;
-      if (el.tagName === 'SELECT') { if (![].some.call(el.options || [], function (o) { return o.value === v || o.textContent === v; })) return; }
-      el.value = v; if (el.setAttribute) el.setAttribute('data-lm-auto', v); n++;
-    });
-    return n;
-  }
-  /* entreprise reconnue par SIRET sur cette page (diagnostic, audit mutuelle) : gardée pour toute la session
-     et reportée aussitôt dans les formulaires de contact de la page et des écrans suivants */
-  function retenirEntreprise(d) {
-    if (!d || d.source === 'demo' || !d.nom) return;
-    try {
-      var p = memo('brhProfil') || {};
-      p.entreprise = Object.assign({}, p.entreprise || {}, { source: d.source || '', siren: d.siren || String(d.siret || '').slice(0, 9), siret: d.siret || (p.entreprise || {}).siret || '',
-        nom: d.nom, ville: d.ville || '', cp: d.cp || '', naf: d.naf || '', idcc: d.idcc || '' });
-      if (d.cp && !p.departement) p.departement = (window.BRH_ENT && BRH_ENT.departement) ? BRH_ENT.departement(d.cp) : String(d.cp).slice(0, 2);
-      memo('brhProfil', p);
-    } catch (e) {}
-    preremplir();
-  }
-  if (window.BRH_ENT && typeof BRH_ENT.chercher === 'function' && !BRH_ENT.__lm) {
-    var _ch = BRH_ENT.chercher; BRH_ENT.__lm = true;
-    BRH_ENT.chercher = function () { return _ch.apply(this, arguments).then(function (d) { setTimeout(function () { retenirEntreprise(d); }, 0); return d; }); };
-  }
-  /* formulaires affichés plus tard (contact du diagnostic, dernier écran de l'audit) : préremplis à l'entrée dans un champ */
-  document.addEventListener('focusin', function (e) { if (e.target && e.target.id && CHAMPS[e.target.id]) preremplir(); }, true);
-  document.addEventListener('change', function (e) { var t = e.target; if (t && t.id && CHAMPS[t.id]) noter(CHAMPS[t.id], t.value); }, true);
-  preremplir();
-  /* l'audit mutuelle redessine son écran à chaque étape : préremplissage après chaque rendu */
-  if (page === 'audit-mutuelle.html' && typeof render === 'function') { var _render = render; render = function () { var r = _render.apply(this, arguments); preremplir(); return r; }; }
-  window.BRH_CONTACT = { lire: contact, noter: noter, preremplir: preremplir, retenirEntreprise: retenirEntreprise };
-
-  /* ============================== ARGUMENTAIRE DE VENTE POUR L'EXPERT ==============================
-     La synthèse préparée par l'IA (profil, questions à poser, pièces à demander, angle d'approche) n'est plus
-     affichée au dirigeant : elle est rattachée à son dossier et apparaît dans le cockpit BRH, rubrique
-     « Argumentaire de vente ». Décision du 15/11/2026. */
-  window.BRH_LM = window.BRH_LM || {};
-  window.BRH_LM.argumentaire = function (s, source) {
-    if (!s || typeof s !== 'object' || !window.BRH_LM_DERNIER) return Promise.resolve(false);
-    return Promise.race([window.BRH_LM_DERNIER, new Promise(function (r) { setTimeout(function () { r(null); }, 3000); })]).then(function (j) {
-      if (!j || !j.ok || !j.id || !j.jeton) return false;
-      return poster({ action: 'argumentaire', id: j.id, jeton: j.jeton, source: source || page,
-        argumentaire: { titre: s.titre || '', synthese: s.synthese || [], questions: s.questions || [], pieces: s.pieces || [], angle: s.angle || '' } })
-        .then(function (r) { return !!(r && r.ok); });
-    });
-  };
-
-  /* ============================== DEMANDES ENVOYÉES À lead.php ==============================
-     Chaque demande est complétée avec ce que le dirigeant a déjà donné dans la session, sans jamais
-     remplacer une valeur saisie : entreprise reconnue (raison sociale, SIRET, code postal, ville),
-     département, e-mail (une demande de rappel sans e-mail rejoint ainsi le dossier du devis).
-     Les coordonnées envoyées sont aussi gardées pour les écrans suivants. */
-  function completer(b) {
-    if (!b || b.action || !(b.contact || b.contexte)) return b;
-    var c = b.contact || b.contexte, consent = c.consentement || c.consent || b.consentement || b.consent;
-    if (!consent) return b;
-    var pf = memo('brhProfil') || {}, pe = pf.entreprise || {}, ct = contact(), ajout = [];
-    /* même objet entreprise que celui lu par lead.php : entreprise, company, ou contexte.entreprise (demande de rappel) */
-    var e = b.entreprise || b.company || (c.entreprise && typeof c.entreprise === 'object' ? c.entreprise : (b.entreprise = {}));
-    var met = function (cles, v, lib) { if (!v) return; for (var i = 0; i < cles.length; i++) if (e[cles[i]] != null && String(e[cles[i]]).trim() !== '') return; e[cles[0]] = v; ajout.push(lib); };
-    if (!c.companyName) met(['raison_sociale', 'nom', 'companyName'], pe.nom, 'raison sociale');
-    met(['siret', 'siren'], pe.siret || pe.siren, 'SIRET');
-    met(['code_postal', 'cp'], pe.cp, 'code postal'); met(['ville'], pe.ville, 'ville');
-    met(['departement'], pf.departement || (pe.cp ? String(pe.cp).slice(0, 2) : ''), 'département');
-    if (!(c.email || c.mail) && ct.email) { c.email = ct.email; ajout.push('e-mail'); }
-    if (ajout.length) b.complete_par_session = ajout;
-    /* Q13, Q16 : parcours de la session et « déjà client ? », seulement avec une demande consentie */
-    var pc = parcours(); if (!b.parcours && ((pc.offres_consultees || []).length || (pc.pages || []).length)) b.parcours = { offres_consultees: pc.offres_consultees || [], pages: pc.pages || [] };
-    var dj = memo('brhLmClient'); if (dj && !e.client_declare && !b.client_declare) e.client_declare = dj;
-    /* preuve que ce navigateur a fait la demande précédente du dossier : le module renvoie alors le lien de suivi */
-    var su = memo('brhLmSuite'); if (su && su.id && su.jeton && !b.suite) b.suite = { id: su.id, jeton: su.jeton };
-    /* coordonnées de cette demande, gardées pour la suite du parcours */
-    if (c.email || c.mail) noter('email', c.email || c.mail);
-    if (c.prenom) noter('prenom', c.prenom); if (c.nom && c.prenom) noter('nom', c.nom); else if (c.nom || c.name) noter('complet', c.nom || c.name);
-    if (c.telephone || c.tel || c.phone) noter('telephone', c.telephone || c.tel || c.phone);
-    if (c.fonction || c.poste) noter('fonction', c.fonction || c.poste);
-    return b;
-  }
-  if (window.fetch && !window.__lmLeadFetch) {
-    window.__lmLeadFetch = true;
-    var _f0 = window.fetch;
-    window.fetch = function (u, o) {
-      try {
-        if (String(u).indexOf('lead.php') === 0 && o && typeof o.body === 'string') {
-          var b = completer(JSON.parse(o.body)); o = Object.assign({}, o, { body: JSON.stringify(b) });
-          var p = _f0.call(this, u, o);
-          if (b && !b.action) {
-            var rep = p.then(function (r) { return r.clone().json(); }).catch(function () { return null; });
-            rep.then(function (j) { if (j && j.ok && j.id && j.jeton) memo('brhLmSuite', { id: j.id, jeton: j.jeton }); });
-            window.BRH_LM_DERNIER = rep;                     // dernière demande : identifiant et jeton du lead
-            if (b.type === 'devis') window.BRH_LM_REPONSE = rep;
-          }
-          return p;
-        }
-      } catch (e) {}
-      return _f0.apply(this, arguments);
-    };
-  }
+  var page = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
 
   /* ============================== DIAGNOSTIC RH ============================== */
-  /* « 4. Nous contacter » (lead qualifié, rappel demandé) : « déjà client ? » facultatif (Q16) */
-  if (page === 'diagnostic.html') {
-    var ceD = $('c-email'), cfD = ceD && ceD.closest ? ceD.closest('.field') : null;
-    if (cfD && cfD.parentNode && !$('lmClientD')) cfD.parentNode.insertBefore(questionClient('lmClientD', 'lmClD'), cfD.nextSibling);
-  }
   if (page === 'diagnostic.html' && typeof unlockResults === 'function') {
     var gate = document.querySelector('#results-gate .rg-form');
     if (gate && !$('lmGateOk')) {
@@ -231,7 +53,7 @@
             entreprise: { effectif: state.effectif, secteur: sect, departement: dep }, priorities: state.priorities, fiscalGain: { total: g.total || 0, details: g.details || {} } })
             .then(function (j) { if (j && j.ok) memo('brhLmDiag', { email: em, dossier: j.dossier || null }); });
           memo('brhLmContact', { email: em });
-          if (typeof track === 'function') track('lm_lead_qualifie', { source: 'diagnostic' });
+          if (typeof track === 'function') track('lm_lead_abandonniste', { source: 'diagnostic' });
         }
       } catch (e) {}
       return r;
@@ -240,51 +62,40 @@
 
   /* ============================== DEVIS EN LIGNE ============================== */
   if (page === 'devis.html' && typeof S !== 'undefined' && typeof next === 'function') {
-    /* ---- étape « Votre estimation » : recevoir son estimation par e-mail et reprendre plus tard (lead ULTRA-QUALIFIÉ) ----
-       Placé après les montants (échange clair : le dirigeant reçoit son estimation) et non plus à l'étape
-       « Votre entreprise », déjà la plus chargée (SIRET, convention collective). Décision du 15/11/2026. */
-    var ancre = $('ia-dv-explique') || $('dvSynth');
-    if (ancre && ancre.parentNode && !$('lmEst')) {
-      var bx = document.createElement('div'); bx.className = 'lm-est'; bx.id = 'lmEst';
-      bx.innerHTML = '<div class="lm-est-t"><b>Recevoir mon estimation par e-mail</b><span>Gardez vos montants sous la main, même si vous ne terminez pas votre devis maintenant.</span></div>' +
-        '<div class="lm-est-f"><div class="field"><label for="lmEm">Votre e-mail</label><input id="lmEm" type="email" autocomplete="email" placeholder="prenom.nom@entreprise.fr" value="' + esc(contact().email || (memo('brhLmContact') || {}).email || '') + '"></div>' +
-        '<button type="button" class="btn btn-outline" id="lmEstBtn">M’envoyer mon estimation</button></div>' +
-        '<div class="consent"><input type="checkbox" id="lmEmOk"><label for="lmEmOk">J’accepte que mon e-mail et les réponses de ce devis soient utilisées par le Crédit Agricole et sa Caisse régionale pour m’adresser mon estimation et me recontacter à ce sujet, même si je ne vais pas jusqu’au bout.</label></div>' +
-        '<p class="lm-est-m" id="lmEstMsg" role="status"></p>';
-      bx.insertBefore(questionClient('lmClientE', 'lmClE'), bx.querySelector ? bx.querySelector('.consent') : null);
-      ancre.parentNode.insertBefore(bx, ancre.nextSibling);
+    var found = $('dvFound'), grid = found && found.querySelector('.dv-grid');
+    if (grid && !$('lmMail')) {
+      var c = memo('brhLmContact') || {};
+      var f1 = document.createElement('div'); f1.className = 'field'; f1.style.gridColumn = '1/-1'; f1.id = 'lmMail';
+      f1.innerHTML = '<label for="lmEm">Votre e-mail <span class="lm-opt">facultatif — pour retrouver votre devis</span></label>' +
+        '<input id="lmEm" type="email" autocomplete="email" placeholder="prenom.nom@entreprise.fr" value="' + esc(c.email || '') + '">' +
+        '<label class="lm-ck"><input type="checkbox" id="lmEmOk"><span>J’accepte que mes réponses soient utilisées par le Crédit Agricole et sa Caisse régionale pour établir mon devis et me recontacter, même si je ne vais pas jusqu’au bout.</span></label>';
+      var f2 = document.createElement('div'); f2.className = 'field'; f2.style.gridColumn = '1/-1'; f2.id = 'lmClient';
+      f2.innerHTML = '<label>Votre entreprise est-elle déjà cliente du Crédit Agricole ? <span class="lm-opt">facultatif</span></label><div class="lm-radios" role="radiogroup">' +
+        [['oui', 'Oui'], ['non', 'Non'], ['nsp', 'Je ne sais pas']].map(function (x) { return '<label><input type="radio" name="lmCl" value="' + x[0] + '"><span>' + x[1] + '</span></label>'; }).join('') + '</div>' +
+        '<span class="hint">Votre demande arrive ainsi directement à la bonne Caisse régionale.</span>';
+      grid.appendChild(f1); grid.appendChild(f2);
     }
-    /* ---- fin du devis (DEMANDE DE DEVIS) : « Votre entreprise est-elle déjà cliente ? » avec les coordonnées ---- */
-    var ce0 = $('c-email'), cf0 = ce0 && ce0.closest ? ce0.closest('.field') : null;
-    if (cf0 && cf0.parentNode && !$('lmClient')) cf0.parentNode.insertBefore(questionClient('lmClient', 'lmCl'), cf0.nextSibling);
     var suivi = memo('brhLmSuivi');
-    var declare = function () { var x = document.querySelector('input[name="lmCl"]:checked'); return x ? x.value : (memo('brhLmClient') || ''); };
+    var declare = function () { var x = document.querySelector('input[name="lmCl"]:checked'); return x ? x.value : ''; };
     var majDeclare = function () { if (S.entSrc) S.entSrc.client_declare = declare(); if (S.ent) S.ent.client_declare = declare(); };
     document.addEventListener('change', function (e) { if (e.target && e.target.name === 'lmCl') majDeclare(); });
     function etape(lib) { if (suivi && suivi.id && suivi.jeton) poster({ action: 'etape', id: suivi.id, jeton: suivi.jeton, etape: lib }); }
-    function estimationTotale() {
-      try { var o = S.est || (typeof compute === 'function' ? compute() : {}); return Math.round(S.sol.reduce(function (a, k) { return a + ((o[k] && o[k].cout) || 0); }, 0)); } catch (x) { return null; }
-    }
     function ouvrir() {
-      var em = (($('lmEm') || {}).value || '').trim(), msg = $('lmEstMsg') || {};
-      if (!MAILRE.test(em)) { msg.textContent = 'Indiquez une adresse e-mail valide.'; msg.className = 'lm-est-m err'; return; }
-      if (!$('lmEmOk') || !$('lmEmOk').checked) { msg.textContent = 'Cochez la case pour accepter l’envoi de votre estimation.'; msg.className = 'lm-est-m err'; return; }
-      if (suivi) { msg.textContent = 'Votre estimation a déjà été envoyée à ' + em + '.'; msg.className = 'lm-est-m ok'; return; }
+      var em = (($('lmEm') || {}).value || '').trim();
+      if (suivi || !em || !$('lmEmOk') || !$('lmEmOk').checked || !MAILRE.test(em)) return;
       var e = S.ent || {};
+      majDeclare();
       suivi = { attente: true };
-      poster({ type: 'devis_en_cours', variante: V, etape: 'Votre estimation', envoyer_estimation: true,
-        contact: { email: em, consentement: true, consentement_date: new Date().toISOString() },
-        entreprise: { raison_sociale: e.nom, siret: e.siret, code_postal: e.cp, ville: e.ville, effectif: e.effectif, secteur: e.secteur, idcc: e.idcc, client_declare: memo('brhLmClient') || '' },
-        solutions: S.sol, estimation_totale: estimationTotale() })
+      poster({ type: 'devis_en_cours', variante: V, etape: 'Votre entreprise', contact: { email: em, consentement: true, consentement_date: new Date().toISOString() },
+        entreprise: { raison_sociale: e.nom, siret: e.siret, code_postal: e.cp, ville: e.ville, effectif: e.effectif, secteur: e.secteur, idcc: e.idcc, client_declare: declare() }, solutions: S.sol })
         .then(function (j) { if (j && j.ok && j.jeton) { suivi = { id: j.id, jeton: j.jeton, dossier: j.dossier || null }; memo('brhLmSuivi', suivi); } else suivi = null; });
       var ce = $('c-email'); if (ce && !ce.value) ce.value = em;
-      noter('email', em); memo('brhLmContact', { email: em });
-      msg.textContent = 'C’est noté : votre estimation est envoyée à ' + em + '. Poursuivez votre devis pour recevoir votre proposition.'; msg.className = 'lm-est-m ok';
-      if (typeof track === 'function') track('lm_lead_ultra_qualifie', { source: 'devis_estimation' });
+      memo('brhLmContact', { email: em });
+      if (typeof track === 'function') track('lm_lead_chaud', { source: 'devis' });
     }
-    var bE = $('lmEstBtn'); if (bE) bE.addEventListener('click', ouvrir);
-    window.BRH_LM_ESTIMATION = ouvrir;
-    /* changements d'étape : étape tracée dans le dossier (une fois l'estimation envoyée) */
+    /* étape 2 validée : ouverture du suivi ; changements d'étape : étape tracée dans le dossier */
+    var _next = next;
+    next = function (n) { var avant = S.step, r = _next.apply(this, arguments); if (n === 2 && S.step > avant) ouvrir(); return r; };
     var _go = go;
     go = function (n) { var r = _go.apply(this, arguments); if (typeof STEPS !== 'undefined' && S.step > 2) etape(STEPS[S.step - 1]); return r; };
     /* réponse de lead.php à l'envoi du devis : référence du dossier et lien de suivi du dirigeant */
@@ -293,18 +104,15 @@
       var p = _fetch.apply(this, arguments);
       try {
         if (String(u).indexOf('lead.php') === 0 && o && typeof o.body === 'string' && /"type":"devis"/.test(o.body)) {
-          p.then(function (r) { return r.clone().json(); }).then(function (j) { if (j && j.ok && (j.suivi || j.suivi_email)) afficherSuivi(j); }).catch(function () {});
+          p.then(function (r) { return r.clone().json(); }).then(function (j) { if (j && j.ok && j.suivi) afficherSuivi(j); }).catch(function () {});
         }
       } catch (e) {}
       return p;
     };
     function afficherSuivi(j) {
-      /* version C : le récapitulatif court de fin-parcours.js porte déjà « Suivre mon dossier » */
-      if (window.BRH_FIN_PARCOURS) return;
       var done = $('dvDone'); if (!done || $('lmSuiviBox')) return;
       var b = document.createElement('div'); b.className = 'lm-suivi'; b.id = 'lmSuiviBox';
-      b.innerHTML = '<b>Votre dossier ' + esc(j.dossier) + '</b><br>Suivez son avancement, du dépôt à la clôture, et retrouvez le nom de votre expert dès qu’il le prend en charge.' + (j.caisse ? ' Caisse régionale : ' + esc(j.caisse) + '.' : '') +
-        (j.suivi ? '<br><a class="btn btn-outline" href="' + esc(j.suivi) + '">Suivre mon dossier</a>' : '<br>Le lien personnel de suivi de votre dossier vous est envoyé par e-mail.');
+      b.innerHTML = '<b>Votre dossier ' + esc(j.dossier) + '</b><br>Suivez son avancement, du dépôt à la clôture, et retrouvez le nom de votre expert dès qu’il le prend en charge.<br><a class="btn btn-outline" href="' + esc(j.suivi) + '">Suivre mon dossier</a>';
       var cta = done.querySelector('.r-cta'); done.insertBefore(b, cta || null);
       try { sessionStorage.removeItem('brhLmSuivi'); } catch (e) {}
     }
