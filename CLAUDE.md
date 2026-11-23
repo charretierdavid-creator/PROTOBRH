@@ -98,9 +98,10 @@ Si une demande ne touche qu'un des deux sites, le dire explicitement dans le ré
   (page « temporairement suspendu », ou JSON `pause: true` pour les appels des formulaires). Texte facultatif dans
   `pause.flag` affiché sous le message. Tout nouveau script PHP d'un site doit charger `acces.php` en première ligne.
   `pause.flag` n'est jamais dans le dépôt (`.gitignore`) : les mises en ligne ne le créent ni ne le suppriment.
-- **Cockpit BRH** : bloc « `# PAUSE-DPO: on` … `# FIN PAUSE-DPO` » en tête de `cockpitbrh/module/.htaccess` ; toutes les
-  adresses renvoient vers `pause.html` et `lm-cron.php` ne lance aucune tâche. Rouvrir = retirer le bloc (PR) **avec
-  l'accord explicite de David** ; ne jamais le retirer à l'occasion d'une autre évolution.
+- **Cockpit BRH** (LM 2.0.4) : même interrupteur `pause.flag`, posé dans le dossier du module. Pages : `.htaccess`
+  (renvoi vers `pause.html`) ; scripts PHP : garde en tête de `lm-db.php` (503 `pause: true`, aussi en ligne de
+  commande) ; `lm-cron.php` ne lance aucune tâche. Tout nouveau script PHP du module doit charger `lm-db.php` (ou
+  `lm2-base.php`) en premier.
 
 ## 3. Ce qu'il ne faut jamais faire
 

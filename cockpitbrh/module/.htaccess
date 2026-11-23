@@ -1,22 +1,22 @@
 # Module LM 2.0 — 15/11/2026 · protection du module lead management (Apache / LiteSpeed Hostinger) · historique : VERSIONS.md
 # ============================================================================
-# PAUSE-DPO: on
-# Site suspendu à la demande du DPO (23/11/2026) : toutes les adresses, y compris les scripts PHP
-# (demandes, avis, assistant, console), affichent pause.html ; aucune donnée n'est recueillie ni affichée.
-# POUR ROUVRIR : supprimer ce bloc (de « PAUSE-DPO: on » à « FIN PAUSE-DPO ») puis mettre en ligne.
+# INTERRUPTEUR DE PAUSE (LM 2.0.4, demande du DPO) : un fichier « pause.flag » posé dans ce dossier
+# (hPanel → Gestionnaire de fichiers → Nouveau fichier) met tout le module en pause : les pages affichent
+# pause.html et les scripts PHP répondent 503 (lm-db.php), lm-cron.php ne lance aucune tâche.
+# Supprimer pause.flag rouvre le module aussitôt. pause.flag n'est jamais dans le dépôt.
 # ============================================================================
-<IfModule mod_headers.c>
-Header always set Cache-Control "no-store"
-</IfModule>
 <IfModule mod_rewrite.c>
 RewriteEngine On
 RewriteRule ^pause\.html$ - [L]
-RewriteRule ^ pause.html [L]
+# 1) pause.flag à la racine du site (cas du sous-domaine cockpitbrh)
+RewriteCond %{DOCUMENT_ROOT}/pause.flag -f
+RewriteRule ^.*$ pause.html [L]
+# 2) pause.flag dans le dossier de ce .htaccess, quel que soit le DOCUMENT_ROOT du serveur
+RewriteCond $0#%{REQUEST_FILENAME} ^([^#]*)#(.*)\1$
+RewriteCond %2pause.flag -f
+RewriteRule ^.*$ pause.html [L]
 </IfModule>
-<IfModule !mod_rewrite.c>
-Require all denied
-</IfModule>
-# FIN PAUSE-DPO
+# FIN INTERRUPTEUR DE PAUSE
 Options -Indexes
 DirectoryIndex index.html
 <IfModule mod_headers.c>

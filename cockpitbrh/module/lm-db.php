@@ -1,4 +1,5 @@
 <?php
+/* Module LM 2.0.4 — 23/11/2026 · interrupteur de pause « pause.flag » (demande du DPO) · historique : VERSIONS.md */
 /* Module LM 2.0 — 15/11/2026 · connexion MySQL et table des demandes « leads » (inchangée depuis 1.0, copie autonome de leads-base.php) · historique : VERSIONS.md */
 /* ============================================================================
    lm-db.php — MODULE LEAD MANAGEMENT AUTONOME : connexion MySQL et table des demandes « leads ».
@@ -9,6 +10,17 @@
    ============================================================================ */
 declare(strict_types=1);
 if (realpath($_SERVER['SCRIPT_FILENAME'] ?? '') === __FILE__) { http_response_code(404); exit; }
+/* INTERRUPTEUR DE PAUSE (LM 2.0.4, demande du DPO) : fichier « pause.flag » dans le dossier du module.
+   Tous les scripts (collecte, API de la console, « Mon dossier », tâches planifiées) chargent ce fichier en premier :
+   aucune donnée n'est reçue, affichée ni envoyée tant que pause.flag existe. */
+if (is_file(__DIR__ . '/pause.flag')) {
+  $lmPause = ['ok' => false, 'pause' => true, 'error' => 'Module en pause : aucune information n\'est reçue ni affichée.'];
+  if (PHP_SAPI === 'cli') { echo json_encode(['ok' => true] + $lmPause, JSON_UNESCAPED_UNICODE), "\n"; exit(0); }
+  while (ob_get_level() > 0) ob_end_clean();
+  http_response_code(503); header('Retry-After: 86400'); header('Cache-Control: no-store');
+  header('Content-Type: application/json; charset=utf-8'); header('X-Robots-Tag: noindex, nofollow');
+  echo json_encode($lmPause, JSON_UNESCAPED_UNICODE); exit;
+}
 
 if (!defined('LM_TABLE_LEADS')) define('LM_TABLE_LEADS', 'leads');   // table des demandes écrite par les sites (mode base partagée) ou par collecte.php
 if (!preg_match('/^[a-z0-9_]{1,40}$/', LM_TABLE_LEADS)) { http_response_code(500); exit('LM_TABLE_LEADS invalide'); }
