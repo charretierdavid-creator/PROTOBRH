@@ -1,4 +1,4 @@
-/* Version C 1.9 — 15/11/2026 · reprise de l’effectif, du secteur, du département et de l’entreprise déjà indiqués ailleurs · historique : VERSIONS.md */
+/* Version C 1.4 — 14/11/2026 · diagnostic : secteur, tranche d’effectif, département · historique : VERSIONS.md */
 /* ==============================================================
    DIAGNOSTIC RH — préremplissage par SIREN / SIRET (version C, protobrhc)
    Surcouche de diagnostic.html (chercherEntreprise, BRH_ENT.chercher, state, onSecteur,
@@ -97,20 +97,6 @@
     if (typeof track === 'function') track('diagnostic_fiche_publique', { tranche: d.tranche || '', idcc: (d.codesIdcc || []).join(','), secteur: d.secteur || '' });
   }
 
-  /* reprise de ce que le dirigeant a déjà indiqué ailleurs (label RH, audit mutuelle, devis), lu par variante.js
-     avant que le diagnostic ne réécrive le profil : effectif saisi, secteur, département, puis entreprise (SIRET) */
-  function reprendre() {
-    var a = window.BRH_PROFIL_AVANT || {}, faits = [];
-    if (a.effectifSaisi && +a.effectif > 0 && !(typeof state === 'object' && state.effSaisi)) { $('effectif').value = a.effectif; if (typeof onEffectif === 'function') onEffectif(); faits.push(a.effectif + ' salariés'); }
-    var sel = $('secteur');
-    if (sel && a.secteur && !sel.value) { sel.value = a.secteur; if (sel.value === a.secteur) { if (typeof onSecteur === 'function') onSecteur(); faits.push(a.secteur); } }
-    var dep = $('departement');
-    if (dep && a.departement && !dep.value && String(a.departement).length <= 2) { dep.value = a.departement; if (typeof onDepartement === 'function') onDepartement(); faits.push('département ' + a.departement); }
-    var pe = a.entreprise || {}, sir = $('siren'), id = String(pe.siret || pe.siren || '').replace(/\D/g, '');
-    if (sir && !sir.value && (id.length === 14 || id.length === 9)) { sir.value = id; if (typeof chercherEntreprise === 'function') chercherEntreprise(); return; }
-    var msg = $('siren-msg'); if (msg && faits.length) { msg.className = 'hint ok'; msg.textContent = 'Repris de votre parcours : ' + faits.join(', ') + '. Vous pouvez les modifier.'; }
-  }
-
   var _chercher = BRH_ENT.chercher;
   BRH_ENT.chercher = function (v) {
     return _chercher.apply(this, arguments).then(completer).then(function (d) {
@@ -120,5 +106,4 @@
       return d;
     });
   };
-  reprendre();
 })();
