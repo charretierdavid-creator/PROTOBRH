@@ -1,6 +1,6 @@
 # Versions de protobrhc (version C du portail)
 
-_Version en cours : **C 2.7** — 16/11/2026_
+_Version en cours : **C 3.0** — 26/11/2026_
 
 Règle : chaque fichier porte en première ligne la version du paquet dans laquelle il a changé pour la dernière fois. Le nom du zip reprend le sous-domaine et la version (`protobrhc_AAAAMMJJ_vX.Y_objet.zip`). Dans le navigateur, la console affiche « Version C X.Y — modules chargés : … ».
 
@@ -30,11 +30,14 @@ Règle : chaque fichier porte en première ligne la version du paquet dans laque
 | **C 2.5** | 15/11/2026 | Branchement sur le module **lead management LM 2.0** : couche parcours 2.0 (identique au module) sur toutes les pages — offres consultées et pages vues transmises avec une demande consentie, « déjà client ? » au « Nous contacter » du diagnostic et à l’estimation, preuve de suite pour le lien « Suivre mon dossier » ; lead.php inchangé sur le fond | protobrhc+cdcbrh_20261115_v2.5_lead-management-2.0.zip |
 | **C 2.6** | 15/11/2026 | **Étape « Votre estimation » du devis (piste A)** : bouton « Construire ma proposition » juste sous les montants (prochaine étape, 2 étapes, environ 2 minutes, barre d’avancement), envoi par e-mail replié sur une ligne et proposé aussi à la sortie de page, détail par solution replié. **Même largeur pour tous les blocs** de chaque écran (bandeaux du haut et Julia alignés sur les sections, 1 092 px, mesuré sur 18 écrans). **Études IDCC** : santé étendue à 196 conventions (46 ajoutées, 86 confirmées), **prévoyance** par convention (196 conventions, 71 confirmées) dans le devis (encadré et fenêtre « i »), l’audit mutuelle, le diagnostic, l’argumentaire de l’expert et Julia (convention de la page et conventions citées dans la question) | protobrhc+cdcbrh_20261115_v2.6_estimation-largeurs-idcc.zip |
 | **C 2.7** | 16/11/2026 | **Diagnostic** : le nombre de salariés part de **0** (au lieu de 50), sauf s’il est déjà connu (saisi ailleurs ou prérempli par le SIREN / SIRET) ; **message d’erreur** quand le visiteur demande son gain et qu’il serait de 0 € (nombre de salariés à 0, aucune priorité au-dessus de 1, ou les deux), avec un bouton vers la rubrique à corriger ; aucun résultat affiché ni demande transmise dans ce cas ; même message sous les montants si le gain retombe à 0 € après affichage ; **case d’accord** sous « Afficher mes résultats » sans « Facultatif », phrase raccourcie, et **obligatoire** pour voir les résultats (arbitrage COPIL conformité). **Offres selon l’effectif** : devis et souscription de **1 à 200 salariés** (500 avant), au-delà prise de contact avec l’expert BRH, diagnostic et simulation toujours possibles ; **formule Amundi conseillée** (Convergence jusqu’à 10 salariés, Découverte et Intégrale de 11 à 49, Intégrale de 50 à 200 : présélection et badge dans le devis, suggestion d’ajouter le second besoin pour Convergence) ; **offres packagées santé et prévoyance CAA jusqu’à 200 salariés** (50 avant), experts CAA au-delà ; Julia alignée | protobrhc+cdcbrh_20261116_v2.7_effectif-zero.zip |
+| **C 3.0** | 26/11/2026 | **En ligne : la démo V4.1 devient l’accueil de protobrhc** (`index.html`) : bandeau « Priorité 4 besoins (A) / Label RH (B) », Mon dossier BRH, menu en 4 phases (Nos solutions, Évaluez vos besoins RH, Allons plus loin ensemble, En savoir plus), diagnostic sans SIREN / SIRET, intitulés 3-4-5, devis « avantages salariés seuls » réduit au minimum (titres-restaurant et cartes cadeaux), étape 6 sans montants, précautions d’usage en bas de chaque écran, site B : Julia en fenêtre flottante ; **branchée sur les vrais services** (ia.php → Mistral, entreprise.php → SIRET réel, lead.php → demandes enregistrées avec le parcours A ou B) ; aperçu d’e-mail simulé retiré ; **accès ouvert** sans identifiant ni mot de passe (`acces.php` propre à C, noindex gardé) ; pages du socle appelées directement renvoyées vers l’accueil (`variante.js`) ; chaîne de fabrication dans `_source/` | protobrhc_20261126_v3.0_en-ligne-ouvert.zip |
 
 ## Version de chaque fichier
 
 | Fichier | Version | Dernière modification |
 |---|---|---|
+| `acces.php` | C 3.0 | accès ouvert sans identifiant ni mot de passe ; config.php, fichiers cachés, data/, _source/ et documents internes toujours refusés ; noindex |
+| `index.html` | C 3.0 | accueil de protobrhc : démo V4.1 (parcours A et B) branchée sur les vrais services, produite par `_source/construire.sh` |
 | `llms.txt` | C 1.0 | contenus GEO (pas d’en-tête : le format llms.txt commence par le titre) |
 | `entreprise.php` | C 1.1 | toutes les conventions collectives déclarées (idcc_liste) |
 | `entreprise-public.js` | C 1.4 | fiche publique lue dans le navigateur |
@@ -47,7 +50,7 @@ Règle : chaque fichier porte en première ligne la version du paquet dans laque
 | `ia.php` | C 2.7 | Julia et base du socle : 1 à 200 salariés, formule Amundi selon l’effectif, offres packagées CAA jusqu’à 200 salariés ; 2.6 : Julia : consignes prévoyance de la convention et conventions citées ; synthèse de l’expert avec santé et prévoyance ; 1 à 500 salariés (2.4) |
 | `lead.php` | C 2.5 | relais vers le module LM 2.0 (protocole inchangé) si LM_HUB_URL / LM_HUB_CLE, sinon table leads du socle (2.0) |
 | `lm-parcours.js` | C 2.5 | couche parcours identique au module LM 2.0 : offres consultées, « déjà client ? », preuve de suite ; encart de suivi laissé à fin-parcours.js (2.0) |
-| `variante.js` | C 2.7 | version 2.7 ; diag-effectif.js sur le diagnostic ; version 2.6 : estimation-c.js sur le devis ; sante-ccn.js et prevoyance-idcc.js sur toutes les pages ; BRH_PAGE pour les tests et aperçus ; lm-parcours.js partout (2.5) |
+| `variante.js` | C 3.0 | pages du socle appelées directement renvoyées vers le même écran de l’accueil (sauf pages de test et ?classique=1) ; IAV 3.0 |
 | `variante.css` | C 2.6 | même largeur pour tous les blocs (bandeaux du haut : marge latérale de 24 px comme les sections) ; accueil resserré (2.3) |
 | `connaissances-version.txt` | C 2.7 | 1 à 200 salariés, formule Amundi et offres CAA selon l’effectif ; gain du diagnostic à 0 € expliqué (nombre de salariés, priorités), case d’accord obligatoire ; 2.6 : prévoyance par convention collective (étude du 15/11/2026), santé 196 conventions, étape « Votre estimation » ; 1 à 500 salariés (2.4) |
 | `README.md` | C 2.0 | présentation de la C 2.0 |
