@@ -1,4 +1,4 @@
-/* Version C 2.7 — 16/11/2026 · version 2.7 : diagnostic avec nombre de salariés à 0 par défaut et message si le gain serait de 0 €, case d'accord obligatoire (diag-effectif.js) ; devis de 1 à 200 salariés, formules Amundi et offres CAA selon l'effectif (offres-effectif.js) ; estimation du devis et études santé / prévoyance (2.6) · historique : VERSIONS.md */
+/* Version C 3.0 — 26/11/2026 · en ligne : la démo V4.1 (parcours A « 4 besoins » et B « Label RH ») devient l'accueil de protobrhc (index.html), branchée sur Mistral, le SIRET réel et lead.php ; accès ouvert sans mot de passe (acces.php) ; les pages appelées directement renvoient vers l'accueil · version 2.7 : diagnostic avec nombre de salariés à 0 par défaut et message si le gain serait de 0 €, case d'accord obligatoire (diag-effectif.js) ; devis de 1 à 200 salariés, formules Amundi et offres CAA selon l'effectif (offres-effectif.js) ; estimation du devis et études santé / prévoyance (2.6) · historique : VERSIONS.md */
 /* Version C — protobrhc.monsitedetest.com : version Standard (socle protobrh/) + IA à chaque étape du parcours.
    Depuis la C 2.0, l'IA prend un seul visage : « Julia, votre assistante RH », en haut de chaque page
    (ia-julia.js). Elle explique, inspire et oriente ; le moteur du portail calcule ; l'expert BRH conseille et engage.
@@ -11,8 +11,20 @@
    lead.php de C le relaie quand il est branché, sinon enregistre dans la table leads du socle.
    ia.php relaie les appels à Mistral (clé dans config.php). Sans clé, Julia répond en « mode démonstration ».
    Identifie aussi la version (C) dans chaque événement de mesure et chaque demande transmise. */
+/* C 3.0 : le parcours en ligne est servi par l'accueil (index.html, démo V4.1 branchée sur les vrais services).
+   Une page du socle appelée directement (ancien lien, favori, moteur de recherche) renvoie vers le même écran dans l'accueil :
+   diagnostic.html → ./#/A/diagnostic.html, label-brh.html → ./#/B/label-brh.html. Pas de renvoi dans les pages de test
+   (BRH_PAGE défini), ni avec ?classique=1 (contrôle de l'ancienne version multi-pages). */
+(function () {
+  try {
+    if (window.BRH_PAGE || window.top !== window.self || /[?&]classique=1/.test(location.search)) return;
+    var p = (location.pathname.split('/').pop() || '').toLowerCase();
+    if (!/\.html$/.test(p) || p === 'index.html') return;
+    location.replace('./#/' + (p === 'label-brh.html' ? 'B' : 'A') + '/' + p + location.search + location.hash);
+  } catch (e) {}
+})();
 (function(){
-  var V = 'C', IAV = '2.7';
+  var V = 'C', IAV = '3.0';
   window.BRH_VARIANTE = V;
   /* profil de la session AVANT le script de la page : le diagnostic réécrit brhProfil à son chargement
      (valeurs par défaut) ; la version C reprend ainsi ce que le dirigeant avait déjà indiqué ailleurs */

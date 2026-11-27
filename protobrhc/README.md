@@ -4,6 +4,15 @@ _Version C 2.0 — 15/11/2026 · présentation de la C 2.0 · historique : VERSI
 
 Même principe que `protobrha/` et `protobrhb/` : ce dossier ne contient **que ce qui diffère** du socle `protobrh/`. La version C reprend le parcours **Standard** et y ajoute **Julia**, sans modifier les pages du socle.
 
+
+## Version C 3.0 (26/11/2026) : la démo V4.1 en ligne, accès ouvert
+
+`index.html` est la démo hors ligne V4.1 du test CSA (parcours A « Priorité 4 besoins » et B « Label RH », bandeau de choix, Mon dossier BRH), branchée sur les vrais services du serveur : `ia.php` (Julia, Mistral), `entreprise.php` (SIRET réel) et `lead.php` (demandes enregistrées avec le parcours `parcours_ab` A ou B). Les adresses sont de la forme `#/A/devis.html`. Les pages du socle appelées directement renvoient vers le même écran de l’accueil (`variante.js`) ; `?classique=1` garde l’ancienne version multi-pages pour contrôle.
+
+`acces.php`, propre à C, ouvre l’accès sans identifiant ni mot de passe (S, A, B et le cahier des charges gardent la porte du socle). `config.php`, les fichiers cachés, `data/`, `_source/` et les documents internes (.md, .sql, .csv, .zip) restent refusés ; le site reste hors des moteurs de recherche (noindex). Pour refermer : supprimer `protobrhc/acces.php`.
+
+`index.html` ne se modifie pas à la main : il est produit par `_source/construire.sh` (démo v2 → V3 précautions → V4 parcours → V4.1 Julia flottante sur B → C 3.0 en ligne). Les modules de la version C embarqués dans la page sont ceux de la C 2.7 ; les fichiers .js de ce dossier restent la référence de la version multi-pages.
+
 ## Julia, sur chaque page
 
 « Julia, votre assistante RH vous accompagne tout au long du parcours » : une rubrique claire et discrète en haut de chaque page (sous le bandeau d’accueil, ou sous le titre de la page), sur 2 lignes et exactement à la largeur totale du bloc du dessus — ligne 1 : « Julia, votre assistante RH » (texte court sur 2 lignes) puis le champ « Posez votre question », qui prend toute la place restante ; ligne 2 : 3 ou 4 exemples propres à la page — la réponse développée juste en dessous et au plus 2 liens vers les pages utiles. Un bouton « Julia » flottant ramène à la rubrique. La bulle « Assistant BRH » du socle n’est plus affichée sur C (ses appels ouvrent Julia).

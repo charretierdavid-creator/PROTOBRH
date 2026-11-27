@@ -22,3 +22,4 @@ protobrhb/config.php
 # --- Interrupteur de pause des sites (créé ou supprimé à la main sur Hostinger, jamais dans le dépôt) ---
 pause.flag
 **/pause.flag
+config.php
